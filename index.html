@@ -610,22 +610,36 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
+        "tag": "전체공지",
+        "title": "[손사 강의] 메리츠 7월 6일 13시",
+        "date": "2026.07.05 게시",
+        "pinned": true,
+        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
+        "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/476b5706-1464-4134-980e-9214325cccae/03428eb4-686f-48dc-a4c8-c3a65b2506e3/KakaoTalk_20260705_150539418.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB4663UIO5V47%2F20260705%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260705T062823Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGkaCXVzLXdlc3QtMiJGMEQCIAD8fCcd4b4rNzVdmDE34Py5FWgZluiS1kkUN3DndedpAiAXEqFwuTRohXFdd1327gcppJVAfskNVYsKgehgMzdR3yr%2FAwgyEAAaDDYzNzQyMzE4MzgwNSIMQAWKCHqiaAyYJ%2FUjKtwDIteDlnTxJV5fHIM7J0WqnIgJn%2B%2BJ5f43RLKQr%2FqRcvbeagcWCOz5ozeQhhAwSwJm6DYQMTxUwV4lewqFXBMvAfePF9wQlNPErT4yUBDWzVCxyL7ZPd2Hf7DpEpZnmISrNrK7If1EUGCfAp4nS1q8Jvl8KYcML7kwY7xLA1Vz2zNfLvPloSPxYiQmcF4RJuvyPNf074BzZd8jJn4u%2Bj1yHvJlfPY%2Bg6AMUZ0b1lFVGvHZ9Xch%2B05FA4bTncJ31WFOceDW5h17wKct5nUj8D8w59d0BILe3C9fJzxNVjE9Ool31sZt1ccTf65E2xRB8euWD8EGFbmUN6bQzjfL0o%2BbzYYZMzo9qoAc6sw0ym3OKmbpAtxUbcqx2185Z5Hj8DEQO1%2FxxDKUsQ6wVDiJK1ZdHo39zdVT30E5DGLWZKPoxlF5wPwKXWVVGup016bVEGQ0%2FcNILH7I9G4lnLCk%2Fx%2FV%2F9iRjoTbp8BMjpAC3xWSWr8NkxP6b%2B140Kjyq94VeShgIN8h13gdU2DdNo0un2TyV2qYZQ4fCecJR4zrhl7q1TEWNnGcPDctvz3vbELgGTadbu3ih08VcE44MClfGsHDyCt809jAMhQCvlVDdtd37sKxycXaz3o6iuUSJR8wk9qm0gY6pgHrfRlSVSK8oen5C1RVW5rQg3uWCuMm23sK2QPuR3LPFX4hMSOY8GEug4224ZnHkTk%2BmllQJJZXzptneyhgdXuTQd3IBi5a9fKwyT%2F%2FousrNkN%2F%2Bk2HgIRhXWXT3e6GEmJE1IJ4XlC80FVwpKRZTqfUUN6sfkix4O3WeO3ytQVzgByRgjJgjVti%2Fv2rOqKCNi64kJ1R6YSqIWEY2aP2qN9KhjDe9M57&X-Amz-Signature=f832e0ab9f65d7c0c75510cea311e054744bcadd6dcc656a1a5017dcaf367697&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
+    },
+    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": true
+        "pinned": false,
+        "content": "",
+        "image": ""
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false
+        "pinned": false,
+        "content": "",
+        "image": ""
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false
+        "pinned": false,
+        "content": "",
+        "image": ""
     }
 ];
 
@@ -660,7 +674,16 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [];
+  const schedule = [
+    {
+        "title": "사업설명회 2:00",
+        "dateStart": "2026-07-09"
+    },
+    {
+        "title": "손사강의 13:00",
+        "dateStart": "2026-07-06"
+    }
+];
 
   function renderSchedule(list){
     const now = new Date();
