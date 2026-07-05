@@ -161,13 +161,13 @@
   .sched-badge{font-size:10.5px; font-weight:700; color:var(--slate); background:#fff; padding:3px 8px; border-radius:999px; border:1px solid var(--line);}
 
   /* ---------- 사업소개 ---------- */
-  .biz-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px;}
-  .biz-card{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:18px; cursor:pointer; transition:.15s;}
+  .biz-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px;}
+  .biz-card{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px; cursor:pointer; transition:.15s;}
   .biz-card:hover{border-color:var(--orange); transform:translateY(-2px);}
-  .biz-icon{font-size:22px;}
-  .biz-name{font-size:14px; font-weight:800; margin-top:8px;}
-  .biz-summary{font-size:11px; color:var(--orange); font-weight:700; margin-top:3px;}
-  .biz-desc{font-size:12px; color:var(--slate); margin-top:8px; line-height:1.55;}
+  .biz-icon{font-size:18px;}
+  .biz-name{font-size:12.5px; font-weight:800; margin-top:6px;}
+  .biz-summary{font-size:10px; color:var(--orange); font-weight:700; margin-top:2px;}
+  .biz-desc{font-size:11px; color:var(--slate); margin-top:6px; line-height:1.5;}
 
   /* ---------- 교육센터 탭 ---------- */
   .edu-tabs{display:flex; gap:6px; margin-bottom:20px;}
@@ -556,21 +556,45 @@
         </div>
         <div id="docSearchResults"></div>
 
-        <div class="subsection-title">💬 우리끼리질문</div>
-        <div class="qna-notice">다온지사 설계사 자유게시판입니다. 실명으로 질문해주셔야 합니다.</div>
-        <button class="qna-new-btn" id="qnaNewBtn">✏️ 새 질문 올리기</button>
-        <div class="qna-form" id="qnaNewForm">
-          <div class="qna-form-row">
-            <input type="text" id="qnaNewAuthor" placeholder="이름">
-            <input type="text" id="qnaNewCode" placeholder="설계사 인증코드">
-          </div>
-          <input type="text" id="qnaNewTitle" placeholder="제목">
-          <textarea id="qnaNewContent" placeholder="내용을 입력하세요"></textarea>
-          <div class="qna-form-msg" id="qnaNewMsg"></div>
-          <button type="button" id="qnaNewSubmit">등록</button>
-        </div>
-        <div id="qnaList"></div>
+        <div class="subsection-title">💬 다온지사 게시판</div>
+        <button class="claim-menu-item" id="qnaBoardOpenBtn" style="width:100%; text-align:left;">
+          <span class="cm-icon">💬</span>
+          <span class="cm-label">게시판입장(다온지사 소속설계사만 입장가능합니다)</span>
+        </button>
       </section>
+
+      <!-- 다온지사 게시판 모달 -->
+      <div class="modal-backdrop" id="qnaBoardModalBackdrop">
+        <div class="modal-card">
+          <button class="modal-close" id="qnaBoardModalClose">&times;</button>
+          <div class="modal-title">💬 다온지사 게시판</div>
+
+          <div id="qnaBoardGate">
+            <div class="qna-notice">다온지사 설계사만 볼 수 있는 게시판입니다. 인증코드를 입력해주세요.</div>
+            <div class="qna-form-row" style="margin-top:10px;">
+              <input type="text" id="qnaGateCode" placeholder="설계사 인증코드">
+              <button type="button" id="qnaGateSubmit" style="flex-shrink:0; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer;">확인</button>
+            </div>
+            <div class="qna-form-msg" id="qnaGateMsg"></div>
+          </div>
+
+          <div id="qnaBoardContent" style="display:none;">
+            <div class="qna-notice">다온지사 설계사 자유게시판입니다. 실명으로 질문해주셔야 합니다.</div>
+            <button class="qna-new-btn" id="qnaNewBtn">✏️ 새 질문 올리기</button>
+            <div class="qna-form" id="qnaNewForm">
+              <div class="qna-form-row">
+                <input type="text" id="qnaNewAuthor" placeholder="이름">
+                <input type="text" id="qnaNewCode" placeholder="설계사 인증코드">
+              </div>
+              <input type="text" id="qnaNewTitle" placeholder="제목">
+              <textarea id="qnaNewContent" placeholder="내용을 입력하세요"></textarea>
+              <div class="qna-form-msg" id="qnaNewMsg"></div>
+              <button type="button" id="qnaNewSubmit">등록</button>
+            </div>
+            <div id="qnaList"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- 파트너모집 -->
       <section class="panel" id="recruit">
@@ -620,36 +644,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": ""
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
@@ -684,16 +694,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -791,39 +792,43 @@
   const bizItems = [
     {
       icon: "🏥",
-      name: "다온 사장님 클리닉",
-      summary: "사업자 대상 안전경영컨설팅",
-      desc: "지역 소상공인 및 사업자 대상으로 중대재해 대응 및 보험안전점검을 진행합니다.",
-      example: "중대재해처벌법 화재보험 및 단체보험 컨설팅 / 소상공인 의무보험 점검"
+      name: "다온 사장님클리닉",
+      summary: "사업자 안전경영컨설팅",
+      desc: "중대재해 대응 및 안전점검 관련",
+      category: "사장님클리닉"
     },
     {
       icon: "🎪",
-      name: "행사영업",
-      summary: "오프라인 행사를 통한 고객접점",
-      desc: "산모교실, 펫페어, 지문상담 등 지역 행사 참여를 통해 잠재고객과의 접점을 넓힙니다.",
-      example: "산모교실, 펫페어, 지문상담 등"
+      name: "행사컨설팅",
+      summary: "오프라인 행사 진행",
+      desc: "산모교실, 펫페어, 입주부스, 지문상담 등",
+      category: "행사컨설팅"
     },
     {
       icon: "💻",
       name: "온라인영업",
-      summary: "카페 · 블로그 기반 고객 발굴",
-      desc: "지역카페, 블로그 등 온라인 채널을 통해 잠재고객을 발굴합니다.",
-      example: "네이버 상위카페 활동, 개인 블로그운영"
+      summary: "카페,블로그 기반",
+      desc: "카페, 블로그 등 온라인 채널",
+      category: "온라인영업"
+    },
+    {
+      icon: "💡",
+      name: "추가 수익화 모델",
+      summary: "다양한 수익화실현",
+      desc: "다양한 방식의 추가 수익화 모델을 소개합니다.",
+      category: "수익화모델"
     },
     {
       icon: "🤝",
       name: "다온파트너스 제휴업체",
-      summary: "보험 × 소상공인 제휴 네트워크",
-      desc: "보험과 소상공인을 접목하는 다온파트너스 제휴 네트워크입니다. 아래 업종을 중심으로 계속 추가·업데이트됩니다.",
-      isPartnerList: true,
-      categories: ["음식/휴게", "병.의원/약국", "미용실/패션", "꽃집/렌탈", "이사/청소", "인테리어/설치.수리", "법률/금융", "학원/교육", "웨딩/상조"],
-      partners: [
-        { name: "법률사무소 태선", category: "법률/금융" },
-        { name: "음봉프라자", category: "음식/휴게" },
-        { name: "치과", category: "병.의원/약국" }
-      ]
+      summary: "보험 × 소상공인",
+      desc: "제휴 업체를 소개합니다 (추가, 업데이트는 계속 됩니다)",
+      category: "제휴업체"
     }
   ];
+
+  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -841,26 +846,81 @@
   }
   renderBiz();
 
+  const BIZ_REPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-biz-reply';
+
   function openBizModal(b){
     document.getElementById('bizModalName').textContent = b.name;
     document.getElementById('bizModalSummary').textContent = b.summary;
     document.getElementById('bizModalDesc').textContent = b.desc;
-    if(b.isPartnerList){
-      document.getElementById('bizModalCaseLabel').textContent = '제휴 업종 카테고리';
-      const chips = b.categories.map(c => `<span class="filter-pill" style="cursor:default;">${c}</span>`).join(' ');
-      const partnerList = b.partners.length
-        ? '<div style="margin-top:10px; font-size:12.5px; color:var(--slate);">' + b.partners.map(p => `· ${p.name} (${p.category})`).join('<br>') + '</div>'
-        : '<div style="margin-top:10px; font-size:12px; color:var(--slate);">아직 등록된 제휴업체가 없습니다.</div>';
-      document.getElementById('bizModalCase').innerHTML = `<div style="display:flex; flex-wrap:wrap; gap:6px;">${chips}</div>${partnerList}`;
+    document.getElementById('bizModalCaseLabel').textContent = '게시물';
+    const posts = bizPosts.filter(p => p.category === b.category);
+    if(posts.length === 0){
+      document.getElementById('bizModalCase').innerHTML = '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>';
     } else {
-      document.getElementById('bizModalCaseLabel').textContent = '대표사례';
-      document.getElementById('bizModalCase').textContent = b.example;
+      document.getElementById('bizModalCase').innerHTML = posts.map(p => `
+        <div class="doc-search-result" style="text-align:left;">
+          <div class="doc-name">${escapeHtml(p.title)}</div>
+          <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
+          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
+          ${(p.replies && p.replies.length) ? `<div class="qna-replies">${p.replies.map(r => `
+            <div class="qna-reply">
+              <div class="qna-reply-meta">${escapeHtml(r.author || '')} · ${escapeHtml(r.date || '')}</div>
+              <div class="qna-reply-content">${escapeHtml(r.content || '')}</div>
+            </div>
+          `).join('')}</div>` : ''}
+          <span class="qna-reply-toggle" data-pid="${p.id}">💬 답글 달기</span>
+          <div class="qna-form" id="bizReplyForm-${p.id}">
+            <div class="qna-form-row">
+              <input type="text" class="biz-reply-author" placeholder="이름">
+              <input type="text" class="biz-reply-code" placeholder="설계사 인증코드">
+            </div>
+            <textarea class="biz-reply-content-input" placeholder="답글 내용을 입력하세요"></textarea>
+            <div class="qna-form-msg" data-msg-for="${p.id}"></div>
+            <button type="button" class="biz-reply-submit" data-pid="${p.id}">답글 등록</button>
+          </div>
+        </div>
+      `).join('');
     }
     document.getElementById('bizModalBackdrop').classList.add('open');
   }
   function closeBizModal(){ document.getElementById('bizModalBackdrop').classList.remove('open'); }
   document.getElementById('bizModalClose').addEventListener('click', closeBizModal);
   document.getElementById('bizModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'bizModalBackdrop') closeBizModal(); });
+
+  document.getElementById('bizModalCase').addEventListener('click', async (e) => {
+    const toggleBtn = e.target.closest('.qna-reply-toggle');
+    if(toggleBtn){
+      document.getElementById('bizReplyForm-' + toggleBtn.dataset.pid).classList.toggle('open');
+      return;
+    }
+    const submitBtn = e.target.closest('.biz-reply-submit');
+    if(submitBtn){
+      const pid = submitBtn.dataset.pid;
+      const form = document.getElementById('bizReplyForm-' + pid);
+      const author = form.querySelector('.biz-reply-author').value.trim();
+      const code = form.querySelector('.biz-reply-code').value.trim();
+      const content = form.querySelector('.biz-reply-content-input').value.trim();
+      const msg = form.querySelector('.qna-form-msg');
+      if(!author || !code || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+      msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+      try{
+        const res = await fetch(BIZ_REPLY_WEBHOOK, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ author, code, postId: pid, content })
+        });
+        const data = await res.json();
+        if(data.success){
+          msg.textContent = '답글이 등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+          form.querySelector('.biz-reply-content-input').value = '';
+        } else {
+          msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
+        }
+      } catch(err){
+        msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
+      }
+    }
+  });
+
 
   // ================= 교육센터 탭 전환 =================
   document.getElementById('eduTabs').addEventListener('click', (e) => {
@@ -1105,7 +1165,7 @@
     </div>
   `).join('');
 
-  document.getElementById('claims').addEventListener('click', (e) => {
+  document.getElementById('claimModalBackdrop').addEventListener('click', (e) => {
     const head = e.target.closest('.acc-head');
     if(!head) return;
     head.parentElement.classList.toggle('open');
@@ -1148,22 +1208,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
@@ -1202,6 +1247,30 @@
   }
   renderQna(qnaList);
 
+  let qnaBoardUnlocked = false;
+  document.getElementById('qnaBoardOpenBtn').addEventListener('click', () => {
+    document.getElementById('qnaBoardModalBackdrop').classList.add('open');
+    document.getElementById('qnaBoardGate').style.display = qnaBoardUnlocked ? 'none' : 'block';
+    document.getElementById('qnaBoardContent').style.display = qnaBoardUnlocked ? 'block' : 'none';
+  });
+  function closeQnaBoardModal(){ document.getElementById('qnaBoardModalBackdrop').classList.remove('open'); }
+  document.getElementById('qnaBoardModalClose').addEventListener('click', closeQnaBoardModal);
+  document.getElementById('qnaBoardModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'qnaBoardModalBackdrop') closeQnaBoardModal(); });
+
+  function tryQnaGate(){
+    const code = document.getElementById('qnaGateCode').value.trim();
+    const msg = document.getElementById('qnaGateMsg');
+    if(code.toLowerCase() === 'daon11'){
+      qnaBoardUnlocked = true;
+      document.getElementById('qnaBoardGate').style.display = 'none';
+      document.getElementById('qnaBoardContent').style.display = 'block';
+    } else {
+      msg.textContent = '인증코드가 올바르지 않습니다.'; msg.style.color = 'red';
+    }
+  }
+  document.getElementById('qnaGateSubmit').addEventListener('click', tryQnaGate);
+  document.getElementById('qnaGateCode').addEventListener('keydown', e => { if(e.key === 'Enter') tryQnaGate(); });
+
   document.getElementById('qnaNewBtn').addEventListener('click', () => {
     document.getElementById('qnaNewForm').classList.toggle('open');
   });
@@ -1221,7 +1290,7 @@
       });
       const data = await res.json();
       if(data.success){
-        msg.textContent = '등록되었습니다. 목록에는 최대 15분 후 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+        msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 목록에 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
         document.getElementById('qnaNewTitle').value = '';
         document.getElementById('qnaNewContent').value = '';
       } else {
@@ -1255,7 +1324,7 @@
         });
         const data = await res.json();
         if(data.success){
-          msg.textContent = '답글이 등록되었습니다. 목록에는 최대 15분 후 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+          msg.textContent = '답글이 등록되었습니다. 잠시 후(수 초~1분) 목록에 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
           form.querySelector('.qna-reply-content-input').value = '';
         } else {
           msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
