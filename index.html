@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0B1B33;
-    --navy-2:#16233F;
-    --orange:#FF6A2B;
-    --orange-deep:#E4531A;
-    --orange-tint:#FFF0E6;
-    --canvas:#F4F5F8;
+    --navy:#1B2A4E;
+    --navy-2:#16213B;
+    --orange:#14B8A6;
+    --orange-deep:#0D9488;
+    --orange-tint:#E4F9F5;
+    --canvas:#F6F8FA;
     --card:#FFFFFF;
-    --line:#E6E8EE;
-    --slate:#6B7280;
-    --text:#16233F;
+    --line:#E3E8EE;
+    --slate:#64748B;
+    --text:#16213B;
     --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -135,9 +135,25 @@
   .day-chip.today .dow{color:rgba(255,255,255,.7);}
   .day-chip .dnum{font-size:16px; font-weight:800; margin-top:2px;}
   .day-chip .dcount{font-size:9px; margin-top:3px; color:var(--orange); font-weight:700;}
-  .day-chip.today .dcount{color:#FFB88A;}
+  .day-chip.today .dcount{color:#8FE8DC;}
+  .month-label{font-size:12.5px; font-weight:800; color:var(--navy-2); margin-bottom:8px;}
+  .month-dow-row{display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:10px; color:var(--slate); font-weight:700; margin-bottom:4px;}
+  .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:16px;}
+  .month-cell{aspect-ratio:1; border-radius:8px; background:var(--canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:11px; color:var(--navy-2); position:relative;}
+  .month-cell.other-month{opacity:.25;}
+  .month-cell.today{background:var(--navy-2); color:#fff; font-weight:800;}
+  .month-cell .mc-dot{width:5px; height:5px; border-radius:50%; background:var(--orange); margin-top:2px;}
+  .month-cell.today .mc-dot{background:#8FE8DC;}
+  .week-group-title{font-size:11.5px; font-weight:800; color:var(--slate); margin-bottom:8px; padding-left:2px;}
+  .week-day-row{display:flex; align-items:flex-start; gap:14px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;}
+  .week-day-row.today{border-color:var(--orange); background:var(--orange-tint);}
+  .wdr-date{width:60px; flex-shrink:0; font-size:12px; font-weight:800; color:var(--navy-2); padding-top:1px;}
+  .week-day-row.today .wdr-date{color:var(--orange-deep);}
+  .wdr-events{flex:1; display:flex; flex-direction:column; gap:4px;}
+  .wdr-event{font-size:12.5px; font-weight:700; color:var(--navy-2); word-break:keep-all;}
+  .wdr-empty{font-size:12px; color:var(--slate);}
   .sched-row{display:flex; align-items:center; gap:12px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:11px 14px;}
-  .sched-row.d1{background:var(--orange-tint); border-color:#FFD8BC;}
+  .sched-row.d1{background:var(--orange-tint); border-color:#A8E8DE;}
   .sched-date{width:56px; flex-shrink:0; font-size:11px; font-weight:800; color:var(--navy-2); text-align:center;}
   .sched-time{width:48px; flex-shrink:0; font-size:11px; font-weight:700; color:var(--slate);}
   .sched-title{flex:1; font-size:13px; font-weight:700;}
@@ -192,13 +208,18 @@
   .lecture-links a{font-size:10.5px; font-weight:700; color:var(--orange-deep); padding:4px 8px; background:var(--orange-tint); border-radius:6px;}
 
   /* ---------- 보험사 ---------- */
-  .insurer-grid{display:grid; grid-template-columns:repeat(6, 1fr); gap:8px;}
-  .insurer-link{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:10px 6px; text-align:center; cursor:pointer; transition:.15s; text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .insurer-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(74px, 1fr)); gap:8px;}
+  .insurer-link{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:8px 4px; text-align:center; cursor:pointer; transition:.15s; text-decoration:none; display:flex; flex-direction:column; align-items:center; justify-content:center; height:74px; box-sizing:border-box; overflow:hidden;}
   .insurer-link:hover{border-color:var(--orange); transform:translateY(-2px); background:#fff;}
-  .insurer-link .icon-badge{width:26px; height:26px; margin:0 auto 6px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff;}
-  .insurer-link .insurer-name{font-size:11.5px; font-weight:700; line-height:1.25; word-break:keep-all;}
+  .insurer-link .icon-badge{width:24px; height:24px; margin:0 auto 4px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; color:#fff; flex-shrink:0;}
+  .insurer-link .insurer-name{font-size:11px; font-weight:700; line-height:1.2; word-break:keep-all; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;}
 
   /* ---------- 보상센터 ---------- */
+  .claim-menu{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:10px;}
+  .claim-menu-item{display:flex; align-items:center; gap:10px; background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:16px; cursor:pointer; transition:.15s; text-align:left;}
+  .claim-menu-item:hover{border-color:var(--orange); transform:translateY(-2px); background:#fff;}
+  .claim-menu-item .cm-icon{font-size:22px; flex-shrink:0;}
+  .claim-menu-item .cm-label{font-size:13.5px; font-weight:700; color:var(--navy-2); word-break:keep-all;}
   .claim-search{width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font-size:13px; margin-bottom:14px; background:#fff;}
   .claim-search:focus{outline:none; border-color:var(--orange);}
   .claim-list{display:flex; flex-direction:column; gap:8px;}
@@ -237,9 +258,38 @@
   .ai-disclaimer{font-size:11px; color:var(--slate); margin-top:10px; text-align:center;}
 
   /* ---------- 질문센터 ---------- */
+  .subsection-title{font-size:13px; font-weight:800; color:var(--navy-2); margin:22px 0 10px; display:flex; align-items:center; gap:6px;}
+  .subsection-title:first-child{margin-top:0;}
+  .doc-search-result{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:13px 15px; margin-bottom:8px;}
+  .doc-search-result .doc-name{font-size:13px; font-weight:800; color:var(--navy-2);}
+  .doc-search-result .doc-snippet{font-size:12px; color:var(--slate); margin-top:5px; line-height:1.5;}
+  .doc-search-result .doc-snippet mark{background:var(--orange-tint); color:var(--orange-deep); font-weight:700; padding:0 1px;}
+  .doc-search-result a{font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:6px; display:inline-block;}
+  .doc-empty-note{font-size:12px; color:var(--slate); padding:14px; text-align:center; background:var(--canvas); border-radius:10px;}
+  .qna-item{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:15px; margin-bottom:10px;}
+  .qna-item-head{display:flex; align-items:center; gap:10px;}
+  .qna-item-title{font-size:13.5px; font-weight:800; color:var(--navy-2); flex:1;}
   .qna-status{flex-shrink:0; font-size:10.5px; font-weight:800; padding:4px 10px; border-radius:999px;}
   .qna-status.waiting{background:var(--orange-tint); color:var(--orange-deep);}
   .qna-status.answered{background:#E6F0EE; color:#2F6E63;}
+  .qna-item-meta{font-size:11.5px; color:var(--slate); margin-top:4px;}
+  .qna-item-content{font-size:12.5px; color:var(--navy-2); margin-top:10px; line-height:1.55; white-space:pre-wrap;}
+  .qna-replies{margin-top:12px; padding-top:12px; border-top:1px dashed var(--line);}
+  .qna-reply{background:#fff; border:1px solid var(--line); border-radius:8px; padding:10px 12px; margin-bottom:6px;}
+  .qna-reply-meta{font-size:11px; font-weight:700; color:var(--slate);}
+  .qna-reply-content{font-size:12px; color:var(--navy-2); margin-top:4px; line-height:1.5; white-space:pre-wrap;}
+  .qna-reply-toggle{font-size:11.5px; font-weight:700; color:var(--orange-deep); cursor:pointer; margin-top:8px; display:inline-block;}
+  .qna-form{display:none; margin-top:10px; gap:8px; flex-direction:column;}
+  .qna-form.open{display:flex;}
+  .qna-form input, .qna-form textarea{width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;}
+  .qna-form textarea{min-height:60px; resize:vertical;}
+  .qna-form-row{display:flex; gap:8px;}
+  .qna-form-row input{flex:1;}
+  .qna-form button{align-self:flex-end; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer;}
+  .qna-form-msg{font-size:11.5px; margin-top:2px;}
+  .qna-new-btn{width:100%; padding:11px; border:1px dashed var(--line); border-radius:10px; background:#fff; color:var(--navy-2); font-size:12.5px; font-weight:700; cursor:pointer; margin-bottom:12px;}
+  .qna-new-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
+  .qna-notice{font-size:11px; color:var(--slate); margin-bottom:10px;}
 
   /* ---------- 파트너모집 ---------- */
   .recruit-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px;}
@@ -281,6 +331,8 @@
     .sidebar.open{left:0;}
     .content{padding:20px 16px 60px;}
     .topbar{padding:14px 16px;}
+    .insurer-grid{grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:6px;}
+    .insurer-link{height:66px; padding:6px 3px;}
   }
 </style>
 </head>
@@ -332,13 +384,27 @@
           <div class="notice-list scroll-box" id="noticeList" data-reveal></div>
         </section>
 
+        <!-- 공지 상세보기 모달 -->
+        <div class="modal-backdrop" id="noticeModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="noticeModalClose">&times;</button>
+            <div class="modal-title" id="noticeModalTitle">공지 제목</div>
+            <div style="font-size:12px; color:var(--slate); margin-top:6px;" id="noticeModalMeta"></div>
+            <img id="noticeModalImage" src="" alt="첨부 이미지" style="display:none; width:100%; border-radius:10px; margin-top:16px;">
+            <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:16px; white-space:pre-wrap;" id="noticeModalContent"></div>
+          </div>
+        </div>
+
+
         <section class="panel" id="schedule">
           <div class="panel-head">
             <div><div class="panel-eyebrow">Schedule</div><h2 class="panel-title">지사일정</h2></div>
-            <div class="panel-count" id="scheduleCount">이번 주 4건</div>
+            <div class="panel-count" id="scheduleCount">이번 달 0건</div>
           </div>
-          <div class="day-rail" id="dayRail" data-reveal></div>
-          <div class="sched-list scroll-box" id="schedList" data-reveal></div>
+          <div class="month-label" id="monthLabel"></div>
+          <div class="month-dow-row"><span>일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span>토</span></div>
+          <div class="month-grid" id="monthGrid" data-reveal></div>
+          <div class="week-groups scroll-box" id="weekGroups" data-reveal></div>
         </section>
       </div>
 
@@ -408,58 +474,50 @@
         <div class="panel-head">
           <div><div class="panel-eyebrow">Claims</div><h2 class="panel-title">보상센터</h2></div>
         </div>
-        <div class="edu-tabs" id="claimTabs" data-reveal style="flex-wrap:wrap;">
-          <button class="claim-tab active" data-ctab="contacts">☎️ 보험사 연락처</button>
-          <button class="claim-tab" data-ctab="forms">📝 보험금 청구서</button>
-          <button class="claim-tab" data-ctab="docs">📋 사고별 제출서류</button>
-          <button class="claim-tab" data-ctab="faq">❓ 보상청구 FAQ</button>
-          <button class="claim-tab" data-ctab="ai">🤖 AI 보상도우미</button>
-          <button class="claim-tab" data-ctab="terms">📖 약관 검색</button>
-        </div>
-
-        <!-- 보험사 연락처 (고객센터+팩스 통합) -->
-        <div class="claim-panel active" id="claim-contacts">
-          <input type="text" class="claim-search" id="contactsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-          <div class="claim-list" id="contactsList"></div>
-        </div>
-
-        <!-- 보험금 청구서 -->
-        <div class="claim-panel" id="claim-forms">
-          <input type="text" class="claim-search" id="formsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-          <div class="claim-list" id="formsList"></div>
-        </div>
-
-        <!-- 사고별 제출서류 -->
-        <div class="claim-panel" id="claim-docs">
-          <div id="docsAccordion"></div>
-        </div>
-
-        <!-- 보상청구 FAQ -->
-        <div class="claim-panel" id="claim-faq">
-          <div id="faqAccordion"></div>
-        </div>
-
-        <!-- 약관 검색 -->
-        <div class="claim-panel" id="claim-terms">
-          <input type="text" class="claim-search" id="termsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-          <div class="claim-list" id="termsList"></div>
-        </div>
-
-        <!-- AI 보상도우미 -->
-        <div class="claim-panel" id="claim-ai">
-          <div class="ai-box">
-            <div class="ai-log" id="aiLog">
-              <div class="ai-msg bot">안녕하세요! 보상청구 관련 자주 묻는 내용을 안내해드려요. 궁금한 걸 입력하거나 아래 버튼을 눌러보세요.</div>
-            </div>
-            <div class="ai-inputrow">
-              <input type="text" id="aiInput" placeholder="예) 실손보험 청구 서류가 뭐예요?">
-              <button id="aiSend">전송</button>
-            </div>
-            <div class="ai-suggest" id="aiSuggest"></div>
-            <div class="ai-disclaimer">⚠️ 실제 AI가 아닌, 자주 묻는 질문(FAQ) 기반 키워드 매칭 도우미입니다. 정확한 답변은 각 보험사 고객센터로 확인해주세요.</div>
-          </div>
+        <div class="claim-menu" id="claimMenu" data-reveal>
+          <button class="claim-menu-item" data-ctab="contacts"><span class="cm-icon">☎️</span><span class="cm-label">보험사 연락처</span></button>
+          <button class="claim-menu-item" data-ctab="forms"><span class="cm-icon">📝</span><span class="cm-label">보험금 청구서</span></button>
+          <button class="claim-menu-item" data-ctab="docs"><span class="cm-icon">📋</span><span class="cm-label">사고별 제출서류</span></button>
+          <button class="claim-menu-item" data-ctab="faq"><span class="cm-icon">❓</span><span class="cm-label">보상청구 FAQ</span></button>
+          <button class="claim-menu-item" data-ctab="terms"><span class="cm-icon">📖</span><span class="cm-label">약관 검색</span></button>
         </div>
       </section>
+
+      <!-- 보상센터 상세 모달 -->
+      <div class="modal-backdrop" id="claimModalBackdrop">
+        <div class="modal-card">
+          <button class="modal-close" id="claimModalClose">&times;</button>
+          <div class="modal-title" id="claimModalTitle">보험사 연락처</div>
+
+          <!-- 보험사 연락처 (고객센터+팩스 통합) -->
+          <div class="claim-panel active" id="claim-contacts">
+            <input type="text" class="claim-search" id="contactsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
+            <div class="claim-list" id="contactsList"></div>
+          </div>
+
+          <!-- 보험금 청구서 -->
+          <div class="claim-panel" id="claim-forms">
+            <input type="text" class="claim-search" id="formsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
+            <div class="claim-list" id="formsList"></div>
+          </div>
+
+          <!-- 사고별 제출서류 -->
+          <div class="claim-panel" id="claim-docs">
+            <div id="docsAccordion"></div>
+          </div>
+
+          <!-- 보상청구 FAQ -->
+          <div class="claim-panel" id="claim-faq">
+            <div id="faqAccordion"></div>
+          </div>
+
+          <!-- 약관 검색 -->
+          <div class="claim-panel" id="claim-terms">
+            <input type="text" class="claim-search" id="termsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
+            <div class="claim-list" id="termsList"></div>
+          </div>
+        </div>
+      </div>
 
       <!-- 보험사 전산 -->
       <section class="panel" id="insurers">
@@ -479,15 +537,29 @@
       <section class="panel" id="qna">
         <div class="panel-head">
           <div><div class="panel-eyebrow">Q&amp;A</div><h2 class="panel-title">질문센터</h2></div>
-          <div class="panel-count">전체 1건</div>
         </div>
-        <div class="notice-list">
-          <div class="notice">
-            <span class="tag 지사공지">상품문의</span>
-            <div class="notice-body"><div class="notice-title">실손보험 중복가입 문의드립니다</div><div class="notice-meta">홍길동 설계사 · 답변 대기중</div></div>
-            <span class="qna-status waiting">대기</span>
+
+        <div class="subsection-title">📄 보험도우미 — 자료 검색 (AI 요약)</div>
+        <div class="qna-form-row" style="margin-bottom:10px;">
+          <input type="text" class="claim-search" id="docSearchInput" placeholder="검색어 입력 (예: 암, 치아, 실손...)" style="margin-bottom:0;">
+          <button type="button" id="docSearchBtn" style="flex-shrink:0; background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:0 18px; font-size:13px; font-weight:700; cursor:pointer;">검색</button>
+        </div>
+        <div id="docSearchResults"></div>
+
+        <div class="subsection-title">💬 우리끼리질문</div>
+        <div class="qna-notice">다온지사 설계사 자유게시판입니다. 실명으로 질문해주셔야 합니다.</div>
+        <button class="qna-new-btn" id="qnaNewBtn">✏️ 새 질문 올리기</button>
+        <div class="qna-form" id="qnaNewForm">
+          <div class="qna-form-row">
+            <input type="text" id="qnaNewAuthor" placeholder="이름">
+            <input type="text" id="qnaNewCode" placeholder="설계사 인증코드">
           </div>
+          <input type="text" id="qnaNewTitle" placeholder="제목">
+          <textarea id="qnaNewContent" placeholder="내용을 입력하세요"></textarea>
+          <div class="qna-form-msg" id="qnaNewMsg"></div>
+          <button type="button" id="qnaNewSubmit">등록</button>
         </div>
+        <div id="qnaList"></div>
       </section>
 
       <!-- 파트너모집 -->
@@ -538,43 +610,29 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/476b5706-1464-4134-980e-9214325cccae/03428eb4-686f-48dc-a4c8-c3a65b2506e3/KakaoTalk_20260705_150539418.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466WC3YFONL%2F20260705%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260705T062509Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGkaCXVzLXdlc3QtMiJHMEUCICLoy2BPZQuK6YsPH8KYl3rEJMDjYJD8KP5pVWLqvPrXAiEA9AMpddVYL2Wb3JR51Ez%2BZshGdojskXa4GWJsdO%2FAb1gq%2FwMIMhAAGgw2Mzc0MjMxODM4MDUiDC8UHel%2B87P4pUI1cSrcA1TctvRXgEow3SqY6bvGl3sgCQCKr1fLkWEo%2F00mWkkOGhjiPZR0XqCjVDjiDYWLBdokG6sogjyoLX73loUt1OLbWv9R5wsb8O45fum99rtORLtQ0AKocC6x5VUi%2BYul5GVcVlQIe%2B%2FSfWYyo2rHi1ePTnlT4cNmJUk%2FxJBG3G0dLPFDEIGZnc2PEkvqBWmcewtp%2BjAdt5UZlLEYoKR5nH0WjTkBXBOecv%2FgAZ8YvplUr3gvjz0wX8kpZNd632e8r93Jfyy%2BEonqOaneIuF6JcIj7m3Dp9DSrF3KUHtA9lMwqHrGFzL%2FtPWcpGxOvvT6iC%2FfPrEr13nw0vVyS%2FU%2BbyXniDiA86IDOEk%2BDXFrzMuiUtW9KgYKEIr8noBEESvG7PtIoASe5t5hFODIiM5Nkutc6ZIuK2u4qz7weti2gUNc2OtsTcgZFPCCB%2BHfF9TnPLUASQ%2BnQUdNpNBXesvyqud%2B9pvUc3tuPJ%2BkUo%2B2ttzCAzIzY1XKY9ZPFvOSjDzeBwpzkyEmoiw%2B46%2BiBmaoxTDAwk4lwFR0Nj5Wv8r96IOQZcrNB4ouLhlSz7dRCPsJEB13fSelt6wFxLXXXZVGewQyYWDVdkQg3cuZmP50LBK2mtDD8g4kaVbbxcV4MKvYptIGOqUBPlVc%2FU6huzxOU3RKdsNURa10FCpIrqTXwIYyAgoD%2F%2FncZkcHOS%2FHAYGtRovj9HQmuM1xbX%2BAXr7B%2FxFLq0Bzecpifk%2BMF1DvLwqkksB3QftVLFQSUnMOaMkoU0TW6tq5hEk7XAqEbQOXaoiL2CXaz%2FKWKTzNSngJXndw5l15N9uoQtZoIEpM8eINUyT1UkT4FMcvdgIP4fs4IcdPST55Gmr7BXgO&X-Amz-Signature=3c96e8ecae7df21df19e1c69c8c70a7a2f4150831936415cc60be805966a32e5&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
   function renderNotices(list){
     document.getElementById('noticeCount').textContent = `전체 ${list.length}건`;
-    document.getElementById('noticeList').innerHTML = list.map(n => `
-      <div class="notice${n.pinned ? ' pinned' : ''}">
+    document.getElementById('noticeList').innerHTML = list.map((n, idx) => `
+      <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}" style="cursor:pointer;">
         <span class="tag ${n.tag}">${n.tag}</span>
         <div class="notice-body"><div class="notice-title">${n.title}</div><div class="notice-meta">${n.date}</div></div>
         ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}
@@ -583,73 +641,100 @@
   }
   renderNotices(notices);
 
-  // ================= 지사일정 =================
-  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
-  const dayRail = [
-    {
-        "dow": "일",
-        "dnum": 5,
-        "count": "·",
-        "today": true
-    },
-    {
-        "dow": "월",
-        "dnum": 6,
-        "count": "·",
-        "today": false
-    },
-    {
-        "dow": "화",
-        "dnum": 7,
-        "count": "·",
-        "today": false
-    },
-    {
-        "dow": "수",
-        "dnum": 8,
-        "count": "·",
-        "today": false
-    },
-    {
-        "dow": "목",
-        "dnum": 9,
-        "count": "·",
-        "today": false
-    },
-    {
-        "dow": "금",
-        "dnum": 10,
-        "count": "·",
-        "today": false
-    },
-    {
-        "dow": "토",
-        "dnum": 11,
-        "count": "·",
-        "today": false
-    }
-];
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
-
-  function renderSchedule(rail, list){
-    document.getElementById('scheduleCount').textContent = `이번 주 ${list.length}건`;
-    document.getElementById('dayRail').innerHTML = rail.map(d => `
-      <div class="day-chip${d.today ? ' today' : ''}"><div class="dow">${d.dow}</div><div class="dnum">${d.dnum}</div><div class="dcount">${d.count}</div></div>
-    `).join('');
-    document.getElementById('schedList').innerHTML = list.map(s => `
-      <div class="sched-row${s.d1 ? ' d1' : ''}"><div class="sched-date">${s.date}</div><div class="sched-time">${s.time}</div><div class="sched-title">${s.title}</div><span class="sched-badge">${s.badge}</span></div>
-    `).join('');
+  function openNoticeModal(n){
+    document.getElementById('noticeModalTitle').textContent = n.title || '';
+    document.getElementById('noticeModalMeta').textContent = `${n.tag || ''} · ${n.date || ''}`;
+    const img = document.getElementById('noticeModalImage');
+    if(n.image){ img.src = n.image; img.style.display = 'block'; } else { img.style.display = 'none'; img.src = ''; }
+    document.getElementById('noticeModalContent').textContent = n.content || '본문 내용이 없습니다.';
+    document.getElementById('noticeModalBackdrop').classList.add('open');
   }
-  renderSchedule(dayRail, schedule);
+  function closeNoticeModal(){ document.getElementById('noticeModalBackdrop').classList.remove('open'); }
+  document.getElementById('noticeList').addEventListener('click', (e) => {
+    const row = e.target.closest('.notice');
+    if(!row) return;
+    openNoticeModal(notices[Number(row.dataset.idx)]);
+  });
+  document.getElementById('noticeModalClose').addEventListener('click', closeNoticeModal);
+  document.getElementById('noticeModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'noticeModalBackdrop') closeNoticeModal(); });
+
+  // ================= 지사일정 =================
+  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
+  const schedule = [];
+
+  function renderSchedule(list){
+    const now = new Date();
+    const y = now.getFullYear(), m = now.getMonth();
+    const todayStr = now.toDateString();
+
+    document.getElementById('monthLabel').textContent = `${y}년 ${m+1}월`;
+
+    const firstOfMonth = new Date(y, m, 1);
+    const startDow = firstOfMonth.getDay();
+    const daysInMonth = new Date(y, m+1, 0).getDate();
+    const gridStart = new Date(y, m, 1 - startDow);
+
+    const eventsByDate = {};
+    list.forEach(e => {
+      if(!e.dateStart) return;
+      const d = new Date(e.dateStart);
+      const key = d.toDateString();
+      if(!eventsByDate[key]) eventsByDate[key] = [];
+      eventsByDate[key].push(e);
+    });
+
+    const weeksInMonth = Math.ceil((startDow + daysInMonth) / 7);
+    const totalCells = weeksInMonth * 7;
+    let monthGridHtml = '';
+    for(let i=0;i<totalCells;i++){
+      const d = new Date(gridStart);
+      d.setDate(d.getDate()+i);
+      const inMonth = d.getMonth() === m;
+      const isToday = d.toDateString() === todayStr;
+      const hasEvents = !!eventsByDate[d.toDateString()];
+      monthGridHtml += `<div class="month-cell${inMonth ? '' : ' other-month'}${isToday ? ' today' : ''}">${d.getDate()}${hasEvents ? '<span class="mc-dot"></span>' : ''}</div>`;
+    }
+    document.getElementById('monthGrid').innerHTML = monthGridHtml;
+
+    document.getElementById('scheduleCount').textContent = `이번 주 ${(() => {
+      const nowDow0 = now.getDay();
+      const ws0 = new Date(now.getFullYear(), now.getMonth(), now.getDate() - nowDow0);
+      const we0 = new Date(ws0); we0.setDate(we0.getDate() + 6);
+      return list.filter(e => { if(!e.dateStart) return false; const d = new Date(e.dateStart); return d >= ws0 && d <= we0; }).length;
+    })()}건`;
+
+    // 이번 주(오늘이 속한 주, 일~토)만 계산해서 보여줌 — 다음 주가 되면 자동으로 다음 주 내용으로 바뀝니다.
+    const nowDow = now.getDay();
+    const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - nowDow);
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+    const dowLabels = ['일','월','화','수','목','금','토'];
+    const weekLabel = `이번 주 (${weekStart.getMonth()+1}/${weekStart.getDate()} ~ ${weekEnd.getMonth()+1}/${weekEnd.getDate()})`;
+
+    let weekHtml = `<div class="week-group-title">${weekLabel}</div>`;
+    for(let i=0;i<7;i++){
+      const d = new Date(weekStart); d.setDate(d.getDate()+i);
+      const isToday = d.toDateString() === todayStr;
+      const dayEvents = list.filter(e => {
+        if(!e.dateStart) return false;
+        return new Date(e.dateStart).toDateString() === d.toDateString();
+      }).sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart));
+
+      let eventsHtml = '';
+      if(dayEvents.length === 0){
+        eventsHtml = `<div class="wdr-empty">일정 없음</div>`;
+      } else {
+        eventsHtml = dayEvents.map(e => {
+          const ed = new Date(e.dateStart);
+          const isDatetime = e.dateStart.includes('T');
+          const timeLabel = isDatetime ? `${String(ed.getHours()).padStart(2,'0')}:${String(ed.getMinutes()).padStart(2,'0')}` : '종일';
+          return `<div class="wdr-event">${timeLabel} ${e.title}</div>`;
+        }).join('');
+      }
+      weekHtml += `<div class="week-day-row${isToday ? ' today' : ''}"><div class="wdr-date">${d.getMonth()+1}/${d.getDate()}(${dowLabels[d.getDay()]})</div><div class="wdr-events">${eventsHtml}</div></div>`;
+    }
+    document.getElementById('weekGroups').innerHTML = weekHtml;
+  }
+  renderSchedule(schedule);
 
   // ================= 사업소개 =================
   const bizItems = [
@@ -876,15 +961,28 @@
 
 
   // ================= 보상센터 =================
-  // 탭 전환
-  document.getElementById('claimTabs').addEventListener('click', (e) => {
-    const btn = e.target.closest('.claim-tab');
+  // 메뉴 클릭 → 모달 열기
+  const claimTitles = {
+    contacts: '☎️ 보험사 연락처',
+    forms: '📝 보험금 청구서',
+    docs: '📋 사고별 제출서류',
+    faq: '❓ 보상청구 FAQ',
+    terms: '📖 약관 검색'
+  };
+  function openClaimModal(ctab){
+    document.querySelectorAll('#claimModalBackdrop .claim-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('claim-' + ctab).classList.add('active');
+    document.getElementById('claimModalTitle').textContent = claimTitles[ctab] || '';
+    document.getElementById('claimModalBackdrop').classList.add('open');
+  }
+  document.getElementById('claimMenu').addEventListener('click', (e) => {
+    const btn = e.target.closest('.claim-menu-item');
     if(!btn) return;
-    document.querySelectorAll('#claimTabs .claim-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('#claims .claim-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('claim-' + btn.dataset.ctab).classList.add('active');
+    openClaimModal(btn.dataset.ctab);
   });
+  function closeClaimModal(){ document.getElementById('claimModalBackdrop').classList.remove('open'); }
+  document.getElementById('claimModalClose').addEventListener('click', closeClaimModal);
+  document.getElementById('claimModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'claimModalBackdrop') closeClaimModal(); });
 
   function crRow(i, valueHtml){
     return `<div class="claim-row">
@@ -962,58 +1060,144 @@
     head.parentElement.classList.toggle('open');
   });
 
-  // AI 보상도우미 (키워드 매칭 기반 – 실제 AI 아님)
-  const aiLog = document.getElementById('aiLog');
-  function aiAppend(text, who){
-    const div = document.createElement('div');
-    div.className = 'ai-msg ' + who;
-    div.textContent = text;
-    aiLog.appendChild(div);
-    aiLog.scrollTop = aiLog.scrollHeight;
-  }
-  function aiAnswer(query){
-    const q = query.trim();
-    if(!q) return '';
-    const matchedInsurer = insurers.find(i => q.includes(i.name) || q.replace(/\s/g,'').includes(i.name.replace(/\s/g,'')));
-    if(matchedInsurer){
-      if(/팩스/.test(q)){
-        return matchedInsurer.claimFax ? `${matchedInsurer.name} 보험금청구팩스: ${matchedInsurer.claimFax}${matchedInsurer.dentalClaimFax ? ' (치아보험: ' + matchedInsurer.dentalClaimFax + ')' : ''}` : `${matchedInsurer.name}의 팩스번호는 아직 확인되지 않았어요. 고객센터로 문의해주세요.`;
+  // ================= 질문센터: 보험도우미(AI 자료검색) =================
+  // 검색은 클라이언트가 아니라 n8n 웹훅에서 처리합니다: Notion에 저장된 실제 문서 발췌문만 근거로 AI가 답변을 정리합니다.
+  const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
+
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  async function runDocSearch(){
+    const kw = document.getElementById('docSearchInput').value.trim();
+    const box = document.getElementById('docSearchResults');
+    if(!kw){ box.innerHTML = ''; return; }
+    box.innerHTML = `<div class="doc-empty-note">검색 중입니다...</div>`;
+    try{
+      const res = await fetch(DOC_AI_SEARCH_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ query: kw })
+      });
+      const data = await res.json();
+      if(!data.success){
+        box.innerHTML = `<div class="doc-empty-note">검색 중 오류가 발생했습니다.</div>`;
+        return;
       }
-      if(/고객센터|전화|번호/.test(q)){
-        return matchedInsurer.customerCenter ? `${matchedInsurer.name} 고객센터: ${matchedInsurer.customerCenter}` : `${matchedInsurer.name}의 고객센터 정보가 아직 없어요.`;
-      }
-      if(/청구서|양식/.test(q)){
-        return matchedInsurer.claimFormLink ? `${matchedInsurer.name} 보험금 청구서 링크: ${matchedInsurer.claimFormLink}` : `${matchedInsurer.name}의 청구서 링크가 아직 준비중이에요.`;
-      }
-      if(/약관/.test(q)){
-        return matchedInsurer.termsLink ? `${matchedInsurer.name} 약관 확인 링크: ${matchedInsurer.termsLink}` : `${matchedInsurer.name}의 약관 링크가 아직 준비중이에요.`;
-      }
-      return `${matchedInsurer.name} 관련 정보를 찾고 계신가요? "고객센터", "팩스", "청구서", "약관" 중 하나를 붙여서 다시 물어봐 주세요. (예: "${matchedInsurer.name} 고객센터")`;
+      const sourcesHtml = (data.sources && data.sources.length)
+        ? data.sources.map(s => s.link ? `<a href="${s.link}" target="_blank" rel="noopener">📄 ${escapeHtml(s.name || '')} 원문 열기 →</a>` : `<span>📄 ${escapeHtml(s.name || '')}</span>`).join('<br>')
+        : '';
+      box.innerHTML = `<div class="doc-search-result">
+        <div class="doc-snippet" style="font-size:13px; white-space:pre-wrap;">${escapeHtml(data.answer || '')}</div>
+        ${sourcesHtml ? `<div style="margin-top:10px;">${sourcesHtml}</div>` : ''}
+      </div>`;
+    } catch(err){
+      box.innerHTML = `<div class="doc-empty-note">네트워크 오류로 검색에 실패했습니다.</div>`;
     }
-    let best = null, bestScore = 0;
-    claimFaqs.forEach(f => {
-      let score = 0;
-      f.q.split(/\s+/).forEach(word => { if(word.length > 1 && q.includes(word)) score++; });
-      if(score > bestScore){ bestScore = score; best = f; }
-    });
-    if(best && bestScore > 0) return best.a;
-    return "죄송해요, 정확히 이해하지 못했어요. 아래 자주 묻는 질문 버튼을 눌러보시거나, 보험사명 + '고객센터'/'팩스'/'청구서'/'약관' 형태로 물어봐 주세요.";
   }
-  document.getElementById('aiSend').addEventListener('click', () => {
-    const input = document.getElementById('aiInput');
-    const val = input.value.trim();
-    if(!val) return;
-    aiAppend(val, 'user');
-    input.value = '';
-    setTimeout(() => aiAppend(aiAnswer(val), 'bot'), 200);
+  document.getElementById('docSearchBtn').addEventListener('click', runDocSearch);
+  document.getElementById('docSearchInput').addEventListener('keydown', e => { if(e.key === 'Enter') runDocSearch(); });
+
+  // ================= 질문센터: 우리끼리질문(게시판) =================
+  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
+  const qnaList = [];
+  const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
+  const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
+
+  function renderQna(list){
+    const box = document.getElementById('qnaList');
+    if(list.length === 0){
+      box.innerHTML = `<div class="doc-empty-note">아직 등록된 질문이 없습니다. 위 "새 질문 올리기"로 첫 질문을 남겨보세요.</div>`;
+      return;
+    }
+    box.innerHTML = list.map(q => `
+      <div class="qna-item">
+        <div class="qna-item-head">
+          <div class="qna-item-title">${escapeHtml(q.title || '')}</div>
+          <span class="qna-status ${q.replies && q.replies.length ? 'answered' : 'waiting'}">${q.replies && q.replies.length ? '답변완료' : '대기'}</span>
+        </div>
+        <div class="qna-item-meta">${escapeHtml(q.author || '')} · ${escapeHtml(q.date || '')}</div>
+        <div class="qna-item-content">${escapeHtml(q.content || '')}</div>
+        ${(q.replies && q.replies.length) ? `<div class="qna-replies">${q.replies.map(r => `
+          <div class="qna-reply">
+            <div class="qna-reply-meta">${escapeHtml(r.author || '')} · ${escapeHtml(r.date || '')}</div>
+            <div class="qna-reply-content">${escapeHtml(r.content || '')}</div>
+          </div>
+        `).join('')}</div>` : ''}
+        <span class="qna-reply-toggle" data-qid="${q.id}">💬 답글 달기</span>
+        <div class="qna-form" id="qnaReplyForm-${q.id}">
+          <div class="qna-form-row">
+            <input type="text" class="qna-reply-author" placeholder="이름">
+            <input type="text" class="qna-reply-code" placeholder="설계사 인증코드">
+          </div>
+          <textarea class="qna-reply-content-input" placeholder="답글 내용을 입력하세요"></textarea>
+          <div class="qna-form-msg" data-msg-for="${q.id}"></div>
+          <button type="button" class="qna-reply-submit" data-qid="${q.id}">답글 등록</button>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderQna(qnaList);
+
+  document.getElementById('qnaNewBtn').addEventListener('click', () => {
+    document.getElementById('qnaNewForm').classList.toggle('open');
   });
-  document.getElementById('aiInput').addEventListener('keydown', (e) => { if(e.key === 'Enter') document.getElementById('aiSend').click(); });
-  document.getElementById('aiSuggest').innerHTML = claimFaqs.slice(0,4).map(f => `<button type="button">${f.q}</button>`).join('');
-  document.getElementById('aiSuggest').addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if(!btn) return;
-    document.getElementById('aiInput').value = btn.textContent;
-    document.getElementById('aiSend').click();
+
+  document.getElementById('qnaNewSubmit').addEventListener('click', async () => {
+    const author = document.getElementById('qnaNewAuthor').value.trim();
+    const code = document.getElementById('qnaNewCode').value.trim();
+    const title = document.getElementById('qnaNewTitle').value.trim();
+    const content = document.getElementById('qnaNewContent').value.trim();
+    const msg = document.getElementById('qnaNewMsg');
+    if(!author || !code || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(QNA_QUESTION_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ author, code, title, content })
+      });
+      const data = await res.json();
+      if(data.success){
+        msg.textContent = '등록되었습니다. 목록에는 최대 15분 후 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+        document.getElementById('qnaNewTitle').value = '';
+        document.getElementById('qnaNewContent').value = '';
+      } else {
+        msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
+      }
+    } catch(err){
+      msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
+    }
+  });
+
+  document.getElementById('qnaList').addEventListener('click', async (e) => {
+    const toggleBtn = e.target.closest('.qna-reply-toggle');
+    if(toggleBtn){
+      document.getElementById('qnaReplyForm-' + toggleBtn.dataset.qid).classList.toggle('open');
+      return;
+    }
+    const submitBtn = e.target.closest('.qna-reply-submit');
+    if(submitBtn){
+      const qid = submitBtn.dataset.qid;
+      const form = document.getElementById('qnaReplyForm-' + qid);
+      const author = form.querySelector('.qna-reply-author').value.trim();
+      const code = form.querySelector('.qna-reply-code').value.trim();
+      const content = form.querySelector('.qna-reply-content-input').value.trim();
+      const msg = form.querySelector('.qna-form-msg');
+      if(!author || !code || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+      msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+      try{
+        const res = await fetch(QNA_ANSWER_WEBHOOK, {
+          method: 'POST', headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ author, code, questionId: qid, content })
+        });
+        const data = await res.json();
+        if(data.success){
+          msg.textContent = '답글이 등록되었습니다. 목록에는 최대 15분 후 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+          form.querySelector('.qna-reply-content-input').value = '';
+        } else {
+          msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
+        }
+      } catch(err){
+        msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
+      }
+    }
   });
 
   // ================= 사이드바 액티브 상태 (클릭 시) =================
