@@ -435,13 +435,22 @@
           <button class="edu-tab active" data-tab="strategy">📈 영업전략</button>
           <button class="edu-tab" data-tab="lecture">🎬 강의실</button>
           <button class="edu-tab" data-tab="archive">📁 자료실</button>
+          <button class="edu-tab" data-tab="request">🙋 강의자료요청</button>
         </div>
 
         <div class="edu-panel active" id="edu-strategy">
-          <div class="strategy-card">
-            <span class="tag 전체공지">2026년 7월</span>
-            <h3 class="strategy-title">7월 영업전략 - 기존고객 보장분석 재점검</h3>
-            <p class="strategy-body">7월은 상반기 마감 모집 시즌입니다. 기존고객 대상 보장분석 재점검을 중점적으로 진행해주세요.</p>
+          <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+            <button class="qna-new-btn" id="strategyViewAllBtn" style="width:auto; padding:8px 16px; margin-bottom:0;">📋 게시물 보기</button>
+          </div>
+          <div id="strategyLatest"></div>
+        </div>
+
+        <!-- 영업전략 전체보기 모달 -->
+        <div class="modal-backdrop" id="strategyModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="strategyModalClose">&times;</button>
+            <div class="modal-title">📈 영업전략 전체 게시물</div>
+            <div id="strategyAllList" style="margin-top:16px;"></div>
           </div>
         </div>
 
@@ -476,6 +485,21 @@
             <button class="filter-pill" data-cat="DB영업">DB영업</button>
           </div>
           <div class="doc-grid" id="docGrid" data-reveal></div>
+        </div>
+
+        <div class="edu-panel" id="edu-request">
+          <div class="qna-notice">강의나 자료가 필요하시면 자유롭게 요청해주세요. 다온지사 설계사가 아니어도 누구나 보고 쓰실 수 있습니다.</div>
+          <button class="qna-new-btn" id="reqNewBtn">✏️ 요청 글쓰기</button>
+          <div class="qna-form" id="reqNewForm">
+            <div class="qna-form-row">
+              <input type="text" id="reqNewAuthor" placeholder="이름">
+            </div>
+            <input type="text" id="reqNewTitle" placeholder="제목">
+            <textarea id="reqNewContent" placeholder="어떤 강의·자료가 필요하신지 적어주세요"></textarea>
+            <div class="qna-form-msg" id="reqNewMsg"></div>
+            <button type="button" id="reqNewSubmit">등록</button>
+          </div>
+          <div id="reqList"></div>
         </div>
       </section>
 
@@ -644,36 +668,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": ""
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
@@ -708,16 +718,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -851,16 +852,7 @@
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "date": "2026.07.06 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -964,6 +956,41 @@
     document.getElementById('edu-' + btn.dataset.tab).classList.add('active');
   });
 
+  // ================= 영업전략 =================
+  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date) — 최신순 정렬
+  const strategyPosts = [];
+  function renderStrategy(){
+    const latestBox = document.getElementById('strategyLatest');
+    if(strategyPosts.length === 0){
+      latestBox.innerHTML = '<div class="doc-empty-note">아직 등록된 영업전략이 없습니다.</div>';
+    } else {
+      const p = strategyPosts[0];
+      latestBox.innerHTML = `
+        <div class="strategy-card">
+          <span class="tag 전체공지">${escapeHtml(p.date)}</span>
+          <h3 class="strategy-title">${escapeHtml(p.title)}</h3>
+          <p class="strategy-body">${escapeHtml(p.content)}</p>
+        </div>
+      `;
+    }
+  }
+  renderStrategy();
+  document.getElementById('strategyViewAllBtn').addEventListener('click', () => {
+    document.getElementById('strategyAllList').innerHTML = strategyPosts.length === 0
+      ? '<div class="doc-empty-note">아직 등록된 게시물이 없습니다.</div>'
+      : strategyPosts.map(p => `
+        <div class="doc-search-result" style="text-align:left;">
+          <div class="doc-name">${escapeHtml(p.title)}</div>
+          <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
+          <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
+        </div>
+      `).join('');
+    document.getElementById('strategyModalBackdrop').classList.add('open');
+  });
+  function closeStrategyModal(){ document.getElementById('strategyModalBackdrop').classList.remove('open'); }
+  document.getElementById('strategyModalClose').addEventListener('click', closeStrategyModal);
+  document.getElementById('strategyModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'strategyModalBackdrop') closeStrategyModal(); });
+
   // ================= 강의실 =================
   const lectures = [
     {
@@ -1046,6 +1073,57 @@
     btn.classList.add('active');
     const cat = btn.dataset.cat;
     renderDocs(cat === '전체' ? docs : docs.filter(d => d.category === cat));
+  });
+
+  // ================= 강의자료요청 =================
+  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, author, content, date)
+  const reqList = [];
+  const REQ_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-lecture-request';
+
+  function renderReqList(list){
+    const box = document.getElementById('reqList');
+    if(list.length === 0){
+      box.innerHTML = '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>';
+      return;
+    }
+    box.innerHTML = list.map(r => `
+      <div class="qna-item">
+        <div class="qna-item-head">
+          <div class="qna-item-title">${escapeHtml(r.title)}</div>
+        </div>
+        <div class="qna-item-meta">${escapeHtml(r.author)} · ${escapeHtml(r.date)}</div>
+        <div class="qna-item-content">${escapeHtml(r.content)}</div>
+      </div>
+    `).join('');
+  }
+  renderReqList(reqList);
+
+  document.getElementById('reqNewBtn').addEventListener('click', () => {
+    document.getElementById('reqNewForm').classList.toggle('open');
+  });
+  document.getElementById('reqNewSubmit').addEventListener('click', async () => {
+    const author = document.getElementById('reqNewAuthor').value.trim();
+    const title = document.getElementById('reqNewTitle').value.trim();
+    const content = document.getElementById('reqNewContent').value.trim();
+    const msg = document.getElementById('reqNewMsg');
+    if(!author || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(REQ_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ author, title, content })
+      });
+      const data = await res.json();
+      if(data.success){
+        msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+        document.getElementById('reqNewTitle').value = '';
+        document.getElementById('reqNewContent').value = '';
+      } else {
+        msg.textContent = data.message || '등록에 실패했습니다.'; msg.style.color = 'red';
+      }
+    } catch(err){
+      msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
+    }
   });
 
   // ================= 보험사 전산·보상청구 =================
@@ -1240,22 +1318,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
