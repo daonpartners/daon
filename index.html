@@ -620,36 +620,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/476b5706-1464-4134-980e-9214325cccae/03428eb4-686f-48dc-a4c8-c3a65b2506e3/KakaoTalk_20260705_150539418.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466WXN7N3WE%2F20260705%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260705T064553Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGkaCXVzLXdlc3QtMiJHMEUCIQDJAy04KUh7hDSH01s97Cs6dMiLxPaF6PQ%2FtazMvGuJBQIgUWqUsZxVVUKNXNYlAkpcCX884596BZGLOxetaG%2B3vHYq%2FwMIMhAAGgw2Mzc0MjMxODM4MDUiDC06qxTDxeEhf9Sa1ircA0Ei2ZIWDIkA5DcyYfbhjMYSLSa%2BES8o88NQ6Rnye1bhKA%2F29JBm5OUYjKMjpFmE%2BJjwArGUg8rTwqMGZ5lVolH2AS6ewae0suK%2FRRgBoJgoGtZCg2dCvy7QzTbu4GQJ6T7ddaivWt1JGDCaW5do1ksDDebay0qUnjokgPet6WJ2DDaNpc1xEmK%2BZl5aoa9yDZ%2FJohb%2FGpn686OJKat1loD6F8qaV%2B5xZKCTXYvQA17jvY4Dj9CnIaq8T4ZEOre7siez4r9FLbUrwPMjMJzaU9sXA2VsIab4POa%2FWiGku0bLxqU0DztJfAvObPWUcfguN890vYV%2FfnurijBICD0ufGW2FN5%2F2YLYhNckrl4s6CFkVJ5omvphvQpi4sn03dfTIgBDzyrE8RnqkrU6RJiT4dQxLb5qJExesOkCzjnO13zKZxQbmcmsfNUfknz7aSC3pq7J42XeoeIyE5XzHxyCKssAb7fuK8mDD%2FYKsmb%2BhyvcmUl1PtohXBHQoIcaomihrLcwKTWqVw0fonqmUMiU0eCR2Isq9cI4qdhOJ5haE0Xp3GLpG9r4mpQ28LirqS5NXcn0hyARxs%2BVcInFE%2FO5ynniLQfFqfo0UEjRZb1TYDMJCN4NHnluR2qf32RMMIrYptIGOqUBBcy2%2Bjv0rSK8lu3PC9bCJYm%2BApQFHz%2BbJroSprqBIC0%2FY0xcqBDQG9T2%2FkD2NnS34Lumx14%2B2pqXd6SoBxoUlZ48LHBohbGuMf02mIeHMdf13%2BFeTLjU%2FKU4USLW4euRQLBJoCxhbkuFWMgPopPdi%2Bi5ksKbxCoqrtbygyYIdxa9aUM9S9cBPMP%2BkJS9zm4Nkf%2FUDdwuADAivLjfzjFbYbi2QHPc&X-Amz-Signature=41b007662171033bf5246744e8f847dd107bf9cd4d27824ffeae8078062b2367&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
@@ -684,16 +670,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -760,10 +737,7 @@
         eventsHtml = `<div class="wdr-empty">일정 없음</div>`;
       } else {
         eventsHtml = dayEvents.map(e => {
-          const ed = new Date(e.dateStart);
-          const isDatetime = e.dateStart.includes('T');
-          const timeLabel = isDatetime ? `${String(ed.getHours()).padStart(2,'0')}:${String(ed.getMinutes()).padStart(2,'0')}` : '종일';
-          return `<div class="wdr-event">${timeLabel} ${e.title}</div>`;
+          return `<div class="wdr-event">${e.title}</div>`;
         }).join('');
       }
       weekHtml += `<div class="week-day-row${isToday ? ' today' : ''}"><div class="wdr-date">${d.getMonth()+1}/${d.getDate()}(${dowLabels[d.getDay()]})</div><div class="wdr-events">${eventsHtml}</div></div>`;
@@ -780,12 +754,8 @@
     const d = new Date(dKey);
     document.getElementById('dayModalTitle').textContent = `${d.getMonth()+1}월 ${d.getDate()}일 일정`;
     document.getElementById('dayModalList').innerHTML = events.map(ev => {
-      const ed = new Date(ev.dateStart);
-      const isDatetime = ev.dateStart.includes('T');
-      const timeLabel = isDatetime ? `${String(ed.getHours()).padStart(2,'0')}:${String(ed.getMinutes()).padStart(2,'0')}` : '종일';
       return `<div style="background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;">
-        <div style="font-size:11.5px; font-weight:700; color:var(--orange-deep);">${timeLabel}</div>
-        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2); margin-top:4px;">${ev.title}</div>
+        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2);">${ev.title}</div>
       </div>`;
     }).join('') || '<div class="doc-empty-note">일정이 없습니다.</div>';
     document.getElementById('dayModalBackdrop').classList.add('open');
