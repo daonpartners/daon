@@ -572,20 +572,50 @@
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const dayRail = [
-    { dow: "목", dnum: 2, count: "·", today: true },
-    { dow: "금", dnum: 3, count: "·", today: false },
-    { dow: "토", dnum: 4, count: "1건", today: false },
-    { dow: "일", dnum: 5, count: "2건", today: false },
-    { dow: "월", dnum: 6, count: "·", today: false },
-    { dow: "화", dnum: 7, count: "·", today: false },
-    { dow: "수", dnum: 8, count: "·", today: false }
-  ];
-  const schedule = [
-    { date: "7/2(목)", time: "종일", title: "관리자회의", badge: "전체", d1: false },
-    { date: "7/4(토)", time: "15:00", title: "라이나생명 방문 미팅", badge: "D-2", d1: true },
-    { date: "7/5(일)", time: "10:00", title: "현대해상 상품 설명회", badge: "D-3", d1: false },
-    { date: "7/5(일)", time: "16:00", title: "삼성생명 방문 미팅", badge: "D-3", d1: false }
-  ];
+    {
+        "dow": "일",
+        "dnum": 5,
+        "count": "·",
+        "today": true
+    },
+    {
+        "dow": "월",
+        "dnum": 6,
+        "count": "·",
+        "today": false
+    },
+    {
+        "dow": "화",
+        "dnum": 7,
+        "count": "·",
+        "today": false
+    },
+    {
+        "dow": "수",
+        "dnum": 8,
+        "count": "·",
+        "today": false
+    },
+    {
+        "dow": "목",
+        "dnum": 9,
+        "count": "·",
+        "today": false
+    },
+    {
+        "dow": "금",
+        "dnum": 10,
+        "count": "·",
+        "today": false
+    },
+    {
+        "dow": "토",
+        "dnum": 11,
+        "count": "·",
+        "today": false
+    }
+];
+  const schedule = [];
 
   function renderSchedule(rail, list){
     document.getElementById('scheduleCount').textContent = `이번 주 ${list.length}건`;
