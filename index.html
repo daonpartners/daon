@@ -327,45 +327,18 @@
         <section class="panel" id="notice">
           <div class="panel-head">
             <div><div class="panel-eyebrow">Notice</div><h2 class="panel-title">공지사항</h2></div>
-            <div class="panel-count">전체 3건</div>
+            <div class="panel-count" id="noticeCount">전체 3건</div>
           </div>
-          <div class="notice-list scroll-box" data-reveal>
-            <div class="notice pinned">
-              <span class="tag 지사공지">지사공지</span>
-              <div class="notice-body"><div class="notice-title">산모교실 행사공지</div><div class="notice-meta">2026.07.02 게시</div></div>
-              <span class="pin-mark">상단고정</span>
-            </div>
-            <div class="notice">
-              <span class="tag 긴급">긴급</span>
-              <div class="notice-body"><div class="notice-title">7월 상품 개정 관련 필수 안내사항</div><div class="notice-meta">2026.07.01 게시</div></div>
-            </div>
-            <div class="notice">
-              <span class="tag 전체공지">전체공지</span>
-              <div class="notice-body"><div class="notice-title">하반기 지사장 워크숍 일정 안내</div><div class="notice-meta">2026.06.28 게시</div></div>
-            </div>
-          </div>
+          <div class="notice-list scroll-box" id="noticeList" data-reveal></div>
         </section>
 
         <section class="panel" id="schedule">
           <div class="panel-head">
             <div><div class="panel-eyebrow">Schedule</div><h2 class="panel-title">지사일정</h2></div>
-            <div class="panel-count">이번 주 4건</div>
+            <div class="panel-count" id="scheduleCount">이번 주 4건</div>
           </div>
-          <div class="day-rail" data-reveal>
-            <div class="day-chip today"><div class="dow">목</div><div class="dnum">2</div><div class="dcount">·</div></div>
-            <div class="day-chip"><div class="dow">금</div><div class="dnum">3</div><div class="dcount">·</div></div>
-            <div class="day-chip"><div class="dow">토</div><div class="dnum">4</div><div class="dcount">1건</div></div>
-            <div class="day-chip"><div class="dow">일</div><div class="dnum">5</div><div class="dcount">2건</div></div>
-            <div class="day-chip"><div class="dow">월</div><div class="dnum">6</div><div class="dcount">·</div></div>
-            <div class="day-chip"><div class="dow">화</div><div class="dnum">7</div><div class="dcount">·</div></div>
-            <div class="day-chip"><div class="dow">수</div><div class="dnum">8</div><div class="dcount">·</div></div>
-          </div>
-          <div class="sched-list scroll-box" data-reveal>
-            <div class="sched-row"><div class="sched-date">7/2(목)</div><div class="sched-time">종일</div><div class="sched-title">관리자회의</div><span class="sched-badge">전체</span></div>
-            <div class="sched-row d1"><div class="sched-date">7/4(토)</div><div class="sched-time">15:00</div><div class="sched-title">라이나생명 방문 미팅</div><span class="sched-badge">D-2</span></div>
-            <div class="sched-row"><div class="sched-date">7/5(일)</div><div class="sched-time">10:00</div><div class="sched-title">현대해상 상품 설명회</div><span class="sched-badge">D-3</span></div>
-            <div class="sched-row"><div class="sched-date">7/5(일)</div><div class="sched-time">16:00</div><div class="sched-title">삼성생명 방문 미팅</div><span class="sched-badge">D-3</span></div>
-          </div>
+          <div class="day-rail" id="dayRail" data-reveal></div>
+          <div class="sched-list scroll-box" id="schedList" data-reveal></div>
         </section>
       </div>
 
@@ -436,18 +409,22 @@
           <div><div class="panel-eyebrow">Claims</div><h2 class="panel-title">보상센터</h2></div>
         </div>
         <div class="edu-tabs" id="claimTabs" data-reveal style="flex-wrap:wrap;">
-          <button class="claim-tab active" data-ctab="forms">📝 보험금 청구서</button>
-          <button class="claim-tab" data-ctab="faxes">📠 보험사 팩스번호</button>
+          <button class="claim-tab active" data-ctab="contacts">☎️ 보험사 연락처</button>
+          <button class="claim-tab" data-ctab="forms">📝 보험금 청구서</button>
           <button class="claim-tab" data-ctab="docs">📋 사고별 제출서류</button>
           <button class="claim-tab" data-ctab="faq">❓ 보상청구 FAQ</button>
           <button class="claim-tab" data-ctab="ai">🤖 AI 보상도우미</button>
-          <div style="flex-basis:100%; height:0;"></div>
-          <button class="claim-tab" data-ctab="centers">🎧 보험사 고객센터</button>
           <button class="claim-tab" data-ctab="terms">📖 약관 검색</button>
         </div>
 
+        <!-- 보험사 연락처 (고객센터+팩스 통합) -->
+        <div class="claim-panel active" id="claim-contacts">
+          <input type="text" class="claim-search" id="contactsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
+          <div class="claim-list" id="contactsList"></div>
+        </div>
+
         <!-- 보험금 청구서 -->
-        <div class="claim-panel active" id="claim-forms">
+        <div class="claim-panel" id="claim-forms">
           <input type="text" class="claim-search" id="formsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
           <div class="claim-list" id="formsList"></div>
         </div>
@@ -455,18 +432,6 @@
         <!-- 사고별 제출서류 -->
         <div class="claim-panel" id="claim-docs">
           <div id="docsAccordion"></div>
-        </div>
-
-        <!-- 보험사 고객센터 -->
-        <div class="claim-panel" id="claim-centers">
-          <input type="text" class="claim-search" id="centersSearch" placeholder="보험사명으로 검색">
-          <div class="claim-list" id="centersList"></div>
-        </div>
-
-        <!-- 보험사 팩스번호 -->
-        <div class="claim-panel" id="claim-faxes">
-          <input type="text" class="claim-search" id="faxesSearch" placeholder="보험사명으로 검색">
-          <div class="claim-list" id="faxesList"></div>
         </div>
 
         <!-- 보상청구 FAQ -->
@@ -568,6 +533,55 @@
   // (현재 데스크톱 우선, 모바일에서는 사이드바 숨김 상태 기본)
 
   // ================= 공지/일정 스크롤 표시는 CSS로 처리 =================
+
+  // ================= 공지사항 =================
+  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
+  const notices = [
+    { tag: "지사공지", title: "산모교실 행사공지", date: "2026.07.02 게시", pinned: true },
+    { tag: "긴급", title: "7월 상품 개정 관련 필수 안내사항", date: "2026.07.01 게시", pinned: false },
+    { tag: "전체공지", title: "하반기 지사장 워크숍 일정 안내", date: "2026.06.28 게시", pinned: false }
+  ];
+
+  function renderNotices(list){
+    document.getElementById('noticeCount').textContent = `전체 ${list.length}건`;
+    document.getElementById('noticeList').innerHTML = list.map(n => `
+      <div class="notice${n.pinned ? ' pinned' : ''}">
+        <span class="tag ${n.tag}">${n.tag}</span>
+        <div class="notice-body"><div class="notice-title">${n.title}</div><div class="notice-meta">${n.date}</div></div>
+        ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}
+      </div>
+    `).join('');
+  }
+  renderNotices(notices);
+
+  // ================= 지사일정 =================
+  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
+  const dayRail = [
+    { dow: "목", dnum: 2, count: "·", today: true },
+    { dow: "금", dnum: 3, count: "·", today: false },
+    { dow: "토", dnum: 4, count: "1건", today: false },
+    { dow: "일", dnum: 5, count: "2건", today: false },
+    { dow: "월", dnum: 6, count: "·", today: false },
+    { dow: "화", dnum: 7, count: "·", today: false },
+    { dow: "수", dnum: 8, count: "·", today: false }
+  ];
+  const schedule = [
+    { date: "7/2(목)", time: "종일", title: "관리자회의", badge: "전체", d1: false },
+    { date: "7/4(토)", time: "15:00", title: "라이나생명 방문 미팅", badge: "D-2", d1: true },
+    { date: "7/5(일)", time: "10:00", title: "현대해상 상품 설명회", badge: "D-3", d1: false },
+    { date: "7/5(일)", time: "16:00", title: "삼성생명 방문 미팅", badge: "D-3", d1: false }
+  ];
+
+  function renderSchedule(rail, list){
+    document.getElementById('scheduleCount').textContent = `이번 주 ${list.length}건`;
+    document.getElementById('dayRail').innerHTML = rail.map(d => `
+      <div class="day-chip${d.today ? ' today' : ''}"><div class="dow">${d.dow}</div><div class="dnum">${d.dnum}</div><div class="dcount">${d.count}</div></div>
+    `).join('');
+    document.getElementById('schedList').innerHTML = list.map(s => `
+      <div class="sched-row${s.d1 ? ' d1' : ''}"><div class="sched-date">${s.date}</div><div class="sched-time">${s.time}</div><div class="sched-title">${s.title}</div><span class="sched-badge">${s.badge}</span></div>
+    `).join('');
+  }
+  renderSchedule(dayRail, schedule);
 
   // ================= 사업소개 =================
   const bizItems = [
@@ -817,18 +831,14 @@
       i.claimFormLink ? `<a class="cr-btn" href="${i.claimFormLink}" target="_blank" rel="noopener">청구서 열기</a>` : `<span class="cr-empty">준비중</span>`
     )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
   }
-  function renderCenters(keyword=''){
+  function renderContacts(keyword=''){
     const list = insurers.filter(i => i.name.includes(keyword));
-    document.getElementById('centersList').innerHTML = list.map(i => crRow(i,
-      i.customerCenter ? `<a class="cr-value" href="tel:${i.customerCenter.replace(/[^0-9]/g,'')}">${i.customerCenter}</a>` : `<span class="cr-empty">정보없음</span>`
-    )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
-  }
-  function renderFaxes(keyword=''){
-    const list = insurers.filter(i => i.name.includes(keyword));
-    document.getElementById('faxesList').innerHTML = list.map(i => crRow(i,
+    document.getElementById('contactsList').innerHTML = list.map(i => crRow(i,
       `<div style="text-align:right;">
-        ${i.claimFax ? `<div class="cr-value">${i.claimFax}</div>` : `<span class="cr-empty">정보없음</span>`}
+        ${i.customerCenter ? `<div class="cr-value">고객센터 <a href="tel:${i.customerCenter.replace(/[^0-9]/g,'')}">${i.customerCenter}</a></div>` : ``}
+        ${i.claimFax ? `<div class="cr-value" style="margin-top:2px;">보험청구 ${i.claimFax}</div>` : ``}
         ${i.dentalClaimFax ? `<div style="font-size:11px;color:var(--slate);margin-top:2px;">치아: ${i.dentalClaimFax}</div>` : ``}
+        ${(!i.customerCenter && !i.claimFax) ? `<span class="cr-empty">정보없음</span>` : ``}
       </div>`
     )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
   }
@@ -838,11 +848,10 @@
       i.termsLink ? `<a class="cr-btn" href="${i.termsLink}" target="_blank" rel="noopener">약관 보기</a>` : `<span class="cr-empty">준비중</span>`
     )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
   }
-  renderClaimForms(); renderCenters(); renderFaxes(); renderTerms();
+  renderClaimForms(); renderContacts(); renderTerms();
 
   document.getElementById('formsSearch').addEventListener('input', e => renderClaimForms(e.target.value.trim()));
-  document.getElementById('centersSearch').addEventListener('input', e => renderCenters(e.target.value.trim()));
-  document.getElementById('faxesSearch').addEventListener('input', e => renderFaxes(e.target.value.trim()));
+  document.getElementById('contactsSearch').addEventListener('input', e => renderContacts(e.target.value.trim()));
   document.getElementById('termsSearch').addEventListener('input', e => renderTerms(e.target.value.trim()));
 
   // 사고별 제출서류 (아코디언)
@@ -866,11 +875,11 @@
     { q: "보험금 청구 기한이 있나요?", a: "보험금 청구권은 상법상 원칙적으로 3년의 소멸시효가 적용됩니다. 사고 발생 후 너무 늦지 않게 청구하시는 게 안전합니다." },
     { q: "실손보험 청구 시 필요한 서류는?", a: "진료비 영수증과 진료비 세부내역서가 기본이며, 통원의료비는 병원 영수증만으로 청구 가능한 경우도 있습니다. 정확한 서류는 보험사별로 다를 수 있어 청구 전 고객센터 확인을 권장합니다." },
     { q: "입원·수술 보험금 청구 서류는?", a: "입퇴원확인서, 진단서, 수술확인서(수술한 경우), 진료비 영수증 및 세부내역서가 기본적으로 필요합니다." },
-    { q: "자동차사고 보험금 청구는 어떻게 하나요?", a: "사고 접수 후 보험사 담당자가 배정되며, 정비소 견적서·수리비 영수증·(대인사고 시) 진단서 등을 제출합니다. 사고 접수는 보상센터 > 보험사 고객센터 탭에서 바로 전화하실 수 있어요." },
+    { q: "자동차사고 보험금 청구는 어떻게 하나요?", a: "사고 접수 후 보험사 담당자가 배정되며, 정비소 견적서·수리비 영수증·(대인사고 시) 진단서 등을 제출합니다. 사고 접수는 보상센터 > 보험사 연락처 탭에서 바로 전화하실 수 있어요." },
     { q: "보험금 청구는 모바일로도 가능한가요?", a: "대부분의 보험사가 모바일 앱 또는 홈페이지를 통한 온라인 청구를 지원합니다. 소액 청구는 모바일로 빠르게 처리되는 경우가 많습니다." },
     { q: "청구한 보험금은 언제 지급되나요?", a: "보험업법상 서류 접수 완료일로부터 원칙적으로 3영업일 이내 지급하며, 조사가 필요한 경우 지급일이 연장될 수 있습니다 (최대 30일, 특별한 사유 시 추가 연장 가능)." },
     { q: "설계사가 대신 청구서를 접수해도 되나요?", a: "보험사·상품에 따라 설계사 대리 접수가 가능한 경우가 있습니다. 다만 위임 관련 서류가 필요할 수 있어 사전에 해당 보험사 고객센터에 확인하시는 게 좋습니다." },
-    { q: "치아보험은 청구 서류가 다른가요?", a: "치아보험은 치과 진단서, 임플란트/보철 시술확인서, 방사선 사진 등이 추가로 필요한 경우가 많습니다. 일부 보험사는 치아보험 전용 팩스번호를 별도 운영하니 보상센터 > 보험사 팩스번호 탭을 확인해주세요." },
+    { q: "치아보험은 청구 서류가 다른가요?", a: "치아보험은 치과 진단서, 임플란트/보철 시술확인서, 방사선 사진 등이 추가로 필요한 경우가 많습니다. 일부 보험사는 치아보험 전용 팩스번호를 별도 운영하니 보상센터 > 보험사 연락처 탭을 확인해주세요." },
   ];
   document.getElementById('faqAccordion').innerHTML = claimFaqs.map((f, idx) => `
     <div class="acc-item" data-acc="faq-${idx}">
