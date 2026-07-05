@@ -142,6 +142,7 @@
   .month-cell{aspect-ratio:1; border-radius:8px; background:var(--canvas); display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:11px; color:var(--navy-2); position:relative;}
   .month-cell.other-month{opacity:.25;}
   .month-cell.today{background:var(--navy-2); color:#fff; font-weight:800;}
+  .month-cell.has-events:hover{border:1px solid var(--orange); background:#fff;}
   .month-cell .mc-dot{width:5px; height:5px; border-radius:50%; background:var(--orange); margin-top:2px;}
   .month-cell.today .mc-dot{background:#8FE8DC;}
   .week-group-title{font-size:11.5px; font-weight:800; color:var(--slate); margin-bottom:8px; padding-left:2px;}
@@ -408,6 +409,15 @@
         </section>
       </div>
 
+      <!-- 날짜별 일정 상세 모달 -->
+      <div class="modal-backdrop" id="dayModalBackdrop">
+        <div class="modal-card">
+          <button class="modal-close" id="dayModalClose">&times;</button>
+          <div class="modal-title" id="dayModalTitle">7월 5일 일정</div>
+          <div id="dayModalList" style="margin-top:16px;"></div>
+        </div>
+      </div>
+
       <!-- 사업소개 -->
       <section class="panel" id="business">
         <div class="panel-head">
@@ -610,36 +620,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": "https://prod-files-secure.s3.us-west-2.amazonaws.com/476b5706-1464-4134-980e-9214325cccae/03428eb4-686f-48dc-a4c8-c3a65b2506e3/KakaoTalk_20260705_150539418.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=ASIAZI2LB466SURJ75S3%2F20260705%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20260705T063053Z&X-Amz-Expires=3600&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGkaCXVzLXdlc3QtMiJGMEQCIBvmUxHWyfvS3nVfSNijywrq%2BQAVSK6J42%2BDhLr%2FXfjFAiADw7y%2Fes1hGhS5v6z0IztbzVfl5Hq96cQMHD0TcyppOCr%2FAwgyEAAaDDYzNzQyMzE4MzgwNSIMkf3ww%2Fle3eB2K40fKtwDP22%2FXQA2scIWstCmgGONXoO7n2KCCYfRZMtc3ZBvqcHxM0Nep6p4M%2Fj%2FSoh4Zm1wKUwND6E4HdWVBtsdOreapfH44cEoWRFpSlB1ifSzZiAM1slvW7XEQ3JzByT23w2ouezrpyutd2gS401q6RM4RCgIC0KYptFVT15M%2BP5tgEAIaCVj3cE5Ff6%2BXlY9unVrzsm3LGQ6APQlrCV1Rw6rVEculHBjbC2YM8U%2BgLCJ4a7csH9vd9xnHIbWW%2BaBxGdIpem%2FNV%2Bp2t46f4xLtg7XEn77ekOAAulHhnrbC2BkSDRYphpHitKoPw6FxZaQHHWwzbQCN0g6MtFrJB2UHHlVEyeRFgxCxQgBV%2Fyomo342tlXjmWbUjYkqVfGflE22xY3OMqpKyg4mRfzIO%2BOtUdTzeDBWBA8pwtlWEAXnXrUAm8ZXzNDQfF7l0%2Fn0tImtl1uC9wyBZoHXijw1v00pfTZVF9wgWcyaHgjTTHmoCi7H2gb0qmOt2Rmkh75vmrvZVXGT%2FGQ%2BfnaRkiAo1sPE9hWBrK0gzc1zlYo6ejHbA78dp50ccVJKonpDxrVjxatG0oXMg0235%2B0U%2FKPja0BdZyjN9I2Opcc%2B6MFdeuM9nnV%2FyZKPsJ6b5fxLL2DAt0wmdmm0gY6pgHeyzM44zTP3ivW1ybTqXojhuWSJYCpJp6zueJs6AS%2Fii5AlVgiuaOtriWC8Dzj1t40RNEIKKvPF7aMIANpTZb7g52nVB7BvT8ZQh7Sqs9kg5J2IQKBoXwx4gqQgHHjYmp20a1Tx8VbxdvgqLdNMNHJdj%2Fg5FNceeLaDJgktgNkJFeTjr6zqDVfUcaP6SvYs06fmNN5NcjwvbiDTqz4KoDrq%2FhPDuvo&X-Amz-Signature=61890318c201a19fd1c79c5212251ba23fd63cfc5f2eca482cd8f72d7c44fa7e&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
@@ -674,16 +670,8 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
+  let currentEventsByDate = {};
 
   function renderSchedule(list){
     const now = new Date();
@@ -705,6 +693,7 @@
       if(!eventsByDate[key]) eventsByDate[key] = [];
       eventsByDate[key].push(e);
     });
+    currentEventsByDate = eventsByDate;
 
     const weeksInMonth = Math.ceil((startDow + daysInMonth) / 7);
     const totalCells = weeksInMonth * 7;
@@ -714,8 +703,9 @@
       d.setDate(d.getDate()+i);
       const inMonth = d.getMonth() === m;
       const isToday = d.toDateString() === todayStr;
-      const hasEvents = !!eventsByDate[d.toDateString()];
-      monthGridHtml += `<div class="month-cell${inMonth ? '' : ' other-month'}${isToday ? ' today' : ''}">${d.getDate()}${hasEvents ? '<span class="mc-dot"></span>' : ''}</div>`;
+      const dKey = d.toDateString();
+      const hasEvents = !!eventsByDate[dKey];
+      monthGridHtml += `<div class="month-cell${inMonth ? '' : ' other-month'}${isToday ? ' today' : ''}${hasEvents ? ' has-events' : ''}" data-date="${dKey}" style="${hasEvents ? 'cursor:pointer;' : ''}">${d.getDate()}${hasEvents ? '<span class="mc-dot"></span>' : ''}</div>`;
     }
     document.getElementById('monthGrid').innerHTML = monthGridHtml;
 
@@ -758,6 +748,28 @@
     document.getElementById('weekGroups').innerHTML = weekHtml;
   }
   renderSchedule(schedule);
+
+  document.getElementById('monthGrid').addEventListener('click', (e) => {
+    const cell = e.target.closest('.month-cell.has-events');
+    if(!cell) return;
+    const dKey = cell.dataset.date;
+    const events = (currentEventsByDate[dKey] || []).slice().sort((a,b) => new Date(a.dateStart) - new Date(b.dateStart));
+    const d = new Date(dKey);
+    document.getElementById('dayModalTitle').textContent = `${d.getMonth()+1}월 ${d.getDate()}일 일정`;
+    document.getElementById('dayModalList').innerHTML = events.map(ev => {
+      const ed = new Date(ev.dateStart);
+      const isDatetime = ev.dateStart.includes('T');
+      const timeLabel = isDatetime ? `${String(ed.getHours()).padStart(2,'0')}:${String(ed.getMinutes()).padStart(2,'0')}` : '종일';
+      return `<div style="background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;">
+        <div style="font-size:11.5px; font-weight:700; color:var(--orange-deep);">${timeLabel}</div>
+        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2); margin-top:4px;">${ev.title}</div>
+      </div>`;
+    }).join('') || '<div class="doc-empty-note">일정이 없습니다.</div>';
+    document.getElementById('dayModalBackdrop').classList.add('open');
+  });
+  function closeDayModal(){ document.getElementById('dayModalBackdrop').classList.remove('open'); }
+  document.getElementById('dayModalClose').addEventListener('click', closeDayModal);
+  document.getElementById('dayModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'dayModalBackdrop') closeDayModal(); });
 
   // ================= 사업소개 =================
   const bizItems = [
