@@ -690,22 +690,36 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
+        "tag": "전체공지",
+        "title": "[손사 강의] 메리츠 7월 6일 13시",
+        "date": "2026.07.05 게시",
+        "pinned": true,
+        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
+        "image": ""
+    },
+    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": true
+        "pinned": false,
+        "content": "",
+        "image": ""
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false
+        "pinned": false,
+        "content": "",
+        "image": ""
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false
+        "pinned": false,
+        "content": "",
+        "image": ""
     }
 ];
 
@@ -760,7 +774,16 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [];
+  const schedule = [
+    {
+        "title": "사업설명회 2:00",
+        "dateStart": "2026-07-09"
+    },
+    {
+        "title": "손사강의 13:00",
+        "dateStart": "2026-07-06"
+    }
+];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -894,7 +917,16 @@
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [];
+  const bizPosts = [
+    {
+        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
+        "title": "산모교실 신청",
+        "category": "행사컨설팅",
+        "content": "7/9 15시 천안 산모교실 행사 신청 ",
+        "date": "2026.07.06 게시",
+        "replies": []
+    }
+];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -997,7 +1029,14 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [];
+  const strategyPosts = [
+    {
+        "title": "가나다",
+        "content": "",
+        "date": "2026.07.06 게시",
+        "link": ""
+    }
+];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1369,7 +1408,22 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [];
+  const qnaList = [
+    {
+        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
+        "title": "내일 서울역인가요?",
+        "author": "김화진",
+        "content": "내일 강의가 서울역인가요?",
+        "date": "2026.07.05 14:46",
+        "replies": [
+            {
+                "author": "홍길동",
+                "content": "네 메리츠사옥입니다",
+                "date": "2026.07.05 14:55"
+            }
+        ]
+    }
+];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
