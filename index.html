@@ -10,9 +10,9 @@
   :root{
     --navy:#1B2A4E;
     --navy-2:#16213B;
-    --orange:#14B8A6;
-    --orange-deep:#0D9488;
-    --orange-tint:#E4F9F5;
+    --orange:#FF6A2B;
+    --orange-deep:#E4531A;
+    --orange-tint:#FFF0E6;
     --canvas:#F6F8FA;
     --card:#FFFFFF;
     --line:#E3E8EE;
@@ -137,7 +137,7 @@
   .day-chip.today .dow{color:rgba(255,255,255,.7);}
   .day-chip .dnum{font-size:16px; font-weight:800; margin-top:2px;}
   .day-chip .dcount{font-size:9px; margin-top:3px; color:var(--orange); font-weight:700;}
-  .day-chip.today .dcount{color:#8FE8DC;}
+  .day-chip.today .dcount{color:#FFCBA8;}
   .month-label{font-size:12.5px; font-weight:800; color:var(--navy-2); margin-bottom:8px;}
   .month-dow-row{display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:10px; color:var(--slate); font-weight:700; margin-bottom:4px;}
   .month-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:16px;}
@@ -146,7 +146,7 @@
   .month-cell.today{background:var(--navy-2); color:#fff; font-weight:800;}
   .month-cell.has-events:hover{border:1px solid var(--orange); background:#fff;}
   .month-cell .mc-dot{width:5px; height:5px; border-radius:50%; background:var(--orange); margin-top:2px;}
-  .month-cell.today .mc-dot{background:#8FE8DC;}
+  .month-cell.today .mc-dot{background:#FFCBA8;}
   .week-group-title{font-size:11.5px; font-weight:800; color:var(--slate); margin-bottom:8px; padding-left:2px;}
   .week-day-row{display:flex; align-items:flex-start; gap:14px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;}
   .week-day-row.today{border-color:var(--orange); background:var(--orange-tint);}
@@ -156,7 +156,7 @@
   .wdr-event{font-size:12.5px; font-weight:700; color:var(--navy-2); word-break:keep-all;}
   .wdr-empty{font-size:12px; color:var(--slate);}
   .sched-row{display:flex; align-items:center; gap:12px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:11px 14px;}
-  .sched-row.d1{background:var(--orange-tint); border-color:#A8E8DE;}
+  .sched-row.d1{background:var(--orange-tint); border-color:#FFD8BC;}
   .sched-date{width:56px; flex-shrink:0; font-size:11px; font-weight:800; color:var(--navy-2); text-align:center;}
   .sched-time{width:48px; flex-shrink:0; font-size:11px; font-weight:700; color:var(--slate);}
   .sched-title{flex:1; font-size:13px; font-weight:700;}
@@ -384,7 +384,8 @@
             <div><div class="panel-eyebrow">Notice</div><h2 class="panel-title">공지사항</h2></div>
             <div class="panel-count" id="noticeCount">전체 3건</div>
           </div>
-          <div class="notice-list scroll-box" id="noticeList" data-reveal></div>
+          <div class="notice-list" id="noticeList" data-reveal></div>
+          <button class="qna-new-btn" id="noticeBoardOpenBtn" style="margin-top:10px;">📋 전체 공지 보기</button>
         </section>
 
         <!-- 공지 상세보기 모달 -->
@@ -395,6 +396,15 @@
             <div style="font-size:12px; color:var(--slate); margin-top:6px;" id="noticeModalMeta"></div>
             <img id="noticeModalImage" src="" alt="첨부 이미지" style="display:none; width:100%; border-radius:10px; margin-top:16px;">
             <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:16px; white-space:pre-wrap;" id="noticeModalContent"></div>
+          </div>
+        </div>
+
+        <!-- 공지사항 전체보기 모달 -->
+        <div class="modal-backdrop" id="noticeBoardModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="noticeBoardModalClose">&times;</button>
+            <div class="modal-title">📢 공지사항 전체보기</div>
+            <div class="notice-list scroll-box" id="noticeBoardList" style="margin-top:16px;"></div>
           </div>
         </div>
 
@@ -502,6 +512,16 @@
             <button type="button" id="reqNewSubmit">등록</button>
           </div>
           <div id="reqList"></div>
+          <button class="qna-new-btn" id="reqBoardOpenBtn" style="margin-top:10px;">📋 전체 요청 보기</button>
+        </div>
+
+        <!-- 강의자료요청 전체보기 모달 -->
+        <div class="modal-backdrop" id="reqBoardModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="reqBoardModalClose">&times;</button>
+            <div class="modal-title">🙋 강의자료요청 전체보기</div>
+            <div id="reqBoardList" style="margin-top:16px;"></div>
+          </div>
         </div>
       </section>
 
@@ -582,10 +602,11 @@
         </div>
         <div id="docSearchResults"></div>
 
-        <div class="subsection-title">💬 다온지사 게시판</div>
+        <div class="subsection-title">💬 다온지사 게시판(소속설계사만 입장가능)</div>
+        <div id="qnaPreview" style="margin-bottom:8px;"></div>
         <button class="claim-menu-item" id="qnaBoardOpenBtn" style="width:100%; text-align:left;">
           <span class="cm-icon">💬</span>
-          <span class="cm-label">게시판입장(다온지사 소속설계사만 입장가능합니다)</span>
+          <span class="cm-label">게시판입장</span>
         </button>
       </section>
 
@@ -649,7 +670,6 @@
     <button class="modal-close" id="bizModalClose">&times;</button>
     <div class="modal-title" id="bizModalName">분야명</div>
     <div class="modal-tag" id="bizModalSummary">요약</div>
-    <p style="font-size:14px; color:var(--slate); line-height:1.7; margin-top:18px;" id="bizModalDesc"></p>
     <div class="modal-tile wide" style="margin-top:16px;">
       <div class="tile-icon">📌</div>
       <div class="tile-body">
@@ -670,50 +690,56 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": ""
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
-  function renderNotices(list){
-    document.getElementById('noticeCount').textContent = `전체 ${list.length}건`;
-    document.getElementById('noticeList').innerHTML = list.map((n, idx) => `
+  function noticeRowHtml(n, idx){
+    return `
       <div class="notice${n.pinned ? ' pinned' : ''}" data-idx="${idx}" style="cursor:pointer;">
         <span class="tag ${n.tag}">${n.tag}</span>
         <div class="notice-body"><div class="notice-title">${n.title}</div><div class="notice-meta">${n.date}</div></div>
         ${n.pinned ? '<span class="pin-mark">상단고정</span>' : ''}
       </div>
-    `).join('');
+    `;
+  }
+  function renderNotices(list){
+    document.getElementById('noticeCount').textContent = `전체 ${list.length}건`;
+    document.getElementById('noticeList').innerHTML = list.length === 0
+      ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
+      : noticeRowHtml(list[0], 0);
   }
   renderNotices(notices);
+
+  document.getElementById('noticeBoardOpenBtn').addEventListener('click', () => {
+    document.getElementById('noticeBoardList').innerHTML = notices.length === 0
+      ? '<div class="doc-empty-note">등록된 공지가 없습니다.</div>'
+      : notices.map((n, idx) => noticeRowHtml(n, idx)).join('');
+    document.getElementById('noticeBoardModalBackdrop').classList.add('open');
+  });
+  function closeNoticeBoardModal(){ document.getElementById('noticeBoardModalBackdrop').classList.remove('open'); }
+  document.getElementById('noticeBoardModalClose').addEventListener('click', closeNoticeBoardModal);
+  document.getElementById('noticeBoardModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'noticeBoardModalBackdrop') closeNoticeBoardModal(); });
+  document.getElementById('noticeBoardList').addEventListener('click', (e) => {
+    const row = e.target.closest('.notice');
+    if(!row) return;
+    openNoticeModal(notices[Number(row.dataset.idx)]);
+  });
 
   function openNoticeModal(n){
     document.getElementById('noticeModalTitle').textContent = n.title || '';
@@ -734,16 +760,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -841,52 +858,43 @@
   const bizItems = [
     {
       icon: "🏥",
-      name: "다온 사장님클리닉",
+      name: "사업장컨설팅센터",
       summary: "사업자 안전경영컨설팅",
       desc: "중대재해 대응 및 안전점검 관련",
       category: "사장님클리닉"
     },
     {
       icon: "🎪",
-      name: "행사컨설팅",
+      name: "행사컨설팅센터",
       summary: "오프라인 행사 진행",
       desc: "산모교실, 펫페어, 입주부스, 지문상담 등",
       category: "행사컨설팅"
     },
     {
       icon: "💻",
-      name: "온라인영업",
+      name: "온라인센터",
       summary: "카페,블로그 기반",
       desc: "카페, 블로그 등 온라인 채널",
       category: "온라인영업"
     },
     {
       icon: "💡",
-      name: "추가 수익화 모델",
+      name: "수익확장센터",
       summary: "다양한 수익화실현",
       desc: "다양한 추가 수익화 모델 소개",
       category: "수익화모델"
     },
     {
       icon: "🤝",
-      name: "다온파트너스 제휴업체",
-      summary: "보험 × 소상공인",
-      desc: "제휴 업체를 소개합니다",
+      name: "비즈니스파트너스",
+      summary: "다온x소상공인 상생업체",
+      desc: "다온x소상공인 상생업체",
       category: "제휴업체"
     }
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "date": "2026.07.06 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -906,8 +914,7 @@
 
   function openBizModal(b){
     document.getElementById('bizModalName').textContent = b.name;
-    document.getElementById('bizModalSummary').textContent = b.summary;
-    document.getElementById('bizModalDesc').textContent = b.desc;
+    document.getElementById('bizModalSummary').textContent = b.desc;
     document.getElementById('bizModalCaseLabel').textContent = '게시물';
     const posts = bizPosts.filter(p => p.category === b.category);
     if(posts.length === 0){
@@ -990,14 +997,7 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [
-    {
-        "title": "가나다",
-        "content": "",
-        "date": "2026.07.06 게시",
-        "link": ""
-    }
-];
+  const strategyPosts = [];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1121,13 +1121,8 @@
   const reqList = [];
   const REQ_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-lecture-request';
 
-  function renderReqList(list){
-    const box = document.getElementById('reqList');
-    if(list.length === 0){
-      box.innerHTML = '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>';
-      return;
-    }
-    box.innerHTML = list.map(r => `
+  function reqRowHtml(r){
+    return `
       <div class="qna-item">
         <div class="qna-item-head">
           <div class="qna-item-title">${escapeHtml(r.title)}</div>
@@ -1135,8 +1130,23 @@
         <div class="qna-item-meta">${escapeHtml(r.author)} · ${escapeHtml(r.date)}</div>
         <div class="qna-item-content">${escapeHtml(r.content)}</div>
       </div>
-    `).join('');
+    `;
   }
+  function renderReqList(list){
+    const box = document.getElementById('reqList');
+    box.innerHTML = list.length === 0
+      ? '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>'
+      : reqRowHtml(list[0]);
+  }
+  document.getElementById('reqBoardOpenBtn').addEventListener('click', () => {
+    document.getElementById('reqBoardList').innerHTML = reqList.length === 0
+      ? '<div class="doc-empty-note">아직 등록된 요청이 없습니다.</div>'
+      : reqList.map(r => reqRowHtml(r)).join('');
+    document.getElementById('reqBoardModalBackdrop').classList.add('open');
+  });
+  function closeReqBoardModal(){ document.getElementById('reqBoardModalBackdrop').classList.remove('open'); }
+  document.getElementById('reqBoardModalClose').addEventListener('click', closeReqBoardModal);
+  document.getElementById('reqBoardModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'reqBoardModalBackdrop') closeReqBoardModal(); });
   renderReqList(reqList);
 
   document.getElementById('reqNewBtn').addEventListener('click', () => {
@@ -1359,22 +1369,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
@@ -1412,6 +1407,9 @@
     `).join('');
   }
   renderQna(qnaList);
+  document.getElementById('qnaPreview').innerHTML = qnaList.length === 0
+    ? '<div class="doc-empty-note">아직 등록된 질문이 없습니다.</div>'
+    : `<div class="doc-empty-note" style="text-align:left;">최근 글: ${escapeHtml(qnaList[0].title)}</div>`;
 
   let qnaBoardUnlocked = false;
   document.getElementById('qnaBoardOpenBtn').addEventListener('click', () => {
