@@ -18,6 +18,7 @@
     --line:#E3E8EE;
     --slate:#64748B;
     --text:#16213B;
+    --navy-tint:#E7EBF3;
     --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -70,16 +71,17 @@
   .main{flex:1; min-width:0;}
   .topbar{
     position:sticky; top:0; z-index:30;
-    background:rgba(255,255,255,0.92); backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);
+    background:var(--orange);
+    border-bottom:1px solid var(--orange-deep);
     padding:16px 32px;
     display:flex; align-items:center; justify-content:space-between;
   }
   .topbar-brand{display:flex; align-items:center; gap:12px;}
-  .topbar-brand img{height:34px; width:auto; flex-shrink:0;}
-  .topbar-greet{font-size:15px; font-weight:800; color:var(--navy-2);}
-  .topbar-date{font-size:12px; color:var(--slate); font-weight:600; margin-top:2px;}
-  .topbar-meta{font-size:11px; color:var(--slate); font-weight:600; background:var(--canvas); padding:6px 12px; border-radius:999px; border:1px solid var(--line);}
+  .topbar-brand img{height:34px; width:auto; flex-shrink:0; background:#fff; border-radius:8px; padding:3px 6px;}
+  .topbar-greet{font-size:15px; font-weight:800; color:#fff;}
+  .topbar-date{font-size:12px; color:rgba(255,255,255,.85); font-weight:600; margin-top:2px;}
+  .topbar-meta{font-size:11px; color:#fff; font-weight:600; background:rgba(255,255,255,.18); padding:6px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.35);}
+  .panel.panel-navy{background:var(--navy-tint);}
 
   .content{padding:26px 32px 72px; max-width:1220px; margin:0 auto;}
 
@@ -116,7 +118,7 @@
   .notice-list, .sched-list{display:flex; flex-direction:column; gap:8px;}
   .notice{
     background:var(--canvas); border:1px solid var(--line); border-left:3px solid var(--line);
-    border-radius:10px; padding:13px 15px; display:flex; align-items:center; gap:12px;
+    border-radius:10px; padding:10px 13px; display:flex; align-items:center; gap:10px;
   }
   .notice.pinned{border-left-color:var(--orange);}
   .tag{flex-shrink:0; font-size:10.5px; font-weight:800; padding:4px 9px; border-radius:999px; color:#fff;}
@@ -124,7 +126,7 @@
   .tag.지사공지{background:#2F6E63;}
   .tag.긴급{background:#D64545;}
   .notice-body{flex:1; min-width:0;}
-  .notice-title{font-size:13.5px; font-weight:700;}
+  .notice-title{font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .notice-meta{font-size:11px; color:var(--slate); margin-top:2px;}
   .pin-mark{font-size:10.5px; color:var(--orange); font-weight:800; flex-shrink:0;}
 
@@ -162,12 +164,10 @@
 
   /* ---------- 사업소개 ---------- */
   .biz-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr)); gap:10px;}
-  .biz-card{background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px; cursor:pointer; transition:.15s;}
+  .biz-card{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; cursor:pointer; transition:.15s; overflow:hidden;}
   .biz-card:hover{border-color:var(--orange); transform:translateY(-2px);}
-  .biz-icon{font-size:18px;}
-  .biz-name{font-size:12.5px; font-weight:800; margin-top:6px;}
-  .biz-summary{font-size:10px; color:var(--orange); font-weight:700; margin-top:2px;}
-  .biz-desc{font-size:11px; color:var(--slate); margin-top:6px; line-height:1.5;}
+  .biz-name{font-size:12.5px; font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .biz-desc{font-size:11px; color:var(--slate); margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 
   /* ---------- 교육센터 탭 ---------- */
   .edu-tabs{display:flex; gap:6px; margin-bottom:20px;}
@@ -334,6 +334,8 @@
     .topbar{padding:14px 16px;}
     .insurer-grid{grid-template-columns:repeat(auto-fill, minmax(64px, 1fr)); gap:6px;}
     .insurer-link{height:66px; padding:6px 3px;}
+    .biz-grid{grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px;}
+    .panel{padding:16px 14px;}
   }
 </style>
 </head>
@@ -419,7 +421,7 @@
       </div>
 
       <!-- 사업소개 -->
-      <section class="panel" id="business">
+      <section class="panel panel-navy" id="business">
         <div class="panel-head">
           <div><div class="panel-eyebrow">About Our Business</div><h2 class="panel-title">다온지사 사업소개</h2></div>
         </div>
@@ -504,7 +506,7 @@
       </section>
 
       <!-- 보상센터 -->
-      <section class="panel" id="claims">
+      <section class="panel panel-navy" id="claims">
         <div class="panel-head">
           <div><div class="panel-eyebrow">Claims</div><h2 class="panel-title">보상센터</h2></div>
         </div>
@@ -568,7 +570,7 @@
       </section>
 
       <!-- 질문센터 -->
-      <section class="panel" id="qna">
+      <section class="panel panel-navy" id="qna">
         <div class="panel-head">
           <div><div class="panel-eyebrow">Q&amp;A</div><h2 class="panel-title">질문센터</h2></div>
         </div>
@@ -668,36 +670,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "image": ""
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "image": ""
+        "pinned": false
     }
 ];
 
@@ -732,16 +720,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -862,37 +841,26 @@
       icon: "💡",
       name: "추가 수익화 모델",
       summary: "다양한 수익화실현",
-      desc: "다양한 방식의 추가 수익화 모델을 소개합니다.",
+      desc: "다양한 추가 수익화 모델 소개",
       category: "수익화모델"
     },
     {
       icon: "🤝",
       name: "다온파트너스 제휴업체",
       summary: "보험 × 소상공인",
-      desc: "제휴 업체를 소개합니다 (추가, 업데이트는 계속 됩니다)",
+      desc: "제휴 업체를 소개합니다",
       category: "제휴업체"
     }
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "date": "2026.07.06 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
     grid.innerHTML = bizItems.map((b, idx) => `
       <div class="biz-card" data-idx="${idx}">
-        <div class="biz-icon">${b.icon}</div>
-        <div class="biz-name">${b.name}</div>
-        <div class="biz-summary">${b.summary}</div>
+        <div class="biz-name">${b.icon} ${b.name}</div>
         <div class="biz-desc">${b.desc}</div>
       </div>
     `).join('');
@@ -990,14 +958,7 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [
-    {
-        "title": "가나다",
-        "content": "",
-        "date": "2026.07.06 게시",
-        "link": ""
-    }
-];
+  const strategyPosts = [];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1359,22 +1320,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
