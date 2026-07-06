@@ -708,36 +708,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "images": []
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     }
 ];
 
@@ -798,44 +784,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "삼성화재 교육",
-        "dateStart": "2026-07-14"
-    },
-    {
-        "title": "그로우사업부 인천 펫페어 참여",
-        "dateStart": "2026-07-10"
-    },
-    {
-        "title": "KDB생명 교육",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "미래에셋생명 교육",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "교보생명 교육",
-        "dateStart": "2026-07-08"
-    },
-    {
-        "title": "흥국화재보험 교육",
-        "dateStart": "2026-07-08"
-    },
-    {
-        "title": "DB손해보험 교육",
-        "dateStart": "2026-07-07"
-    },
-    {
-        "title": "IM라이프 교육",
-        "dateStart": "2026-07-07"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -902,7 +851,8 @@
         eventsHtml = `<div class="wdr-empty">일정 없음</div>`;
       } else {
         eventsHtml = dayEvents.map(e => {
-          return `<div class="wdr-event">${e.title}</div>`;
+          const meta = [e.time, e.place].filter(Boolean).join(' · ');
+          return `<div class="wdr-event">${meta ? `<span style="font-weight:700; color:var(--orange-deep);">${escapeHtml(meta)}</span> ` : ''}${escapeHtml(e.title)}</div>`;
         }).join('');
       }
       weekHtml += `<div class="week-day-row${isToday ? ' today' : ''}"><div class="wdr-date">${d.getMonth()+1}/${d.getDate()}(${dowLabels[d.getDay()]})</div><div class="wdr-events">${eventsHtml}</div></div>`;
@@ -919,8 +869,10 @@
     const d = new Date(dKey);
     document.getElementById('dayModalTitle').textContent = `${d.getMonth()+1}월 ${d.getDate()}일 일정`;
     document.getElementById('dayModalList').innerHTML = events.map(ev => {
+      const meta = [ev.time, ev.place].filter(Boolean).join(' · ');
       return `<div style="background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:8px;">
-        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2);">${ev.title}</div>
+        ${meta ? `<div style="font-size:11.5px; font-weight:700; color:var(--orange-deep);">${escapeHtml(meta)}</div>` : ''}
+        <div style="font-size:13.5px; font-weight:700; color:var(--navy-2); margin-top:${meta ? '4px' : '0'};">${escapeHtml(ev.title)}</div>
       </div>`;
     }).join('') || '<div class="doc-empty-note">일정이 없습니다.</div>';
     document.getElementById('dayModalBackdrop').classList.add('open');
@@ -969,44 +921,7 @@
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "images": [],
-        "date": "2026.07.06 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-813c-bd91-f7403ed72a72",
-        "title": "음봉프라자",
-        "category": "제휴업체",
-        "content": "업종: 음식/휴게 | 연락처: 041-531-3538 \n정육/판매/도소매   <혜택> 10% 할인",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-816d-adca-ff26872ed607",
-        "title": "치과",
-        "category": "제휴업체",
-        "content": "업종: 병.의원/약국 | 연락처: 041-111-1111\n병원   <혜택> 비급여 10% 할인",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8178-8b26-c1e327c9feca",
-        "title": "법률사무소 태선",
-        "category": "제휴업체",
-        "content": "업종: 법률/금융 | 연락처: 010-3520-1386\n기업법무/ 민.형사 일반 / 건설/부동산 등",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -1112,29 +1027,7 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [
-    {
-        "title": "7월 영업전략 브리핑",
-        "content": "이달의 보험영업전략 브리핑_2026년 7월",
-        "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/file/d/1s-McnwQvzcCgfbmCrKyxx9wxyumSyMCC/view?usp=sharing",
-        "images": []
-    },
-    {
-        "title": "7월 영업전략(손보)",
-        "content": "이달의 보험사별 판매전략_2026년 7월_손해보험",
-        "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/open?id=1jmfDg76W0YOqWofGj-hJbG86T2z7YsZt&usp=drive_fs",
-        "images": []
-    },
-    {
-        "title": "7월 영업전략(생보)",
-        "content": "이달의 보험사별 판매전략_2026년 7월_생명보험",
-        "date": "2026.07.06 게시",
-        "link": "https://drive.google.com/open?id=1yA2teiVLlAcfMdc7cs9FAP-IEobHW1Oe&usp=drive_fs",
-        "images": []
-    }
-];
+  const strategyPosts = [];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1221,62 +1114,7 @@
 
   // ================= 자료실 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, category, content, links, date)
-  const docs = [
-    {
-        "title": "고지의무 사례집",
-        "category": "고지의무.보상사례",
-        "content": "보험인이 반드시 알아야 할 고지의무 사례집",
-        "links": [
-            "https://drive.google.com/open?id=1lbMskG0GK8wZmFqroVqJcA8RHZ13QN1a&usp=drive_fs"
-        ],
-        "date": "2026.07.06 게시"
-    },
-    {
-        "title": "보상사례",
-        "category": "고지의무.보상사례",
-        "content": "보상사례",
-        "links": [
-            "https://drive.google.com/open?id=1AApzAy63uI6DDE11LaT8vC4CsuZCJuvv&usp=drive_fs\""
-        ],
-        "date": "2026.07.06 게시"
-    },
-    {
-        "title": "[절세]임원편",
-        "category": "CEO.법인.세금",
-        "content": "연금 더 받고 세금 덜 내는 임원의 퇴직금 관리 전략 ",
-        "links": [
-            "https://drive.google.com/open?id=1tRWoh0ybfZq3voqt2K8CEs0SOWQb45qe&usp=drive_fs"
-        ],
-        "date": "2026.07.06 게시"
-    },
-    {
-        "title": "법인세법 가이드",
-        "category": "CEO.법인.세금",
-        "content": "법인세법 주제별 가이드",
-        "links": [
-            "https://drive.google.com/open?id=1CMk0pBVV4z7zE7Bm2hIc4K-KZgUBgkeJ&usp=drive_fs"
-        ],
-        "date": "2026.07.06 게시"
-    },
-    {
-        "title": "태아보험",
-        "category": "치아.펫.태아",
-        "content": "태아보험",
-        "links": [
-            "https://drive.google.com/open?id=1y1C2U9yq2wY0_rvquQ5ISy63OWnczQgM&usp=drive_fs"
-        ],
-        "date": "2026.07.06 게시"
-    },
-    {
-        "title": "CEO플랜_교육자료",
-        "category": "CEO.법인.세금",
-        "content": "CEO플랜_교육자료",
-        "links": [
-            "https://drive.google.com/open?id=1QISQ03w8DO8aVEjguBpxhbVcoiAVge0N&usp=drive_fs"
-        ],
-        "date": "2026.07.06 게시"
-    }
-];
+  const docs = [];
   function renderDocs(list){
     const grid = document.getElementById('docGrid');
     if(list.length === 0){
@@ -1582,42 +1420,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "395e0c8a-96e6-818e-b69f-c104d9e1777a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8161-ae6b-e2f28937520a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "images": [],
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "images": [],
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
