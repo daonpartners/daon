@@ -495,6 +495,11 @@
             <button class="filter-pill" data-cat="자동차">자동차</button>
             <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
             <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
+            <button class="filter-pill" data-cat="고지의무.보상사례">고지의무·보상사례</button>
+            <button class="filter-pill" data-cat="세일즈">세일즈</button>
+            <button class="filter-pill" data-cat="DB스크립트">DB스크립트</button>
+            <button class="filter-pill" data-cat="CEO.법인.세금">CEO·법인·세금</button>
+            <button class="filter-pill" data-cat="연금.종신">연금·종신</button>
           </div>
           <div class="doc-grid" id="docGrid" data-reveal></div>
         </div>
@@ -703,36 +708,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "images": []
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     }
 ];
 
@@ -793,44 +784,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "삼성화재 교육",
-        "dateStart": "2026-07-14"
-    },
-    {
-        "title": "그로우사업부 인천 펫페어 참여",
-        "dateStart": "2026-07-10"
-    },
-    {
-        "title": "KDB생명 교육",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "미래에셋생명 교육",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "교보생명 교육",
-        "dateStart": "2026-07-08"
-    },
-    {
-        "title": "흥국화재보험 교육",
-        "dateStart": "2026-07-08"
-    },
-    {
-        "title": "DB손해보험 교육",
-        "dateStart": "2026-07-07"
-    },
-    {
-        "title": "IM라이프 교육",
-        "dateStart": "2026-07-07"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -964,44 +918,7 @@
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "images": [],
-        "date": "2026.07.06 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-813c-bd91-f7403ed72a72",
-        "title": "음봉프라자",
-        "category": "제휴업체",
-        "content": "업종: 음식/휴게 | 연락처: 041-531-3538\n정육/판매/도소매",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-816d-adca-ff26872ed607",
-        "title": "치과",
-        "category": "제휴업체",
-        "content": "업종: 병.의원/약국 | 연락처: 041-111-1111\n병원",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8178-8b26-c1e327c9feca",
-        "title": "법률사무소 태선",
-        "category": "제휴업체",
-        "content": "업종: 법률/금융 | 연락처: 010-3520-1386\n기업법무/ 민.형사 일반 / 건설/부동산 등",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -1107,15 +1024,7 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [
-    {
-        "title": "7월 영업전략",
-        "content": "7월 이슈 및 전략",
-        "date": "2026.07.06 게시",
-        "link": "",
-        "images": []
-    }
-];
+  const strategyPosts = [];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1202,17 +1111,7 @@
 
   // ================= 자료실 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, category, content, links, date)
-  const docs = [
-    {
-        "title": "CEO플랜_교육자료",
-        "category": "",
-        "content": "CEO플랜_교육자료",
-        "links": [
-            "\"G:\\내 드라이브\\★다온파트너스\\05_교육자료\\08.법인.연금.절세\\CEO플랜_교육자료.pdf”"
-        ],
-        "date": "2026.07.06 게시"
-    }
-];
+  const docs = [];
   function renderDocs(list){
     const grid = document.getElementById('docGrid');
     if(list.length === 0){
@@ -1518,42 +1417,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "395e0c8a-96e6-818e-b69f-c104d9e1777a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8161-ae6b-e2f28937520a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "images": [],
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "images": [],
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
