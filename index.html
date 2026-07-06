@@ -397,7 +397,7 @@
             <button class="modal-close" id="noticeModalClose">&times;</button>
             <div class="modal-title" id="noticeModalTitle">공지 제목</div>
             <div style="font-size:12px; color:var(--slate); margin-top:6px;" id="noticeModalMeta"></div>
-            <img id="noticeModalImage" src="" alt="첨부 이미지" style="display:none; width:100%; border-radius:10px; margin-top:16px;">
+            <div id="noticeModalGallery" style="display:none; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:16px;"></div>
             <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:16px; white-space:pre-wrap;" id="noticeModalContent"></div>
           </div>
         </div>
@@ -486,20 +486,24 @@
         <div class="edu-panel" id="edu-archive">
           <div class="filter-row" id="filterRow" data-reveal>
             <button class="filter-pill active" data-cat="전체">전체</button>
-            <button class="filter-pill" data-cat="암뇌심">암뇌심</button>
             <button class="filter-pill" data-cat="실손보험">실손보험</button>
-            <button class="filter-pill" data-cat="치료비수술비">치료비수술비</button>
             <button class="filter-pill" data-cat="자동차">자동차</button>
-            <button class="filter-pill" data-cat="운전자.상해">운전자·상해</button>
-            <button class="filter-pill" data-cat="치아.태아.펫">치아·태아·펫</button>
-            <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상</button>
-            <button class="filter-pill" data-cat="후유장해치매간병">후유장해·치매간병</button>
-            <button class="filter-pill" data-cat="법인.연금.절세">법인·연금·절세</button>
-            <button class="filter-pill" data-cat="보상사례고지의무">보상사례·고지의무</button>
-            <button class="filter-pill" data-cat="세일즈.보장분석">세일즈·보장분석</button>
-            <button class="filter-pill" data-cat="DB영업">DB영업</button>
+            <button class="filter-pill" data-cat="화재.배상.중대재해단체">화재·배상·중대재해단체</button>
+            <button class="filter-pill" data-cat="후유장해.치매.간병">후유장해·치매·간병</button>
+            <button class="filter-pill" data-cat="기타">기타</button>
           </div>
           <div class="doc-grid" id="docGrid" data-reveal></div>
+        </div>
+
+        <!-- 자료실 상세보기 모달 -->
+        <div class="modal-backdrop" id="docModalBackdrop">
+          <div class="modal-card">
+            <button class="modal-close" id="docModalClose">&times;</button>
+            <div class="modal-title" id="docModalTitle"></div>
+            <div style="font-size:11px; color:var(--slate); margin-top:6px;" id="docModalMeta"></div>
+            <div style="font-size:13.5px; color:var(--navy-2); line-height:1.7; margin-top:14px; white-space:pre-wrap;" id="docModalContent"></div>
+            <div style="margin-top:16px;" id="docModalLinks"></div>
+          </div>
         </div>
 
         <div class="edu-panel" id="edu-request">
@@ -511,6 +515,7 @@
             </div>
             <input type="text" id="reqNewTitle" placeholder="제목">
             <textarea id="reqNewContent" placeholder="어떤 강의·자료가 필요하신지 적어주세요"></textarea>
+            <textarea id="reqNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
             <div class="qna-form-msg" id="reqNewMsg"></div>
             <button type="button" id="reqNewSubmit">등록</button>
           </div>
@@ -638,6 +643,7 @@
               </div>
               <input type="text" id="qnaNewTitle" placeholder="제목">
               <textarea id="qnaNewContent" placeholder="내용을 입력하세요"></textarea>
+              <textarea id="qnaNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
               <div class="qna-form-msg" id="qnaNewMsg"></div>
               <button type="button" id="qnaNewSubmit">등록</button>
             </div>
@@ -693,36 +699,22 @@
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
   const notices = [
     {
-        "tag": "전체공지",
-        "title": "[손사 강의] 메리츠 7월 6일 13시",
-        "date": "2026.07.05 게시",
-        "pinned": true,
-        "content": "메리츠 서울 사옥에서 13시에 손사강의가 있습니다.",
-        "images": []
-    },
-    {
         "tag": "지사공지",
         "title": "산모교실 행사공지",
         "date": "2026.07.02 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": true
     },
     {
         "tag": "긴급",
         "title": "7월 상품 개정 관련 필수 안내사항",
         "date": "2026.07.01 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     },
     {
         "tag": "전체공지",
         "title": "하반기 지사장 워크숍 일정 안내",
         "date": "2026.06.28 게시",
-        "pinned": false,
-        "content": "",
-        "images": []
+        "pinned": false
     }
 ];
 
@@ -761,8 +753,14 @@
   function openNoticeModal(n){
     document.getElementById('noticeModalTitle').textContent = n.title || '';
     document.getElementById('noticeModalMeta').textContent = `${n.tag || ''} · ${n.date || ''}`;
-    const img = document.getElementById('noticeModalImage');
-    if(n.image){ img.src = n.image; img.style.display = 'block'; } else { img.style.display = 'none'; img.src = ''; }
+    const gallery = document.getElementById('noticeModalGallery');
+    if(n.images && n.images.length){
+      gallery.style.display = 'grid';
+      gallery.innerHTML = n.images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('');
+    } else {
+      gallery.style.display = 'none';
+      gallery.innerHTML = '';
+    }
     document.getElementById('noticeModalContent').textContent = n.content || '본문 내용이 없습니다.';
     document.getElementById('noticeModalBackdrop').classList.add('open');
   }
@@ -777,16 +775,7 @@
 
   // ================= 지사일정 =================
   // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다. (title, dateStart: ISO 날짜/일시 문자열)
-  const schedule = [
-    {
-        "title": "사업설명회 2:00",
-        "dateStart": "2026-07-09"
-    },
-    {
-        "title": "손사강의 13:00",
-        "dateStart": "2026-07-06"
-    }
-];
+  const schedule = [];
   let currentEventsByDate = {};
 
   function renderSchedule(list){
@@ -920,44 +909,7 @@
   ];
 
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, title, content, date)
-  const bizPosts = [
-    {
-        "id": "394e0c8a-96e6-8061-964f-e2c148deee1a",
-        "title": "산모교실 신청",
-        "category": "행사컨설팅",
-        "content": "7/9 15시 천안 산모교실 행사 신청 ",
-        "images": [],
-        "date": "2026.07.06 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-813c-bd91-f7403ed72a72",
-        "title": "음봉프라자",
-        "category": "제휴업체",
-        "content": "업종: 음식/휴게 | 연락처: 041-531-3538\n정육/판매/도소매",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-816d-adca-ff26872ed607",
-        "title": "치과",
-        "category": "제휴업체",
-        "content": "업종: 병.의원/약국 | 연락처: 041-111-1111\n병원",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8178-8b26-c1e327c9feca",
-        "title": "법률사무소 태선",
-        "category": "제휴업체",
-        "content": "업종: 법률/금융 | 연락처: 010-3520-1386\n기업법무/ 민.형사 일반 / 건설/부동산 등",
-        "images": [],
-        "date": "2026.07.03 게시",
-        "replies": []
-    }
-];
+  const bizPosts = [];
 
   function renderBiz(){
     const grid = document.getElementById('bizGrid');
@@ -988,6 +940,9 @@
           <div class="doc-name">${escapeHtml(p.title)}</div>
           <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
           <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
+          ${(p.images && p.images.length) ? `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:10px;">${p.images.map(src => `
+            <img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">
+          `).join('')}</div>` : ''}
           ${(p.replies && p.replies.length) ? `<div class="qna-replies">${p.replies.map(r => `
             <div class="qna-reply">
               <div class="qna-reply-meta">${escapeHtml(r.author || '')} · ${escapeHtml(r.date || '')}</div>
@@ -1060,15 +1015,7 @@
 
   // ================= 영업전략 =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, content, date, link) — 최신순 정렬
-  const strategyPosts = [
-    {
-        "title": "7월 영업전략",
-        "content": "7월 이슈 및 전략",
-        "date": "2026.07.06 게시",
-        "link": "",
-        "images": []
-    }
-];
+  const strategyPosts = [];
   function renderStrategy(){
     const latestBox = document.getElementById('strategyLatest');
     if(strategyPosts.length === 0){
@@ -1080,6 +1027,7 @@
           <span class="tag 전체공지">${escapeHtml(p.date)}</span>
           <h3 class="strategy-title">${escapeHtml(p.title)}</h3>
           <p class="strategy-body">${escapeHtml(p.content)}</p>
+          ${galleryHtml(p.images)}
           ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:12px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">📎 자료 보기</a>` : ''}
         </div>
       `;
@@ -1094,6 +1042,7 @@
           <div class="doc-name">${escapeHtml(p.title)}</div>
           <div style="font-size:11px; color:var(--slate); margin-top:2px;">${escapeHtml(p.date)}</div>
           <div class="doc-snippet" style="margin-top:8px; white-space:pre-wrap;">${escapeHtml(p.content)}</div>
+          ${galleryHtml(p.images)}
           ${p.link ? `<a href="${p.link}" target="_blank" rel="noopener" style="font-size:11.5px; font-weight:700; color:var(--orange-deep); margin-top:8px; display:inline-block;">📎 자료 보기</a>` : ''}
         </div>
       `).join('');
@@ -1152,31 +1101,43 @@
   });
 
   // ================= 자료실 =================
-  const docs = [
-    { name: "질병후유장해.jpg", category: "후유장해치매간병", type: "이미지", date: "2026.07.02",
-      thumb: "https://lh3.googleusercontent.com/drive-storage/AJQWtBP6yy0k2iO__mToH9GGfeLBt5r3ycfdSB6fsmr4eP-QW3BTX8j2s8yJJuF31psWOwr9A__Gu8FBJh1DXd5wtV9cXCBM4VBfVX77RkrCgm8W_mu2bw=s220",
-      link: "https://drive.google.com/file/d/1a-3239no1pOlo0wZWI4MdBHgTIEWsJN0/view" },
-    { name: "2026년 실손보험 상품비교표.pdf", category: "실손보험", type: "문서", date: "2026.06.30", thumb: null, link: "#" },
-    { name: "자동차보험 가입 안내 브리핑.pdf", category: "자동차", type: "문서", date: "2026.06.27", thumb: null, link: "#" },
-    { name: "화재·배상책임 상품 소개 영상", category: "화재.배상.중대재해단체", type: "영상", date: "2026.06.20", thumb: null, link: "#" }
-  ];
-  function iconFor(type){ if(type === "문서") return "📄"; if(type === "영상") return "▶"; return "🖼"; }
+  // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (title, category, content, links, date)
+  const docs = [];
   function renderDocs(list){
     const grid = document.getElementById('docGrid');
-    grid.innerHTML = list.map(d => `
-      <a class="doc-card" href="${d.link}" target="_blank" rel="noopener">
-        <div class="doc-thumb ${d.type === '문서' ? 'doc' : d.type === '영상' ? 'video' : ''}">
-          <span class="doc-type-badge">${d.type}</span>
-          ${d.thumb ? `<img src="${d.thumb}" alt="${d.name}">` : iconFor(d.type)}
+    if(list.length === 0){
+      grid.innerHTML = '<div class="doc-empty-note">등록된 자료가 없습니다.</div>';
+      return;
+    }
+    grid.innerHTML = list.map((d, idx) => `
+      <div class="doc-card" data-idx="${idx}" style="cursor:pointer;">
+        <div class="doc-thumb doc">
+          <span class="doc-type-badge">${d.links.length}개 자료</span>
+          📄
         </div>
         <div class="doc-info">
-          <div class="doc-cat">${d.category.replace(/\./g,' · ')}</div>
-          <div class="doc-name">${d.name}</div>
-          <div class="doc-meta">${d.date}</div>
+          <div class="doc-cat">${escapeHtml((d.category || '').replace(/\./g,' · '))}</div>
+          <div class="doc-name">${escapeHtml(d.title)}</div>
+          <div class="doc-meta">${escapeHtml(d.date)}</div>
         </div>
-      </a>
+      </div>
     `).join('');
+    grid.querySelectorAll('.doc-card').forEach(card => {
+      card.addEventListener('click', () => openDocModal(list[Number(card.dataset.idx)]));
+    });
   }
+  function openDocModal(d){
+    document.getElementById('docModalTitle').textContent = d.title;
+    document.getElementById('docModalMeta').textContent = `${(d.category || '').replace(/\./g,' · ')} · ${d.date}`;
+    document.getElementById('docModalContent').textContent = d.content || '';
+    document.getElementById('docModalLinks').innerHTML = (d.links && d.links.length)
+      ? d.links.map((link, i) => `<a href="${link}" target="_blank" rel="noopener" style="display:block; font-size:13px; font-weight:700; color:var(--orange-deep); padding:10px 0; border-bottom:1px solid var(--line);">📎 자료 ${i+1} 열기</a>`).join('')
+      : '<div class="doc-empty-note">첨부된 자료 링크가 없습니다.</div>';
+    document.getElementById('docModalBackdrop').classList.add('open');
+  }
+  function closeDocModal(){ document.getElementById('docModalBackdrop').classList.remove('open'); }
+  document.getElementById('docModalClose').addEventListener('click', closeDocModal);
+  document.getElementById('docModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'docModalBackdrop') closeDocModal(); });
   renderDocs(docs);
   document.getElementById('filterRow').addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
@@ -1200,6 +1161,7 @@
         </div>
         <div class="qna-item-meta">${escapeHtml(r.author)} · ${escapeHtml(r.date)}</div>
         <div class="qna-item-content">${escapeHtml(r.content)}</div>
+        ${galleryHtml(r.images)}
       </div>
     `;
   }
@@ -1227,19 +1189,21 @@
     const author = document.getElementById('reqNewAuthor').value.trim();
     const title = document.getElementById('reqNewTitle').value.trim();
     const content = document.getElementById('reqNewContent').value.trim();
+    const imageLinks = document.getElementById('reqNewImages').value.split(/\r?\n/).map(s => s.trim()).filter(s => s);
     const msg = document.getElementById('reqNewMsg');
     if(!author || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
     msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
     try{
       const res = await fetch(REQ_WEBHOOK, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ author, title, content })
+        body: JSON.stringify({ author, title, content, imageLinks })
       });
       const data = await res.json();
       if(data.success){
         msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
         document.getElementById('reqNewTitle').value = '';
         document.getElementById('reqNewContent').value = '';
+        document.getElementById('reqNewImages').value = '';
       } else {
         msg.textContent = data.message || '등록에 실패했습니다.'; msg.style.color = 'red';
       }
@@ -1408,6 +1372,10 @@
   const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
 
   function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function galleryHtml(images){
+    if(!images || !images.length) return '';
+    return `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px,1fr)); gap:6px; margin-top:8px;">${images.map(src => `<img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">`).join('')}</div>`;
+  }
 
   async function runDocSearch(){
     const kw = document.getElementById('docSearchInput').value.trim();
@@ -1440,42 +1408,7 @@
 
   // ================= 질문센터: 우리끼리질문(게시판) =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (id: Notion 페이지ID, title, author, content, date, replies:[{author,content,date}])
-  const qnaList = [
-    {
-        "id": "395e0c8a-96e6-818e-b69f-c104d9e1777a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "395e0c8a-96e6-8161-ae6b-e2f28937520a",
-        "title": "비가오나요?",
-        "author": "가나나",
-        "content": "가나\n나나\n\nㄴㅅㅁㄹ\nㅎㄱㄴㅎ\nㅎㄹㅅ",
-        "images": [],
-        "date": "2026.07.06 01:40",
-        "replies": []
-    },
-    {
-        "id": "394e0c8a-96e6-81da-ac39-fd3a6c34dbc0",
-        "title": "내일 서울역인가요?",
-        "author": "김화진",
-        "content": "내일 강의가 서울역인가요?",
-        "images": [],
-        "date": "2026.07.05 14:46",
-        "replies": [
-            {
-                "author": "홍길동",
-                "content": "네 메리츠사옥입니다",
-                "images": [],
-                "date": "2026.07.05 14:55"
-            }
-        ]
-    }
-];
+  const qnaList = [];
   const QNA_QUESTION_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-question';
   const QNA_ANSWER_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-qna-answer';
 
@@ -1493,10 +1426,12 @@
         </div>
         <div class="qna-item-meta">${escapeHtml(q.author || '')} · ${escapeHtml(q.date || '')}</div>
         <div class="qna-item-content">${escapeHtml(q.content || '')}</div>
+        ${galleryHtml(q.images)}
         ${(q.replies && q.replies.length) ? `<div class="qna-replies">${q.replies.map(r => `
           <div class="qna-reply">
             <div class="qna-reply-meta">${escapeHtml(r.author || '')} · ${escapeHtml(r.date || '')}</div>
             <div class="qna-reply-content">${escapeHtml(r.content || '')}</div>
+            ${galleryHtml(r.images)}
           </div>
         `).join('')}</div>` : ''}
         <span class="qna-reply-toggle" data-qid="${q.id}">💬 답글 달기</span>
@@ -1506,6 +1441,7 @@
             <input type="text" class="qna-reply-code" placeholder="설계사 인증코드">
           </div>
           <textarea class="qna-reply-content-input" placeholder="답글 내용을 입력하세요"></textarea>
+          <textarea class="qna-reply-images-input" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
           <div class="qna-form-msg" data-msg-for="${q.id}"></div>
           <button type="button" class="qna-reply-submit" data-qid="${q.id}">답글 등록</button>
         </div>
@@ -1550,19 +1486,21 @@
     const code = document.getElementById('qnaNewCode').value.trim();
     const title = document.getElementById('qnaNewTitle').value.trim();
     const content = document.getElementById('qnaNewContent').value.trim();
+    const imageLinks = document.getElementById('qnaNewImages').value.split(/\r?\n/).map(s => s.trim()).filter(s => s);
     const msg = document.getElementById('qnaNewMsg');
     if(!author || !code || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
     msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
     try{
       const res = await fetch(QNA_QUESTION_WEBHOOK, {
         method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ author, code, title, content })
+        body: JSON.stringify({ author, code, title, content, imageLinks })
       });
       const data = await res.json();
       if(data.success){
         msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 목록에 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
         document.getElementById('qnaNewTitle').value = '';
         document.getElementById('qnaNewContent').value = '';
+        document.getElementById('qnaNewImages').value = '';
       } else {
         msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
       }
@@ -1584,18 +1522,20 @@
       const author = form.querySelector('.qna-reply-author').value.trim();
       const code = form.querySelector('.qna-reply-code').value.trim();
       const content = form.querySelector('.qna-reply-content-input').value.trim();
+      const imageLinks = form.querySelector('.qna-reply-images-input').value.split(/\r?\n/).map(s => s.trim()).filter(s => s);
       const msg = form.querySelector('.qna-form-msg');
       if(!author || !code || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
       msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
       try{
         const res = await fetch(QNA_ANSWER_WEBHOOK, {
           method: 'POST', headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ author, code, questionId: qid, content })
+          body: JSON.stringify({ author, code, questionId: qid, content, imageLinks })
         });
         const data = await res.json();
         if(data.success){
           msg.textContent = '답글이 등록되었습니다. 잠시 후(수 초~1분) 목록에 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
           form.querySelector('.qna-reply-content-input').value = '';
+          form.querySelector('.qna-reply-images-input').value = '';
         } else {
           msg.textContent = data.message || '등록에 실패했습니다. 인증코드를 확인해주세요.'; msg.style.color = 'red';
         }
