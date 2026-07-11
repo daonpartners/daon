@@ -456,6 +456,12 @@ body.growon{ background:var(--g-navy); }
 .dname-box:hover{border-color:#1D3A5C; box-shadow:0 2px 10px rgba(15,39,64,.08);}
 .dname-box .dname{font-size:13px; font-weight:800; color:#0F2740; text-align:center;}
 .dname-box .dlogo, .dname-box .dlogo-fb{width:32px; height:32px;}
+.sm-item{display:flex; align-items:center; gap:12px; padding:13px 14px; border:1px solid var(--line); border-radius:9px; margin-bottom:8px;}
+.sm-item .sm-icon{font-size:20px; flex:none;}
+.sm-item .sm-name{font-size:13.5px; font-weight:700; color:var(--navy-2); flex:1;}
+.sm-item .sm-meta{font-size:11px; color:var(--slate);}
+.sm-item .sm-dl{background:var(--navy-2); color:#fff; font-size:12px; font-weight:700; padding:7px 13px; border-radius:7px; text-decoration:none; flex:none;}
+.sm-item .sm-dl:hover{background:var(--navy-3,#0F2740);}
 .dcard{border:1px solid #E3E7EE; border-radius:12px; padding:14px 13px; background:#fff; display:flex; flex-direction:column;}
 .dcard-hd{text-align:center; font-size:15px; font-weight:900; color:#0F2740; padding-bottom:11px; min-height:24px;}
 .dcard-hd .dbadge{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle;}
@@ -595,6 +601,27 @@ body.growon{ background:var(--g-navy); }
         <div class="biz-grid" id="bizGrid" data-reveal></div>
       </section>
       </div>
+      <div class="gview" id="view-salesmaterials">
+<section class="panel" id="salesmaterials">
+        <div class="panel-head">
+          <div><div class="panel-eyebrow">Sales Materials</div><h2 class="panel-title">영업자료실</h2></div>
+        </div>
+
+        <div class="edu-tabs" id="smTabs" data-reveal>
+          <button class="edu-tab active" data-smtab="cardnews">🖼️ 카드뉴스</button>
+          <button class="edu-tab" data-smtab="leaflet">📄 리플렛</button>
+          <button class="edu-tab" data-smtab="pitch">🗣️ 상담화법</button>
+          <button class="edu-tab" data-smtab="consulting">📊 컨설팅자료</button>
+          <button class="edu-tab" data-smtab="industry">🏢 업종별 제안서</button>
+        </div>
+
+        <div class="edu-panel active" id="sm-cardnews"><div class="sm-list" id="smList-cardnews"></div></div>
+        <div class="edu-panel" id="sm-leaflet"><div class="sm-list" id="smList-leaflet"></div></div>
+        <div class="edu-panel" id="sm-pitch"><div class="sm-list" id="smList-pitch"></div></div>
+        <div class="edu-panel" id="sm-consulting"><div class="sm-list" id="smList-consulting"></div></div>
+        <div class="edu-panel" id="sm-industry"><div class="sm-list" id="smList-industry"></div></div>
+      </section>
+      </div>
       <div class="gview" id="view-materials">
 <section class="panel" id="materials">
         <div class="panel-head">
@@ -679,20 +706,7 @@ body.growon{ background:var(--g-navy); }
         </div>
       </section>
       </div>
-      <div class="gview" id="view-claims">
-<section class="panel panel-navy" id="claims">
-        <div class="panel-head">
-          <div><div class="panel-eyebrow">Claims</div><h2 class="panel-title">보상센터</h2></div>
-        </div>
-        <div class="claim-menu" id="claimMenu" data-reveal>
-          <button class="claim-menu-item" data-ctab="contacts"><span class="cm-icon">☎️</span><span class="cm-label">보험사 연락처</span></button>
-          <button class="claim-menu-item" data-ctab="forms"><span class="cm-icon">📝</span><span class="cm-label">보험금 청구서</span></button>
-          <button class="claim-menu-item" data-ctab="docs"><span class="cm-icon">📋</span><span class="cm-label">사고별 제출서류</span></button>
-          <button class="claim-menu-item" data-ctab="faq"><span class="cm-icon">❓</span><span class="cm-label">보상청구 FAQ</span></button>
-          <button class="claim-menu-item" data-ctab="terms"><span class="cm-icon">📖</span><span class="cm-label">약관 검색</span></button>
-        </div>
-      </section>
-      </div>
+      
       <div class="gview" id="view-insurers">
         <section class="panel">
           <div class="panel-head">
@@ -777,7 +791,7 @@ body.growon{ background:var(--g-navy); }
 
   <div class="gcol" id="colRight">
     <div class="rail-t">업무링크</div>
-    <a class="rlink" data-view="materials" href="#">영업자료실 바로가기</a>
+    <a class="rlink" data-view="salesmaterials" href="#">영업자료실 바로가기</a>
     <a class="rlink" data-view="notice" href="#">행사공지 및 신청하기</a>
     <a class="rlink" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener">DB신청하기</a>
     <div class="rgroup">
@@ -798,7 +812,6 @@ body.growon{ background:var(--g-navy); }
     <div class="rstack">
       <a href="https://www.nps.or.kr" target="_blank" rel="noopener">연금계산기</a>
       <a href="https://terms.kordi.or.kr" target="_blank" rel="noopener">상병코드 검색</a>
-      <a data-view="claims" href="#">수술비분류표 검색</a>
       <a href="https://www.hira.or.kr" target="_blank" rel="noopener">전국병원 검색</a>
     </div>
   </div>
@@ -866,40 +879,7 @@ body.growon{ background:var(--g-navy); }
             <div id="reqBoardList" style="margin-top:16px;"></div>
           </div>
         </div>
-<div class="modal-backdrop" id="claimModalBackdrop">
-        <div class="modal-card">
-          <button class="modal-close" id="claimModalClose">&times;</button>
-          <div class="modal-title" id="claimModalTitle">보험사 연락처</div>
 
-          <!-- 보험사 연락처 (고객센터+팩스 통합) -->
-          <div class="claim-panel active" id="claim-contacts">
-            <input type="text" class="claim-search" id="contactsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-            <div class="claim-list" id="contactsList"></div>
-          </div>
-
-          <!-- 보험금 청구서 -->
-          <div class="claim-panel" id="claim-forms">
-            <input type="text" class="claim-search" id="formsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-            <div class="claim-list" id="formsList"></div>
-          </div>
-
-          <!-- 사고별 제출서류 -->
-          <div class="claim-panel" id="claim-docs">
-            <div id="docsAccordion"></div>
-          </div>
-
-          <!-- 보상청구 FAQ -->
-          <div class="claim-panel" id="claim-faq">
-            <div id="faqAccordion"></div>
-          </div>
-
-          <!-- 약관 검색 -->
-          <div class="claim-panel" id="claim-terms">
-            <input type="text" class="claim-search" id="termsSearch" placeholder="보험사명으로 검색 (예: 삼성, DB, 메리츠...)">
-            <div class="claim-list" id="termsList"></div>
-          </div>
-        </div>
-      </div>
 <div class="modal-backdrop" id="qnaBoardModalBackdrop">
         <div class="modal-card">
           <button class="modal-close" id="qnaBoardModalClose">&times;</button>
@@ -1883,106 +1863,6 @@ body.growon{ background:var(--g-navy); }
 
 
 
-  // ================= 보상센터 =================
-  // 메뉴 클릭 → 모달 열기
-  const claimTitles = {
-    contacts: '☎️ 보험사 연락처',
-    forms: '📝 보험금 청구서',
-    docs: '📋 사고별 제출서류',
-    faq: '❓ 보상청구 FAQ',
-    terms: '📖 약관 검색'
-  };
-  function openClaimModal(ctab){
-    document.querySelectorAll('#claimModalBackdrop .claim-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('claim-' + ctab).classList.add('active');
-    document.getElementById('claimModalTitle').textContent = claimTitles[ctab] || '';
-    document.getElementById('claimModalBackdrop').classList.add('open');
-  }
-  document.getElementById('claimMenu').addEventListener('click', (e) => {
-    const btn = e.target.closest('.claim-menu-item');
-    if(!btn) return;
-    openClaimModal(btn.dataset.ctab);
-  });
-  function closeClaimModal(){ document.getElementById('claimModalBackdrop').classList.remove('open'); }
-  document.getElementById('claimModalClose').addEventListener('click', closeClaimModal);
-  document.getElementById('claimModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'claimModalBackdrop') closeClaimModal(); });
-
-  function crRow(i, valueHtml){
-    return `<div class="claim-row">
-      <div class="cr-name"><span class="cr-dot" style="background:${i.color || '#6B7280'}"></span>${i.name}</div>
-      ${valueHtml}
-    </div>`;
-  }
-
-  function renderClaimForms(keyword=''){
-    const list = insurers.filter(i => i.name.includes(keyword));
-    document.getElementById('formsList').innerHTML = list.map(i => crRow(i,
-      i.claimFormLink ? `<a class="cr-btn" href="${i.claimFormLink}" target="_blank" rel="noopener">청구서 열기</a>` : `<span class="cr-empty">준비중</span>`
-    )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
-  }
-  function renderContacts(keyword=''){
-    const list = insurers.filter(i => i.name.includes(keyword));
-    document.getElementById('contactsList').innerHTML = list.map(i => crRow(i,
-      `<div style="text-align:right;">
-        ${i.customerCenter ? `<div class="cr-value">고객센터 <a href="tel:${i.customerCenter.replace(/[^0-9]/g,'')}">${i.customerCenter}</a></div>` : ``}
-        ${i.claimFax ? `<div class="cr-value" style="margin-top:2px;">보험청구 ${i.claimFax}</div>` : ``}
-        ${i.dentalClaimFax ? `<div style="font-size:11px;color:var(--slate);margin-top:2px;">치아: ${i.dentalClaimFax}</div>` : ``}
-        ${(!i.customerCenter && !i.claimFax) ? `<span class="cr-empty">정보없음</span>` : ``}
-      </div>`
-    )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
-  }
-  function renderTerms(keyword=''){
-    const list = insurers.filter(i => i.name.includes(keyword));
-    document.getElementById('termsList').innerHTML = list.map(i => crRow(i,
-      i.termsLink ? `<a class="cr-btn" href="${i.termsLink}" target="_blank" rel="noopener">약관 보기</a>` : `<span class="cr-empty">준비중</span>`
-    )).join('') || `<div class="cr-empty" style="padding:20px; text-align:center;">검색 결과가 없습니다.</div>`;
-  }
-  renderClaimForms(); renderContacts(); renderTerms();
-
-  document.getElementById('formsSearch').addEventListener('input', e => renderClaimForms(e.target.value.trim()));
-  document.getElementById('contactsSearch').addEventListener('input', e => renderContacts(e.target.value.trim()));
-  document.getElementById('termsSearch').addEventListener('input', e => renderTerms(e.target.value.trim()));
-
-  // 사고별 제출서류 (아코디언)
-  const accidentDocs = [
-    { title: "통원 · 약제비 (실손보험)", items: ["진료비 영수증", "진료비 세부내역서", "처방전 (약제비 청구 시)", "3만원 이하 통원의료비는 병원영수증만으로 가능한 경우도 있음 (보험사별 상이)"] },
-    { title: "입원 · 수술", items: ["입퇴원확인서", "진단서", "수술확인서 (수술한 경우)", "진료비 영수증 및 세부내역서"] },
-    { title: "후유장해", items: ["후유장해진단서", "장해 관련 검사자료 (X-ray, MRI, CT 등)", "장해 발생 경위서"] },
-    { title: "자동차사고", items: ["사고사실확인원 (경찰서/보험사 발급)", "정비소 견적서 · 수리비 영수증", "(대인사고) 진단서 · 치료비 영수증", "사고접수는 보험사 고객센터 또는 앱에서 우선 접수"] },
-    { title: "화재 · 배상책임", items: ["사고경위서", "피해물 사진", "수리 견적서 · 영수증", "(배상책임) 피해자와의 합의서"] },
-    { title: "사망보험금", items: ["사망진단서 (또는 시체검안서)", "기본증명서 · 가족관계증명서", "수익자 신분증", "(사고사) 경찰 수사기록 등 사고 입증서류"] },
-  ];
-  document.getElementById('docsAccordion').innerHTML = accidentDocs.map((d, idx) => `
-    <div class="acc-item" data-acc="doc-${idx}">
-      <div class="acc-head"><span>${d.title}</span><span class="acc-arrow">▼</span></div>
-      <div class="acc-body"><ul>${d.items.map(it => `<li>${it}</li>`).join('')}</ul></div>
-    </div>
-  `).join('') + `<div class="ai-disclaimer" style="text-align:left; margin-top:6px;">⚠️ 일반적인 기준이며, 보험사·상품·특약에 따라 필요 서류가 달라질 수 있습니다. 접수 전 해당 보험사 고객센터로 확인해주세요.</div>`;
-
-  // 보상청구 FAQ
-  const claimFaqs = [
-    { q: "보험금 청구 기한이 있나요?", a: "보험금 청구권은 상법상 원칙적으로 3년의 소멸시효가 적용됩니다. 사고 발생 후 너무 늦지 않게 청구하시는 게 안전합니다." },
-    { q: "실손보험 청구 시 필요한 서류는?", a: "진료비 영수증과 진료비 세부내역서가 기본이며, 통원의료비는 병원 영수증만으로 청구 가능한 경우도 있습니다. 정확한 서류는 보험사별로 다를 수 있어 청구 전 고객센터 확인을 권장합니다." },
-    { q: "입원·수술 보험금 청구 서류는?", a: "입퇴원확인서, 진단서, 수술확인서(수술한 경우), 진료비 영수증 및 세부내역서가 기본적으로 필요합니다." },
-    { q: "자동차사고 보험금 청구는 어떻게 하나요?", a: "사고 접수 후 보험사 담당자가 배정되며, 정비소 견적서·수리비 영수증·(대인사고 시) 진단서 등을 제출합니다. 사고 접수는 보상센터 > 보험사 연락처 탭에서 바로 전화하실 수 있어요." },
-    { q: "보험금 청구는 모바일로도 가능한가요?", a: "대부분의 보험사가 모바일 앱 또는 홈페이지를 통한 온라인 청구를 지원합니다. 소액 청구는 모바일로 빠르게 처리되는 경우가 많습니다." },
-    { q: "청구한 보험금은 언제 지급되나요?", a: "보험업법상 서류 접수 완료일로부터 원칙적으로 3영업일 이내 지급하며, 조사가 필요한 경우 지급일이 연장될 수 있습니다 (최대 30일, 특별한 사유 시 추가 연장 가능)." },
-    { q: "설계사가 대신 청구서를 접수해도 되나요?", a: "보험사·상품에 따라 설계사 대리 접수가 가능한 경우가 있습니다. 다만 위임 관련 서류가 필요할 수 있어 사전에 해당 보험사 고객센터에 확인하시는 게 좋습니다." },
-    { q: "치아보험은 청구 서류가 다른가요?", a: "치아보험은 치과 진단서, 임플란트/보철 시술확인서, 방사선 사진 등이 추가로 필요한 경우가 많습니다. 일부 보험사는 치아보험 전용 팩스번호를 별도 운영하니 보상센터 > 보험사 연락처 탭을 확인해주세요." },
-  ];
-  document.getElementById('faqAccordion').innerHTML = claimFaqs.map((f, idx) => `
-    <div class="acc-item" data-acc="faq-${idx}">
-      <div class="acc-head"><span>${f.q}</span><span class="acc-arrow">▼</span></div>
-      <div class="acc-body">${f.a}</div>
-    </div>
-  `).join('');
-
-  document.getElementById('claimModalBackdrop').addEventListener('click', (e) => {
-    const head = e.target.closest('.acc-head');
-    if(!head) return;
-    head.parentElement.classList.toggle('open');
-  });
-
   // ================= 질문센터: 보험도우미(AI 자료검색) =================
   // 검색은 클라이언트가 아니라 n8n 웹훅에서 처리합니다: Notion에 저장된 실제 문서 발췌문만 근거로 AI가 답변을 정리합니다.
   const DOC_AI_SEARCH_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-doc-ai-search';
@@ -2439,7 +2319,20 @@ body.growon{ background:var(--g-navy); }
   // ================= 보험FAQ =================
   // n8n/Notion 자동화 대상: 이 배열이 자동으로 채워집니다. (category, question, answer)
   const insuranceFaqs = [
-    // 예시: { category: "보험가입", question: "청약 후 철회는 언제까지 가능한가요?", answer: "청약일로부터 15일 이내 철회 가능합니다." }
+    { category: "사고별제출서류", question: "통원 · 약제비 (실손보험) 청구 시 필요서류는?", answer: "진료비 영수증 / 진료비 세부내역서 / 처방전 (약제비 청구 시) / 3만원 이하 통원의료비는 병원영수증만으로 가능한 경우도 있음 (보험사별 상이)" },
+    { category: "사고별제출서류", question: "입원 · 수술 청구 시 필요서류는?", answer: "입퇴원확인서 / 진단서 / 수술확인서 (수술한 경우) / 진료비 영수증 및 세부내역서" },
+    { category: "사고별제출서류", question: "후유장해 청구 시 필요서류는?", answer: "후유장해진단서 / 장해 관련 검사자료 (X-ray, MRI, CT 등) / 장해 발생 경위서" },
+    { category: "사고별제출서류", question: "자동차사고 청구 시 필요서류는?", answer: "사고사실확인원 (경찰서/보험사 발급) / 정비소 견적서 · 수리비 영수증 / (대인사고) 진단서 · 치료비 영수증 / 사고접수는 보험사 고객센터 또는 앱에서 우선 접수" },
+    { category: "사고별제출서류", question: "화재 · 배상책임 청구 시 필요서류는?", answer: "사고경위서 / 피해물 사진 / 수리 견적서 · 영수증 / (배상책임) 피해자와의 합의서" },
+    { category: "사고별제출서류", question: "사망보험금 청구 시 필요서류는?", answer: "사망진단서 (또는 시체검안서) / 기본증명서 · 가족관계증명서 / 수익자 신분증 / (사고사) 경찰 수사기록 등 사고 입증서류" },
+    { category: "보상청구", question: "보험금 청구 기한이 있나요?", answer: "보험금 청구권은 상법상 원칙적으로 3년의 소멸시효가 적용됩니다. 사고 발생 후 너무 늦지 않게 청구하시는 게 안전합니다." },
+    { category: "보상청구", question: "실손보험 청구 시 필요한 서류는?", answer: "진료비 영수증과 진료비 세부내역서가 기본이며, 통원의료비는 병원 영수증만으로 청구 가능한 경우도 있습니다. 정확한 서류는 보험사별로 다를 수 있어 청구 전 고객센터 확인을 권장합니다." },
+    { category: "보상청구", question: "입원·수술 보험금 청구 서류는?", answer: "입퇴원확인서, 진단서, 수술확인서(수술한 경우), 진료비 영수증 및 세부내역서가 기본적으로 필요합니다." },
+    { category: "보상청구", question: "자동차사고 보험금 청구는 어떻게 하나요?", answer: "사고 접수 후 보험사 담당자가 배정되며, 정비소 견적서·수리비 영수증·(대인사고 시) 진단서 등을 제출합니다. 사고 접수는 보험사 업무지원 센터에서 해당 보험사 고객센터로 바로 전화하실 수 있어요." },
+    { category: "보상청구", question: "보험금 청구는 모바일로도 가능한가요?", answer: "대부분의 보험사가 모바일 앱 또는 홈페이지를 통한 온라인 청구를 지원합니다. 소액 청구는 모바일로 빠르게 처리되는 경우가 많습니다." },
+    { category: "보상청구", question: "청구한 보험금은 언제 지급되나요?", answer: "보험업법상 서류 접수 완료일로부터 원칙적으로 3영업일 이내 지급하며, 조사가 필요한 경우 지급일이 연장될 수 있습니다 (최대 30일, 특별한 사유 시 추가 연장 가능)." },
+    { category: "보상청구", question: "설계사가 대신 청구서를 접수해도 되나요?", answer: "보험사·상품에 따라 설계사 대리 접수가 가능한 경우가 있습니다. 다만 위임 관련 서류가 필요할 수 있어 사전에 해당 보험사 고객센터에 확인하시는 게 좋습니다." },
+    { category: "보상청구", question: "치아보험은 청구 서류가 다른가요?", answer: "치아보험은 치과 진단서, 임플란트/보철 시술확인서, 방사선 사진 등이 추가로 필요한 경우가 많습니다. 일부 보험사는 치아보험 전용 팩스번호를 별도 운영하니 보험사 업무지원 센터에서 확인해주세요." }
   ];
   let faqCat = '전체';
   function renderFaq(){
@@ -2466,6 +2359,49 @@ body.growon{ background:var(--g-navy); }
     b.classList.add('active'); faqCat = b.dataset.fcat; renderFaq();
   });
   renderFaq();
+
+
+  // ================= 영업자료실 =================
+  // n8n/Notion/Drive 자동화 대상: 폴더별 배열이 자동으로 채워집니다. (name, type, meta, link)
+  const salesMaterials = {
+    cardnews:   [], // 이미지, 압축파일
+    leaflet:    [], // pdf파일, 이미지
+    pitch:      [], // 상담화법
+    consulting: [], // 컨설팅자료
+    industry:   [], // 업종별 제안서
+  };
+  const smFolderLabel = {
+    cardnews: '카드뉴스', leaflet: '리플렛', pitch: '상담화법',
+    consulting: '컨설팅자료', industry: '업종별 제안서'
+  };
+  const smIcon = { image:'🖼️', zip:'🗜️', pdf:'📄', doc:'📝' };
+  function renderSmFolder(key){
+    const box = document.getElementById('smList-' + key);
+    if(!box) return;
+    const list = salesMaterials[key] || [];
+    if(!list.length){
+      box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">${escapeHtml(smFolderLabel[key])} 자료가 없습니다.<br><span style="font-size:11.5px;">자료를 주시면 채워 드립니다.</span></div>`;
+      return;
+    }
+    box.innerHTML = list.map(f => `
+      <div class="sm-item">
+        <span class="sm-icon">${smIcon[f.type] || '📁'}</span>
+        <span class="sm-name">${escapeHtml(f.name)}</span>
+        ${f.meta ? `<span class="sm-meta">${escapeHtml(f.meta)}</span>` : ''}
+        <a class="sm-dl" href="${escapeHtml(f.link||'#')}" target="_blank" rel="noopener">다운로드</a>
+      </div>`).join('');
+  }
+  Object.keys(salesMaterials).forEach(renderSmFolder);
+
+  const _smt = document.getElementById('smTabs');
+  if(_smt) _smt.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edu-tab');
+    if(!btn) return;
+    _smt.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#salesmaterials .edu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sm-' + btn.dataset.smtab).classList.add('active');
+  });
 
   syncGrowLayout(); renderHome(); showView('home');
 
