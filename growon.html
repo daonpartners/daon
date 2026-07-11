@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GROW ON 그로우온 | 미래에셋 그로우 사업부</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
 <style>
 
   :root{
@@ -25,7 +26,7 @@
   body{
     background:var(--canvas);
     color:var(--text);
-    font-family:'Noto Sans KR', -apple-system, sans-serif;
+    font-family:'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing:-0.1px;
     -webkit-font-smoothing:antialiased;
     line-height:1.5;
     font-variant-numeric:tabular-nums;
@@ -453,26 +454,26 @@ body.growon{ background:var(--g-navy); }
 .dcard{border:1px solid #E3E7EE; border-radius:12px; padding:14px 13px; background:#fff; display:flex; flex-direction:column;}
 .dcard-hd{text-align:center; font-size:15px; font-weight:900; color:#0F2740; padding-bottom:11px; min-height:24px;}
 .dcard-hd .dbadge{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle;}
-.drow{display:flex; justify-content:space-between; align-items:center; gap:8px; background:#F4F7FA; border-radius:6px; padding:7px 9px; margin-bottom:5px; font-size:11.5px;}
-.drow-k{color:#6B7A8C; font-weight:700; white-space:nowrap;}
-.drow-v{color:#0F2740; font-weight:800; text-align:right;}
+.drow{display:flex; justify-content:space-between; align-items:center; gap:8px; background:#F4F7FA; border-radius:6px; padding:8px 10px; margin-bottom:5px; font-size:12.5px; letter-spacing:-0.2px;}
+.drow-k{color:#6B7A8C; font-weight:600; white-space:nowrap;}
+.drow-v{color:#0F2740; font-weight:700; text-align:right; font-variant-numeric:tabular-nums;}
 .drow-v a{color:#0F2740; text-decoration:none;}
 .drow-v a:hover{text-decoration:underline;}
 .dnone{color:#A9B4C0; font-weight:600;}
-.dcard-btn{display:block; text-align:center; background:#1D3A5C; color:#fff; font-size:12.5px; font-weight:800; padding:9px; border-radius:7px; text-decoration:none; margin:7px 0;}
+.dcard-btn{display:block; text-align:center; background:#1D3A5C; color:#fff; font-size:13px; font-weight:700; padding:9px; border-radius:7px; text-decoration:none; margin:7px 0; letter-spacing:-0.2px;}
 .dcard-btn:hover{background:#12283F;}
 .dcard-btn.off{background:#E3E7EE; color:#A9B4C0; cursor:not-allowed;}
 .dfoot{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:auto; padding-top:7px;}
-.dfoot a{text-align:center; font-size:11.5px; font-weight:800; padding:8px 4px; border-radius:7px; text-decoration:none; border:1px solid #1D3A5C; color:#1D3A5C;}
+.dfoot a{text-align:center; font-size:12px; font-weight:700; padding:8px 4px; border-radius:7px; text-decoration:none; border:1px solid #1D3A5C; color:#1D3A5C; letter-spacing:-0.2px;}
 .dfoot a:hover{background:#EEF3F9;}
 .dfoot a.off{border-color:#E3E7EE; color:#C6D2E0; cursor:not-allowed;}
 .dinfo{cursor:pointer; color:#F0821E; font-weight:800; font-size:11px;}
 
 
 .dcard-hd{display:flex; align-items:center; justify-content:center; gap:7px; padding-bottom:11px; min-height:30px;}
-.dcard-hd .dname{font-size:14.5px; font-weight:900; color:#0F2740;}
-.dlogo{width:22px; height:22px; border-radius:5px; object-fit:contain; flex:none;}
-.dlogo-fb{width:22px; height:22px; border-radius:5px; color:#fff; font-size:12px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; flex:none;}
+.dcard-hd .dname{font-size:15px; font-weight:800; color:#0F2740; letter-spacing:-0.3px;}
+.dlogo{width:26px; height:26px; border-radius:5px; object-fit:contain; flex:none; background:#fff;}
+.dlogo-fb{width:26px; height:26px; border-radius:5px; color:#fff; font-size:13px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; flex:none;}
 
 </style>
 </head>
@@ -1791,38 +1792,38 @@ body.growon{ background:var(--g-navy); }
   // ================= 보험사 전산·보상청구 =================
   const insurers = [
     // 손해보험 (12)
-    { name: "KB손해보험", category: "손해보험", color: "#FFB81C", customerCenter: "1544-0114", incallMonitoring: "1544-0019", helpdesk: "1544-8119", claimFax: "0505-136-6500", cardInfo: "구분: 초회,계속분 가능 / 수납: 계속분 설계사수납 / 카드범위: 계약자,배우자,직계가족", claimFormLink: "https://www.kbinsure.co.kr/CG205020001.ec", termsLink: "https://www.kbinsure.co.kr/CG802030001.ec", systemLink: "https://nsales.kbinsure.co.kr/eus/ch/ch_index.jsp" },
-    { name: "삼성화재", category: "손해보험", color: "#1428A0", customerCenter: "1588-5114", incallMonitoring: "1566-0553", helpdesk: "1899-5005", claimFax: "0505-162-0872", claimFormLink: "https://www.samsungfire.com/claim/P_P03_01_02_009.html", termsLink: "https://www.samsungfire.com/page/VH.REIF0011.do", systemLink: "https://erp.samsungfire.com/" },
-    { name: "현대해상", category: "손해보험", color: "#004EA2", customerCenter: "1588-5656", incallMonitoring: "1577-3223", helpdesk: "02-2628-4567", claimFax: "0507-774-6060", claimFormLink: "https://www.hi.co.kr/serviceAction.do?menuId=100631", termsLink: "https://www.hi.co.kr/serviceAction.do?menuId=100931", systemLink: "https://sp.hi.co.kr" },
-    { name: "DB손해보험", category: "손해보험", color: "#F58220", customerCenter: "1588-0100", incallMonitoring: "1566-0757", helpdesk: "02-2262-1241", claimFax: "0505-181-4862", claimFormLink: "https://www.idbins.com/pc/bizxpress/ct/dc/FWCUSV1301.shtm", termsLink: "https://www.idbins.com/FWMAIV1534.do", systemLink: "https://www.mdbins.com/" },
-    { name: "메리츠화재", category: "손해보험", color: "#E4032E", customerCenter: "1566-7711", incallMonitoring: "1577-7711", helpdesk: "02-3786-2777", claimFax: "0505-021-3400", claimFormLink: "https://m.meritzfire.com/compensation/longterm-insurance/request.do", termsLink: "https://www.meritzfire.com/disclosure/product-announcement/product-list.do?vMode=PC", systemLink: "http://sales.meritzfire.com" },
-    { name: "한화손해보험", category: "손해보험", color: "#FF4800", customerCenter: "1566-8000", incallMonitoring: "1670-1882", helpdesk: "02-316-0111", claimFormLink: "https://www.hwgeneralins.com/fplaza/compensation/receipt01.do", claimFax: "0502-779-1004", termsLink: "https://www.hwgeneralins.com/notice/ir/product-main.do?mtoh=Y", systemLink: "https://portal.hwgeneralins.com/" },
-    { name: "흥국화재", category: "손해보험", color: "#F7941D", customerCenter: "1688-1688", incallMonitoring: "1688-6997", helpdesk: "031-786-8088", claimFormLink: "https://www.heungkukfire.co.kr/FRW/compensation/accidentDocInfo.do", claimFax: "0504-800-0700", termsLink: "https://www.heungkukfire.co.kr/FRW/announce/insGoodsGongsiSale.do", systemLink: "https://sales.heungkukfire.co.kr/#/login" },
-    { name: "NH농협손해보험", category: "손해보험", color: "#00A366", customerCenter: "1644-9000", incallMonitoring: "1644-9600", helpdesk: "1644-0090", claimFormLink: "https://www.nhfire.co.kr/customer/bilgdcm/retrieveBilgDcmList.nhfire", claimFax: "0505-060-7000", termsLink: "https://www.nhfire.co.kr/announce/productAnnounce/retrieveInsuranceProductsAnnounce.nhfire", systemLink: "https://www.nhfire.co.kr/fc/fd.nhfire" },
-    { name: "라이나손해보험", category: "손해보험", color: "#003D6E", customerCenter: "1566-5800", claimFormLink: "https://www.chubb.com/kr-kr/claims/report-a-claim.html", claimFax: "02-6742-3992", dentalClaimFax: "02-6742-3991~2", termsLink: "https://www.lina.co.kr", systemLink: "https://ga.linagi.com/" },
-    { name: "롯데손해보험", category: "손해보험", color: "#ED1C24", customerCenter: "1588-3344", incallMonitoring: "1600-5182", helpdesk: "1599-8260", claimFax: "0507-333-9999", termsLink: "https://www.lotteins.co.kr/web/C/D/H/cdh170.jsp", claimFormLink: "https://www.lotteins.co.kr/web/C/D/C/cdc_claim_0502.jsp", systemLink: "https://lottero.lotteins.co.kr/ncrmwebroot/webfw/html/nawlogon.jsp" },
-    { name: "하나손해보험", category: "손해보험", color: "#009490", customerCenter: "1566-3000", incallMonitoring: "1566-3000 (3번)", claimFormLink: "https://www.hanainsure.co.kr/w/claim/carReward/rewardDocumentGuide", claimFax: "0504-3764-0765", termsLink: "https://m.hanainsure.co.kr/w/disclosure/product/saleProduct", systemLink: "https://sfa.saleshana.com" },
+    { name: "KB손해보험", category: "손해보험", color: "#FFB81C", customerCenter: "1544-0114", incallMonitoring: "1544-0019", helpdesk: "1544-8119", claimFax: "0505-136-6500", cardInfo: "구분: 초회,계속분 가능 / 수납: 계속분 설계사수납 / 카드범위: 계약자,배우자,직계가족", claimFormLink: "https://www.kbinsure.co.kr/CG205020001.ec", termsLink: "https://www.kbinsure.co.kr/CG802030001.ec", systemLink: "https://nsales.kbinsure.co.kr/eus/ch/ch_index.jsp", claimAddress: "서울 마포구 양화로 19, (합정동) KB손해보험 합정빌딩 19층 인보험사고접수센터 (04027)" },
+    { name: "삼성화재", category: "손해보험", color: "#1428A0", customerCenter: "1588-5114", incallMonitoring: "1566-0553", helpdesk: "1899-5005", claimFax: "0505-162-0872", claimFormLink: "https://www.samsungfire.com/claim/P_P03_01_02_009.html", termsLink: "https://www.samsungfire.com/page/VH.REIF0011.do", systemLink: "https://erp.samsungfire.com/", claimAddress: "서울 영등포구 영등포로5길 19, 동아프라임밸리 504호 삼성화재 장기보험접수팀 (07275)" },
+    { name: "현대해상", category: "손해보험", color: "#004EA2", customerCenter: "1588-5656", incallMonitoring: "1577-3223", helpdesk: "02-2628-4567", claimFax: "0507-774-6060", claimFormLink: "https://www.hi.co.kr/serviceAction.do?menuId=100631", termsLink: "https://www.hi.co.kr/serviceAction.do?menuId=100931", systemLink: "https://sp.hi.co.kr", claimAddress: "서울 영등포구 국회대로 543, (당산동4가) 동양타워빌딩 7층 (07219)" },
+    { name: "DB손해보험", category: "손해보험", color: "#F58220", customerCenter: "1588-0100", incallMonitoring: "1566-0757", helpdesk: "02-2262-1241", claimFax: "0505-181-4862", claimFormLink: "https://www.idbins.com/pc/bizxpress/ct/dc/FWCUSV1301.shtm", termsLink: "https://www.idbins.com/FWMAIV1534.do", systemLink: "https://www.mdbins.com/", claimAddress: "전북 전주시 완산구 서원로 99, 전주우체국 사서함 15호 DB손해보험 사고접수팀 (54966)" },
+    { name: "메리츠화재", category: "손해보험", color: "#E4032E", customerCenter: "1566-7711", incallMonitoring: "1577-7711", helpdesk: "02-3786-2777", claimFax: "0505-021-3400", claimFormLink: "https://m.meritzfire.com/compensation/longterm-insurance/request.do", termsLink: "https://www.meritzfire.com/disclosure/product-announcement/product-list.do?vMode=PC", systemLink: "http://sales.meritzfire.com", claimAddress: "경기 부천시 원미구 송내대로 80, 메리츠화재빌딩 6층 사고접수파트 (14623)" },
+    { name: "한화손해보험", category: "손해보험", color: "#FF4800", customerCenter: "1566-8000", incallMonitoring: "1670-1882", helpdesk: "02-316-0111", claimFormLink: "https://www.hwgeneralins.com/fplaza/compensation/receipt01.do", claimFax: "0502-779-1004", termsLink: "https://www.hwgeneralins.com/notice/ir/product-main.do?mtoh=Y", systemLink: "https://portal.hwgeneralins.com/", claimAddress: "서울 영등포구 은행로 30, 한화손해보험 장기보험심사팀 (사고보험금 접수담당자) (07327)" },
+    { name: "흥국화재", category: "손해보험", color: "#F7941D", customerCenter: "1688-1688", incallMonitoring: "1688-6997", helpdesk: "031-786-8088", claimFormLink: "https://www.heungkukfire.co.kr/FRW/compensation/accidentDocInfo.do", claimFax: "0504-800-0700", termsLink: "https://www.heungkukfire.co.kr/FRW/announce/insGoodsGongsiSale.do", systemLink: "https://sales.heungkukfire.co.kr/#/login", claimAddress: "서울시 영등포구 버드나루로 2길 7, 흥국생명빌딩 9층 접수담당자 (07254)" },
+    { name: "NH농협손해보험", category: "손해보험", color: "#00A366", customerCenter: "1644-9000", incallMonitoring: "1644-9600", helpdesk: "1644-0090", claimFormLink: "https://www.nhfire.co.kr/customer/bilgdcm/retrieveBilgDcmList.nhfire", claimFax: "0505-060-7000", termsLink: "https://www.nhfire.co.kr/announce/productAnnounce/retrieveInsuranceProductsAnnounce.nhfire", systemLink: "https://www.nhfire.co.kr/fc/fd.nhfire", claimAddress: "서울 서대문구 경기대로58, 경기빌딩 503호 농협손해보험 사고접수팀 (03736)" },
+    { name: "라이나손해보험", category: "손해보험", color: "#003D6E", customerCenter: "1566-5800", claimFormLink: "https://www.chubb.com/kr-kr/claims/report-a-claim.html", claimFax: "02-6742-3992", dentalClaimFax: "02-6742-3991~2", termsLink: "https://www.lina.co.kr", systemLink: "https://ga.linagi.com/", claimAddress: "서울 종로구 종로6, 광화문 우체국 사서함 386(서린동) (03187)" },
+    { name: "롯데손해보험", category: "손해보험", color: "#ED1C24", customerCenter: "1588-3344", incallMonitoring: "1600-5182", helpdesk: "1599-8260", claimFax: "0507-333-9999", termsLink: "https://www.lotteins.co.kr/web/C/D/H/cdh170.jsp", claimFormLink: "https://www.lotteins.co.kr/web/C/D/C/cdc_claim_0502.jsp", systemLink: "https://lottero.lotteins.co.kr/ncrmwebroot/webfw/html/nawlogon.jsp", claimAddress: "서울 용산구 원효로90길 11, 용산더프라임빌딩 업무동 20층 롯데손해보험 장기사고접수파트(04315)" },
+    { name: "하나손해보험", category: "손해보험", color: "#009490", customerCenter: "1566-3000", incallMonitoring: "1566-3000 (3번)", claimFormLink: "https://www.hanainsure.co.kr/w/claim/carReward/rewardDocumentGuide", claimFax: "0504-3764-0765", termsLink: "https://m.hanainsure.co.kr/w/disclosure/product/saleProduct", systemLink: "https://sfa.saleshana.com", claimAddress: "서울 종로구 창경궁로 158, (인의동) 하나손해보험 보상팀 (03137)" },
     // 생명보험 (15)
-    { name: "미래에셋생명", category: "생명보험", color: "#0068B7", customerCenter: "1588-0220", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://life.miraeasset.com/Cmmn/lifePage.do?cp=MNT-CC-012", termsLink: "https://life.miraeasset.com/Cmmn/lifePage.do?cp=MNT-CC-012", systemLink: "http://www.loveageplan.com" },
-    { name: "삼성생명", category: "생명보험", color: "#1428A0", customerCenter: "1588-3114", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.samsunglife.com/individual/cs/guide/MDP-CURDO010100M", termsLink: "https://www.samsunglife.com/individual/products/disclosure/sales/PDO-PRPRI010110M", systemLink: "https://ga.samsunglife.com" },
-    { name: "교보생명", category: "생명보험", color: "#0066B3", customerCenter: "1588-1001", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.kyobo.com/dgt/web/customer/support/need-papers/list", termsLink: "https://www.kyobo.com/dgt/web/product-official/information", systemLink: "http://ga.kyobo.com" },
-    { name: "한화생명", category: "생명보험", color: "#FF4800", customerCenter: "1588-6363", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.hanwhalife.com/static/main/myPage/insurance/accident/document/MY_INAPADC_T10000.jsp", termsLink: "https://www.hanwhalife.com/main/disclosure/goods/disclosurenotice/DF_GDDN000_P10000.do", systemLink: "https://hmp.hanwhalife.com/online/ga" },
-    { name: "KDB생명", category: "생명보험", color: "#004EA2", customerCenter: "1588-4040", claimFax: "02-2669-6500", claimFormLink: "https://www.kdblife.co.kr/ajax.do?scrId=HCSCT006M01P", termsLink: "https://www.kdblife.co.kr", systemLink: "http://kss.kdblife.co.kr" },
-    { name: "신한라이프", category: "생명보험", color: "#0046FF", customerCenter: "1588-5580", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.shinhanlife.co.kr/hp/cdhf0020t02.do", termsLink: "https://www.shinhanlife.co.kr/hp/cdhi0020t01.do", systemLink: "https://ga.shinhanlife.co.kr" },
-    { name: "라이나생명", category: "생명보험", color: "#003D6E", customerCenter: "1588-0058", claimFax: "02-6944-1200", claimFormLink: "https://www.lina.co.kr/cms/upload/upload/cms/wss/insrmoney_doc/1/A0124.pdf", termsLink: "https://www.lina.co.kr/disclosure/product-public-announcement/product-guide", systemLink: "https://ga.lina.co.kr/html/gap/GA/GAZ910M0.html" },
-    { name: "메트라이프생명", category: "생명보험", color: "#00A9E0", customerCenter: "1588-9600", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://cyber.metlife.co.kr/claim/requiredDocumentNotice", termsLink: "https://brand.metlife.co.kr/pn/paReal/insuProductDisclMain.do", systemLink: "https://metplus.metlife.co.kr/" },
-    { name: "동양생명", category: "생명보험", color: "#FF6600", customerCenter: "1577-1004", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.myangel.co.kr/Mn", termsLink: "https://www.myangel.co.kr", systemLink: "http://1004.myangel.co.kr/" },
+    { name: "미래에셋생명", category: "생명보험", color: "#0068B7", customerCenter: "1588-0220", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://life.miraeasset.com/Cmmn/lifePage.do?cp=MNT-CC-012", termsLink: "https://life.miraeasset.com/Cmmn/lifePage.do?cp=MNT-CC-012", systemLink: "http://www.loveageplan.com", claimAddress: "서울 영등포구 선유로 49길 23, 아이에스비즈타워 13층 미래에셋생명 보험금 접수 담당자 (07208)" },
+    { name: "삼성생명", category: "생명보험", color: "#1428A0", customerCenter: "1588-3114", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.samsunglife.com/individual/cs/guide/MDP-CURDO010100M", termsLink: "https://www.samsunglife.com/individual/products/disclosure/sales/PDO-PRPRI010110M", systemLink: "https://ga.samsunglife.com", claimAddress: "부산우체국 사서함 189호 삼성생명 사고보험금 접수담당자" },
+    { name: "교보생명", category: "생명보험", color: "#0066B3", customerCenter: "1588-1001", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.kyobo.com/dgt/web/customer/support/need-papers/list", termsLink: "https://www.kyobo.com/dgt/web/product-official/information", systemLink: "http://ga.kyobo.com", claimAddress: "서울 영등포구 영등포로 96, 교보생명빌딩 6층, 교보생명 사고보험금 우편청구 담당자 (07291)" },
+    { name: "한화생명", category: "생명보험", color: "#FF4800", customerCenter: "1588-6363", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.hanwhalife.com/static/main/myPage/insurance/accident/document/MY_INAPADC_T10000.jsp", termsLink: "https://www.hanwhalife.com/main/disclosure/goods/disclosurenotice/DF_GDDN000_P10000.do", systemLink: "https://hmp.hanwhalife.com/online/ga", claimAddress: "서울 마포구 마포대로 155, LG마포빌딩 3층 한화생명 사고보험금 우편청구 심사 담당자 (04143)" },
+    { name: "KDB생명", category: "생명보험", color: "#004EA2", customerCenter: "1588-4040", claimFax: "02-2669-6500", claimFormLink: "https://www.kdblife.co.kr/ajax.do?scrId=HCSCT006M01P", termsLink: "https://www.kdblife.co.kr", systemLink: "http://kss.kdblife.co.kr", claimAddress: "광주 서구 천변좌로 268, KDB생명빌딩 15층 사고보험금 우편청구 담당자 (61925)" },
+    { name: "신한라이프", category: "생명보험", color: "#0046FF", customerCenter: "1588-5580", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.shinhanlife.co.kr/hp/cdhf0020t02.do", termsLink: "https://www.shinhanlife.co.kr/hp/cdhi0020t01.do", systemLink: "https://ga.shinhanlife.co.kr", claimAddress: "서울 중구 소공로 70, 서울중앙우체국 사서함 160호 신한라이프 보험금접수 담당자 (04535)" },
+    { name: "라이나생명", category: "생명보험", color: "#003D6E", customerCenter: "1588-0058", claimFax: "02-6944-1200", claimFormLink: "https://www.lina.co.kr/cms/upload/upload/cms/wss/insrmoney_doc/1/A0124.pdf", termsLink: "https://www.lina.co.kr/disclosure/product-public-announcement/product-guide", systemLink: "https://ga.lina.co.kr/html/gap/GA/GAZ910M0.html", claimAddress: "서울 종로구 삼봉로 48, (청진동 188) 라이나타워 보험금 담당자 (03156)" },
+    { name: "메트라이프생명", category: "생명보험", color: "#00A9E0", customerCenter: "1588-9600", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://cyber.metlife.co.kr/claim/requiredDocumentNotice", termsLink: "https://brand.metlife.co.kr/pn/paReal/insuProductDisclMain.do", systemLink: "https://metplus.metlife.co.kr/", claimAddress: "서울 강남구 테헤란로 316, 메트라이프타워 클레임서비스팀 (06211)" },
+    { name: "동양생명", category: "생명보험", color: "#FF6600", customerCenter: "1577-1004", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.myangel.co.kr/Mn", termsLink: "https://www.myangel.co.kr", systemLink: "http://1004.myangel.co.kr/", claimAddress: "서울 영등포구 선유로49길 23, 아이에스비즈타워 2차 12층 동양생명 보험심사팀 (07208)" },
     { name: "ABL생명", category: "생명보험", color: "#002856", customerCenter: "1588-6500", claimFax: "02-3299-5544", claimFormLink: "https://www.abllife.co.kr/st/custDesk/insSrvcGudn/acdtInsmClamGudn/acdtInsmClamGudn3?page=index", termsLink: "https://www.abllife.co.kr", systemLink: "https://ga.abllife.co.kr" },
-    { name: "흥국생명", category: "생명보험", color: "#F7941D", customerCenter: "1588-2288", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.heungkuklife.co.kr/jsps/front/help/customer_require_tab.jsp", termsLink: "https://www.heungkuklife.co.kr", systemLink: "https://sales.heungkuklife.co.kr/" },
-    { name: "DB생명", category: "생명보험", color: "#F58220", customerCenter: "1588-3131", claimFax: "0505-129-3134", claimFormLink: "https://www.idblife.com/support/guide/acbf_clm", termsLink: "https://www.idblife.com/notice/product/sale", systemLink: "http://etopia.dongbulife.com" },
-    { name: "IM라이프", category: "생명보험", color: "#00AEEF", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.imlifeins.co.kr/BA/BA_A010.do", systemLink: "https://fgs.imlifeins.co.kr:8443/" },
-    { name: "하나생명", category: "생명보험", color: "#009490", customerCenter: "1577-1112", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.hanalife.co.kr/anm/product/productIntro.do", systemLink: "https://ga.hanalife.co.kr" },
-    { name: "KB라이프생명", category: "생명보험", color: "#FFB81C", customerCenter: "1588-9922", claimFax: "02-390-4629", claimFormLink: "https://www.kblife.co.kr/customer-center/informRequiredDocument.do", systemLink: "http://sfa.kblife.co.kr" },
-  { name: "푸본현대생명", category: "생명보험", color: "#005BAC", customerCenter: "1577-3311", helpdesk: "080-860-1212", claimFax: "0505-106-0311", cardInfo: "구분: 초회, 계속분 가능", systemLink: "https://www.fubonhyundai.com", termsLink: "https://www.fubonhyundai.com" },
+    { name: "흥국생명", category: "생명보험", color: "#F7941D", customerCenter: "1588-2288", claimFax: "콜센터 가상번호 부여", claimFormLink: "https://www.heungkuklife.co.kr/jsps/front/help/customer_require_tab.jsp", termsLink: "https://www.heungkuklife.co.kr", systemLink: "https://sales.heungkuklife.co.kr/", claimAddress: "서울 영등포구 버드나루로2길 7, 2층 흥국생명 사고접수센터 (07254)" },
+    { name: "DB생명", category: "생명보험", color: "#F58220", customerCenter: "1588-3131", claimFax: "0505-129-3134", claimFormLink: "https://www.idblife.com/support/guide/acbf_clm", termsLink: "https://www.idblife.com/notice/product/sale", systemLink: "http://etopia.dongbulife.com", claimAddress: "서울 성동구 아차산로 17길 48, SK V1 401호 DB생명 보험금 접수 담당자 (04799)" },
+    { name: "IM라이프", category: "생명보험", color: "#00AEEF", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.imlifeins.co.kr/BA/BA_A010.do", systemLink: "https://fgs.imlifeins.co.kr:8443/", claimAddress: "서울 중구 통일로 2길 16 (순화동 216) AIA타워 25층 AIA생명 보험금팀 (04511)" },
+    { name: "하나생명", category: "생명보험", color: "#009490", customerCenter: "1577-1112", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.hanalife.co.kr/anm/product/productIntro.do", systemLink: "https://ga.hanalife.co.kr", claimAddress: "서울 중구 을지로 66, 하나생명 보험금 접수담당자 (04538)" },
+    { name: "KB라이프생명", category: "생명보험", color: "#FFB81C", customerCenter: "1588-9922", claimFax: "02-390-4629", claimFormLink: "https://www.kblife.co.kr/customer-center/informRequiredDocument.do", systemLink: "http://sfa.kblife.co.kr", claimAddress: "서울 영등포구 국제금융로 2길 28, KB금융타워 15층 보험금심사팀 (07325)" },
+  { name: "푸본현대생명", category: "생명보험", color: "#005BAC", customerCenter: "1577-3311", helpdesk: "080-860-1212", claimFax: "0505-106-0311", cardInfo: "구분: 초회, 계속분 가능", systemLink: "https://www.fubonhyundai.com", termsLink: "https://www.fubonhyundai.com", claimAddress: "서울 영등포구 여의나루로 57, 푸본현대생명 보험금팀 (07327)" },
     // 공제 (3)
-    { name: "우체국보험", category: "공제", color: "#E8380D", customerCenter: "1599-0100", cardInfo: "해당사항 없음", termsLink: "https://www.epostbank.go.kr" },
-    { name: "수협보험", category: "공제", color: "#0B4DA2", customerCenter: "1588-4119", cardInfo: "해당사항 없음", termsLink: "https://www.suhyup-bank.com" },
-    { name: "신협", category: "공제", color: "#E5B200", customerCenter: "1544-3030", cardInfo: "해당사항 없음", termsLink: "https://www.cu.co.kr" },
+    { name: "우체국보험", category: "공제", color: "#E8380D", customerCenter: "1599-0100", cardInfo: "해당사항 없음", termsLink: "https://www.epostbank.go.kr", claimFormLink: "https://www.epostbank.go.kr", claimAddress: "우편 청구 : 관할 우체국" },
+    { name: "수협보험", category: "공제", color: "#0B4DA2", customerCenter: "1588-4119", cardInfo: "해당사항 없음", termsLink: "https://www.suhyup-bank.com", claimFormLink: "https://www.suhyup-bank.com", claimAddress: "서울 영등포구 은행로 54, 수협재단빌딩 (공제보상실 앞) (07241)" },
+    { name: "신협", category: "공제", color: "#E5B200", customerCenter: "1544-3030", cardInfo: "해당사항 없음", termsLink: "https://www.cu.co.kr", claimFormLink: "https://www.cu.co.kr", claimAddress: "대전 서구 한밭대로 745, 신협중앙회 17층 고객지원센터 보상지원 담당자 (35209)" },
   ];
 
   function renderInsurers(list){
@@ -2277,8 +2278,26 @@ body.growon{ background:var(--g-navy); }
     const ini = escapeHtml(i.name.slice(0,1));
     const col = escapeHtml(i.color || '#1D3A5C');
     if(!d) return `<span class="dlogo-fb" style="background:${col}">${ini}</span>`;
-    return `<img class="dlogo" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=64" alt="" loading="lazy" data-ini="${ini}" data-col="${col}" onerror="deskLogoFail(this)">`;
+    // 1차: 브랜드 로고 전용 서비스 → 2차: 파비콘 → 3차: 이니셜
+    return `<img class="dlogo" src="https://logo.clearbit.com/${encodeURIComponent(d)}?size=64" alt="" loading="lazy"
+      data-ini="${ini}" data-col="${col}" data-fallback="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=64"
+      onerror="deskLogoFail(this)">`;
   }
+  function deskLogoFail(img){
+    if(img.dataset.fallback){
+      const fb = img.dataset.fallback;
+      img.removeAttribute('data-fallback');
+      img.onerror = function(){ deskLogoFail(img); };
+      img.src = fb;
+      return;
+    }
+    const s = document.createElement('span');
+    s.className = 'dlogo-fb';
+    s.style.background = img.dataset.col || '#1D3A5C';
+    s.textContent = img.dataset.ini || '';
+    img.replaceWith(s);
+  }
+
   function deskLogoFail(img){
     const s = document.createElement('span');
     s.className = 'dlogo-fb';
@@ -2321,6 +2340,7 @@ body.growon{ background:var(--g-navy); }
         ${deskRow('고객센터', deskTel(i.customerCenter))}
         ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
         ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
+        ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress)) : ''}
         <div class="dfoot">${terms}${form}</div>
       </div>`;
     }).join('') || '<div class="cr-empty" style="padding:24px;text-align:center;">검색 결과가 없습니다.</div>';
