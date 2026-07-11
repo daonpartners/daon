@@ -951,7 +951,14 @@
     document.getElementById('cardnewsModalTitle').textContent = c.title || '';
     document.getElementById('cardnewsModalMeta').textContent = `${c.category || ''}${c.category ? ' · ' : ''}${c.date || ''}`;
     document.getElementById('cardnewsModalImg').innerHTML = c.image
-      ? `<img src="${c.image}" loading="lazy" style="width:100%; border-radius:10px; border:1px solid var(--line);" alt="">`
+      ? `<img src="${c.image}" loading="lazy" style="width:100%; border-radius:10px; border:1px solid var(--line);" alt="">
+         <div style="display:flex; gap:8px; margin-top:12px;">
+           <a href="${c.image}" download="${(c.title||'카드뉴스').replace(/[\\/:*?"<>|]/g,'')}.png"
+              style="flex:1; text-align:center; background:var(--orange-deep); color:#fff; font-size:13px; font-weight:800; padding:11px 0; border-radius:9px; text-decoration:none;">⬇️ 이미지 저장</a>
+           <a href="${c.image}" target="_blank" rel="noopener"
+              style="flex:1; text-align:center; background:#eef1f6; color:var(--navy-2); font-size:13px; font-weight:800; padding:11px 0; border-radius:9px; text-decoration:none;">🔍 원본 크게 보기</a>
+         </div>
+         <div style="font-size:11px; color:var(--slate); margin-top:8px; text-align:center;">모바일에서 저장이 안 되면 '원본 크게 보기' 후 이미지를 길게 눌러 저장하세요.</div>`
       : '';
     document.getElementById('cardnewsModalContent').textContent = c.content || c.summary || '';
     document.getElementById('cardnewsModalLinks').innerHTML = (c.links && c.links.length)
