@@ -2611,7 +2611,19 @@ body.growon{ background:var(--g-navy); }
     _ecr.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
     b.classList.add('active'); eventCat = b.dataset.ecat; renderEvents();
   });
-  renderEvents();
+  const EVENT_FEED = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-feed';
+  (async () => {
+    try {
+      const res = await fetch(EVENT_FEED);
+      const data = await res.json();
+      if (data && Array.isArray(data.posts)) {
+        eventPosts.length = 0;
+        data.posts.forEach(p => eventPosts.push(p));
+      }
+    } catch (e) { /* 실패 시 빈 배열 유지 — 화면은 깨지지 않음 */ }
+    renderEvents();
+  })();
+
 
   document.getElementById('eventList').addEventListener('click', async (e) => {
     const toggleBtn = e.target.closest('.evt-apply-toggle');
