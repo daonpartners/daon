@@ -451,6 +451,11 @@ body.growon{ background:var(--g-navy); }
 
 /* ===== 보험사 전산실 카드 ===== */
 .desk-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:14px;}
+.dname-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; margin-top:14px;}
+.dname-box{background:#fff; border:1px solid #E3E7EE; border-radius:10px; padding:14px 10px; display:flex; flex-direction:column; align-items:center; gap:8px; cursor:pointer; transition:.15s;}
+.dname-box:hover{border-color:#1D3A5C; box-shadow:0 2px 10px rgba(15,39,64,.08);}
+.dname-box .dname{font-size:13px; font-weight:800; color:#0F2740; text-align:center;}
+.dname-box .dlogo, .dname-box .dlogo-fb{width:32px; height:32px;}
 .dcard{border:1px solid #E3E7EE; border-radius:12px; padding:14px 13px; background:#fff; display:flex; flex-direction:column;}
 .dcard-hd{text-align:center; font-size:15px; font-weight:900; color:#0F2740; padding-bottom:11px; min-height:24px;}
 .dcard-hd .dbadge{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle;}
@@ -512,7 +517,6 @@ body.growon{ background:var(--g-navy); }
     <button class="gbtn" data-view="materials">교육센터 바로가기</button>
     <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
     <button class="gbtn" data-view="qna">AI 질문센터</button>
-    <button class="gbtn" data-view="claims">보상센터</button>
     <button class="gbtn" data-view="recruit">파트너모집</button>
     <button class="gbtn" data-view="album">그로우앨범</button>
   </div>
@@ -705,7 +709,7 @@ body.growon{ background:var(--g-navy); }
             <button class="filter-pill" data-dcat="생명보험">생명보험</button>
             <button class="filter-pill" data-dcat="공제">공제</button>
           </div>
-          <div class="desk-grid" id="deskGrid"></div>
+          <div class="dname-grid" id="deskGrid"></div>
           <div class="gnote">청구팩스가 &lsquo;콜센터 가상번호 부여&rsquo;인 곳은 고객센터로 먼저 문의해 번호를 발급받으셔야 합니다.</div>
         </section>
       </div>
@@ -828,6 +832,12 @@ body.growon{ background:var(--g-navy); }
           <button class="modal-close" id="dayModalClose">&times;</button>
           <div class="modal-title" id="dayModalTitle">7월 5일 일정</div>
           <div id="dayModalList" style="margin-top:16px;"></div>
+        </div>
+      </div>
+<div class="modal-backdrop" id="insurerModalBackdrop">
+        <div class="modal-card" style="max-width:420px;">
+          <button class="modal-close" id="insurerModalClose">&times;</button>
+          <div id="insurerModalBody"></div>
         </div>
       </div>
 <div class="modal-backdrop" id="cardnewsModalBackdrop">
@@ -2336,43 +2346,57 @@ body.growon{ background:var(--g-navy); }
     const num = String(v).replace(/[^0-9]/g,'');
     return num ? `<a href="tel:${num}">${escapeHtml(v)}</a>` : escapeHtml(v);
   }
+  let deskCurrentList = [];
+  function buildDeskDetail(i){
+    const card = i.cardInfo ? escapeHtml(i.cardInfo) : '<span class="dnone">-</span>';
+    const sys = i.systemLink
+      ? `<a class="dcard-btn" href="${escapeHtml(i.systemLink)}" target="_blank" rel="noopener">↗ 전산접속</a>`
+      : `<span class="dcard-btn off">전산접속 없음</span>`;
+    const terms = i.termsLink
+      ? `<a href="${escapeHtml(i.termsLink)}" target="_blank" rel="noopener">↗ 약관</a>`
+      : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">약관</span>`;
+    const form = i.claimFormLink
+      ? `<a href="${escapeHtml(i.claimFormLink)}" target="_blank" rel="noopener">↓ 청구양식</a>`
+      : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">청구양식</span>`;
+    const addrExtra = i.claimAddress ? `<span class="daddr-popup" data-addr="${escapeHtml(i.claimAddress)}" style="margin-left:6px;cursor:pointer;color:#F0821E;font-size:10px;font-weight:900;">📮</span>` : '';
+    return `<div class="dcard-hd" style="margin-bottom:12px;">${deskLogo(i)}<span class="dname">${escapeHtml(i.name)}</span></div>
+      ${sys}
+      ${deskRow('고객센터', deskTel(i.customerCenter))}
+      ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
+      ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
+      ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
+      ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress), addrExtra) : ''}
+      ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
+      ${deskRow('카드납', card)}
+      <div class="dfoot">${terms}${form}</div>`;
+  }
+  function openInsurerDetail(idx){
+    const i = deskCurrentList[idx];
+    if(!i) return;
+    const body = document.getElementById('insurerModalBody');
+    body.innerHTML = buildDeskDetail(i);
+    body.querySelectorAll('.daddr-popup').forEach(el=>{
+      el.addEventListener('click', ()=>{ alert('청구주소 (등기우편)\n\n' + el.dataset.addr); });
+    });
+    document.getElementById('insurerModalBackdrop').classList.add('open');
+  }
+  function closeInsurerModal(){ document.getElementById('insurerModalBackdrop').classList.remove('open'); }
+  document.getElementById('insurerModalClose').addEventListener('click', closeInsurerModal);
+  document.getElementById('insurerModalBackdrop').addEventListener('click', (e) => { if(e.target.id === 'insurerModalBackdrop') closeInsurerModal(); });
+
   function renderDesk(list){
     const grid = document.getElementById('deskGrid');
     if(!grid) return;
-    grid.innerHTML = list.map((i, idx) => {
-      const card = i.cardInfo
-        ? `<span class="dinfo" data-card="${idx}">정보 보기</span>`
-        : '<span class="dnone">-</span>';
-      const sys = i.systemLink
-        ? `<a class="dcard-btn" href="${escapeHtml(i.systemLink)}" target="_blank" rel="noopener">↗ 전산접속</a>`
-        : `<span class="dcard-btn off">전산접속 없음</span>`;
-      const terms = i.termsLink
-        ? `<a href="${escapeHtml(i.termsLink)}" target="_blank" rel="noopener">↗ 약관</a>`
-        : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">약관</span>`;
-      const form = i.claimFormLink
-        ? `<a href="${escapeHtml(i.claimFormLink)}" target="_blank" rel="noopener">↓ 청구양식</a>`
-        : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">청구양식</span>`;
-      return `<div class="dcard">
-        <div class="dcard-hd">${deskLogo(i)}<span class="dname">${escapeHtml(i.name)}</span></div>
-        ${sys}
-        ${deskRow('고객센터', deskTel(i.customerCenter))}
-        ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
-        ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
-        ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
-        ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress), '<span class="daddr-popup" data-addr="${escapeHtml(i.claimAddress)}" style="margin-left:6px;cursor:pointer;color:#F0821E;font-size:10px;font-weight:900;">📮</span>') : ''}
-        ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
-        ${deskRow('카드납', card)}
-        <div class="dfoot">${terms}${form}</div>
-      </div>`;
-    }).join('') || '<div class="cr-empty" style="padding:24px;text-align:center;">검색 결과가 없습니다.</div>';
+    deskCurrentList = list;
+    grid.innerHTML = list.map((i, idx) => `
+      <div class="dname-box" data-idx="${idx}">
+        ${deskLogo(i)}
+        <span class="dname">${escapeHtml(i.name)}</span>
+      </div>`).join('') || '<div class="cr-empty" style="padding:24px;text-align:center;">검색 결과가 없습니다.</div>';
 
-
-  grid.querySelectorAll('.daddr-popup').forEach(el=>{
-    el.addEventListener('click', ()=>{
-      const addr = el.dataset.addr;
-      alert('청구주소 (등기우편)\n\n' + addr);
+    grid.querySelectorAll('.dname-box').forEach(el=>{
+      el.addEventListener('click', ()=> openInsurerDetail(Number(el.dataset.idx)));
     });
-  });
 
   grid.querySelectorAll('.dinfo').forEach(el=>{
       el.addEventListener('click', ()=>{
