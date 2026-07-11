@@ -615,40 +615,75 @@ body.growon{ background:var(--g-navy); }
         <div class="biz-grid" id="bizGrid" data-reveal></div>
       </section>
       </div>
-      <div class="gview" id="view-eventnotice">
-<section class="panel" id="eventnotice">
+      <div class="gview" id="view-admin">
+<section class="panel" id="admincenter">
         <div class="panel-head">
-          <div><div class="panel-eyebrow">Event</div><h2 class="panel-title">행사공지 및 신청하기</h2></div>
+          <div><div class="panel-eyebrow">Admin</div><h2 class="panel-title">관리자센터</h2></div>
         </div>
 
-        <div class="qna-notice">관리자가 행사(산모교실·펫페어·입주박람회·기타행사)를 등록하면, 아래에서 지사별로 참석 신청을 댓글로 남길 수 있습니다.</div>
-        <button class="qna-new-btn" id="eventNewBtn">✏️ 행사 등록 (관리자)</button>
-        <div class="qna-form" id="eventNewForm">
-          <div class="qna-form-row">
-            <select id="eventNewCategory">
-              <option value="산모교실">산모교실</option>
-              <option value="펫페어">펫페어</option>
-              <option value="입주박람회">입주박람회</option>
-              <option value="기타행사">기타행사</option>
-            </select>
-            <input type="text" id="eventNewAuthor" placeholder="등록자명(관리자)">
+        <!-- 인증 게이트 -->
+        <div id="adminGate">
+          <div class="qna-notice">🔒 관리자 전용 공간입니다. 인증번호를 입력해 주세요.</div>
+          <div class="qna-form open" style="max-width:360px;">
+            <input type="password" id="adminCode" placeholder="관리자 인증번호" autocomplete="off">
+            <div class="qna-form-msg" id="adminGateMsg"></div>
+            <button type="button" id="adminGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">입장하기</button>
           </div>
-          <input type="text" id="eventNewTitle" placeholder="제목">
-          <textarea id="eventNewContent" placeholder="일시·장소 등 행사 내용을 적어주세요"></textarea>
-          <textarea id="eventNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
-          <div class="qna-form-msg" id="eventNewMsg"></div>
-          <button type="button" id="eventNewSubmit">등록</button>
         </div>
 
-        <div class="filter-row" id="eventFilterRow" style="margin-bottom:14px;">
-          <button class="filter-pill active" data-ecat="전체">전체</button>
-          <button class="filter-pill" data-ecat="산모교실">산모교실</button>
-          <button class="filter-pill" data-ecat="펫페어">펫페어</button>
-          <button class="filter-pill" data-ecat="입주박람회">입주박람회</button>
-          <button class="filter-pill" data-ecat="기타행사">기타행사</button>
-        </div>
+        <!-- 인증 후 본문 -->
+        <div id="adminBody" style="display:none;">
+          <div class="edu-tabs" id="adminTabs" data-reveal>
+            <button class="edu-tab active" data-atab="meeting">📁 회의자료</button>
+            <button class="edu-tab" data-atab="event">📋 행사신청</button>
+          </div>
 
-        <div id="eventList"></div>
+          <!-- 회의자료 -->
+          <div class="edu-panel active" id="admin-meeting">
+            <button class="qna-new-btn" id="meetingNewBtn">✏️ 회의자료 등록</button>
+            <div class="qna-form" id="meetingNewForm">
+              <div class="qna-form-row">
+                <input type="text" id="meetingNewAuthor" placeholder="등록자명">
+                <input type="text" id="meetingNewTitle" placeholder="제목">
+              </div>
+              <textarea id="meetingNewContent" placeholder="회의 내용 / 요약"></textarea>
+              <textarea id="meetingNewFiles" placeholder="자료 링크(선택, 한 줄에 하나씩 — 구글드라이브 등)" style="min-height:44px;"></textarea>
+              <div class="qna-form-msg" id="meetingNewMsg"></div>
+              <button type="button" id="meetingNewSubmit">등록</button>
+            </div>
+            <div id="meetingList"></div>
+          </div>
+
+          <!-- 행사신청 -->
+          <div class="edu-panel" id="admin-event">
+            <button class="qna-new-btn" id="eventNewBtn">✏️ 행사 등록</button>
+            <div class="qna-form" id="eventNewForm">
+              <div class="qna-form-row">
+                <select id="eventNewCategory">
+                  <option value="산모교실">산모교실</option>
+                  <option value="펫페어">펫페어</option>
+                  <option value="입주박람회">입주박람회</option>
+                  <option value="기타행사">기타행사</option>
+                </select>
+                <input type="text" id="eventNewAuthor" placeholder="등록자명">
+              </div>
+              <input type="text" id="eventNewTitle" placeholder="제목">
+              <textarea id="eventNewContent" placeholder="일시·장소 등 행사 내용"></textarea>
+              <textarea id="eventNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
+              <div class="qna-form-msg" id="eventNewMsg"></div>
+              <button type="button" id="eventNewSubmit">등록</button>
+            </div>
+
+            <div class="filter-row" id="eventFilterRow" style="margin:14px 0;">
+              <button class="filter-pill active" data-ecat="전체">전체</button>
+              <button class="filter-pill" data-ecat="산모교실">산모교실</button>
+              <button class="filter-pill" data-ecat="펫페어">펫페어</button>
+              <button class="filter-pill" data-ecat="입주박람회">입주박람회</button>
+              <button class="filter-pill" data-ecat="기타행사">기타행사</button>
+            </div>
+            <div id="eventList"></div>
+          </div>
+        </div>
       </section>
       </div>
       <div class="gview" id="view-salesmaterials">
@@ -873,7 +908,7 @@ body.growon{ background:var(--g-navy); }
   <div class="gcol" id="colRight">
     <div class="rail-t">업무링크</div>
     <a class="rlink" data-view="salesmaterials" href="#">영업자료실 바로가기</a>
-    <a class="rlink" data-view="eventnotice" href="#">행사공지 및 신청하기</a>
+    <a class="rlink" data-view="admin" href="#">🔒 관리자센터</a>
     <a class="rlink" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener">DB신청하기</a>
     <div class="rgroup">
       <h4>자동차보험</h4>
@@ -2487,11 +2522,7 @@ body.growon{ background:var(--g-navy); }
   });
 
 
-  // ================= 행사공지 및 신청하기 =================
-  // n8n/Notion 자동화 대상: 이 배열만 교체하면 화면에 자동 반영됩니다.
-  const eventPosts = [
-    // 예시: { id:"e1", category:"산모교실", title:"7월 산모교실 안내", date:"2026.07.10 게시", content:"일시/장소 등 상세내용", images:[], replies:[] }
-  ];
+  // ================= 관리자센터 =================
   const PARTNER_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-partner-apply';
   const _pas = document.getElementById('partnerApplySubmit');
   if(_pas) _pas.addEventListener('click', async () => {
@@ -2529,17 +2560,119 @@ body.growon{ background:var(--g-navy); }
   });
 
   const EVENT_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-apply';
-
   const EVENT_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-post';
-  document.getElementById('eventNewBtn').addEventListener('click', () => {
+  const MEETING_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-meeting-post';
+  const ADMIN_FEED = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-feed';
+
+  const eventPosts = [];
+  const meetingPosts = [];
+
+  /* ===== 관리자 인증 게이트 ===== */
+  const ADMIN_CODE = 'grow2026';
+  function unlockAdmin(){
+    document.getElementById('adminGate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'block';
+    loadAdminFeed();
+  }
+  const _agb = document.getElementById('adminGateBtn');
+  if(_agb) _agb.addEventListener('click', () => {
+    const code = document.getElementById('adminCode').value.trim();
+    const msg = document.getElementById('adminGateMsg');
+    if(code === ADMIN_CODE){
+      sessionStorage.setItem('growAdmin', '1');
+      unlockAdmin();
+    } else {
+      msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)';
+    }
+  });
+  const _ac = document.getElementById('adminCode');
+  if(_ac) _ac.addEventListener('keydown', e => { if(e.key === 'Enter') _agb.click(); });
+  if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')) unlockAdmin();
+
+  /* ===== 관리자센터 탭 ===== */
+  const _at = document.getElementById('adminTabs');
+  if(_at) _at.addEventListener('click', (e) => {
+    const btn = e.target.closest('.edu-tab');
+    if(!btn) return;
+    _at.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('#admincenter .edu-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('admin-' + btn.dataset.atab).classList.add('active');
+  });
+
+  /* ===== 피드 로딩 ===== */
+  async function loadAdminFeed(){
+    try {
+      const res = await fetch(ADMIN_FEED);
+      const data = await res.json();
+      eventPosts.length = 0; meetingPosts.length = 0;
+      if(data && Array.isArray(data.posts)) data.posts.forEach(p => eventPosts.push(p));
+      if(data && Array.isArray(data.meetings)) data.meetings.forEach(m => meetingPosts.push(m));
+    } catch(e) { /* 실패 시 빈 목록 유지 */ }
+    renderEvents();
+    renderMeetings();
+  }
+
+  /* ===== 회의자료 ===== */
+  function renderMeetings(){
+    const box = document.getElementById('meetingList');
+    if(!box) return;
+    if(!meetingPosts.length){
+      box.innerHTML = '<div class="cr-empty" style="padding:28px; text-align:center;">등록된 회의자료가 없습니다.</div>';
+      return;
+    }
+    box.innerHTML = meetingPosts.map(m => `
+      <div class="evt-card">
+        <div class="evt-title">${escapeHtml(m.title)}</div>
+        <div class="evt-date">${escapeHtml(m.author || '')} · ${escapeHtml(m.date || '')}</div>
+        ${m.content ? `<div class="evt-content">${escapeHtml(m.content)}</div>` : ''}
+        ${(m.files && m.files.length) ? `<div style="margin-top:10px;">${m.files.map((f,idx) => `
+          <a class="sm-dl" href="${escapeHtml(f)}" target="_blank" rel="noopener" style="display:inline-block; margin:0 6px 6px 0;">📎 자료 ${idx+1}</a>
+        `).join('')}</div>` : ''}
+      </div>`).join('');
+  }
+
+  const _mnb = document.getElementById('meetingNewBtn');
+  if(_mnb) _mnb.addEventListener('click', () => {
+    document.getElementById('meetingNewForm').classList.toggle('open');
+  });
+  const _mns = document.getElementById('meetingNewSubmit');
+  if(_mns) _mns.addEventListener('click', async () => {
+    const author = document.getElementById('meetingNewAuthor').value.trim();
+    const title = document.getElementById('meetingNewTitle').value.trim();
+    const content = document.getElementById('meetingNewContent').value.trim();
+    const fileLinks = document.getElementById('meetingNewFiles').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    const msg = document.getElementById('meetingNewMsg');
+    if(!author || !title || !content){ msg.textContent = '등록자명·제목·내용을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(MEETING_POST_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ author, title, content, fileLinks })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '등록되었습니다.'; msg.style.color = 'var(--orange-deep)';
+        document.getElementById('meetingNewTitle').value = '';
+        document.getElementById('meetingNewContent').value = '';
+        document.getElementById('meetingNewFiles').value = '';
+        loadAdminFeed();
+      } else { msg.textContent = '등록에 실패했습니다.'; msg.style.color = 'red'; }
+    } catch(err){ msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red'; }
+  });
+
+  /* ===== 행사 등록 ===== */
+  const _enb = document.getElementById('eventNewBtn');
+  if(_enb) _enb.addEventListener('click', () => {
     document.getElementById('eventNewForm').classList.toggle('open');
   });
-  document.getElementById('eventNewSubmit').addEventListener('click', async () => {
+  const _ens = document.getElementById('eventNewSubmit');
+  if(_ens) _ens.addEventListener('click', async () => {
     const category = document.getElementById('eventNewCategory').value;
     const author = document.getElementById('eventNewAuthor').value.trim();
     const title = document.getElementById('eventNewTitle').value.trim();
     const content = document.getElementById('eventNewContent').value.trim();
-    const imageLinks = document.getElementById('eventNewImages').value.split(/\\r?\\n/).map(s => s.trim()).filter(s => s);
+    const imageLinks = document.getElementById('eventNewImages').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
     const msg = document.getElementById('eventNewMsg');
     if(!author || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
     msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
@@ -2550,43 +2683,39 @@ body.growon{ background:var(--g-navy); }
       });
       const data = await res.json();
       if(data && data.success){
-        msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+        msg.textContent = '등록되었습니다.'; msg.style.color = 'var(--orange-deep)';
         document.getElementById('eventNewTitle').value = '';
         document.getElementById('eventNewContent').value = '';
         document.getElementById('eventNewImages').value = '';
-      } else {
-        msg.textContent = (data && data.message) || '등록에 실패했습니다.'; msg.style.color = 'red';
-      }
-    } catch(err){
-      msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
-    }
+        loadAdminFeed();
+      } else { msg.textContent = '등록에 실패했습니다.'; msg.style.color = 'red'; }
+    } catch(err){ msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red'; }
   });
 
+  /* ===== 행사 목록 + 참석신청 ===== */
   let eventCat = '전체';
   function renderEvents(){
     const box = document.getElementById('eventList');
     if(!box) return;
     const list = eventCat === '전체' ? eventPosts : eventPosts.filter(p => p.category === eventCat);
     if(!list.length){
-      box.innerHTML = `<div class="cr-empty" style="padding:28px; text-align:center;">등록된 행사공지가 없습니다.</div>`;
+      box.innerHTML = '<div class="cr-empty" style="padding:28px; text-align:center;">등록된 행사가 없습니다.</div>';
       return;
     }
     box.innerHTML = list.map(p => `
       <div class="evt-card">
         <span class="evt-tag">${escapeHtml(p.category)}</span>
         <div class="evt-title">${escapeHtml(p.title)}</div>
-        <div class="evt-date">${escapeHtml(p.date)}</div>
+        <div class="evt-date">${escapeHtml(p.author || '')} · ${escapeHtml(p.date || '')}</div>
         ${p.content ? `<div class="evt-content">${escapeHtml(p.content)}</div>` : ''}
         ${(p.images && p.images.length) ? `<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(110px,1fr)); gap:8px; margin-top:10px;">${p.images.map(src => `
-          <img src="${src}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${src}','_blank')">
+          <img src="${escapeHtml(src)}" loading="lazy" style="width:100%; aspect-ratio:1; object-fit:cover; border-radius:8px; border:1px solid var(--line); cursor:pointer;" onclick="window.open('${escapeHtml(src)}','_blank')">
         `).join('')}</div>` : ''}
-
         ${(p.replies && p.replies.length) ? `<div class="evt-apply-list">${p.replies.map(r => `
           <div class="evt-apply-item">${escapeHtml(r.manager)} · ${escapeHtml(r.branch)}(${escapeHtml(r.branchType)}) · 참석인원 ${escapeHtml(String(r.count))}명</div>
         `).join('')}</div>` : ''}
-
-        <span class="evt-apply-toggle" data-pid="${p.id}">📋 신청하기</span>
-        <div class="evt-apply-form" id="eventApplyForm-${p.id}">
+        <span class="evt-apply-toggle" data-pid="${escapeHtml(p.id)}">📋 신청하기</span>
+        <div class="evt-apply-form" id="eventApplyForm-${escapeHtml(p.id)}">
           <div class="evt-apply-hint">관리자명 / 지사명(본부·지점) / 참석인원</div>
           <div class="evt-apply-row">
             <input type="text" class="evt-manager" placeholder="관리자명">
@@ -2599,33 +2728,20 @@ body.growon{ background:var(--g-navy); }
             </select>
             <input type="number" class="evt-count" placeholder="참석인원" min="1">
           </div>
-          <div class="qna-form-msg" data-msg-for="${p.id}"></div>
-          <button type="button" class="evt-apply-submit" data-pid="${p.id}" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px; font-size:12.5px; font-weight:700; cursor:pointer;">신청 등록</button>
+          <div class="qna-form-msg"></div>
+          <button type="button" class="evt-apply-submit" data-pid="${escapeHtml(p.id)}" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px; font-size:12.5px; font-weight:700; cursor:pointer;">신청 등록</button>
         </div>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
   const _ecr = document.getElementById('eventFilterRow');
   if(_ecr) _ecr.addEventListener('click', e => {
     const b = e.target.closest('.filter-pill'); if(!b) return;
-    _ecr.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+    _ecr.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
     b.classList.add('active'); eventCat = b.dataset.ecat; renderEvents();
   });
-  const EVENT_FEED = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-feed';
-  (async () => {
-    try {
-      const res = await fetch(EVENT_FEED);
-      const data = await res.json();
-      if (data && Array.isArray(data.posts)) {
-        eventPosts.length = 0;
-        data.posts.forEach(p => eventPosts.push(p));
-      }
-    } catch (e) { /* 실패 시 빈 배열 유지 — 화면은 깨지지 않음 */ }
-    renderEvents();
-  })();
 
-
-  document.getElementById('eventList').addEventListener('click', async (e) => {
+  const _el = document.getElementById('eventList');
+  if(_el) _el.addEventListener('click', async (e) => {
     const toggleBtn = e.target.closest('.evt-apply-toggle');
     if(toggleBtn){
       document.getElementById('eventApplyForm-' + toggleBtn.dataset.pid).classList.toggle('open');
@@ -2649,13 +2765,10 @@ body.growon{ background:var(--g-navy); }
         });
         const data = await res.json();
         if(data && data.success){
-          msg.textContent = '신청이 등록되었습니다. 잠시 후 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
-        } else {
-          msg.textContent = '등록 중 오류가 발생했습니다. 다시 시도해주세요.'; msg.style.color = 'var(--orange-deep)';
-        }
-      } catch(err){
-        msg.textContent = '네트워크 오류. 잠시 후 다시 시도해주세요.'; msg.style.color = 'var(--orange-deep)';
-      }
+          msg.textContent = '신청이 등록되었습니다.'; msg.style.color = 'var(--orange-deep)';
+          loadAdminFeed();
+        } else { msg.textContent = '등록 중 오류가 발생했습니다.'; msg.style.color = 'var(--orange-deep)'; }
+      } catch(err){ msg.textContent = '네트워크 오류. 잠시 후 다시 시도해주세요.'; msg.style.color = 'var(--orange-deep)'; }
     }
   });
 
