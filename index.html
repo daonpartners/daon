@@ -904,7 +904,7 @@
     box.querySelector('.cardnews-hero').addEventListener('click', () => openCardnewsModal(cardNews[0]));
   }
 
-  // Daily뉴스: 가장 최근 발행분 (비지 않게)
+  // Daily뉴스: 가장 최근 발행분 (비지 않게) — 이미지 카드(오늘의 뉴스한입) 우선 표시
   function renderDailyNews(){
     const box = document.getElementById('dailyNewsBox');
     if(!box) return;
@@ -912,15 +912,24 @@
       box.innerHTML = '<div class="doc-empty-note">오늘의 뉴스를 준비 중입니다.</div>';
       return;
     }
-    const c = cardNews[0];
-    box.innerHTML = `
-      <div class="strategy-card" style="cursor:pointer;" data-cidx="0">
-        <span class="tag 전체공지">${escapeHtml(c.date || '')}${c.category ? ' · ' + escapeHtml(c.category) : ''}</span>
-        <h3 class="strategy-title">${escapeHtml(c.title || '')}</h3>
-        ${c.summary ? `<p class="strategy-body">${escapeHtml(c.summary)}</p>` : ''}
-      </div>`;
-    const card = box.querySelector('.strategy-card');
-    if(card) card.addEventListener('click', () => openCardnewsModal(cardNews[0]));
+    // '데일리뉴스' 카테고리 카드 우선(없으면 최신 카드)
+    const c = cardNews.find(x => x.category === '데일리뉴스') || cardNews[0];
+    if(c.image){
+      box.innerHTML = `
+        <div class="daily-news-card" style="cursor:pointer;">
+          <img src="${c.image}" loading="lazy" alt="${escapeHtml(c.title || '오늘의 뉴스한입')}" style="width:100%; display:block; border-radius:10px; border:1px solid var(--line);">
+          ${c.date ? `<div style="font-size:11px; color:var(--slate); margin-top:8px; text-align:right;">${escapeHtml(c.date)}</div>` : ''}
+        </div>`;
+    } else {
+      box.innerHTML = `
+        <div class="strategy-card" style="cursor:pointer;">
+          <span class="tag 전체공지">${escapeHtml(c.date || '')}${c.category ? ' · ' + escapeHtml(c.category) : ''}</span>
+          <h3 class="strategy-title">${escapeHtml(c.title || '')}</h3>
+          ${c.summary ? `<p class="strategy-body">${escapeHtml(c.summary)}</p>` : ''}
+        </div>`;
+    }
+    const clickable = box.firstElementChild;
+    if(clickable) clickable.addEventListener('click', () => openCardnewsModal(c));
   }
 
   function renderCardnews(list){
