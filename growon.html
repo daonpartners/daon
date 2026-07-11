@@ -468,6 +468,12 @@ body.growon{ background:var(--g-navy); }
 .dfoot a.off{border-color:#E3E7EE; color:#C6D2E0; cursor:not-allowed;}
 .dinfo{cursor:pointer; color:#F0821E; font-weight:800; font-size:11px;}
 
+
+.dcard-hd{display:flex; align-items:center; justify-content:center; gap:7px; padding-bottom:11px; min-height:30px;}
+.dcard-hd .dname{font-size:14.5px; font-weight:900; color:#0F2740;}
+.dlogo{width:22px; height:22px; border-radius:5px; object-fit:contain; flex:none;}
+.dlogo-fb{width:22px; height:22px; border-radius:5px; color:#fff; font-size:12px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; flex:none;}
+
 </style>
 </head>
 <body class="growon">
@@ -696,6 +702,7 @@ body.growon{ background:var(--g-navy); }
             <button class="filter-pill active" data-dcat="전체">전체</button>
             <button class="filter-pill" data-dcat="손해보험">손해보험</button>
             <button class="filter-pill" data-dcat="생명보험">생명보험</button>
+            <button class="filter-pill" data-dcat="공제">공제</button>
           </div>
           <div class="desk-grid" id="deskGrid"></div>
           <div class="gnote">청구팩스가 &lsquo;콜센터 가상번호 부여&rsquo;인 곳은 고객센터로 먼저 문의해 번호를 발급받으셔야 합니다.</div>
@@ -1811,6 +1818,11 @@ body.growon{ background:var(--g-navy); }
     { name: "IM라이프", category: "생명보험", color: "#00AEEF", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.imlifeins.co.kr/BA/BA_A010.do", systemLink: "https://fgs.imlifeins.co.kr:8443/" },
     { name: "하나생명", category: "생명보험", color: "#009490", customerCenter: "1577-1112", claimFax: "콜센터 가상번호 부여", termsLink: "https://www.hanalife.co.kr/anm/product/productIntro.do", systemLink: "https://ga.hanalife.co.kr" },
     { name: "KB라이프생명", category: "생명보험", color: "#FFB81C", customerCenter: "1588-9922", claimFax: "02-390-4629", claimFormLink: "https://www.kblife.co.kr/customer-center/informRequiredDocument.do", systemLink: "http://sfa.kblife.co.kr" },
+  { name: "푸본현대생명", category: "생명보험", color: "#005BAC", customerCenter: "1577-3311", helpdesk: "080-860-1212", claimFax: "0505-106-0311", cardInfo: "구분: 초회, 계속분 가능", systemLink: "https://www.fubonhyundai.com", termsLink: "https://www.fubonhyundai.com" },
+    // 공제 (3)
+    { name: "우체국보험", category: "공제", color: "#E8380D", customerCenter: "1599-0100", cardInfo: "해당사항 없음", termsLink: "https://www.epostbank.go.kr" },
+    { name: "수협보험", category: "공제", color: "#0B4DA2", customerCenter: "1588-4119", cardInfo: "해당사항 없음", termsLink: "https://www.suhyup-bank.com" },
+    { name: "신협", category: "공제", color: "#E5B200", customerCenter: "1544-3030", cardInfo: "해당사항 없음", termsLink: "https://www.cu.co.kr" },
   ];
 
   function renderInsurers(list){
@@ -2254,6 +2266,28 @@ body.growon{ background:var(--g-navy); }
   window.addEventListener('resize', syncGrowLayout);
 
   /* ===== 보험사 전산실 (카드형) ===== */
+
+  function deskDomain(i){
+    const url = i.systemLink || i.termsLink || i.claimFormLink || '';
+    const m = String(url).match(/^https?:\/\/([^\/]+)/i);
+    return m ? m[1].replace(/^m\./,'').replace(/^www\./,'') : '';
+  }
+  function deskLogo(i){
+    const d = deskDomain(i);
+    const ini = escapeHtml(i.name.slice(0,1));
+    const col = escapeHtml(i.color || '#1D3A5C');
+    if(!d) return `<span class="dlogo-fb" style="background:${col}">${ini}</span>`;
+    return `<img class="dlogo" src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=64" alt="" loading="lazy" data-ini="${ini}" data-col="${col}" onerror="deskLogoFail(this)">`;
+  }
+  function deskLogoFail(img){
+    const s = document.createElement('span');
+    s.className = 'dlogo-fb';
+    s.style.background = img.dataset.col || '#1D3A5C';
+    s.textContent = img.dataset.ini || '';
+    img.replaceWith(s);
+  }
+
+
   function deskRow(k, v, extra){
     return `<div class="drow"><span class="drow-k">${k}</span><span class="drow-v">${v || '<span class="dnone">-</span>'}${extra||''}</span></div>`;
   }
@@ -2279,7 +2313,7 @@ body.growon{ background:var(--g-navy); }
         ? `<a href="${escapeHtml(i.claimFormLink)}" target="_blank" rel="noopener">↓ 청구양식</a>`
         : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">청구양식</span>`;
       return `<div class="dcard">
-        <div class="dcard-hd"><span class="dbadge" style="background:${escapeHtml(i.color||'#1D3A5C')}"></span>${escapeHtml(i.name)}</div>
+        <div class="dcard-hd">${deskLogo(i)}<span class="dname">${escapeHtml(i.name)}</span></div>
         ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
         ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
         ${deskRow('카드납', card)}
