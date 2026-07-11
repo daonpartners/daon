@@ -447,6 +447,27 @@ body.growon{ background:var(--g-navy); }
   .map-wrap{grid-template-columns:1fr;} .album-grid{grid-template-columns:1fr;}
 }
 
+
+/* ===== 보험사 전산실 카드 ===== */
+.desk-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:14px; margin-top:14px;}
+.dcard{border:1px solid #E3E7EE; border-radius:12px; padding:14px 13px; background:#fff; display:flex; flex-direction:column;}
+.dcard-hd{text-align:center; font-size:15px; font-weight:900; color:#0F2740; padding-bottom:11px; min-height:24px;}
+.dcard-hd .dbadge{display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+.drow{display:flex; justify-content:space-between; align-items:center; gap:8px; background:#F4F7FA; border-radius:6px; padding:7px 9px; margin-bottom:5px; font-size:11.5px;}
+.drow-k{color:#6B7A8C; font-weight:700; white-space:nowrap;}
+.drow-v{color:#0F2740; font-weight:800; text-align:right;}
+.drow-v a{color:#0F2740; text-decoration:none;}
+.drow-v a:hover{text-decoration:underline;}
+.dnone{color:#A9B4C0; font-weight:600;}
+.dcard-btn{display:block; text-align:center; background:#1D3A5C; color:#fff; font-size:12.5px; font-weight:800; padding:9px; border-radius:7px; text-decoration:none; margin:7px 0;}
+.dcard-btn:hover{background:#12283F;}
+.dcard-btn.off{background:#E3E7EE; color:#A9B4C0; cursor:not-allowed;}
+.dfoot{display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:auto; padding-top:7px;}
+.dfoot a{text-align:center; font-size:11.5px; font-weight:800; padding:8px 4px; border-radius:7px; text-decoration:none; border:1px solid #1D3A5C; color:#1D3A5C;}
+.dfoot a:hover{background:#EEF3F9;}
+.dfoot a.off{border-color:#E3E7EE; color:#C6D2E0; cursor:not-allowed;}
+.dinfo{cursor:pointer; color:#F0821E; font-weight:800; font-size:11px;}
+
 </style>
 </head>
 <body class="growon">
@@ -662,18 +683,23 @@ body.growon{ background:var(--g-navy); }
       </section>
       </div>
       <div class="gview" id="view-insurers">
-<section class="panel" id="insurers">
-        <div class="panel-head">
-          <div><div class="panel-eyebrow">Insurers</div><h2 class="panel-title">보험사 전산</h2></div>
-          <div class="panel-count" id="insurerCount">전체 26건</div>
-        </div>
-        <div class="filter-row" id="insurerFilterRow" data-reveal>
-          <button class="filter-pill active" data-cat="전체">전체</button>
-          <button class="filter-pill" data-cat="손해보험">손해보험</button>
-          <button class="filter-pill" data-cat="생명보험">생명보험</button>
-        </div>
-        <div class="insurer-grid" id="insurerGrid" data-reveal></div>
-      </section>
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="panel-eyebrow">Insurers</div>
+              <h2 class="panel-title">보험사 업무지원 <span style="font-size:13px;color:var(--slate);font-weight:700;">— 전산실</span></h2>
+            </div>
+            <span class="badge" id="deskCount">26개사</span>
+          </div>
+          <input id="deskSearch" class="search-input" type="text" placeholder="보험사명 검색 (예: 삼성화재)" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;margin-bottom:10px;">
+          <div class="filter-row" id="deskFilterRow">
+            <button class="filter-pill active" data-dcat="전체">전체</button>
+            <button class="filter-pill" data-dcat="손해보험">손해보험</button>
+            <button class="filter-pill" data-dcat="생명보험">생명보험</button>
+          </div>
+          <div class="desk-grid" id="deskGrid"></div>
+          <div class="gnote">청구팩스가 &lsquo;콜센터 가상번호 부여&rsquo;인 곳은 고객센터로 먼저 문의해 번호를 발급받으셔야 합니다.</div>
+        </section>
       </div>
       <div class="gview" id="view-qna">
 <section class="panel panel-navy" id="qna">
@@ -1789,7 +1815,9 @@ body.growon{ background:var(--g-navy); }
 
   function renderInsurers(list){
     const grid = document.getElementById('insurerGrid');
-    document.getElementById('insurerCount').textContent = `전체 ${list.length}건`;
+    if(!grid) return;                       // 전산실 카드형으로 대체됨
+    const _c = document.getElementById('insurerCount');
+    if(_c) _c.textContent = `전체 ${list.length}건`;
     grid.innerHTML = list.map((ins, idx) => `
       <a class="insurer-link" href="${ins.systemLink || '#'}" target="_blank" rel="noopener">
         <div class="icon-badge" style="background:${ins.color || '#6B7280'}">${ins.name.slice(0,1)}</div>
@@ -1799,7 +1827,8 @@ body.growon{ background:var(--g-navy); }
   }
   renderInsurers(insurers);
 
-  document.getElementById('insurerFilterRow').addEventListener('click', (e) => {
+  const _oldIF = document.getElementById('insurerFilterRow');
+  if(_oldIF) _oldIF.addEventListener('click', (e) => {
     const btn = e.target.closest('.filter-pill');
     if(!btn) return;
     document.querySelectorAll('#insurerFilterRow .filter-pill').forEach(p => p.classList.remove('active'));
@@ -2223,6 +2252,71 @@ body.growon{ background:var(--g-navy); }
   document.getElementById('drawerX').addEventListener('click', closeDrawer);
   document.getElementById('scrim').addEventListener('click', closeDrawer);
   window.addEventListener('resize', syncGrowLayout);
+
+  /* ===== 보험사 전산실 (카드형) ===== */
+  function deskRow(k, v, extra){
+    return `<div class="drow"><span class="drow-k">${k}</span><span class="drow-v">${v || '<span class="dnone">-</span>'}${extra||''}</span></div>`;
+  }
+  function deskTel(v){
+    if(!v) return '';
+    const num = String(v).replace(/[^0-9]/g,'');
+    return num ? `<a href="tel:${num}">${escapeHtml(v)}</a>` : escapeHtml(v);
+  }
+  function renderDesk(list){
+    const grid = document.getElementById('deskGrid');
+    if(!grid) return;
+    grid.innerHTML = list.map((i, idx) => {
+      const card = i.cardInfo
+        ? `<span class="dinfo" data-card="${idx}">정보 보기</span>`
+        : '<span class="dnone">-</span>';
+      const sys = i.systemLink
+        ? `<a class="dcard-btn" href="${escapeHtml(i.systemLink)}" target="_blank" rel="noopener">↗ 전산접속</a>`
+        : `<span class="dcard-btn off">전산접속 없음</span>`;
+      const terms = i.termsLink
+        ? `<a href="${escapeHtml(i.termsLink)}" target="_blank" rel="noopener">↗ 약관</a>`
+        : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">약관</span>`;
+      const form = i.claimFormLink
+        ? `<a href="${escapeHtml(i.claimFormLink)}" target="_blank" rel="noopener">↓ 청구양식</a>`
+        : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">청구양식</span>`;
+      return `<div class="dcard">
+        <div class="dcard-hd"><span class="dbadge" style="background:${escapeHtml(i.color||'#1D3A5C')}"></span>${escapeHtml(i.name)}</div>
+        ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
+        ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
+        ${deskRow('카드납', card)}
+        ${sys}
+        ${deskRow('고객센터', deskTel(i.customerCenter))}
+        ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
+        ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
+        <div class="dfoot">${terms}${form}</div>
+      </div>`;
+    }).join('') || '<div class="cr-empty" style="padding:24px;text-align:center;">검색 결과가 없습니다.</div>';
+
+    grid.querySelectorAll('.dinfo').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const it = list[Number(el.dataset.card)];
+        if(it && it.cardInfo) alert(it.name + ' — 카드납 안내\n\n' + it.cardInfo);
+      });
+    });
+  }
+  let deskCat = '전체', deskKw = '';
+  function applyDesk(){
+    let list = insurers;
+    if(deskCat !== '전체') list = list.filter(i => i.category === deskCat);
+    if(deskKw) list = list.filter(i => i.name.includes(deskKw));
+    renderDesk(list);
+    const c = document.getElementById('deskCount');
+    if(c) c.textContent = list.length + '개사';
+  }
+  const _dr = document.getElementById('deskFilterRow');
+  if(_dr) _dr.addEventListener('click', e=>{
+    const b = e.target.closest('.filter-pill'); if(!b) return;
+    _dr.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+    b.classList.add('active'); deskCat = b.dataset.dcat; applyDesk();
+  });
+  const _ds = document.getElementById('deskSearch');
+  if(_ds) _ds.addEventListener('input', e=>{ deskKw = e.target.value.trim(); applyDesk(); });
+  applyDesk();
+
   syncGrowLayout(); renderHome(); showView('home');
 
 </script>
