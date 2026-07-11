@@ -433,13 +433,7 @@
           <button class="qna-new-btn" id="noticeBoardOpenBtn" style="margin-top:10px;">📋 전체 공지 보기</button>
         </section>
 
-        <!-- Daily뉴스 (가장 최근 카드뉴스, 비지 않게) -->
-        <section class="panel" id="dailynews">
-          <div class="panel-head">
-            <div><div class="panel-eyebrow">Daily News</div><h2 class="panel-title">Daily뉴스</h2></div>
-          </div>
-          <div id="dailyNewsBox" data-reveal></div>
-        </section>
+        <!-- Daily뉴스 블록은 상단 히어로와 중복이라 제거함 (상단 오늘의 카드뉴스가 대신 표시) -->
 
         <!-- 이달의 판매전략 및 소식지 (기존 영업전략 이동) -->
         <section class="panel" id="salesstrategy">
@@ -890,7 +884,7 @@
   function renderCardnewsHero(){
     const box = document.getElementById('cardnewsHero');
     if(!cardNews.length){ box.innerHTML = ''; return; }
-    const c = cardNews[0];
+    const c = cardNews.find(x => x.category === '데일리뉴스') || cardNews[0];
     box.innerHTML = `
       <div class="cardnews-hero" data-cidx="0">
         <div class="cardnews-hero-img">${cardnewsThumbHtml(c.image)}</div>
@@ -901,7 +895,7 @@
           <div class="cardnews-hero-date">${escapeHtml(c.date || '')}</div>
         </div>
       </div>`;
-    box.querySelector('.cardnews-hero').addEventListener('click', () => openCardnewsModal(cardNews[0]));
+    box.querySelector('.cardnews-hero').addEventListener('click', () => openCardnewsModal(c));
   }
 
   // Daily뉴스: 가장 최근 발행분 (비지 않게) — 이미지 카드(오늘의 뉴스한입) 우선 표시
