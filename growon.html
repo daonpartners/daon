@@ -621,6 +621,25 @@ body.growon{ background:var(--g-navy); }
           <div><div class="panel-eyebrow">Event</div><h2 class="panel-title">행사공지 및 신청하기</h2></div>
         </div>
 
+        <div class="qna-notice">관리자가 행사(산모교실·펫페어·입주박람회·기타행사)를 등록하면, 아래에서 지사별로 참석 신청을 댓글로 남길 수 있습니다.</div>
+        <button class="qna-new-btn" id="eventNewBtn">✏️ 행사 등록 (관리자)</button>
+        <div class="qna-form" id="eventNewForm">
+          <div class="qna-form-row">
+            <select id="eventNewCategory">
+              <option value="산모교실">산모교실</option>
+              <option value="펫페어">펫페어</option>
+              <option value="입주박람회">입주박람회</option>
+              <option value="기타행사">기타행사</option>
+            </select>
+            <input type="text" id="eventNewAuthor" placeholder="등록자명(관리자)">
+          </div>
+          <input type="text" id="eventNewTitle" placeholder="제목">
+          <textarea id="eventNewContent" placeholder="일시·장소 등 행사 내용을 적어주세요"></textarea>
+          <textarea id="eventNewImages" placeholder="이미지 링크(선택, 한 줄에 하나씩)" style="min-height:44px;"></textarea>
+          <div class="qna-form-msg" id="eventNewMsg"></div>
+          <button type="button" id="eventNewSubmit">등록</button>
+        </div>
+
         <div class="filter-row" id="eventFilterRow" style="margin-bottom:14px;">
           <button class="filter-pill active" data-ecat="전체">전체</button>
           <button class="filter-pill" data-ecat="산모교실">산모교실</button>
@@ -827,23 +846,25 @@ body.growon{ background:var(--g-navy); }
     <a class="rlink" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener">DB신청하기</a>
     <div class="rgroup">
       <h4>자동차보험</h4>
-      <a href="https://www.kidi.or.kr" target="_blank" rel="noopener">1. 보험개발원등록</a>
-      <a href="https://www.kidi.or.kr" target="_blank" rel="noopener">2. 할인할증요인 조회</a>
-      <a href="https://accident.knia.or.kr" target="_blank" rel="noopener">3. 과실비율조회</a>
-      <a href="https://www.knia.or.kr" target="_blank" rel="noopener">4. 보험비교견적</a>
+      <a href="https://iics.kidi.or.kr/insuUserReal/viewInsuUserReal.do" target="_blank" rel="noopener">1. 보험개발원등록</a>
+      <a href="https://prem.kidi.or.kr:1443/" target="_blank" rel="noopener">2. 할인할증요인 조회</a>
+      <a href="https://accident.knia.or.kr/" target="_blank" rel="noopener">3. 과실비율조회</a>
+      <a href="https://carinfo.knia.or.kr/lmxsrv/main/main.do" target="_blank" rel="noopener">4. 자동차보험종합포털</a>
     </div>
     <div class="rgroup">
       <h4>화재·배상보험</h4>
-      <a href="https://www.kidi.or.kr" target="_blank" rel="noopener">1. 특수건물조회</a>
-      <a href="https://www.eais.go.kr" target="_blank" rel="noopener">2. 건축물대장</a>
-      <a href="https://www.elevator.go.kr" target="_blank" rel="noopener">3. 승강기정보조회</a>
-      <a href="https://www.safetyins.or.kr" target="_blank" rel="noopener">4. 재난배상정보조회</a>
-      <a href="https://www.cpf.go.kr" target="_blank" rel="noopener">5. 어린이놀이시설 조회</a>
+      <a href="https://bridge.kfpa.or.kr/#/" target="_blank" rel="noopener">1. 특수건물조회</a>
+      <a href="https://www.gov.kr/mw/AA020InfoCappView.do?CappBizCD=15000000098&HighCtgCD=A02004002&Mcode=10205" target="_blank" rel="noopener">2. 건축물대장</a>
+      <a href="https://www.elevator.go.kr/opn/MainPage.do" target="_blank" rel="noopener">3. 승강기정보조회</a>
+      <a href="https://www.safemap.go.kr/insur/searchInsur.do" target="_blank" rel="noopener">4. 재난배상정보조회</a>
+      <a href="https://cps.kstar.or.kr/playgroundState" target="_blank" rel="noopener">5. 어린이놀이시설 조회</a>
     </div>
     <div class="rstack">
       <a href="https://www.nps.or.kr" target="_blank" rel="noopener">연금계산기</a>
-      <a href="https://terms.kordi.or.kr" target="_blank" rel="noopener">상병코드 검색</a>
-      <a href="https://www.hira.or.kr" target="_blank" rel="noopener">전국병원 검색</a>
+      <a href="https://www.hira.or.kr/main.do" target="_blank" rel="noopener">건강보험심사평가원</a>
+      <a href="https://www.hira.or.kr/rc/term/getExplainList.do?pgmid=HIRAA030407000000&WT.gnb=%EC%89%BD%EA%B2%8C+%EC%9D%B4%ED%95%B4%ED%95%98%EB%8A%94+%EC%9A%A9%EC%96%B4%EC%84%A4%EB%AA%85" target="_blank" rel="noopener">건강보험용어검색</a>
+      <a href="https://www.hira.or.kr/ra/dtlCndHospSrch/dtlCndHospSrch.do?pgmid=HIRAA050200000000&WT.gnb=%EC%84%B8%EB%B6%80%EC%A1%B0%EA%B1%B4%EB%B3%84+%EC%9D%98%EB%A3%8C%EA%B8%B0%EA%B4%80+%EC%B0%BE%EA%B8%B0" target="_blank" rel="noopener">의료기관찾기</a>
+      <a href="https://www.hira.or.kr/rb/dur/form.do?pgmid=HIRAA050300000100&WT.gnb=%EB%82%B4%EA%B0%80+%EB%A8%B9%EB%8A%94+%EC%95%BD%21+%ED%95%9C%EB%88%88%EC%97%90" target="_blank" rel="noopener">내가먹는약조회</a>
     </div>
   </div>
 </div>
@@ -2441,6 +2462,38 @@ body.growon{ background:var(--g-navy); }
     // 예시: { id:"e1", category:"산모교실", title:"7월 산모교실 안내", date:"2026.07.10 게시", content:"일시/장소 등 상세내용", images:[], replies:[] }
   ];
   const EVENT_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-apply';
+
+  const EVENT_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-post';
+  document.getElementById('eventNewBtn').addEventListener('click', () => {
+    document.getElementById('eventNewForm').classList.toggle('open');
+  });
+  document.getElementById('eventNewSubmit').addEventListener('click', async () => {
+    const category = document.getElementById('eventNewCategory').value;
+    const author = document.getElementById('eventNewAuthor').value.trim();
+    const title = document.getElementById('eventNewTitle').value.trim();
+    const content = document.getElementById('eventNewContent').value.trim();
+    const imageLinks = document.getElementById('eventNewImages').value.split(/\\r?\\n/).map(s => s.trim()).filter(s => s);
+    const msg = document.getElementById('eventNewMsg');
+    if(!author || !title || !content){ msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return; }
+    msg.textContent = '등록 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(EVENT_POST_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ category, author, title, content, imageLinks })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '등록되었습니다. 잠시 후(수 초~1분) 반영됩니다.'; msg.style.color = 'var(--orange-deep)';
+        document.getElementById('eventNewTitle').value = '';
+        document.getElementById('eventNewContent').value = '';
+        document.getElementById('eventNewImages').value = '';
+      } else {
+        msg.textContent = (data && data.message) || '등록에 실패했습니다.'; msg.style.color = 'red';
+      }
+    } catch(err){
+      msg.textContent = '네트워크 오류로 등록에 실패했습니다.'; msg.style.color = 'red';
+    }
+  });
 
   let eventCat = '전체';
   function renderEvents(){
