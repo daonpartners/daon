@@ -482,7 +482,7 @@ body.growon{ background:var(--g-navy); }
 <div class="growon-hd">
   <div class="gh-l">미래에셋 그로우 사업부</div>
   <div class="gh-c">
-    <div class="gh-t">GROW ON 그로우온</div>
+    <div class="gh-t">GROW ON</div>
     <div class="gh-s">함께 배우고, 연결하고, 성장하는 그로우사업부 통합 플랫폼</div>
   </div>
   <div class="gh-r">MIRAE ASSET<span>미래에셋금융서비스</span></div>
@@ -2278,8 +2278,8 @@ body.growon{ background:var(--g-navy); }
     const ini = escapeHtml(i.name.slice(0,1));
     const col = escapeHtml(i.color || '#1D3A5C');
     if(!d) return `<span class="dlogo-fb" style="background:${col}">${ini}</span>`;
-    // 1차: 브랜드 로고 전용 서비스 → 2차: 파비콘 → 3차: 이니셜
-    return `<img class="dlogo" src="https://logo.clearbit.com/${encodeURIComponent(d)}?size=64" alt="" loading="lazy"
+    // 1차: DuckDuckGo Logo → 2차: Google Favicon → 3차: 이니셜
+    return `<img class="dlogo" src="https://icons.duckduckgo.com/ip3/${encodeURIComponent(d)}.ico" alt="" loading="lazy"
       data-ini="${ini}" data-col="${col}" data-fallback="https://www.google.com/s2/favicons?domain=${encodeURIComponent(d)}&sz=64"
       onerror="deskLogoFail(this)">`;
   }
@@ -2333,19 +2333,27 @@ body.growon{ background:var(--g-navy); }
         : `<span class="off" style="text-align:center;font-size:11.5px;font-weight:800;padding:8px 4px;border-radius:7px;border:1px solid #E3E7EE;color:#C6D2E0;">청구양식</span>`;
       return `<div class="dcard">
         <div class="dcard-hd">${deskLogo(i)}<span class="dname">${escapeHtml(i.name)}</span></div>
-        ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
-        ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
-        ${deskRow('카드납', card)}
         ${sys}
         ${deskRow('고객센터', deskTel(i.customerCenter))}
+        ${deskRow('인콜/모니터링', deskTel(i.incallMonitoring))}
+        ${deskRow('전산헬프데스크', deskTel(i.helpdesk))}
         ${deskRow('청구팩스', i.claimFax ? escapeHtml(i.claimFax) : '')}
+        ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress), '<span class="daddr-popup" data-addr="${escapeHtml(i.claimAddress)}" style="margin-left:6px;cursor:pointer;color:#F0821E;font-size:10px;font-weight:900;">📮</span>') : ''}
         ${i.dentalClaimFax ? deskRow('치아청구팩스', escapeHtml(i.dentalClaimFax)) : ''}
-        ${i.claimAddress ? deskRow('청구주소', escapeHtml(i.claimAddress)) : ''}
+        ${deskRow('카드납', card)}
         <div class="dfoot">${terms}${form}</div>
       </div>`;
     }).join('') || '<div class="cr-empty" style="padding:24px;text-align:center;">검색 결과가 없습니다.</div>';
 
-    grid.querySelectorAll('.dinfo').forEach(el=>{
+
+  grid.querySelectorAll('.daddr-popup').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const addr = el.dataset.addr;
+      alert('청구주소 (등기우편)\n\n' + addr);
+    });
+  });
+
+  grid.querySelectorAll('.dinfo').forEach(el=>{
       el.addEventListener('click', ()=>{
         const it = list[Number(el.dataset.card)];
         if(it && it.cardInfo) alert(it.name + ' — 카드납 안내\n\n' + it.cardInfo);
