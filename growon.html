@@ -831,8 +831,39 @@ body.growon{ background:var(--g-navy); }
             <div class="recruit-title">2026년 하반기 경력설계사 모집</div>
             <div class="recruit-desc">미래에셋금융 다온지사에서 함께할 경력직 보험설계사를 모집합니다.</div>
             <span class="recruit-badge open">모집중</span>
-            <a class="claim-form-btn" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener">✍️ 지원하기</a>
+            <!-- 기존 다온지사파트너지원하기 링크: 숨김 처리 (삭제 아님) -->
+            <a class="claim-form-btn" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener" style="display:none;">✍️ 지원하기</a>
           </div>
+        </div>
+
+        <div class="panel-head" style="margin-top:28px;">
+          <div><div class="panel-eyebrow">Apply</div><h2 class="panel-title" style="font-size:18px;">미래에셋금융 그로우사업부 파트너(설계사)지원하기</h2></div>
+        </div>
+        <div class="qna-form open" style="margin-top:0;">
+          <div class="qna-form-row">
+            <select id="partnerBranch">
+              <option value="">지원지사 선택</option>
+              <option value="광명">광명</option>
+              <option value="검단">검단</option>
+              <option value="남양주">남양주</option>
+              <option value="천안아산">천안아산</option>
+              <option value="전라도광주">전라도광주</option>
+            </select>
+            <input type="text" id="partnerName" placeholder="이름">
+          </div>
+          <div class="qna-form-row">
+            <input type="text" id="partnerPhone" placeholder="연락처 (예: 010-1234-5678)">
+            <select id="partnerField">
+              <option value="">지원분야 선택</option>
+              <option value="신입">신입</option>
+              <option value="경력">경력</option>
+              <option value="지점장">지점장</option>
+            </select>
+          </div>
+          <textarea id="partnerCareer" placeholder="경력사항을 적어주세요 (신입인 경우 '해당없음'으로 입력)"></textarea>
+          <input type="text" id="partnerCompany" placeholder="현재 소속사 (없으면 '없음')">
+          <div class="qna-form-msg" id="partnerApplyMsg"></div>
+          <button type="button" id="partnerApplySubmit" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">지원하기</button>
         </div>
       </section>
       </div>
@@ -2461,6 +2492,42 @@ body.growon{ background:var(--g-navy); }
   const eventPosts = [
     // 예시: { id:"e1", category:"산모교실", title:"7월 산모교실 안내", date:"2026.07.10 게시", content:"일시/장소 등 상세내용", images:[], replies:[] }
   ];
+  const PARTNER_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-partner-apply';
+  const _pas = document.getElementById('partnerApplySubmit');
+  if(_pas) _pas.addEventListener('click', async () => {
+    const branch = document.getElementById('partnerBranch').value;
+    const name = document.getElementById('partnerName').value.trim();
+    const phone = document.getElementById('partnerPhone').value.trim();
+    const field = document.getElementById('partnerField').value;
+    const career = document.getElementById('partnerCareer').value.trim();
+    const company = document.getElementById('partnerCompany').value.trim();
+    const msg = document.getElementById('partnerApplyMsg');
+    if(!branch || !name || !phone || !field || !career || !company){
+      msg.textContent = '모든 항목을 입력해주세요.'; msg.style.color = 'var(--orange-deep)'; return;
+    }
+    msg.textContent = '제출 중...'; msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(PARTNER_APPLY_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ branch, name, phone, field, career, company })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '지원이 접수되었습니다. 담당자가 곧 연락드립니다.'; msg.style.color = 'var(--orange-deep)';
+        document.getElementById('partnerBranch').value = '';
+        document.getElementById('partnerName').value = '';
+        document.getElementById('partnerPhone').value = '';
+        document.getElementById('partnerField').value = '';
+        document.getElementById('partnerCareer').value = '';
+        document.getElementById('partnerCompany').value = '';
+      } else {
+        msg.textContent = (data && data.message) || '제출에 실패했습니다.'; msg.style.color = 'red';
+      }
+    } catch(err){
+      msg.textContent = '네트워크 오류로 제출에 실패했습니다.'; msg.style.color = 'red';
+    }
+  });
+
   const EVENT_APPLY_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-apply';
 
   const EVENT_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-event-post';
