@@ -500,6 +500,9 @@ body.growon{ background:var(--g-navy); }
 .dlogo{width:26px; height:26px; border-radius:5px; object-fit:contain; flex:none; background:#fff;}
 .dlogo-fb{width:26px; height:26px; border-radius:5px; color:#fff; font-size:13px; font-weight:900; display:inline-flex; align-items:center; justify-content:center; flex:none;}
 
+.gfoot{margin-top:4px; padding:12px 10px; text-align:center; font-size:11px; font-weight:700; color:#9FB0C4; line-height:1.7;}
+.gfoot span{display:block; font-size:10.5px; font-weight:600; color:#7D8FA6; margin-top:3px;}
+#colRight .gbtn{text-align:center;}
 </style>
 </head>
 <body class="growon">
@@ -507,7 +510,7 @@ body.growon{ background:var(--g-navy); }
 <div class="growon-hd">
   <div class="gh-l">미래에셋 그로우 사업부</div>
   <div class="gh-c">
-    <div class="gh-t">GROW ON</div>
+    <div class="gh-t" data-view="home" style="cursor:pointer;" title="홈으로">GROW ON</div>
     <div class="gh-s">함께 배우고, 연결하고, 성장하는 그로우사업부 통합 플랫폼</div>
   </div>
   <div class="gh-r">MIRAE ASSET<span>미래에셋금융서비스</span></div>
@@ -534,11 +537,15 @@ body.growon{ background:var(--g-navy); }
         <a data-view="home">전국지사안내</a>
       </div>
     </div>
-    <button class="gbtn" data-view="materials">교육센터 바로가기</button>
-    <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
-    <button class="gbtn" data-view="qna">AI 질문센터</button>
-    <button class="gbtn" data-view="recruit">파트너모집</button>
+    <button class="gbtn" data-view="admin">🔒 관리자센터</button>
     <button class="gbtn" data-view="album">그로우앨범</button>
+    <button class="gbtn" data-view="recruit">파트너모집</button>
+
+    <div class="gfoot">
+      © 2026 GROW ON<br>
+      그로우사업부 통합 플랫폼<br>
+      <span>기획·구축·운영 | 다온지사 김화진</span>
+    </div>
   </div>
 
   <div class="gcol" id="colCenter">
@@ -636,6 +643,7 @@ body.growon{ background:var(--g-navy); }
           <div class="edu-tabs" id="adminTabs" data-reveal>
             <button class="edu-tab active" data-atab="meeting">📁 회의자료</button>
             <button class="edu-tab" data-atab="event">📋 행사신청</button>
+            <button class="edu-tab" data-atab="db">🗂️ DB신청</button>
           </div>
 
           <!-- 회의자료 -->
@@ -682,6 +690,12 @@ body.growon{ background:var(--g-navy); }
               <button class="filter-pill" data-ecat="기타행사">기타행사</button>
             </div>
             <div id="eventList"></div>
+          </div>
+
+          <!-- DB신청 -->
+          <div class="edu-panel" id="admin-db">
+            <div class="qna-notice">DB(잠재고객 리드) 배정을 신청합니다. 신청 내역은 담당자에게 전달됩니다.</div>
+            <a class="dcard-btn" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener" style="max-width:280px; margin:14px 0;">↗ DB신청 폼 열기</a>
           </div>
         </div>
       </section>
@@ -906,10 +920,15 @@ body.growon{ background:var(--g-navy); }
   </div>
 
   <div class="gcol" id="colRight">
+    <div class="rail-t">주요 메뉴</div>
+    <button class="gbtn" data-view="materials">교육센터</button>
+    <button class="gbtn" data-view="salesmaterials">영업자료실</button>
+    <button class="gbtn" data-view="insurers">보험사 업무지원<small>(보험회사전산)</small></button>
+    <button class="gbtn" data-view="qna">AI 질문센터</button>
+
     <div class="rail-t">업무링크</div>
-    <a class="rlink" data-view="salesmaterials" href="#">영업자료실 바로가기</a>
-    <a class="rlink" data-view="admin" href="#">🔒 관리자센터</a>
     <a class="rlink" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener">DB신청하기</a>
+
     <div class="rgroup">
       <h4>자동차보험</h4>
       <a href="https://iics.kidi.or.kr/insuUserReal/viewInsuUserReal.do" target="_blank" rel="noopener">1. 보험개발원등록</a>
