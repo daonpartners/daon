@@ -330,6 +330,49 @@
   .qna-new-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
   .qna-notice{font-size:11px; color:var(--slate); margin-bottom:10px;}
 
+  /* ---------- DB 신청 게시판 ---------- */
+  .dbb-list{display:flex; flex-direction:column; gap:10px;}
+  .dbb-card{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--orange); border-radius:12px; padding:15px 17px; cursor:pointer; transition:.15s;}
+  .dbb-card:hover{box-shadow:0 3px 14px rgba(22,33,59,0.09); transform:translateY(-1px);}
+  .dbb-card.closed{border-left-color:var(--slate); opacity:.72;}
+  .dbb-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .dbb-tag{font-size:10.5px; font-weight:800; padding:3px 9px; border-radius:999px; background:var(--orange-tint); color:var(--orange-deep);}
+  .dbb-tag.gray{background:var(--navy-tint); color:var(--navy-2);}
+  .dbb-title{font-size:14px; font-weight:800; color:var(--navy-2); flex:1; min-width:120px;}
+  .dbb-due{font-size:11px; font-weight:800; color:var(--orange-deep);}
+  .dbb-due.over{color:var(--slate);}
+  .dbb-bar{height:7px; border-radius:999px; background:var(--navy-tint); margin:11px 0 8px; overflow:hidden;}
+  .dbb-bar-fill{height:100%; background:var(--orange); border-radius:999px; transition:width .3s;}
+  .dbb-bar-fill.full{background:var(--slate);}
+  .dbb-meta{display:flex; gap:14px; flex-wrap:wrap; font-size:11.5px; color:var(--slate); font-weight:700;}
+  .dbb-meta b{color:var(--navy-2); font-weight:800;}
+  .dbb-empty{text-align:center; padding:34px 14px; color:var(--slate); font-size:12.5px;}
+
+  .dbb-back{font-size:12px; font-weight:800; color:var(--slate); cursor:pointer; margin-bottom:12px; display:inline-block;}
+  .dbb-back:hover{color:var(--orange-deep);}
+  .dbb-detail-head{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:16px 18px; margin-bottom:14px;}
+  .dbb-desc{font-size:12.5px; color:var(--navy-2); line-height:1.6; margin-top:10px; white-space:pre-wrap;}
+  .dbb-sec{font-size:12px; font-weight:800; color:var(--navy-2); margin:16px 0 9px;}
+  .dbb-apps{display:flex; flex-direction:column; gap:7px;}
+  .dbb-app{background:#fff; border:1px solid var(--line); border-radius:9px; padding:10px 13px; display:flex; align-items:center; gap:9px; flex-wrap:wrap;}
+  .dbb-app-branch{font-size:12px; font-weight:800; color:var(--navy-2);}
+  .dbb-app-who{font-size:11.5px; color:var(--slate); font-weight:700;}
+  .dbb-app-qty{font-size:12px; font-weight:800; color:var(--orange-deep); margin-left:auto;}
+  .dbb-app-st{font-size:10px; font-weight:800; padding:3px 8px; border-radius:999px;}
+  .dbb-app-st.접수{background:#FEF3C7; color:#92400E;}
+  .dbb-app-st.승인{background:#DCFCE7; color:#166534;}
+  .dbb-app-st.거절{background:#FEE2E2; color:#991B1B;}
+  .dbb-app-memo{flex-basis:100%; font-size:11.5px; color:var(--slate); line-height:1.5;}
+  .dbb-form{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:15px 17px; margin-top:16px;}
+  .dbb-form select, .dbb-form input, .dbb-form textarea{width:100%; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff; margin-bottom:8px;}
+  .dbb-form textarea{min-height:52px; resize:vertical;}
+  .dbb-form-row{display:flex; gap:8px;}
+  .dbb-form-row > *{flex:1;}
+  .dbb-submit{width:100%; padding:12px; border:none; border-radius:9px; background:var(--navy-2); color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:.15s;}
+  .dbb-submit:hover{background:var(--orange);}
+  .dbb-submit:disabled{background:var(--slate); cursor:not-allowed;}
+  .dbb-msg{font-size:11.5px; font-weight:700; margin-top:8px; text-align:center;}
+
   /* ---------- 파트너모집 ---------- */
   .recruit-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px;}
   .recruit-card{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:18px; position:relative;}
@@ -843,8 +886,39 @@ body.growon{ background:var(--g-navy); }
 
           <!-- DB신청 -->
           <div class="edu-panel" id="admin-db">
-            <div class="qna-notice">DB(잠재고객 리드) 배정을 신청합니다. 신청 내역은 담당자에게 전달됩니다.</div>
-            <a class="dcard-btn" href="https://daonpartners.app.n8n.cloud/form/6885e5fe-0bc7-400a-a9f4-47c31f92af68" target="_blank" rel="noopener" style="max-width:280px; margin:14px 0;">↗ DB신청 폼 열기</a>
+
+            <!-- 목록 뷰 -->
+            <div id="dbbListView">
+              <button class="qna-new-btn" id="dbbNewBtn">✏️ DB 게시물 등록 (관리자)</button>
+              <div class="qna-form" id="dbbNewForm">
+                <div class="qna-form-row">
+                  <select id="dbbNewType" style="flex:1; padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; background:#fff;">
+                    <option value="광고">광고</option>
+                    <option value="부동산이사">부동산이사</option>
+                    <option value="온라인">온라인</option>
+                    <option value="행사">행사</option>
+                    <option value="기타">기타</option>
+                  </select>
+                  <input type="text" id="dbbNewAuthor" placeholder="등록자명">
+                </div>
+                <input type="text" id="dbbNewTitle" placeholder="제목 (예: 7월 온라인DB)">
+                <div class="qna-form-row">
+                  <input type="number" id="dbbNewQty" placeholder="보유수량" min="1">
+                  <input type="date" id="dbbNewDue" placeholder="신청 마감일">
+                </div>
+                <textarea id="dbbNewDesc" placeholder="DB 소개 (유입경로, 연령대, 지역, 단가 등)"></textarea>
+                <div class="qna-form-msg" id="dbbNewMsg"></div>
+                <button type="button" id="dbbNewSubmit">등록</button>
+              </div>
+
+              <div class="qna-notice">DB 게시물을 선택하면 신청 현황을 확인하고 신청할 수 있습니다.</div>
+              <div class="dbb-list" id="dbbList">
+                <div class="dbb-empty">불러오는 중…</div>
+              </div>
+            </div>
+
+            <!-- 상세 뷰 -->
+            <div id="dbbDetailView" style="display:none;"></div>
           </div>
         </div>
       </section>
@@ -2747,6 +2821,233 @@ body.growon{ background:var(--g-navy); }
   if(_ac) _ac.addEventListener('keydown', e => { if(e.key === 'Enter') _agb.click(); });
   if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')) unlockAdmin();
 
+  /* ===== DB신청 게시판 ===== */
+  const DB_BOARD_FEED   = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-board';
+  const DB_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-post';
+  const DB_APPLY_WEBHOOK= 'https://daonpartners.app.n8n.cloud/webhook/daon-db-apply';
+  const DB_BRANCHES = ['광명','다온','도약','동행','광주'];
+
+  let dbbPosts = [];
+  let dbbLoaded = false;
+
+  function dbbEsc(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function dbbDday(due){
+    if(!due) return null;
+    const d = new Date(due + 'T23:59:59');
+    return Math.ceil((d - new Date()) / 86400000);
+  }
+
+  async function dbbLoad(force){
+    if(dbbLoaded && !force) return;
+    const list = document.getElementById('dbbList');
+    if(!list) return;
+    list.innerHTML = '<div class="dbb-empty">불러오는 중…</div>';
+    try{
+      const res = await fetch(DB_BOARD_FEED + '?t=' + Date.now());
+      const data = await res.json();
+      dbbPosts = (data && data.posts) ? data.posts : [];
+      dbbLoaded = true;
+      dbbRenderList();
+    }catch(err){
+      list.innerHTML = '<div class="dbb-empty">목록을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>';
+    }
+  }
+
+  function dbbRenderList(){
+    const list = document.getElementById('dbbList');
+    if(!list) return;
+    if(!dbbPosts.length){
+      list.innerHTML = '<div class="dbb-empty">등록된 DB 게시물이 없습니다.</div>';
+      return;
+    }
+    list.innerHTML = dbbPosts.map(p => {
+      const dd = dbbDday(p.dueAt);
+      const closed = p.status === '마감' || p.remain <= 0 || (dd !== null && dd < 0);
+      const pct = p.total > 0 ? Math.min(100, Math.round(p.used / p.total * 100)) : 0;
+      let dueTxt = '';
+      if(dd !== null) dueTxt = dd < 0 ? '마감' : (dd === 0 ? 'D-DAY' : 'D-' + dd);
+      return '<div class="dbb-card' + (closed ? ' closed' : '') + '" data-dbid="' + dbbEsc(p.id) + '">' +
+        '<div class="dbb-top">' +
+          '<span class="dbb-tag' + (closed ? ' gray' : '') + '">' + dbbEsc(p.type) + '</span>' +
+          '<span class="dbb-title">' + dbbEsc(p.title) + '</span>' +
+          (dueTxt ? '<span class="dbb-due' + (dd < 0 ? ' over' : '') + '">' + dueTxt + '</span>' : '') +
+        '</div>' +
+        '<div class="dbb-bar"><div class="dbb-bar-fill' + (closed ? ' full' : '') + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="dbb-meta">' +
+          '<span>잔여 <b>' + p.remain + '</b> / ' + p.total + '개</span>' +
+          '<span>신청 <b>' + p.applications.length + '</b>건</span>' +
+          (p.dueAt ? '<span>마감 ' + dbbEsc(p.dueAt) + '</span>' : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  function dbbRenderDetail(id){
+    const p = dbbPosts.filter(x => x.id === id)[0];
+    if(!p) return;
+    const dd = dbbDday(p.dueAt);
+    const closed = p.status === '마감' || p.remain <= 0 || (dd !== null && dd < 0);
+    const pct = p.total > 0 ? Math.min(100, Math.round(p.used / p.total * 100)) : 0;
+
+    const appsHtml = p.applications.length
+      ? p.applications.map(a =>
+          '<div class="dbb-app">' +
+            '<span class="dbb-app-branch">' + dbbEsc(a.branch) + '지사</span>' +
+            '<span class="dbb-app-who">' + dbbEsc(a.applicant) + '</span>' +
+            '<span class="dbb-app-st ' + dbbEsc(a.status) + '">' + dbbEsc(a.status) + '</span>' +
+            '<span class="dbb-app-qty">' + a.qty + '개</span>' +
+            (a.memo ? '<div class="dbb-app-memo">💬 ' + dbbEsc(a.memo) + '</div>' : '') +
+          '</div>').join('')
+      : '<div class="dbb-empty" style="padding:18px;">아직 신청이 없습니다. 첫 번째로 신청해 보세요.</div>';
+
+    const formHtml = closed
+      ? '<div class="dbb-form"><div class="dbb-msg" style="color:var(--slate);">마감된 DB입니다. 신청할 수 없습니다.</div></div>'
+      : '<div class="dbb-form">' +
+          '<div class="dbb-sec" style="margin-top:0;">✍️ DB 신청하기</div>' +
+          '<div class="dbb-form-row">' +
+            '<select id="dbbApplyBranch">' +
+              '<option value="">지사 선택</option>' +
+              DB_BRANCHES.map(b => '<option value="' + b + '">' + b + '지사</option>').join('') +
+            '</select>' +
+            '<input type="text" id="dbbApplyName" placeholder="신청자 이름">' +
+          '</div>' +
+          '<input type="number" id="dbbApplyQty" placeholder="신청 수량 (최대 ' + p.remain + '개)" min="1" max="' + p.remain + '">' +
+          '<textarea id="dbbApplyMemo" placeholder="메모 (선택)"></textarea>' +
+          '<button type="button" class="dbb-submit" id="dbbApplySubmit">DB신청하기</button>' +
+          '<div class="dbb-msg" id="dbbApplyMsg"></div>' +
+        '</div>';
+
+    document.getElementById('dbbDetailView').innerHTML =
+      '<span class="dbb-back" id="dbbBack">← 목록으로</span>' +
+      '<div class="dbb-detail-head">' +
+        '<div class="dbb-top">' +
+          '<span class="dbb-tag' + (closed ? ' gray' : '') + '">' + dbbEsc(p.type) + '</span>' +
+          '<span class="dbb-title" style="font-size:15.5px;">' + dbbEsc(p.title) + '</span>' +
+        '</div>' +
+        '<div class="dbb-bar"><div class="dbb-bar-fill' + (closed ? ' full' : '') + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="dbb-meta">' +
+          '<span>잔여 <b>' + p.remain + '</b> / ' + p.total + '개</span>' +
+          '<span>신청 <b>' + p.applications.length + '</b>건</span>' +
+          (p.dueAt ? '<span>마감 <b>' + dbbEsc(p.dueAt) + '</b></span>' : '') +
+          '<span>게시 ' + dbbEsc((p.postedAt || '').slice(0,10)) + '</span>' +
+        '</div>' +
+        (p.desc ? '<div class="dbb-desc">' + dbbEsc(p.desc) + '</div>' : '') +
+      '</div>' +
+      '<div class="dbb-sec">📋 신청 현황 (' + p.applications.length + ')</div>' +
+      '<div class="dbb-apps">' + appsHtml + '</div>' +
+      formHtml;
+
+    document.getElementById('dbbListView').style.display = 'none';
+    document.getElementById('dbbDetailView').style.display = 'block';
+
+    document.getElementById('dbbBack').addEventListener('click', () => {
+      document.getElementById('dbbDetailView').style.display = 'none';
+      document.getElementById('dbbListView').style.display = 'block';
+    });
+
+    const sub = document.getElementById('dbbApplySubmit');
+    if(sub) sub.addEventListener('click', () => dbbApply(p.id));
+  }
+
+  async function dbbApply(postId){
+    const branch = document.getElementById('dbbApplyBranch').value;
+    const name = document.getElementById('dbbApplyName').value.trim();
+    const qty = parseInt(document.getElementById('dbbApplyQty').value, 10);
+    const memo = document.getElementById('dbbApplyMemo').value.trim();
+    const msg = document.getElementById('dbbApplyMsg');
+    const btn = document.getElementById('dbbApplySubmit');
+
+    if(!branch || !name || !qty || qty < 1){
+      msg.textContent = '지사 · 이름 · 수량을 모두 입력해 주세요.';
+      msg.style.color = 'var(--orange-deep)';
+      return;
+    }
+    btn.disabled = true;
+    msg.textContent = '신청 중…';
+    msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(DB_APPLY_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ postId: postId, branch: branch, name: name, qty: qty, memo: memo })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '✅ ' + data.message;
+        msg.style.color = 'var(--orange-deep)';
+        await dbbLoad(true);
+        setTimeout(() => dbbRenderDetail(postId), 400);
+      } else {
+        msg.textContent = (data && data.message) || '신청에 실패했습니다.';
+        msg.style.color = 'red';
+        btn.disabled = false;
+      }
+    }catch(err){
+      msg.textContent = '네트워크 오류로 신청에 실패했습니다.';
+      msg.style.color = 'red';
+      btn.disabled = false;
+    }
+  }
+
+  const _dbbList = document.getElementById('dbbList');
+  if(_dbbList) _dbbList.addEventListener('click', (e) => {
+    const card = e.target.closest('.dbb-card');
+    if(card) dbbRenderDetail(card.dataset.dbid);
+  });
+
+  const _dbbNewBtn = document.getElementById('dbbNewBtn');
+  if(_dbbNewBtn) _dbbNewBtn.addEventListener('click', () => {
+    document.getElementById('dbbNewForm').classList.toggle('open');
+  });
+
+  const _dbbNewSubmit = document.getElementById('dbbNewSubmit');
+  if(_dbbNewSubmit) _dbbNewSubmit.addEventListener('click', async () => {
+    const title = document.getElementById('dbbNewTitle').value.trim();
+    const type = document.getElementById('dbbNewType').value;
+    const qty = parseInt(document.getElementById('dbbNewQty').value, 10);
+    const due = document.getElementById('dbbNewDue').value;
+    const desc = document.getElementById('dbbNewDesc').value.trim();
+    const author = document.getElementById('dbbNewAuthor').value.trim();
+    const msg = document.getElementById('dbbNewMsg');
+
+    if(!title || !qty || qty < 1 || !due){
+      msg.textContent = '제목 · 보유수량 · 마감일은 필수입니다.';
+      msg.style.color = 'var(--orange-deep)';
+      return;
+    }
+    msg.textContent = '등록 중…';
+    msg.style.color = 'var(--slate)';
+    try{
+      const res = await fetch(DB_POST_WEBHOOK, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ title: title, type: type, qty: qty, due: due, desc: desc, author: author })
+      });
+      const data = await res.json();
+      if(data && data.success){
+        msg.textContent = '✅ ' + data.message;
+        msg.style.color = 'var(--orange-deep)';
+        document.getElementById('dbbNewTitle').value = '';
+        document.getElementById('dbbNewQty').value = '';
+        document.getElementById('dbbNewDue').value = '';
+        document.getElementById('dbbNewDesc').value = '';
+        await dbbLoad(true);
+        setTimeout(() => {
+          document.getElementById('dbbNewForm').classList.remove('open');
+          msg.textContent = '';
+        }, 1500);
+      } else {
+        msg.textContent = (data && data.message) || '등록에 실패했습니다.';
+        msg.style.color = 'red';
+      }
+    }catch(err){
+      msg.textContent = '네트워크 오류로 등록에 실패했습니다.';
+      msg.style.color = 'red';
+    }
+  });
+
   /* ===== 관리자센터 탭 ===== */
   const _at = document.getElementById('adminTabs');
   if(_at) _at.addEventListener('click', (e) => {
@@ -2756,6 +3057,7 @@ body.growon{ background:var(--g-navy); }
     document.querySelectorAll('#admincenter .edu-panel').forEach(p => p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById('admin-' + btn.dataset.atab).classList.add('active');
+    if(btn.dataset.atab === 'db') dbbLoad(false);
   });
 
   /* ===== 피드 로딩 ===== */
