@@ -437,13 +437,14 @@ body.growon{ background:var(--g-navy); }
   .gi-rank{display:flex; align-items:center; justify-content:center; min-height:64px;}
   .gi-rank .gi-box-t{margin:0; font-size:15px;}
   .gi-tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px;}
-  .gi-tbl{width:100%; border-collapse:collapse; min-width:720px; background:var(--canvas);}
+  .gi-tbl{width:100%; border-collapse:collapse; min-width:560px; background:var(--canvas);}
   .gi-tbl th{background:#F3F5F8; font-size:12px; font-weight:800; color:var(--navy-2); text-align:left; padding:11px 14px; border-bottom:1px solid var(--line);}
   .gi-tbl td{font-size:12.2px; line-height:1.6; color:var(--slate); padding:13px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
   .gi-tbl tr:last-child td{border-bottom:none;}
   .gi-tbl td b{color:var(--navy-2); font-weight:800;}
   .gi-tbl td:last-child{font-weight:800; color:#FF6A2B; white-space:nowrap;}
   .gi-sub{font-size:10.5px; font-weight:700; color:#FF6A2B;}
+  .gi-cond{display:inline-block; margin-top:3px; font-size:10.5px; font-weight:600; color:#9AA5B4;}
   .gi-note{font-size:11.5px; color:var(--slate); margin-top:10px; line-height:1.6;}
   .gi-decl{background:var(--navy-2); color:#fff; border-radius:14px; padding:22px 26px; margin-top:26px;}
   .gi-decl-t{font-size:15px; font-weight:800; letter-spacing:.03em;}
@@ -668,47 +669,40 @@ body.growon{ background:var(--g-navy); }
         <div class="gi-h">FC 복지혜택 7</div>
         <div class="gi-tblwrap">
           <table class="gi-tbl">
-            <thead><tr><th>복지제도</th><th>대상 · 조건</th><th>혜택</th><th>시행</th></tr></thead>
+            <thead><tr><th>복지제도</th><th>혜택</th><th>시행</th></tr></thead>
             <tbody>
               <tr>
-                <td><b>어린이집 &amp; 아이돌봄 지원금</b></td>
-                <td>1년 이상 근속 FC(팀장)<br>6개월 분기평가 실적 50만원 이상<br>자녀 만 7세 이하 1명 이상 (한부모·미혼모·싱글맘/대디 포함)</td>
+                <td><b>어린이집 &amp; 아이돌봄 지원금</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>매월 20만원 지급<br>최대 1년간 최대 240만원</td>
                 <td>2026.09</td>
               </tr>
               <tr>
-                <td><b>출근율 성과보너스</b><br><span class="gi-sub">제2의 월급</span></td>
-                <td>1년 이상 근속 FC(팀장)<br>1년 중 최소 8개월 이상 출근, 출근일수 80% 이상<br>1년 분기 평균 실적 50만원 이상</td>
+                <td><b>출근율 성과보너스</b> <span class="gi-sub">제2의 월급</span><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>300만원 일시지급<br>12개월 마감 후 익월 15일 지급<br>우수 FC 특별 포상(상품권 등)</td>
                 <td>2026.09</td>
               </tr>
               <tr>
-                <td><b>장기근속자 학자금 지원</b></td>
-                <td>2년/4년 이상 근속 FC(팀장) 및 지점장<br>자녀 대학 재학 중<br>연 합산 실적 평균 70만원 이상 · 연 리쿠르팅 3명 이상</td>
+                <td><b>장기근속자 학자금 지원</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>2년 근속 : 자녀 1인, 대학등록금 30% (최대 250~300만원)<br>4년 근속 : 자녀 2인, 대학등록금 30% (최대 500~600만원)</td>
                 <td>2027.05</td>
               </tr>
               <tr>
-                <td><b>출산 &amp; 결혼 지원금</b></td>
-                <td>2년 이상 근속 FC(팀장)<br>출산 : 1년 합산 실적 평균 30만원 이상<br>결혼 : 1년 합산 실적 평균 50만원 이상</td>
+                <td><b>출산 &amp; 결혼 지원금</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>출산 : 1인 출산기준 100만원<br>결혼 : 예식장 대관료 200만원 지원</td>
                 <td>2026.06</td>
               </tr>
               <tr>
-                <td><b>상조(장례)서비스 지원</b></td>
-                <td>2년 이상 근속 소속 모든 설계사 및 관리자<br>1년 합산 실적 평균 30만원 이상</td>
+                <td><b>상조(장례)서비스 지원</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>직계존·비속 및 형제·자매 상조서비스<br>접객도우미·장례지도사·차량·화환 등 약 250만원 상당</td>
                 <td>2026.06</td>
               </tr>
               <tr>
-                <td><b>자기계발 도서 &amp; book 콘서트</b></td>
-                <td>1년 이상 근속 FC · 지점장 · 지사장<br>1년 합산 실적 평균 30만원 이상</td>
+                <td><b>자기계발 도서 &amp; book 콘서트</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>도서 : 연 120,000원 교보문고 기프트카드<br>book 콘서트 : 연 100,000원 상당(식사·커피)</td>
                 <td>2026.06</td>
               </tr>
               <tr>
-                <td><b>제휴 종합 건강검진</b></td>
-                <td>2년 이상 근속 FC &amp; 관리자<br>연 합산 실적 평균 50만원 이상</td>
+                <td><b>제휴 종합 건강검진</b><br><span class="gi-cond">(각 해당조건 충당 시)</span></td>
                 <td>약 160만원 상당 종합 건강검진<br>뇌 MRI/MRA, 췌장 MRI 등 84가지 항목<br>2년마다 1매씩 지원</td>
                 <td>2026.05</td>
               </tr>
