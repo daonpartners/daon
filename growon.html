@@ -418,6 +418,35 @@ body.growon{ background:var(--g-navy); }
 .gmain .panel{background:transparent; border:none; box-shadow:none; padding:0; margin:0;}
 .gstrip{display:grid; grid-template-columns:1fr 1fr 1.1fr; gap:11px; margin-bottom:13px;}
 .gview{display:none;} .gview.on{display:block;}
+
+  /* ---------- 제도안내(그로우 소개) ---------- */
+  .gi-hero{background:linear-gradient(135deg,#FF6A2B,#FF9354); border-radius:14px; padding:26px 28px; color:#fff; margin-bottom:6px;}
+  .gi-hero-tag{display:inline-block; font-size:11px; font-weight:800; letter-spacing:.08em; background:rgba(255,255,255,.22); padding:5px 12px; border-radius:999px;}
+  .gi-hero-t{font-size:24px; font-weight:800; line-height:1.35; margin-top:12px;}
+  .gi-hero-d{font-size:13px; line-height:1.65; margin-top:12px; opacity:.95; max-width:820px;}
+  .gi-hero-d b{font-weight:800;}
+  .gi-h{font-size:15px; font-weight:800; color:var(--navy-2); margin:26px 0 12px; padding-left:11px; border-left:4px solid #FF6A2B;}
+  .gi-2{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:12px;}
+  .gi-3{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px;}
+  .gi-box{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:16px 18px;}
+  .gi-box-t{font-size:14px; font-weight:800; color:var(--navy-2); margin-bottom:8px;}
+  .gi-box-t span{font-size:11.5px; font-weight:700; color:#FF6A2B; margin-left:6px;}
+  .gi-box-d{font-size:12.3px; line-height:1.7; color:var(--slate);}
+  .gi-box-d b{color:var(--navy-2);}
+  .gi-year .gi-box-t{color:#FF6A2B;}
+  .gi-tblwrap{overflow-x:auto; border:1px solid var(--line); border-radius:12px;}
+  .gi-tbl{width:100%; border-collapse:collapse; min-width:720px; background:var(--canvas);}
+  .gi-tbl th{background:#F3F5F8; font-size:12px; font-weight:800; color:var(--navy-2); text-align:left; padding:11px 14px; border-bottom:1px solid var(--line);}
+  .gi-tbl td{font-size:12.2px; line-height:1.6; color:var(--slate); padding:13px 14px; border-bottom:1px solid var(--line); vertical-align:top;}
+  .gi-tbl tr:last-child td{border-bottom:none;}
+  .gi-tbl td b{color:var(--navy-2); font-weight:800;}
+  .gi-tbl td:last-child{font-weight:800; color:#FF6A2B; white-space:nowrap;}
+  .gi-sub{font-size:10.5px; font-weight:700; color:#FF6A2B;}
+  .gi-note{font-size:11.5px; color:var(--slate); margin-top:10px; line-height:1.6;}
+  .gi-decl{background:var(--navy-2); color:#fff; border-radius:14px; padding:22px 26px; margin-top:26px;}
+  .gi-decl-t{font-size:15px; font-weight:800; letter-spacing:.03em;}
+  .gi-decl-d{font-size:12.5px; line-height:1.85; margin-top:10px; opacity:.9;}
+  .gi-foot{font-size:11.5px; line-height:1.75; color:var(--slate); margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);}
 .map-wrap{display:grid; grid-template-columns:1fr 250px; gap:18px; align-items:start;}
 .kmap{width:100%; height:auto;}
 .kmap .region{fill:#E8EDF3; stroke:#fff; stroke-width:1.5;}
@@ -532,7 +561,7 @@ body.growon{ background:var(--g-navy); }
     <div class="gcard">
       <div class="gcard-t">그로우사업부</div>
       <div class="gcard-list">
-        <a data-view="business">제도안내</a>
+        <a data-view="guide">제도안내</a>
         <a data-view="business">사업소개</a>
         <a data-view="home">전국지사안내</a>
       </div>
@@ -614,10 +643,142 @@ body.growon{ background:var(--g-navy); }
         <div class="cardnews-grid" id="cardnewsGrid" data-reveal></div>
       </section>
       </div>
+      <div class="gview" id="view-guide">
+<section class="panel panel-navy" id="guide">
+        <div class="panel-head">
+          <div><div class="panel-eyebrow">About GROW</div><h2 class="panel-title">그로우사업부 제도안내</h2></div>
+          <div class="panel-count">통합 운영메뉴얼 요약</div>
+        </div>
+
+        <div class="gi-hero">
+          <div class="gi-hero-tag">Partner + Grow</div>
+          <div class="gi-hero-t">설계사가 오랫동안 일할 수 있는<br>가장 좋은 회사</div>
+          <div class="gi-hero-d">그로우사업부는 단순한 보험 영업 조직이 아닌, <b>성장과 상생을 함께 이루는 GSP 플랫폼</b>을 중심 가치로 둡니다. 대기업형 복지 · 풍부한 영업먹거리 · 최고의 교육시스템을 만들어갑니다.</div>
+        </div>
+
+        <div class="gi-h">GSP 핵심 철학</div>
+        <div class="gi-3">
+          <div class="gi-box"><div class="gi-box-t">Growth <span>성장</span></div><div class="gi-box-d">FC 개개인의 성장이 조직의 성장으로 연결. 단기 실적보다 장기 커리어 중심의 지원체계를 설계합니다.</div></div>
+          <div class="gi-box"><div class="gi-box-t">Shared <span>공유와 협력</span></div><div class="gi-box-d">교육자료 전체 공유, 영업정보 데이터베이스화, 성공사례·노하우 공유. 모든 FC가 동등하게 접근합니다.</div></div>
+          <div class="gi-box"><div class="gi-box-t">Prosperity <span>상생과 번영</span></div><div class="gi-box-d">투명한 수수료 체계와 실질적 복지, 장기근속 제도로 공정한 보상을 실현합니다.</div></div>
+        </div>
+
+        <div class="gi-h">FC 복지혜택 7</div>
+        <div class="gi-tblwrap">
+          <table class="gi-tbl">
+            <thead><tr><th>복지제도</th><th>대상 · 조건</th><th>혜택</th><th>시행</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>어린이집 &amp; 아이돌봄 지원금</b></td>
+                <td>1년 이상 근속 FC(팀장)<br>6개월 분기평가 실적 50만원 이상<br>자녀 만 7세 이하 1명 이상 (한부모·미혼모·싱글맘/대디 포함)</td>
+                <td>매월 20만원 지급<br>최대 1년간 최대 240만원</td>
+                <td>2026.09</td>
+              </tr>
+              <tr>
+                <td><b>출근율 성과보너스</b><br><span class="gi-sub">제2의 월급</span></td>
+                <td>1년 이상 근속 FC(팀장)<br>1년 중 최소 8개월 이상 출근, 출근일수 80% 이상<br>1년 분기 평균 실적 50만원 이상</td>
+                <td>300만원 일시지급<br>12개월 마감 후 익월 15일 지급<br>우수 FC 특별 포상(상품권 등)</td>
+                <td>2026.09</td>
+              </tr>
+              <tr>
+                <td><b>장기근속자 학자금 지원</b></td>
+                <td>2년/4년 이상 근속 FC(팀장) 및 지점장<br>자녀 대학 재학 중<br>연 합산 실적 평균 70만원 이상 · 연 리쿠르팅 3명 이상</td>
+                <td>2년 근속 : 자녀 1인, 대학등록금 30% (최대 250~300만원)<br>4년 근속 : 자녀 2인, 대학등록금 30% (최대 500~600만원)</td>
+                <td>2027.05</td>
+              </tr>
+              <tr>
+                <td><b>출산 &amp; 결혼 지원금</b></td>
+                <td>2년 이상 근속 FC(팀장)<br>출산 : 1년 합산 실적 평균 30만원 이상<br>결혼 : 1년 합산 실적 평균 50만원 이상</td>
+                <td>출산 : 1인 출산기준 100만원<br>결혼 : 예식장 대관료 200만원 지원</td>
+                <td>2026.06</td>
+              </tr>
+              <tr>
+                <td><b>상조(장례)서비스 지원</b></td>
+                <td>2년 이상 근속 소속 모든 설계사 및 관리자<br>1년 합산 실적 평균 30만원 이상</td>
+                <td>직계존·비속 및 형제·자매 상조서비스<br>접객도우미·장례지도사·차량·화환 등 약 250만원 상당</td>
+                <td>2026.06</td>
+              </tr>
+              <tr>
+                <td><b>자기계발 도서 &amp; book 콘서트</b></td>
+                <td>1년 이상 근속 FC · 지점장 · 지사장<br>1년 합산 실적 평균 30만원 이상</td>
+                <td>도서 : 연 120,000원 교보문고 기프트카드<br>book 콘서트 : 연 100,000원 상당(식사·커피)</td>
+                <td>2026.06</td>
+              </tr>
+              <tr>
+                <td><b>제휴 종합 건강검진</b></td>
+                <td>2년 이상 근속 FC &amp; 관리자<br>연 합산 실적 평균 50만원 이상</td>
+                <td>약 160만원 상당 종합 건강검진<br>뇌 MRI/MRA, 췌장 MRI 등 84가지 항목<br>2년마다 1매씩 지원</td>
+                <td>2026.05</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="gi-h">승격 &amp; 수수료 제도</div>
+        <div class="gi-3">
+          <div class="gi-box"><div class="gi-box-t">일반 FC (팀장)</div><div class="gi-box-d">수수료율 70~75% + @(팀장)<br>승격 조건 : 일반(없음) / 팀장(실적)<br>기본 &amp; 특화 영업활동 지원</div></div>
+          <div class="gi-box"><div class="gi-box-t">지점장</div><div class="gi-box-d">수수료율 85% + 하위팀원 OR<br>손보법인시책 100%(익월)<br>승격 : FC 5명 이상 · 실적평균 500만원<br>평가 : 6개월마다 분기평가 합산</div></div>
+          <div class="gi-box"><div class="gi-box-t">지사장</div><div class="gi-box-d">수수료율 97% + 하위팀원 OR<br>손보법인시책(상생포함) 250%<br>승격 : FC 10명 이상 · 실적평균 1,000만원<br>평가 : 6개월마다 분기평가 합산</div></div>
+        </div>
+        <div class="gi-note">※ 실적 제외 : 실손 · 자동차 · 일반 · 본인계약 / 손보·생보 100% 원장 수수료 예시표 및 환수율표는 통합 운영메뉴얼 원본 참조</div>
+
+        <div class="gi-h">교육 &amp; 영업지원</div>
+        <div class="gi-2">
+          <div class="gi-box">
+            <div class="gi-box-t">교육 시스템</div>
+            <div class="gi-box-d">
+              · <b>기본교육</b> — 신입FC 필수과정(보험기초·상품이해·윤리/준법). 입사 후 1개월 내, 월 4회 이상<br>
+              · <b>실무교육</b> — 중급FC(6개월 이상) 대상. 월 2회(둘째·넷째 주), 1회 2시간, 롤플레잉·멘토링<br>
+              · <b>특별교육</b> — 분기 1회 무료, 8시간 전일. 세일즈 스킬 마스터, 리더십 교육, 우수 참가자 인센티브
+            </div>
+          </div>
+          <div class="gi-box">
+            <div class="gi-box-t">특화 시스템 영업지원</div>
+            <div class="gi-box-d">
+              · 부동산 + 이사 플랫폼 연계형 DB영업 (월 신규 600~800건 예상)<br>
+              · 광고·마케팅 활성화 DB영업 (연 10만 건 확보)<br>
+              · 네이버 상위노출 온라인영업 (FC 월 60~120건 생성)<br>
+              · 병원 제휴 홍보마케팅 / 유튜브 스튜디오 개인브랜딩<br>
+              · 이벤트 · 사업자 · 건물 마케팅 영업
+            </div>
+          </div>
+        </div>
+
+        <div class="gi-h">공통 총무 &amp; 매니져 운영</div>
+        <div class="gi-2">
+          <div class="gi-box"><div class="gi-box-t">공통총무 이용</div><div class="gi-box-d">인원대비 월 최소 80~100만원으로 이용 가능 · 최대 10명까지 공통총무 이용<br>메인 총무 : 조직 규모 30명당 1명 배치<br>업무 : 행정지원, 계약관리, 고객응대 보조</div></div>
+          <div class="gi-box"><div class="gi-box-t">교육 &amp; 도입 매니져</div><div class="gi-box-d">교육매니져 : 사업단별 월별 스케줄 확인 후 방문교육 (전산·고객응대·세일즈스킬·DB운용)<br>리쿠르팅 매니져 : 온라인·외부매체 홍보 및 소개 전담</div></div>
+        </div>
+
+        <div class="gi-h">비전 &amp; 목표</div>
+        <div class="gi-3">
+          <div class="gi-box gi-year"><div class="gi-box-t">2026 <span>안정적 정착</span></div><div class="gi-box-d">재적 200명 · 월 보험료 매출 1억 5천만원<br>복지체계 완성, 신규 FC 교육 시스템 고도화</div></div>
+          <div class="gi-box gi-year"><div class="gi-box-t">2027 <span>허브조직 확장</span></div><div class="gi-box-d">재적 500명 · 월 매출 4억원 이상<br>지역별 거점 확보, 지사장 육성 시스템</div></div>
+          <div class="gi-box gi-year"><div class="gi-box-t">2028 <span>전국 지사화</span></div><div class="gi-box-d">재적 1,000명 이상 · 월 매출 7억원 이상<br>GSP 플랫폼 정착 및 확산</div></div>
+        </div>
+
+        <div class="gi-decl">
+          <div class="gi-decl-t">PartnerGrow Declaration</div>
+          <div class="gi-decl-d">
+            우리는 서로의 성장을 위해 협력하며 파트너십을 기반으로 동반 성공을 실현한다.<br>
+            우리는 따뜻하고 공정한 시스템으로 구성원 모두의 커리어·삶·미래를 함께 만들어간다.<br>
+            우리는 개인의 성공이 곧 조직의 성공이 되는 새로운 보험 영업 조직의 기준을 세운다.
+          </div>
+        </div>
+
+        <div class="gi-foot">
+          시행 기준 — 작성일 2025년 11월 · 시행일 2026년 3월 · 작성자 그로우사업부 대표 황경호<br>
+          적용 범위 : 전체 조직 공통 (FC, 지점장, 지사장, 본부장 포함)<br>
+          복지운영 공통사항 : 손해·생명보험 업적기준 평가 (단기납종신, 연금, 실손, 일반, 자동차, 펫보험 제외)<br>
+          출근성과 예외사항 : 직계가족 조사, 병원 통원/입원, 기타 인정 가능한 사유
+        </div>
+      </section>
+      </div>
+
       <div class="gview" id="view-business">
 <section class="panel panel-navy" id="business">
         <div class="panel-head">
-          <div><div class="panel-eyebrow">About Our Business</div><h2 class="panel-title">다온지사 사업소개</h2></div>
+          <div><div class="panel-eyebrow">About Our Business</div><h2 class="panel-title">그로우사업부 사업소개</h2></div>
         </div>
         <div class="biz-grid" id="bizGrid" data-reveal></div>
       </section>
@@ -1467,8 +1628,8 @@ body.growon{ background:var(--g-navy); }
     {
       icon: "🤝",
       name: "비즈니스파트너스",
-      summary: "다온x소상공인 상생업체",
-      desc: "다온x소상공인 상생업체",
+      summary: "그로우사업부 제휴업체",
+      desc: "그로우사업부 제휴업체",
       category: "제휴업체"
     }
   ];
