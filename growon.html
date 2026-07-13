@@ -330,6 +330,66 @@
   .qna-new-btn:hover{border-color:var(--orange); color:var(--orange-deep);}
   .qna-notice{font-size:11px; color:var(--slate); margin-bottom:10px;}
 
+  /* ---------- 오늘의 뉴스한입 카드 ---------- */
+  .dnc-wrap{background:#fff; border-radius:12px; overflow:hidden; border:1px solid var(--line); font-family:'Pretendard','Noto Sans KR',sans-serif;}
+  .dnc-head{background:#1B2A4E; padding:16px 18px 14px; text-align:center; border-bottom:3px solid #FF6A2B;}
+  .dnc-org{font-size:10.5px; color:#B9C4D9; font-weight:700; letter-spacing:.2px;}
+  .dnc-logo{font-size:27px; font-weight:900; color:#fff; letter-spacing:-0.5px; margin:3px 0 2px; line-height:1.15;}
+  .dnc-logo em{color:#FF6A2B; font-style:normal;}
+  .dnc-sub{font-size:11px; color:#DCE3EF; font-weight:700;}
+  .dnc-body{padding:16px 16px 18px;}
+  .dnc-date{text-align:center; font-size:16px; font-weight:900; color:#16213B; padding-bottom:12px; border-bottom:1px solid #EEF1F5;}
+
+  .dnc-wx{display:flex; justify-content:space-between; gap:2px; padding:12px 2px 10px; border-bottom:1px solid #EEF1F5;}
+  .dnc-wx-i{flex:1; text-align:center; min-width:0;}
+  .dnc-wx-c{font-size:10px; color:#64748B; font-weight:700; white-space:nowrap;}
+  .dnc-wx-e{font-size:15px; line-height:1.5; margin:1px 0;}
+  .dnc-wx-t{font-size:9.5px; color:#16213B; font-weight:800; white-space:nowrap;}
+  .dnc-wx-t b{color:#E4531A;}
+
+  .dnc-note{text-align:right; font-size:8.5px; color:#9AA6B8; padding:6px 2px 4px;}
+  .dnc-mk{display:flex; gap:6px; padding-bottom:12px; border-bottom:1px solid #EEF1F5;}
+  .dnc-mk-i{flex:1; background:#F6F8FA; border:1px solid #E9EDF2; border-radius:8px; padding:8px 4px; text-align:center; min-width:0;}
+  .dnc-mk-l{font-size:9px; color:#64748B; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .dnc-mk-v{font-size:13px; font-weight:900; color:#16213B; margin:3px 0 2px; white-space:nowrap;}
+  .dnc-mk-d{font-size:9px; font-weight:800; white-space:nowrap;}
+  .dnc-mk-d.up{color:#D93025;}
+  .dnc-mk-d.down{color:#1A73E8;}
+  .dnc-mk-d.flat{color:#9AA6B8;}
+
+  .dnc-tr{padding:12px 0; border-bottom:1px solid #EEF1F5; text-align:center;}
+  .dnc-tr-h{font-size:10.5px; font-weight:800; color:#16213B;}
+  .dnc-tr-h span{font-size:8.5px; color:#9AA6B8; font-weight:600;}
+  .dnc-tr-l{display:flex; justify-content:center; gap:6px; flex-wrap:wrap; margin-top:8px;}
+  .dnc-tr-p{font-size:10.5px; font-weight:800; color:#16213B; background:#F1F4F8; border:1px solid #E3E8EE; border-radius:999px; padding:4px 12px;}
+
+  .dnc-news{padding-top:12px; display:flex; flex-direction:column; gap:8px;}
+  .dnc-n{background:#fff; border:1px solid #E9EDF2; border-left:4px solid #FF6A2B; border-radius:7px; padding:10px 12px;}
+  .dnc-n-t{display:flex; align-items:center; gap:7px; margin-bottom:5px;}
+  .dnc-n-cat{font-size:9px; font-weight:800; color:#fff; background:#1B2A4E; border-radius:4px; padding:2.5px 7px; flex-shrink:0;}
+  .dnc-n-h{font-size:12.5px; font-weight:900; color:#16213B; line-height:1.35;}
+  .dnc-n-s{font-size:10.5px; color:#5A6577; line-height:1.55;}
+  .dnc-n-a{display:block; text-decoration:none; color:inherit;}
+  .dnc-n-a:hover .dnc-n{border-color:#FF6A2B; box-shadow:0 2px 10px rgba(255,106,43,.14);}
+
+  .dnc-q{margin-top:12px; background:#F6F8FA; border:1px solid #E9EDF2; border-radius:8px; padding:14px 12px; text-align:center;}
+  .dnc-q-t{font-size:12.5px; font-weight:900; color:#16213B;}
+  .dnc-q-a{font-size:10px; color:#64748B; font-weight:700; margin-top:5px;}
+  .dnc-empty{text-align:center; padding:26px 12px; color:#9AA6B8; font-size:12px;}
+
+  /* 모달 */
+  .dn-modal{display:none; position:fixed; inset:0; z-index:200; background:rgba(11,27,51,.62); align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto;}
+  .dn-modal.open{display:flex;}
+  .dn-modal-box{width:100%; max-width:560px; background:#fff; border-radius:14px; padding:18px; position:relative;}
+  .dn-modal-x{position:absolute; top:12px; right:14px; background:none; border:none; font-size:24px; line-height:1; color:#9AA6B8; cursor:pointer; z-index:2;}
+  .dn-modal-h{font-size:16px; font-weight:900; color:#16213B; padding-right:28px;}
+  .dn-modal-m{font-size:11px; color:#64748B; margin-top:4px; margin-bottom:14px;}
+  .dn-save{display:flex; gap:8px; margin-top:14px;}
+  .dn-save button{flex:1; padding:11px; border:none; border-radius:9px; font-size:12.5px; font-weight:800; cursor:pointer;}
+  .dn-save .p{background:#E4531A; color:#fff;}
+  .dn-save .s{background:#EEF1F6; color:#16213B;}
+  .dn-save button:disabled{opacity:.55; cursor:wait;}
+
   /* ---------- DB 신청 게시판 ---------- */
   .dbb-list{display:flex; flex-direction:column; gap:10px;}
   .dbb-card{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--orange); border-radius:12px; padding:15px 17px; cursor:pointer; transition:.15s;}
@@ -1273,6 +1333,18 @@ body.growon{ background:var(--g-navy); }
         <div class="label" id="bizModalCaseLabel">대표사례</div>
         <div class="value" id="bizModalCase"></div>
       </div>
+    </div>
+  </div>
+</div>
+<div class="dn-modal" id="dnModal">
+  <div class="dn-modal-box">
+    <button class="dn-modal-x" id="dnModalClose">&times;</button>
+    <div class="dn-modal-h" id="dnModalHead"></div>
+    <div class="dn-modal-m" id="dnModalMeta"></div>
+    <div id="dnModalCard"></div>
+    <div class="dn-save">
+      <button class="p" id="dnSaveBtn">⬇️ 이미지로 저장 (PNG)</button>
+      <button class="s" id="dnOpenBtn">🔗 첫 기사 원문</button>
     </div>
   </div>
 </div>
@@ -2496,14 +2568,15 @@ body.growon{ background:var(--g-navy); }
     el.addEventListener('click',e=>{ e.preventDefault(); showView(el.dataset.view); });
   });
   function renderGrowDaily(){
+    return;
+  }
+  function dnRenderMini(){
     const box=document.getElementById('gDaily'); if(!box) return;
-    const c = cardNews.find(x=>x.category==='데일리뉴스') || cardNews[0];
-    if(!c){ box.innerHTML='<div class="dn-empty">오늘의 뉴스를<br>준비 중입니다.</div>'; return; }
-    box.innerHTML = c.image
-      ? `<div class="dn-thumb"><img src="${escapeHtml(c.image)}" alt=""></div><div class="dn-date">${escapeHtml(c.date||'')}</div>`
-      : `<div class="dn-empty">${escapeHtml(c.title||'')}</div>`;
+    if(!dnData){ box.innerHTML='<div class="dn-empty">오늘의 뉴스를<br>준비 중입니다.</div>'; return; }
+    box.innerHTML = '<div class="dn-thumb" style="cursor:pointer;">' + dnCardHtml(dnData, {linkable:false}) + '</div>'
+      + '<div class="dn-date">' + dnEsc(dnData.date||'') + '</div>';
     const t=box.querySelector('.dn-thumb');
-    if(t) t.addEventListener('click',()=>openCardnewsModal(c));
+    if(t) t.addEventListener('click', dnOpenModal);
   }
   const MOBILE=()=>window.matchMedia('(max-width:900px)').matches;
   let gMoved=false;
@@ -2821,6 +2894,154 @@ body.growon{ background:var(--g-navy); }
   if(_ac) _ac.addEventListener('keydown', e => { if(e.key === 'Enter') _agb.click(); });
   if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')) unlockAdmin();
 
+
+  /* ===== 오늘의 뉴스한입 (dailynews/latest.json) ===== */
+  const DN_FEED = 'dailynews/latest.json';
+  let dnData = null;
+
+  function dnEsc(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+  function dnWxIcon(code){
+    const c = Number(code);
+    if(c === 0) return '☀️';
+    if(c === 1 || c === 2) return '🌤️';
+    if(c === 3) return '☁️';
+    if(c === 45 || c === 48) return '🌫️';
+    if(c >= 51 && c <= 57) return '🌦️';
+    if(c >= 61 && c <= 67) return '🌧️';
+    if(c >= 71 && c <= 77) return '❄️';
+    if(c >= 80 && c <= 82) return '🌦️';
+    if(c >= 85 && c <= 86) return '🌨️';
+    if(c >= 95) return '⛈️';
+    return '☁️';
+  }
+
+  function dnCardHtml(d, opts){
+    opts = opts || {};
+    const linkable = !!opts.linkable;
+    if(!d) return '<div class="dnc-empty">오늘의 뉴스를 준비 중입니다.</div>';
+
+    const wx = (d.weather || []).map(w =>
+      '<div class="dnc-wx-i">' +
+        '<div class="dnc-wx-c">' + dnEsc(w.city) + '</div>' +
+        '<div class="dnc-wx-e">' + dnWxIcon(w.code) + '</div>' +
+        '<div class="dnc-wx-t">' + w.min + '°/<b>' + w.max + '°</b></div>' +
+      '</div>').join('');
+
+    const mk = (d.market || []).map(m =>
+      '<div class="dnc-mk-i">' +
+        '<div class="dnc-mk-l">' + dnEsc(m.label) + '</div>' +
+        '<div class="dnc-mk-v">' + dnEsc(m.value) + '</div>' +
+        '<div class="dnc-mk-d ' + dnEsc(m.dir) + '">' +
+          (m.dir === 'up' ? '▲' : (m.dir === 'down' ? '▼' : '—')) + ' ' + dnEsc(String(m.diff).replace(/^[+-]/, '')) +
+        '</div>' +
+      '</div>').join('');
+
+    const tr = (d.trends || []).map(t => '<span class="dnc-tr-p">#' + dnEsc(t) + '</span>').join('');
+
+    const news = (d.news || []).map(n => {
+      const inner =
+        '<div class="dnc-n">' +
+          '<div class="dnc-n-t">' +
+            '<span class="dnc-n-cat">' + dnEsc(n.cat) + '</span>' +
+            '<span class="dnc-n-h">' + dnEsc(n.title) + '</span>' +
+          '</div>' +
+          (n.summary ? '<div class="dnc-n-s">' + dnEsc(n.summary) + '</div>' : '') +
+        '</div>';
+      return (linkable && n.url)
+        ? '<a class="dnc-n-a" href="' + dnEsc(n.url) + '" target="_blank" rel="noopener">' + inner + '</a>'
+        : inner;
+    }).join('');
+
+    const q = d.quote || {};
+
+    return '<div class="dnc-wrap">' +
+      '<div class="dnc-head">' +
+        '<div class="dnc-org">미래에셋금융 그로우 사업부</div>' +
+        '<div class="dnc-logo">Daily <em>News</em></div>' +
+        '<div class="dnc-sub">오늘의 뉴스한입</div>' +
+      '</div>' +
+      '<div class="dnc-body">' +
+        '<div class="dnc-date">' + dnEsc(d.dateLabel || d.date || '') + '</div>' +
+        (wx ? '<div class="dnc-wx">' + wx + '</div>' : '') +
+        (mk ? '<div class="dnc-note">※ 전 영업일 종가기준</div><div class="dnc-mk">' + mk + '</div>' : '') +
+        (tr ? '<div class="dnc-tr"><div class="dnc-tr-h">검색어 트렌드 TOP3 <span>(구글트렌드)</span></div><div class="dnc-tr-l">' + tr + '</div></div>' : '') +
+        (news ? '<div class="dnc-news">' + news + '</div>' : '') +
+        (q.text ? '<div class="dnc-q"><div class="dnc-q-t">"' + dnEsc(q.text) + '"</div><div class="dnc-q-a">— ' + dnEsc(q.author || '') + '</div></div>' : '') +
+      '</div>' +
+    '</div>';
+  }
+
+  function dnOpenModal(){
+    if(!dnData) return;
+    document.getElementById('dnModalHead').textContent = '오늘의 뉴스한입 ' + (dnData.dateLabel || '');
+    document.getElementById('dnModalMeta').textContent = '데일리뉴스 · ' + (dnData.date || '');
+    document.getElementById('dnModalCard').innerHTML = dnCardHtml(dnData, { linkable: true });
+    document.getElementById('dnModal').classList.add('open');
+  }
+  function dnCloseModal(){ document.getElementById('dnModal').classList.remove('open'); }
+
+  function dnLoadScript(src){
+    return new Promise((res, rej) => {
+      if(window.html2canvas) return res();
+      const s = document.createElement('script');
+      s.src = src; s.onload = res; s.onerror = rej;
+      document.head.appendChild(s);
+    });
+  }
+
+  async function dnSavePng(){
+    const btn = document.getElementById('dnSaveBtn');
+    if(!dnData) return;
+    btn.disabled = true;
+    const old = btn.textContent;
+    btn.textContent = '이미지 만드는 중…';
+    try{
+      await dnLoadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+      const stage = document.createElement('div');
+      stage.style.cssText = 'position:fixed; left:-9999px; top:0; width:560px; background:#fff;';
+      stage.innerHTML = dnCardHtml(dnData, { linkable: false });
+      document.body.appendChild(stage);
+      const canvas = await window.html2canvas(stage.firstElementChild, { scale: 2, backgroundColor: '#ffffff', useCORS: true, logging: false });
+      document.body.removeChild(stage);
+      const a = document.createElement('a');
+      a.download = '뉴스한입_' + (dnData.date || 'today') + '.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+      btn.textContent = '✅ 저장 완료';
+      setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 1600);
+    }catch(err){
+      btn.textContent = '저장 실패 — 다시 시도';
+      setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 1800);
+    }
+  }
+
+  async function dnLoad(){
+    try{
+      const res = await fetch(DN_FEED + '?t=' + Date.now(), { cache: 'no-store' });
+      const d = await res.json();
+      if(!d || !d.news || !d.news.length){ dnData = null; dnRenderMini(); return; }
+      dnData = d;
+      dnRenderMini();
+    }catch(err){
+      dnData = null;
+      dnRenderMini();
+    }
+  }
+
+  const _dnX = document.getElementById('dnModalClose');
+  if(_dnX) _dnX.addEventListener('click', dnCloseModal);
+  const _dnB = document.getElementById('dnModal');
+  if(_dnB) _dnB.addEventListener('click', (e) => { if(e.target.id === 'dnModal') dnCloseModal(); });
+  const _dnS = document.getElementById('dnSaveBtn');
+  if(_dnS) _dnS.addEventListener('click', dnSavePng);
+  const _dnO = document.getElementById('dnOpenBtn');
+  if(_dnO) _dnO.addEventListener('click', () => { if(dnData && dnData.news && dnData.news[0]) window.open(dnData.news[0].url, '_blank'); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') dnCloseModal(); });
+  dnLoad();
   /* ===== DB신청 게시판 ===== */
   const DB_BOARD_FEED   = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-board';
   const DB_POST_WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-db-post';
