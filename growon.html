@@ -377,6 +377,13 @@
   .dnc-q-a{font-size:10px; color:#64748B; font-weight:700; margin-top:5px;}
   .dnc-empty{text-align:center; padding:26px 12px; color:#9AA6B8; font-size:12px;}
 
+  /* 사이드 미니 썸네일: 560px 원본을 컬럼 폭에 맞춰 축소 */
+  .dn-mini{position:relative; width:100%; overflow:hidden; border-radius:10px; border:1px solid var(--line); cursor:pointer; transition:.15s; background:#fff;}
+  .dn-mini:hover{box-shadow:0 5px 18px rgba(22,33,59,.16); transform:translateY(-1px);}
+  .dn-mini::after{content:''; position:absolute; left:0; right:0; bottom:0; height:34px; background:linear-gradient(rgba(255,255,255,0), #fff); pointer-events:none;}
+  .dn-mini-in{width:560px; transform-origin:top left; pointer-events:none;}
+  .dn-mini-in .dnc-wrap{border:none; border-radius:0;}
+
   /* 모달 */
   .dn-modal{display:none; position:fixed; inset:0; z-index:200; background:rgba(11,27,51,.62); align-items:flex-start; justify-content:center; padding:24px 16px; overflow-y:auto;}
   .dn-modal.open{display:flex;}
@@ -2573,11 +2580,28 @@ body.growon{ background:var(--g-navy); }
   function dnRenderMini(){
     const box=document.getElementById('gDaily'); if(!box) return;
     if(!dnData){ box.innerHTML='<div class="dn-empty">오늘의 뉴스를<br>준비 중입니다.</div>'; return; }
-    box.innerHTML = '<div class="dn-thumb" style="cursor:pointer;">' + dnCardHtml(dnData, {linkable:false}) + '</div>'
+    box.innerHTML = '<div class="dn-mini" id="dnMini"><div class="dn-mini-in" id="dnMiniIn">'
+      + dnCardHtml(dnData, {linkable:false})
+      + '</div></div>'
       + '<div class="dn-date">' + dnEsc(dnData.date||'') + '</div>';
-    const t=box.querySelector('.dn-thumb');
+    const t=document.getElementById('dnMini');
     if(t) t.addEventListener('click', dnOpenModal);
+    dnScaleMini();
+    setTimeout(dnScaleMini, 60);
+    setTimeout(dnScaleMini, 300);
   }
+
+  function dnScaleMini(){
+    const wrap = document.getElementById('dnMini');
+    const inner = document.getElementById('dnMiniIn');
+    if(!wrap || !inner) return;
+    const w = wrap.clientWidth || wrap.offsetWidth;
+    if(!w) return;
+    const s = w / 560;
+    inner.style.transform = 'scale(' + s + ')';
+    wrap.style.height = Math.round(inner.scrollHeight * s) + 'px';
+  }
+  window.addEventListener('resize', dnScaleMini);
   const MOBILE=()=>window.matchMedia('(max-width:900px)').matches;
   let gMoved=false;
   function syncGrowLayout(){
