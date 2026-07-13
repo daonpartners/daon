@@ -3127,7 +3127,7 @@ body.growon{ background:var(--g-navy); }
     admRole = sessionStorage.getItem('growRole') || 'admin';
     admBranch = sessionStorage.getItem('growBranch') || '';
     admName = sessionStorage.getItem('growName') || '';
-    admLabel = sessionStorage.getItem('growLabel') || '본부 관리자';
+    admLabel = sessionStorage.getItem('growLabel') || '사업부 관리자';
     unlockAdmin();
   }
 
@@ -3816,7 +3816,7 @@ body.growon{ background:var(--g-navy); }
         `).join('')}</div>` : ''}
         <span class="evt-apply-toggle" data-pid="${escapeHtml(p.id)}">📋 신청하기</span>
         <div class="evt-apply-form" id="eventApplyForm-${escapeHtml(p.id)}">
-          <div class="evt-apply-hint">관리자명 / 지사명(본부·지점) / 참석인원</div>
+          <div class="evt-apply-hint">관리자명 / 지사명(사업부·지점) / 참석인원</div>
           <div class="evt-apply-row">
             <input type="text" class="evt-manager" placeholder="관리자명">
             <input type="text" class="evt-branch" placeholder="지사명 (예: 다온지사)">
@@ -3824,7 +3824,7 @@ body.growon{ background:var(--g-navy); }
           <div class="evt-apply-row">
             <select class="evt-branch-type">
               <option value="지점">지점</option>
-              <option value="본부">본부</option>
+              <option value="사업부">사업부</option>
             </select>
             <input type="number" class="evt-count" placeholder="참석인원" min="1">
           </div>
