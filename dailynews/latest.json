@@ -1,126 +1,133 @@
 {
-  "date": "2026-07-13",
-  "dateLabel": "2026.07.13(월)",
+  "date": "2026-07-14",
+  "dateLabel": "2026.07.14(화)",
   "weather": [
     {
       "city": "서울",
-      "min": 24,
-      "max": 33,
-      "code": 3
+      "min": 25,
+      "max": 31,
+      "code": 65
     },
     {
       "city": "부산",
       "min": 26,
-      "max": 31,
-      "code": 3
+      "max": 29,
+      "code": 51
     },
     {
       "city": "대구",
       "min": 25,
-      "max": 34,
-      "code": 1
+      "max": 33,
+      "code": 2
     },
     {
       "city": "인천",
       "min": 25,
-      "max": 31,
-      "code": 2
+      "max": 30,
+      "code": 65
     },
     {
       "city": "광주",
       "min": 26,
       "max": 31,
-      "code": 1
+      "code": 53
     },
     {
       "city": "대전",
       "min": 24,
-      "max": 34,
-      "code": 1
+      "max": 32,
+      "code": 61
     },
     {
       "city": "강릉",
-      "min": 26,
+      "min": 25,
       "max": 37,
-      "code": 2
+      "code": 61
     },
     {
       "city": "제주",
       "min": 26,
-      "max": 32,
-      "code": 0
+      "max": 31,
+      "code": 3
     }
   ],
   "market": [
     {
       "label": "코스피",
-      "value": "6,880.97",
-      "diff": "-594.97",
+      "value": "6,806.93",
+      "diff": "-484.98",
       "dir": "down"
     },
     {
       "label": "코스닥",
-      "value": "801.59",
-      "diff": "-35.84",
-      "dir": "down"
-    },
-    {
-      "label": "환율(USD)",
-      "value": "1,506.98",
-      "diff": "+1.07",
+      "value": "799.36",
+      "diff": "+5.36",
       "dir": "up"
     },
     {
+      "label": "환율(USD)",
+      "value": "1,497.02",
+      "diff": "-1.46",
+      "dir": "down"
+    },
+    {
       "label": "국제유가($/배럴)",
-      "value": "74.5",
-      "diff": "+3.0",
+      "value": "78.0",
+      "diff": "+6.6",
       "dir": "up"
     },
     {
       "label": "금(돈)",
-      "value": "737,914",
-      "diff": "-7,228",
+      "value": "723,525",
+      "diff": "-17,941",
       "dir": "down"
     }
   ],
   "trends": [
-    "박지원",
-    "코스피 주가",
-    "전인화"
+    "신진서",
+    "검사",
+    "홍지윤"
   ],
   "news": [
     {
-      "cat": "경제",
-      "title": "7월부터 국민연금 보험료 인상",
-      "summary": "7월부터 국민연금 기준소득월액 상한과 하한이 조정되어 보험료가 인상된다. 고소득 가입자는 월 2만900원 증가하며, 전체 가입자의 86%는 영향이 없다.",
-      "url": "https://n.news.naver.com/article/009/0005706102",
-      "host": "n.news.naver.com"
+      "cat": "보험",
+      "title": "삼쩜삼 GA, 보험 시장 진출 시험대",
+      "summary": "삼쩜삼이 2450만 가입자를 기반으로 보험 시장에 진출하지만, 실제 상담 고객 수는 불확실하다.",
+      "url": "https://www.viva100.com/article/20260710500807",
+      "host": "viva100.com"
     },
     {
       "cat": "보험",
-      "title": "에즈금융서비스, 허위사실 유포 법적 대응",
-      "summary": "에즈금융서비스가 허위사실 유포에 대해 법적 대응을 시작했다. 김앤장과 함께 손해배상 청구 및 가압류 절차를 진행 중이다.",
-      "url": "http://www.fins.co.kr/news/articleView.html?idxno=109127",
-      "host": "fins.co.kr"
+      "title": "간병비 급여화 사업 본격 추진",
+      "summary": "정부의 간병비 급여화 추진에 따라 보험사들이 간병보험 판매 전략을 조정하고 있다. 간병인 서비스 투자 확대와 리스크 관리가 중요해질 전망이다.",
+      "url": "https://www.insweek.co.kr/news/articleView.html?idxno=71654",
+      "host": "insweek.co.kr"
     },
     {
       "cat": "사회",
-      "title": "당뇨병 환자, 80세 이상 치매 사망 증가",
-      "summary": "당뇨병 환자의 치매 사망률이 80세 이상에서 급증하고 있다는 연구 결과가 발표됐다. 이는 당뇨병 치료 발전으로 수명이 늘어난 반면, 치매가 새로운 건강 부담으로 떠오르고 있음을 시사한다.",
-      "url": "https://v.daum.net/v/20260712210148518?from=newsbot&botref=CN2&botevent=q",
+      "title": "직장암 3기 진단, 병원 책임 논란",
+      "summary": "60대 남성이 PET-CT 검사 후 직장암 3기를 진단받아 병원 책임을 주장하고 있다. B병원은 검사 당시 암 의심 소견이 없었다고 반박했다.",
+      "url": "https://v.daum.net/v/20260713230158497?from=newsbot&botref=CN2&botevent=q",
       "host": "v.daum.net"
     },
     {
       "cat": "생활",
-      "title": "여름철 신장 건강, 물 섭취 중요",
-      "summary": "여름철 갈증을 느끼기 전에 물을 충분히 마시는 것이 신장 건강에 중요하다. 탈수 예방을 위해 적절한 수분 섭취가 필요하며, 만성 질환자는 주의해야 한다.",
-      "url": "https://v.daum.net/v/20260712173128553?from=newsbot&botref=CN2&botevent=q",
+      "title": "소변 마려워 자주 깨는 이유는?",
+      "summary": "야간뇨는 나이가 들수록 증가하며, 여러 원인이 있을 수 있다. 증상이 심하면 병원 진료를 권장한다.",
+      "url": "https://v.daum.net/v/20260714013210148?from=newsbot&botref=CN2&botevent=q",
+      "host": "v.daum.net"
+    },
+    {
+      "cat": "생활",
+      "title": "전국 장맛비, 수도권 최대 100㎜ 예보",
+      "summary": "14일 제주를 시작으로 전국에 장맛비가 내리며, 수도권은 최대 100㎜의 비가 예상된다.",
+      "url": "https://v.daum.net/v/20260714060352039?from=newsbot&botref=KN&botevent=q",
       "host": "v.daum.net"
     }
   ],
   "quote": {
-    "text": "신뢰는 쌓기 어렵고 무너지기는 쉽다",
-    "author": "워런 버핏"
+    "text": "오늘 할 일을 내일로 미루지 마라",
+    "author": "서양 격언"
   },
-  "updatedAt": "2026-07-13T13:53:51.000Z"
+  "updatedAt": "2026-07-14T07:02:39.000Z"
 }
