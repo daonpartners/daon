@@ -1072,7 +1072,7 @@ body.growon{ background:var(--g-navy); }
 
           <!-- 앨범 -->
           <div class="edu-panel" id="admin-album">
-            <div class="qna-notice">행사·교육 사진을 등록합니다. 여러 장을 한 번에 올릴 수 있습니다. (장당 4MB 이하)</div>
+            <div class="qna-notice">행사·교육 사진을 등록합니다. 여러 장을 한 번에 올릴 수 있습니다.<br>업로드 전 자동으로 최적화(최대 1600px)되므로 원본 크기 그대로 선택하셔도 됩니다.</div>
             <div class="alb-up">
               <input type="file" id="albFile" accept="image/*" multiple>
               <div class="alb-prev" id="albPrev"></div>
@@ -3371,12 +3371,41 @@ body.growon{ background:var(--g-navy); }
     });
   });
 
-  function albRead(file){
+  // 원본 사진은 4~8MB라 그대로 보내면 서버가 죽습니다.
+  // 브라우저에서 최대 1600px / JPEG 품질 82%로 줄여서 전송합니다. (보통 200~500KB)
+  function albResize(file, maxSide, quality){
+    maxSide = maxSide || 1600;
+    quality = quality || 0.82;
     return new Promise((res, rej) => {
-      const r = new FileReader();
-      r.onload = () => res(r.result);
-      r.onerror = rej;
-      r.readAsDataURL(file);
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if(!w || !h){ rej(new Error('이미지를 읽을 수 없습니다.')); return; }
+        const scale = Math.min(1, maxSide / Math.max(w, h));
+        w = Math.max(1, Math.round(w * scale));
+        h = Math.max(1, Math.round(h * scale));
+        const c = document.createElement('canvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        let q = quality;
+        let out = c.toDataURL('image/jpeg', q);
+        // 그래도 2MB를 넘으면 품질을 더 낮춰 재시도
+        while(out.length > 2600000 && q > 0.4){
+          q -= 0.12;
+          out = c.toDataURL('image/jpeg', q);
+        }
+        res(out);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        rej(new Error('지원하지 않는 이미지 형식입니다. (HEIC는 JPG로 변환해 주세요)'));
+      };
+      img.src = url;
     });
   }
 
@@ -3391,21 +3420,28 @@ body.growon{ background:var(--g-navy); }
     }
     _albUp.disabled = true;
     let done = 0, fail = 0;
+    let lastErr = '';
     for(let i = 0; i < albFiles.length; i++){
-      msg.textContent = '업로드 중… (' + (i + 1) + '/' + albFiles.length + ')';
+      msg.textContent = '사진 처리 중… (' + (i + 1) + '/' + albFiles.length + ')';
       msg.style.color = 'var(--slate)';
       try{
-        const b64 = await albRead(albFiles[i]);
+        const b64 = await albResize(albFiles[i]);
+        const kb = Math.round(b64.length * 0.75 / 1024);
+        msg.textContent = '업로드 중… (' + (i + 1) + '/' + albFiles.length + ') · ' + kb + 'KB';
         const res = await fetch(ALB_UPLOAD, {
           method: 'POST', headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ base64: b64, caption: caption, uploader: admName || admLabel || '관리자' })
         });
         const data = await res.json();
-        if(data && data.success) done++; else fail++;
-      }catch(err){ fail++; }
+        if(data && data.success){ done++; }
+        else { fail++; lastErr = (data && data.message) || '서버 오류'; }
+      }catch(err){
+        fail++;
+        lastErr = (err && err.message) ? err.message : '처리 실패';
+      }
     }
     msg.textContent = fail
-      ? '✅ ' + done + '장 등록 · ⚠️ ' + fail + '장 실패'
+      ? '✅ ' + done + '장 등록 · ⚠️ ' + fail + '장 실패' + (lastErr ? ' — ' + lastErr : '')
       : '✅ ' + done + '장이 등록되었습니다. 1~2분 내 반영됩니다.';
     msg.style.color = fail ? 'red' : 'var(--orange-deep)';
     document.getElementById('albFile').value = '';
