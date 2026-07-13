@@ -440,6 +440,23 @@
   .dbb-submit:disabled{background:var(--slate); cursor:not-allowed;}
   .dbb-msg{font-size:11.5px; font-weight:700; margin-top:8px; text-align:center;}
 
+  /* 관리자 역할 배지 */
+  .adm-bar{display:flex; align-items:center; gap:9px; background:var(--canvas); border:1px solid var(--line); border-radius:10px; padding:9px 13px; margin-bottom:14px; flex-wrap:wrap;}
+  .adm-badge{font-size:10.5px; font-weight:800; padding:4px 10px; border-radius:999px; background:var(--navy-2); color:#fff;}
+  .adm-badge.mgr{background:var(--orange); color:#fff;}
+  .adm-who{font-size:12px; font-weight:800; color:var(--navy-2);}
+  .adm-role{font-size:11px; color:var(--slate); font-weight:700;}
+  .adm-out{margin-left:auto; font-size:11px; font-weight:800; color:var(--slate); background:none; border:1px solid var(--line); border-radius:7px; padding:5px 11px; cursor:pointer;}
+  .adm-out:hover{color:var(--orange-deep); border-color:var(--orange);}
+  .dbb-fixed{padding:9px 12px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-weight:800; color:var(--navy-2); background:#EEF1F6; margin-bottom:8px;}
+
+  /* 관리자 본인 선택 */
+  .adm-pick{display:flex; flex-direction:column; gap:9px; max-width:360px; margin-top:12px;}
+  .adm-pick button{text-align:left; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:13px 15px; cursor:pointer; transition:.15s;}
+  .adm-pick button:hover{border-color:var(--orange); box-shadow:0 3px 12px rgba(255,106,43,.14); transform:translateY(-1px);}
+  .adm-pick b{display:block; font-size:14px; font-weight:800; color:var(--navy-2);}
+  .adm-pick span{display:block; font-size:11.5px; color:var(--slate); font-weight:700; margin-top:3px;}
+
   /* ---------- 파트너모집 ---------- */
   .recruit-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:14px;}
   .recruit-card{background:var(--canvas); border:1px solid var(--line); border-radius:12px; padding:18px; position:relative;}
@@ -889,16 +906,28 @@ body.growon{ background:var(--g-navy); }
 
         <!-- 인증 게이트 -->
         <div id="adminGate">
-          <div class="qna-notice">🔒 관리자 전용 공간입니다. 인증번호를 입력해 주세요.</div>
-          <div class="qna-form open" style="max-width:360px;">
-            <input type="password" id="adminCode" placeholder="관리자 인증번호" autocomplete="off">
-            <div class="qna-form-msg" id="adminGateMsg"></div>
-            <button type="button" id="adminGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">입장하기</button>
+          <div id="admStep1">
+            <div class="qna-notice">🔒 관리자 전용 공간입니다. 발급받은 인증번호를 입력해 주세요.<br>관리자 · 지사장에 따라 권한이 다릅니다.</div>
+            <div class="qna-form open" style="max-width:360px;">
+              <input type="password" id="adminCode" placeholder="인증번호" autocomplete="off">
+              <div class="qna-form-msg" id="adminGateMsg"></div>
+              <button type="button" id="adminGateBtn" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:11px; font-size:13px; font-weight:800; cursor:pointer;">입장하기</button>
+            </div>
+          </div>
+          <div id="admStep2" style="display:none;">
+            <div class="qna-notice">👤 본인을 선택해 주세요. 게시물 등록자로 기록됩니다.</div>
+            <div class="adm-pick" id="admPick"></div>
           </div>
         </div>
 
         <!-- 인증 후 본문 -->
         <div id="adminBody" style="display:none;">
+          <div class="adm-bar" id="admBar">
+            <span class="adm-badge" id="admBadge">관리자</span>
+            <span class="adm-who" id="admWho"></span>
+            <span class="adm-role" id="admRole"></span>
+            <button type="button" class="adm-out" id="admOut">나가기</button>
+          </div>
           <div class="edu-tabs" id="adminTabs" data-reveal>
             <button class="edu-tab active" data-atab="meeting">📁 회의자료</button>
             <button class="edu-tab" data-atab="event">📋 행사신청</button>
@@ -2895,27 +2924,117 @@ body.growon{ background:var(--g-navy); }
   const eventPosts = [];
   const meetingPosts = [];
 
-  /* ===== 관리자 인증 게이트 ===== */
-  const ADMIN_CODE = 'grow2026';
+  /* ===== 관리자 인증 게이트 (역할별) ===== */
+  const ADMIN_MEMBERS = [
+    { name: '김화진', title: '다온지사장', branch: '다온' },
+    { name: '황경호', title: '그로우사업부 대표 · 광명지사장', branch: '광명' }
+  ];
+  const ADMIN_ACCOUNTS = {
+    'grow26':     { role: 'admin' },
+    'doyak2026':  { role: 'manager', branch: '도약', label: '도약지사장' },
+    'dh2026':     { role: 'manager', branch: '동행', label: '동행지사장' },
+    'gj2026':     { role: 'manager', branch: '광주', label: '광주지사장' }
+  };
+
+  let admRole = '';
+  let admBranch = '';
+  let admName = '';
+  let admLabel = '';
+
+  function applyAdminRole(){
+    const isAdmin = admRole === 'admin';
+    const badge = document.getElementById('admBadge');
+    if(badge){
+      badge.textContent = isAdmin ? '관리자' : '지사장';
+      badge.className = 'adm-badge' + (isAdmin ? '' : ' mgr');
+    }
+    const who = document.getElementById('admWho');
+    if(who) who.textContent = admName || admLabel;
+    const role = document.getElementById('admRole');
+    if(role) role.textContent = isAdmin
+      ? '· ' + admLabel + ' · DB 게시물 등록 및 전체 관리 권한'
+      : '· ' + admBranch + '지사 명의로 DB 신청 가능';
+
+    const newBtn = document.getElementById('dbbNewBtn');
+    const newForm = document.getElementById('dbbNewForm');
+    if(newBtn) newBtn.style.display = isAdmin ? '' : 'none';
+    if(newForm && !isAdmin) newForm.classList.remove('open');
+    const author = document.getElementById('dbbNewAuthor');
+    if(author && isAdmin) author.value = admName;
+  }
+
   function unlockAdmin(){
     document.getElementById('adminGate').style.display = 'none';
     document.getElementById('adminBody').style.display = 'block';
+    applyAdminRole();
     loadAdminFeed();
   }
+
+  function admSaveSession(){
+    sessionStorage.setItem('growAdmin', '1');
+    sessionStorage.setItem('growRole', admRole);
+    sessionStorage.setItem('growBranch', admBranch);
+    sessionStorage.setItem('growName', admName);
+    sessionStorage.setItem('growLabel', admLabel);
+  }
+
+  function admShowPicker(){
+    document.getElementById('admStep1').style.display = 'none';
+    document.getElementById('admStep2').style.display = 'block';
+    const box = document.getElementById('admPick');
+    box.innerHTML = ADMIN_MEMBERS.map((m, i) =>
+      '<button type="button" data-mi="' + i + '"><b>' + m.name + '</b><span>' + m.title + '</span></button>'
+    ).join('');
+    box.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const m = ADMIN_MEMBERS[Number(btn.dataset.mi)];
+        admRole = 'admin';
+        admName = m.name;
+        admBranch = m.branch;
+        admLabel = m.title;
+        admSaveSession();
+        unlockAdmin();
+      });
+    });
+  }
+
   const _agb = document.getElementById('adminGateBtn');
   if(_agb) _agb.addEventListener('click', () => {
     const code = document.getElementById('adminCode').value.trim();
     const msg = document.getElementById('adminGateMsg');
-    if(code === ADMIN_CODE){
-      sessionStorage.setItem('growAdmin', '1');
-      unlockAdmin();
-    } else {
+    const acct = ADMIN_ACCOUNTS[code];
+    if(!acct){
       msg.textContent = '인증번호가 올바르지 않습니다.'; msg.style.color = 'var(--orange-deep)';
+      return;
+    }
+    if(acct.role === 'admin'){
+      admShowPicker();
+    } else {
+      admRole = 'manager';
+      admBranch = acct.branch;
+      admName = '';
+      admLabel = acct.label;
+      admSaveSession();
+      unlockAdmin();
     }
   });
+
   const _ac = document.getElementById('adminCode');
   if(_ac) _ac.addEventListener('keydown', e => { if(e.key === 'Enter') _agb.click(); });
-  if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')) unlockAdmin();
+
+  const _ao = document.getElementById('admOut');
+  if(_ao) _ao.addEventListener('click', () => {
+    ['growAdmin','growRole','growBranch','growName','growLabel'].forEach(k => sessionStorage.removeItem(k));
+    location.reload();
+  });
+
+  if(sessionStorage.getItem('growAdmin') === '1' && document.getElementById('adminBody')){
+    admRole = sessionStorage.getItem('growRole') || 'admin';
+    admBranch = sessionStorage.getItem('growBranch') || '';
+    admName = sessionStorage.getItem('growName') || '';
+    admLabel = sessionStorage.getItem('growLabel') || '본부 관리자';
+    unlockAdmin();
+  }
 
 
   /* ===== 오늘의 뉴스한입 (dailynews/latest.json) ===== */
@@ -3148,16 +3267,22 @@ body.growon{ background:var(--g-navy); }
           '</div>').join('')
       : '<div class="dbb-empty" style="padding:18px;">아직 신청이 없습니다. 첫 번째로 신청해 보세요.</div>';
 
+    const isAdmin = admRole === 'admin';
+    const branchField = isAdmin
+      ? '<select id="dbbApplyBranch">' +
+          '<option value="">지사 선택</option>' +
+          DB_BRANCHES.map(b => '<option value="' + b + '"' + (b === admBranch ? ' selected' : '') + '>' + b + '지사</option>').join('') +
+        '</select>'
+      : '<div class="dbb-fixed">' + dbbEsc(admBranch) + '지사</div>' +
+        '<input type="hidden" id="dbbApplyBranch" value="' + dbbEsc(admBranch) + '">';
+
     const formHtml = closed
       ? '<div class="dbb-form"><div class="dbb-msg" style="color:var(--slate);">마감된 DB입니다. 신청할 수 없습니다.</div></div>'
       : '<div class="dbb-form">' +
           '<div class="dbb-sec" style="margin-top:0;">✍️ DB 신청하기</div>' +
           '<div class="dbb-form-row">' +
-            '<select id="dbbApplyBranch">' +
-              '<option value="">지사 선택</option>' +
-              DB_BRANCHES.map(b => '<option value="' + b + '">' + b + '지사</option>').join('') +
-            '</select>' +
-            '<input type="text" id="dbbApplyName" placeholder="신청자 이름">' +
+            branchField +
+            '<input type="text" id="dbbApplyName" placeholder="신청자 이름" value="' + dbbEsc(admName) + '">' +
           '</div>' +
           '<input type="number" id="dbbApplyQty" placeholder="신청 수량 (최대 ' + p.remain + '개)" min="1" max="' + p.remain + '">' +
           '<textarea id="dbbApplyMemo" placeholder="메모 (선택)"></textarea>' +
