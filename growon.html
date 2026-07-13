@@ -421,6 +421,21 @@
   /* ---------- DB 신청 게시판 ---------- */
   .dbb-list{display:flex; flex-direction:column; gap:10px;}
   .dbb-card{background:var(--card); border:1px solid var(--line); border-left:4px solid var(--orange); border-radius:12px; padding:15px 17px; cursor:pointer; transition:.15s;}
+  /* ---------- 수정·삭제 도구 ---------- */
+  .cm-tools{display:flex; gap:6px; margin-top:10px; padding-top:9px; border-top:1px dashed var(--line);}
+  .cm-btn{border:1px solid var(--line); background:var(--card); color:var(--slate); border-radius:7px; padding:4px 10px; font-size:11.5px; font-weight:700; cursor:pointer; transition:.15s;}
+  .cm-btn:hover{background:#f2f4f8;}
+  .cm-btn.del{color:#c0392b; border-color:#f0c4bd;}
+  .cm-btn.del:hover{background:#fdf0ee;}
+  .cm-btn:disabled{opacity:.5; cursor:default;}
+  .cm-edit{display:none; margin-top:9px;}
+  .cm-edit.open{display:block;}
+  .cm-edit input, .cm-edit textarea{width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:8px; font-size:12.5px; font-family:inherit; margin-bottom:6px; box-sizing:border-box;}
+  .cm-edit textarea{min-height:64px; resize:vertical;}
+  .cm-msg{font-size:11.5px; margin-top:5px; min-height:15px;}
+  .alb-item{position:relative;}
+  .alb-item .cm-tools{position:absolute; left:0; right:0; bottom:0; margin:0; padding:6px; border:none; background:rgba(255,255,255,.93); justify-content:center; opacity:0; transition:.15s;}
+  .alb-item:hover .cm-tools{opacity:1;}
   .dbb-card:hover{box-shadow:0 3px 14px rgba(22,33,59,0.09); transform:translateY(-1px);}
   .dbb-card.closed{border-left-color:var(--slate); opacity:.72;}
   .dbb-top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
@@ -3292,7 +3307,7 @@ body.growon{ background:var(--g-navy); }
       .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
-  function albCardsHtml(list){
+  function albCardsHtml(list, manage){
     if(!list.length) return '<div class="alb-empty">아직 등록된 사진이 없습니다.<br>관리자센터 → 앨범 탭에서 등록하거나, 텔레그램 봇에 사진을 보내주세요.</div>';
     return list.map((p, i) =>
       '<div class="alb-item" data-ai="' + i + '">' +
@@ -3301,6 +3316,11 @@ body.growon{ background:var(--g-navy); }
           '<div class="alb-cap">' +
             (p.caption ? '<b>' + albEsc(p.caption) + '</b>' : '') +
             '<span>' + albEsc(p.date || '') + (p.uploader ? ' · ' + albEsc(p.uploader) : '') + '</span>' +
+          '</div>' : '') +
+        (manage && cmActive() && (cmIsMine(p.uploader) || !p.uploader) ?
+          '<div class="cm-tools">' +
+            '<button type="button" class="cm-btn alb-edit" data-file="' + albEsc(p.file) + '">✏️ 설명수정</button>' +
+            '<button type="button" class="cm-btn del alb-del" data-file="' + albEsc(p.file) + '">🗑️ 삭제</button>' +
           '</div>' : '') +
       '</div>').join('');
   }
@@ -3312,13 +3332,90 @@ body.growon{ background:var(--g-navy); }
     });
   }
 
+  /* ===== 콘텐츠 수정·삭제 (통합) ===== */
+  const CONTENT_MANAGE = 'https://daonpartners.app.n8n.cloud/webhook/daon-content-manage';
+
+  /* 현재 로그인한 관리자 이름. 이 값과 글의 작성자가 같아야 수정·삭제 버튼이 보인다. */
+  function cmMe(){
+    return (admName || admLabel || '').trim();
+  }
+  function cmIsMine(author){
+    const me = cmMe();
+    return !!me && String(author || '').trim() === me;
+  }
+  /* 관리자센터에 들어와 있는 상태에서만 도구를 노출한다 */
+  function cmActive(){
+    return sessionStorage.getItem('growAdmin') === '1';
+  }
+
+  async function cmSend(payload){
+    const res = await fetch(CONTENT_MANAGE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    let data = {};
+    try { data = await res.json(); } catch(e) {}
+    return { ok: res.ok && data.success, message: data.message || '처리에 실패했습니다.' };
+  }
+
+  /* 삭제 버튼 공통 처리 */
+  async function cmDelete(opts){
+    if(!confirm(opts.confirmText || '정말 삭제할까요? 되돌릴 수 없습니다.')) return;
+    const msg = opts.msgEl;
+    if(msg){ msg.textContent = '삭제 중…'; msg.style.color = 'var(--slate)'; }
+    const r = await cmSend({ target: opts.target, action: 'delete', id: opts.id, actor: cmMe() });
+    if(msg){ msg.textContent = r.message; msg.style.color = r.ok ? 'green' : 'red'; }
+    if(r.ok && typeof opts.onDone === 'function') setTimeout(opts.onDone, 900);
+  }
+
+  /* 수정 버튼 공통 처리 */
+  async function cmUpdate(opts){
+    const msg = opts.msgEl;
+    if(msg){ msg.textContent = '저장 중…'; msg.style.color = 'var(--slate)'; }
+    const body = Object.assign({ target: opts.target, action: 'update', id: opts.id, actor: cmMe() }, opts.fields || {});
+    const r = await cmSend(body);
+    if(msg){ msg.textContent = r.message; msg.style.color = r.ok ? 'green' : 'red'; }
+    if(r.ok && typeof opts.onDone === 'function') setTimeout(opts.onDone, 900);
+  }
+
   function albRender(){
     const main = document.getElementById('albGrid');
     if(main){ main.innerHTML = albCardsHtml(albPhotos); albBind(main); }
     const mini = document.getElementById('albGridMini');
     if(mini){ mini.innerHTML = albCardsHtml(albPhotos.slice(0, 6)); albBind(mini); }
     const adm = document.getElementById('albGridAdmin');
-    if(adm){ adm.innerHTML = albCardsHtml(albPhotos); albBind(adm); }
+    if(adm){ adm.innerHTML = albCardsHtml(albPhotos, true); albBind(adm); albBindManage(adm); }
+  }
+
+  /* 앨범 관리자 그리드 전용: 설명수정 / 삭제 */
+  function albBindManage(box){
+    box.querySelectorAll('.alb-del').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cmDelete({
+          target: 'album',
+          id: btn.dataset.file,
+          confirmText: '이 사진을 삭제할까요? 되돌릴 수 없습니다.',
+          onDone: albLoad
+        });
+      });
+    });
+    box.querySelectorAll('.alb-edit').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const file = btn.dataset.file;
+        const cur = albPhotos.filter(p => p.file === file)[0] || {};
+        const next = prompt('사진 설명을 입력하세요.', cur.caption || '');
+        if(next === null) return;
+        cmUpdate({
+          target: 'album',
+          id: file,
+          fields: { caption: next },
+          onDone: albLoad
+        });
+      });
+    });
   }
 
   function albOpen(i){
@@ -3729,7 +3826,53 @@ body.growon{ background:var(--g-navy); }
         ${(m.files && m.files.length) ? `<div style="margin-top:10px;">${m.files.map((f,idx) => `
           <a class="sm-dl" href="${escapeHtml(f)}" target="_blank" rel="noopener" style="display:inline-block; margin:0 6px 6px 0;">📎 자료 ${idx+1}</a>
         `).join('')}</div>` : ''}
+        ${(cmActive() && cmIsMine(m.author)) ? `
+        <div class="cm-tools">
+          <button type="button" class="cm-btn cm-mtg-edit" data-id="${escapeHtml(m.id)}">✏️ 수정</button>
+          <button type="button" class="cm-btn del cm-mtg-del" data-id="${escapeHtml(m.id)}">🗑️ 삭제</button>
+        </div>
+        <div class="cm-edit" id="cmMtgEdit-${escapeHtml(m.id)}">
+          <input type="text" class="cm-f-title" value="${escapeHtml(m.title)}" placeholder="제목">
+          <textarea class="cm-f-content" placeholder="내용">${escapeHtml(m.content || '')}</textarea>
+          <button type="button" class="cm-btn cm-mtg-save" data-id="${escapeHtml(m.id)}">💾 저장</button>
+        </div>
+        <div class="cm-msg" id="cmMtgMsg-${escapeHtml(m.id)}"></div>` : ''}
       </div>`).join('');
+    cmBindMeetings(box);
+  }
+
+  function cmBindMeetings(box){
+    box.querySelectorAll('.cm-mtg-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('cmMtgEdit-' + btn.dataset.id).classList.toggle('open');
+      });
+    });
+    box.querySelectorAll('.cm-mtg-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cmDelete({
+          target: 'meeting',
+          id: btn.dataset.id,
+          confirmText: '이 회의자료를 삭제할까요? 되돌릴 수 없습니다.',
+          msgEl: document.getElementById('cmMtgMsg-' + btn.dataset.id),
+          onDone: loadAdminFeed
+        });
+      });
+    });
+    box.querySelectorAll('.cm-mtg-save').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const wrap = document.getElementById('cmMtgEdit-' + btn.dataset.id);
+        cmUpdate({
+          target: 'meeting',
+          id: btn.dataset.id,
+          fields: {
+            title: wrap.querySelector('.cm-f-title').value.trim(),
+            content: wrap.querySelector('.cm-f-content').value.trim()
+          },
+          msgEl: document.getElementById('cmMtgMsg-' + btn.dataset.id),
+          onDone: loadAdminFeed
+        });
+      });
+    });
   }
 
   const _mnb = document.getElementById('meetingNewBtn');
@@ -3815,6 +3958,17 @@ body.growon{ background:var(--g-navy); }
           <div class="evt-apply-item">${escapeHtml(r.manager)} · ${escapeHtml(r.branch)}(${escapeHtml(r.branchType)}) · 참석인원 ${escapeHtml(String(r.count))}명</div>
         `).join('')}</div>` : ''}
         <span class="evt-apply-toggle" data-pid="${escapeHtml(p.id)}">📋 신청하기</span>
+        ${(cmActive() && cmIsMine(p.author)) ? `
+        <div class="cm-tools">
+          <button type="button" class="cm-btn cm-evt-edit" data-id="${escapeHtml(p.id)}">✏️ 수정</button>
+          <button type="button" class="cm-btn del cm-evt-del" data-id="${escapeHtml(p.id)}">🗑️ 삭제</button>
+        </div>
+        <div class="cm-edit" id="cmEvtEdit-${escapeHtml(p.id)}">
+          <input type="text" class="cm-f-title" value="${escapeHtml(p.title)}" placeholder="행사명">
+          <textarea class="cm-f-content" placeholder="내용">${escapeHtml(p.content || '')}</textarea>
+          <button type="button" class="cm-btn cm-evt-save" data-id="${escapeHtml(p.id)}">💾 저장</button>
+        </div>
+        <div class="cm-msg" id="cmEvtMsg-${escapeHtml(p.id)}"></div>` : ''}
         <div class="evt-apply-form" id="eventApplyForm-${escapeHtml(p.id)}">
           <div class="evt-apply-hint">관리자명 / 지사명(사업부·지점) / 참석인원</div>
           <div class="evt-apply-row">
@@ -3832,7 +3986,43 @@ body.growon{ background:var(--g-navy); }
           <button type="button" class="evt-apply-submit" data-pid="${escapeHtml(p.id)}" style="background:var(--navy-2); color:#fff; border:none; border-radius:8px; padding:9px; font-size:12.5px; font-weight:700; cursor:pointer;">신청 등록</button>
         </div>
       </div>`).join('');
+    cmBindEvents(box);
   }
+
+  function cmBindEvents(box){
+    box.querySelectorAll('.cm-evt-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById('cmEvtEdit-' + btn.dataset.id).classList.toggle('open');
+      });
+    });
+    box.querySelectorAll('.cm-evt-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cmDelete({
+          target: 'event',
+          id: btn.dataset.id,
+          confirmText: '이 행사 글을 삭제할까요? 되돌릴 수 없습니다.',
+          msgEl: document.getElementById('cmEvtMsg-' + btn.dataset.id),
+          onDone: loadAdminFeed
+        });
+      });
+    });
+    box.querySelectorAll('.cm-evt-save').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const wrap = document.getElementById('cmEvtEdit-' + btn.dataset.id);
+        cmUpdate({
+          target: 'event',
+          id: btn.dataset.id,
+          fields: {
+            title: wrap.querySelector('.cm-f-title').value.trim(),
+            content: wrap.querySelector('.cm-f-content').value.trim()
+          },
+          msgEl: document.getElementById('cmEvtMsg-' + btn.dataset.id),
+          onDone: loadAdminFeed
+        });
+      });
+    });
+  }
+
   const _ecr = document.getElementById('eventFilterRow');
   if(_ecr) _ecr.addEventListener('click', e => {
     const b = e.target.closest('.filter-pill'); if(!b) return;
