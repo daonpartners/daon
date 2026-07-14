@@ -3631,8 +3631,27 @@ body.growon{ background:var(--g-navy); }
             '<span class="dbb-app-st ' + dbbEsc(a.status) + '">' + dbbEsc(a.status) + '</span>' +
             '<span class="dbb-app-qty">' + a.qty + '개</span>' +
             (a.memo ? '<div class="dbb-app-memo">💬 ' + dbbEsc(a.memo) + '</div>' : '') +
+            (cmActive() && cmIsMine(a.applicant) ?
+              '<div class="cm-tools">' +
+                '<button type="button" class="cm-btn cm-app-edit" data-id="' + dbbEsc(a.id) + '">✏️ 메모수정</button>' +
+                '<button type="button" class="cm-btn del cm-app-del" data-id="' + dbbEsc(a.id) + '">🗑️ 신청취소</button>' +
+              '</div>' +
+              '<div class="cm-msg" id="cmAppMsg-' + dbbEsc(a.id) + '"></div>' : '') +
           '</div>').join('')
       : '<div class="dbb-empty" style="padding:18px;">아직 신청이 없습니다. 첫 번째로 신청해 보세요.</div>';
+
+    /* 본인이 올린 DB게시물이면 수정·삭제 도구를 붙인다 */
+    const postToolsHtml = (cmActive() && cmIsMine(p.author)) ?
+      '<div class="cm-tools">' +
+        '<button type="button" class="cm-btn" id="cmPostEditBtn">✏️ 게시물 수정</button>' +
+        '<button type="button" class="cm-btn del" id="cmPostDelBtn">🗑️ 게시물 삭제</button>' +
+      '</div>' +
+      '<div class="cm-edit" id="cmPostEdit">' +
+        '<input type="text" id="cmPostTitle" value="' + dbbEsc(p.title) + '" placeholder="제목">' +
+        '<textarea id="cmPostDesc" placeholder="설명">' + dbbEsc(p.desc || '') + '</textarea>' +
+        '<button type="button" class="cm-btn" id="cmPostSaveBtn">💾 저장</button>' +
+      '</div>' +
+      '<div class="cm-msg" id="cmPostMsg"></div>' : '';
 
     const isAdmin = admRole === 'admin';
     const branchField = isAdmin
@@ -3672,6 +3691,7 @@ body.growon{ background:var(--g-navy); }
           '<span>게시 ' + dbbEsc((p.postedAt || '').slice(0,10)) + '</span>' +
         '</div>' +
         (p.desc ? '<div class="dbb-desc">' + dbbEsc(p.desc) + '</div>' : '') +
+        postToolsHtml +
       '</div>' +
       '<div class="dbb-sec">📋 신청 현황 (' + p.applications.length + ')</div>' +
       '<div class="dbb-apps">' + appsHtml + '</div>' +
@@ -3687,6 +3707,73 @@ body.growon{ background:var(--g-navy); }
 
     const sub = document.getElementById('dbbApplySubmit');
     if(sub) sub.addEventListener('click', () => dbbApply(p.id));
+
+    cmBindDbBoard(p.id);
+  }
+
+  /* DB게시판 수정·삭제 바인딩 */
+  function cmBindDbBoard(postId){
+    const view = document.getElementById('dbbDetailView');
+    const reload = () => dbbLoad(true);
+
+    /* ----- DB게시물 본체 ----- */
+    const eb = document.getElementById('cmPostEditBtn');
+    if(eb) eb.addEventListener('click', () => {
+      document.getElementById('cmPostEdit').classList.toggle('open');
+    });
+    const db = document.getElementById('cmPostDelBtn');
+    if(db) db.addEventListener('click', () => {
+      cmDelete({
+        target: 'dbpost',
+        id: postId,
+        confirmText: '이 DB 게시물을 삭제할까요? 신청 내역은 남습니다. 되돌릴 수 없습니다.',
+        msgEl: document.getElementById('cmPostMsg'),
+        onDone: () => {
+          document.getElementById('dbbDetailView').style.display = 'none';
+          document.getElementById('dbbListView').style.display = 'block';
+          reload();
+        }
+      });
+    });
+    const sb = document.getElementById('cmPostSaveBtn');
+    if(sb) sb.addEventListener('click', () => {
+      cmUpdate({
+        target: 'dbpost',
+        id: postId,
+        fields: {
+          title: document.getElementById('cmPostTitle').value.trim(),
+          content: document.getElementById('cmPostDesc').value.trim()
+        },
+        msgEl: document.getElementById('cmPostMsg'),
+        onDone: reload
+      });
+    });
+
+    /* ----- 개별 신청 건 ----- */
+    view.querySelectorAll('.cm-app-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        cmDelete({
+          target: 'dbapply',
+          id: btn.dataset.id,
+          confirmText: '이 신청을 취소할까요? 되돌릴 수 없습니다.',
+          msgEl: document.getElementById('cmAppMsg-' + btn.dataset.id),
+          onDone: reload
+        });
+      });
+    });
+    view.querySelectorAll('.cm-app-edit').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const next = prompt('메모를 입력하세요.', '');
+        if(next === null) return;
+        cmUpdate({
+          target: 'dbapply',
+          id: btn.dataset.id,
+          fields: { content: next },
+          msgEl: document.getElementById('cmAppMsg-' + btn.dataset.id),
+          onDone: reload
+        });
+      });
+    });
   }
 
   async function dbbApply(postId){
