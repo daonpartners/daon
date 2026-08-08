@@ -63,7 +63,27 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 
 .state{text-align:center;padding:60px 20px;color:var(--steel)}
 #profileArea{display:none}
+
+/* 이미지 명함 */
+.bizcard-wrap{padding:0 var(--pad);margin-top:4px}
+.bizcard{
+  width:100%;aspect-ratio:1000/560;background:#fff;position:relative;
+  border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  font-family:var(--body);
+}
+.bizcard__logos{position:absolute;top:6.5%;left:6%;right:6%;display:flex;justify-content:space-between;align-items:flex-start}
+.bizcard__logos img{height:13%;width:auto;display:block}
+.bizcard__logos img.daon{height:15%}
+.bizcard__namewrap{position:absolute;top:44%;right:6%;text-align:right}
+.bizcard__name{font-family:var(--display);font-weight:900;font-size:6.2vw;letter-spacing:.16em;color:#14161A;white-space:nowrap}
+.bizcard__role{font-size:2.6vw;color:#2A2E33;font-weight:600;margin-top:2%;letter-spacing:-.01em;white-space:nowrap}
+.bizcard__hr{position:absolute;left:0;right:0;top:63%;height:3px;background:var(--orange)}
+.bizcard__info{position:absolute;left:6%;right:6%;top:68%;font-size:2.55vw;color:#14161A;line-height:1.9}
+.bizcard__info b{color:var(--orange);font-weight:800;margin-right:1.2%}
+.bizcard__row{display:flex;gap:4%}
+.bizcard-btn{display:block;width:100%;margin-top:12px;background:var(--navy);color:#fff;text-align:center;padding:13px;border-radius:11px;font-size:14px;font-weight:700;border:none;cursor:pointer}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -91,6 +111,32 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   </section>
 
   <div class="wrap">
+    <section class="sec" style="padding-top:26px;">
+      <div class="sec__label">디지털 명함</div>
+      <div class="bizcard-wrap">
+        <div class="bizcard" id="bizcard">
+          <div class="bizcard__logos">
+            <img src="/assets/logo-miraeasset.png" alt="미래에셋금융서비스">
+            <img class="daon" src="/assets/logo-daon-wordmark.png" alt="다온파트너스">
+          </div>
+          <div class="bizcard__namewrap">
+            <div class="bizcard__name" id="bc-name"></div>
+            <div class="bizcard__role" id="bc-role"></div>
+          </div>
+          <div class="bizcard__hr"></div>
+          <div class="bizcard__info">
+            <div class="bizcard__row">
+              <span><b>M.</b><span id="bc-phone"></span></span>
+              <span><b>F.</b>041-534-1126</span>
+            </div>
+            <div><b>E.</b><span id="bc-email"></span></div>
+            <div><b>A.</b>충남 아산시 탕정면 용머리길 22, 브라운스톤갤럭시 C301호</div>
+          </div>
+        </div>
+        <button class="bizcard-btn" id="bc-download" type="button">명함 이미지 다운로드</button>
+      </div>
+    </section>
+
     <section class="sec">
       <div class="sec__label">보험 상담</div>
       <div class="consultgrid" id="p-consult"></div>
@@ -170,6 +216,30 @@ if (!code) {
       document.getElementById("p-consult").innerHTML = consultPages.map(c =>
         `<a href="${c.path}?m=${encodeURIComponent(code)}"><div class="cbtn">${c.label}</div></a>`
       ).join('');
+
+      // 디지털 명함 채우기
+      document.getElementById("bc-name").textContent = p.name;
+      document.getElementById("bc-role").textContent = "다온파트너스 | " + (p.title || "보험컨설턴트");
+      document.getElementById("bc-phone").textContent = p.phone || "010-0000-0000";
+      document.getElementById("bc-email").textContent = p.email || "";
+
+      document.getElementById("bc-download").addEventListener("click", function(){
+        const btn = this;
+        btn.disabled = true;
+        btn.textContent = "이미지 생성 중...";
+        html2canvas(document.getElementById("bizcard"), { scale: 3, backgroundColor: "#ffffff", useCORS: true }).then(canvas => {
+          const link = document.createElement("a");
+          link.download = p.name + "_다온파트너스_명함.png";
+          link.href = canvas.toDataURL("image/png");
+          link.click();
+          btn.disabled = false;
+          btn.textContent = "명함 이미지 다운로드";
+        }).catch(() => {
+          btn.disabled = false;
+          btn.textContent = "명함 이미지 다운로드";
+          alert("이미지 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.");
+        });
+      });
 
       const contentItems = [];
       if (p.blog) contentItems.push({ ico: "📝", label: p.name + " 블로그", url: p.blog });
