@@ -70,6 +70,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .sec__title{font-family:var(--display);font-weight:700;font-size:clamp(19px,5.2vw,23px);line-height:1.45;letter-spacing:-.006em;margin-bottom:22px;text-align:center}
 
 /* ══ ③ SERVICE 4카드 ══ */
+/* 2컬럼: 다온지사 전용 / 고객 전용 */
+.twocol{display:grid;gap:28px}
+.col__label{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.1em;color:var(--deep);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--orange);display:inline-block}
+
 .gate{display:grid;gap:12px}
 .gate a{text-decoration:none;color:inherit;display:block}
 .gate-card{
@@ -145,7 +149,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .foot__links span{padding:0 10px;color:#6B7C93}
 .foot__legal{margin-top:20px;padding:16px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.1);font-size:10.5px;color:#6B7C93;line-height:1.8;max-width:var(--maxw);margin-left:auto;margin-right:auto}
 
-@media (min-width:600px){.gate{grid-template-columns:1fr 1fr}}
+@media (min-width:860px){
+  .wrap:has(.twocol){max-width:960px}
+  .twocol{grid-template-columns:1fr 1fr;align-items:start}
+}
 </style>
 </head>
 <body>
@@ -176,60 +183,96 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   </div>
 </section>
 
-<!-- ③ SERVICE + ④ RECRUITING -->
+<!-- ③ SERVICE (2컬럼) + ④ RECRUITING -->
 <section class="sec sec--navygray">
   <div class="wrap">
     <div class="sec__label">무엇을 도와드릴까요</div>
 
-    <div class="gate">
-      <div class="gate-card gate-card--group">
-        <div class="group-head">
-          <div class="gate-ico">🛡️</div>
-          <div class="gate-body">
-            <h3>개인 보험 컨설팅</h3>
-            <p>분야별 무료 상담·설계 신청</p>
-          </div>
-        </div>
-        <div class="sublist">
-          <a href="/consult"><span class="emo">☂️</span>보험 보장분석 신청<span class="chev">›</span></a>
-          <a href="/health-consult"><span class="emo">🩺</span>모든보험 문의<span class="chev">›</span></a>
-          <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
-          <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
-          <a href="/pet-consult"><span class="emo">🐶</span>펫보험 설계 요청<span class="chev">›</span></a>
-          <a href="/auto-consult"><span class="emo">🚗</span>자동차보험 설계 요청<span class="chev">›</span></a>
+    <div class="twocol">
+
+      <!-- 좌측 : 다온지사 전용 -->
+      <div class="col">
+        <div class="col__label">다온지사 전용</div>
+        <div class="gate">
+          <a href="/experts">
+            <div class="gate-card">
+              <div class="gate-ico">🔍</div>
+              <div class="gate-body">
+                <h3>전문가 찾기</h3>
+                <p>다온파트너스 소속 보험 전문가를 만나보세요</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+
+          <a href="/news">
+            <div class="gate-card">
+              <div class="gate-ico">📰</div>
+              <div class="gate-body">
+                <h3>다온 보험 데일리</h3>
+                <p>매일 아침 업데이트되는 보험·경제 뉴스</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+
+          <a href="/letter">
+            <div class="gate-card">
+              <div class="gate-ico">📋</div>
+              <div class="gate-body">
+                <h3>사장님 브리핑</h3>
+                <p>소상공인을 위한 주간 뉴스레터</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
         </div>
       </div>
 
-      <a href="/business">
-        <div class="gate-card">
-          <div class="gate-ico">🏢</div>
-          <div class="gate-body">
-            <h3>사업장 위험관리</h3>
-            <p>화재 · 배상책임 · 중대재해 · 위험성평가</p>
+      <!-- 우측 : 고객 전용 -->
+      <div class="col">
+        <div class="col__label">고객 전용</div>
+        <div class="gate">
+          <div class="gate-card gate-card--group">
+            <div class="group-head">
+              <div class="gate-ico">🛡️</div>
+              <div class="gate-body">
+                <h3>개인 보험 컨설팅</h3>
+                <p>분야별 무료 상담·설계 신청</p>
+              </div>
+            </div>
+            <div class="sublist">
+              <a href="/consult"><span class="emo">☂️</span>보장분석 요청<span class="chev">›</span></a>
+              <a href="/health-consult"><span class="emo">🩺</span>모든보험 상담<span class="chev">›</span></a>
+              <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
+              <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
+              <a href="/pet-consult"><span class="emo">🐶</span>펫보험 설계 요청<span class="chev">›</span></a>
+              <a href="/auto-consult"><span class="emo">🚗</span>자동차보험 설계 요청<span class="chev">›</span></a>
+            </div>
           </div>
-          <div class="gate-arrow">›</div>
-        </div>
-      </a>
 
-      <div class="gate-card soon">
-        <div class="gate-ico">🤝</div>
-        <div class="gate-body">
-          <h3>소상공인 파트너십</h3>
-          <p>소상공인 제휴 · 사업장 안전점검 · 협업</p>
+          <a href="/business">
+            <div class="gate-card">
+              <div class="gate-ico">🏢</div>
+              <div class="gate-body">
+                <h3>사업장 위험관리</h3>
+                <p>화재 · 배상책임 · 중대재해 · 위험성평가</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+
+          <div class="gate-card soon">
+            <div class="gate-ico">🤝</div>
+            <div class="gate-body">
+              <h3>소상공인 파트너십</h3>
+              <p>소상공인 제휴 · 사업장 안전점검 · 협업</p>
+            </div>
+            <div class="gate-arrow">›</div>
+          </div>
         </div>
-        <div class="gate-arrow">›</div>
       </div>
 
-      <a href="/experts">
-        <div class="gate-card">
-          <div class="gate-ico">🔍</div>
-          <div class="gate-body">
-            <h3>전문가 찾기</h3>
-            <p>다온파트너스 소속 보험 전문가를 만나보세요</p>
-          </div>
-          <div class="gate-arrow">›</div>
-        </div>
-      </a>
     </div>
 
     <!-- ④ RECRUITING -->
@@ -238,35 +281,6 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <h3>전국 파트너 조직 확대 중</h3>
       <p>지역 사업단장 · 팀장 · 경력/신입 설계사 파트너 모집</p>
       <a class="recruit-btn" href="/join1">파트너 모집 자세히 보기 →</a>
-    </div>
-  </div>
-</section>
-
-<!-- 다온 소식 -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec__label">다온 소식</div>
-    <div class="news">
-      <a href="/news">
-        <div class="news-card">
-          <div class="news-ico">📰</div>
-          <div class="news-body">
-            <h3>다온 보험 데일리</h3>
-            <p>매일 아침 업데이트되는 보험·경제 뉴스</p>
-          </div>
-          <div class="news-arrow">›</div>
-        </div>
-      </a>
-      <a href="/letter">
-        <div class="news-card">
-          <div class="news-ico">📋</div>
-          <div class="news-body">
-            <h3>사장님 브리핑</h3>
-            <p>소상공인을 위한 주간 뉴스레터</p>
-          </div>
-          <div class="news-arrow">›</div>
-        </div>
-      </a>
     </div>
   </div>
 </section>
