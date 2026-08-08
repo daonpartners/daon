@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title id="pageTitle">전문가 프로필 | 다온파트너스</title>
+<meta name="robots" content="noindex, follow">
+<meta name="theme-color" content="#0B1B33">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+
+<style>
+:root{
+  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
+  --paper:#FFFFFF; --cream:#F5F7FA;
+  --orange:#F58220; --deep:#C2650A; --tint:#FDEEDD;
+  --navy:#0B1B33; --navy2:#132A4D;
+  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
+  --maxw:560px; --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px;word-break:keep-all}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad) 50px}
+.topbar{display:flex;align-items:center;gap:9px;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
+.brand-mark{height:22px;width:auto}
+.brand-txt{font-size:12.5px;color:var(--steel);font-weight:600}
+
+.hero{background:linear-gradient(160deg,var(--navy),var(--navy2));color:#fff;padding:34px 0 30px;text-align:center;position:relative}
+.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
+.photo{width:92px;height:92px;border-radius:50%;object-fit:cover;border:3px solid var(--orange);margin:0 auto 14px;display:block;background:var(--navy2)}
+.badge{display:inline-block;font-family:var(--display);font-weight:700;font-size:10.5px;letter-spacing:.05em;background:var(--orange);color:var(--navy);padding:4px 11px;border-radius:999px;margin-bottom:8px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:22px}
+.hero .role{font-size:13px;color:#C6D0DE;margin-top:3px}
+.hero .intro{margin-top:12px;font-size:14px;color:#DCE4EE;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.7}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
+.tag{font-size:11px;font-weight:600;background:rgba(245,130,32,.16);color:var(--orange);border:1px solid rgba(245,130,32,.35);padding:4px 10px;border-radius:999px}
+
+.ctarow{display:flex;gap:8px;margin-top:20px;padding:0 var(--pad)}
+.cta{flex:1;text-align:center;padding:12px 8px;border-radius:11px;font-size:13px;font-weight:700;text-decoration:none}
+.cta--kakao{background:#FEE500;color:#3C1E1E}
+.cta--call{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.cta--card{background:var(--orange);color:#fff}
+
+.sec{padding:30px 0}
+.sec__label{font-family:var(--display);font-weight:600;font-size:11.5px;letter-spacing:.12em;color:var(--steel);margin-bottom:14px;text-align:center}
+
+.consultgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.consultgrid a{text-decoration:none;color:inherit}
+.cbtn{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px 10px;text-align:center;font-size:13px;font-weight:700;transition:border-color .14s,transform .14s}
+.cbtn:hover{border-color:var(--orange);transform:translateY(-2px)}
+
+.content{display:grid;gap:8px}
+.content a{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px;padding:13px 14px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:600}
+.content a:hover{border-color:var(--orange)}
+.content .ico{font-size:16px}
+
+.recruitbox{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:16px;padding:22px 20px;text-align:center;color:#fff}
+.recruitbox p{font-size:13.5px;color:#C6D0DE;margin:6px 0 16px}
+.recruitbtn{display:inline-block;background:var(--orange);color:var(--navy);font-family:var(--display);font-weight:700;font-size:13.5px;padding:11px 20px;border-radius:999px;text-decoration:none}
+
+.state{text-align:center;padding:60px 20px;color:var(--steel)}
+#profileArea{display:none}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <img class="brand-mark" src="/assets/logo.png" alt="다온파트너스">
+  <span class="brand-txt">다온파트너스</span>
+</header>
+
+<div id="loadingState" class="state">불러오는 중...</div>
+<div id="errorState" class="state" style="display:none;">프로필을 찾을 수 없습니다.<br><a href="/experts" style="color:var(--deep);font-weight:700;">전문가 목록으로 이동</a></div>
+
+<div id="profileArea">
+  <section class="hero">
+    <img class="photo" id="p-photo" src="" alt="">
+    <div id="p-badge"></div>
+    <h1 id="p-name"></h1>
+    <div class="role" id="p-title"></div>
+    <div class="intro" id="p-intro"></div>
+    <div class="tags" id="p-tags"></div>
+    <div class="ctarow">
+      <a class="cta cta--kakao" id="p-kakao" href="#" target="_blank" rel="noopener">카카오톡</a>
+      <a class="cta cta--call" id="p-call" href="#">전화</a>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec">
+      <div class="sec__label">보험 상담</div>
+      <div class="consultgrid" id="p-consult"></div>
+    </section>
+
+    <section class="sec" id="p-contentSec" style="display:none;">
+      <div class="sec__label">MY CONTENT</div>
+      <div class="content" id="p-content"></div>
+    </section>
+
+    <section class="sec" id="p-recruitSec" style="display:none;">
+      <div class="recruitbox">
+        <div class="sec__label" style="color:var(--orange);">WITH DAON</div>
+        <p id="p-recruitText">함께 일할 파트너를 찾습니다.</p>
+        <a class="recruitbtn" id="p-recruitBtn" href="#">입사 지원 알아보기</a>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const API = "https://daonpartners.app.n8n.cloud/webhook/daon-expert-profile";
+const params = new URLSearchParams(location.search);
+const code = params.get("a") || "";
+
+const consultPages = [
+  { label: "☂️ 보장분석", path: "/consult" },
+  { label: "🩺 모든보험", path: "/health-consult" },
+  { label: "🔎 암보험", path: "/cancer-consult" },
+  { label: "🔥 화재보험", path: "/fire-consult" },
+  { label: "🐶 펫보험", path: "/pet-consult" },
+  { label: "🚗 자동차보험", path: "/auto-consult" }
+];
+
+if (!code) {
+  document.getElementById("loadingState").style.display = "none";
+  document.getElementById("errorState").style.display = "block";
+} else {
+  fetch(API + "?a=" + encodeURIComponent(code))
+    .then(r => r.json())
+    .then(p => {
+      if (!p || p.error || !p.name) throw new Error("not found");
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("profileArea").style.display = "block";
+      document.getElementById("pageTitle").textContent = p.name + " | 다온파트너스";
+
+      document.getElementById("p-photo").src = p.photo || "/assets/logo.png";
+      document.getElementById("p-photo").alt = p.name;
+      document.getElementById("p-badge").innerHTML = p.recruiting ? '<span class="badge">함께할 팀원을 찾고 있어요</span>' : '';
+      document.getElementById("p-name").textContent = p.name;
+      document.getElementById("p-title").textContent = p.title || "";
+      document.getElementById("p-intro").textContent = p.intro || "";
+      document.getElementById("p-tags").innerHTML = (p.specialties || []).map(s => `<span class="tag">${s}</span>`).join('');
+
+      const kakaoEl = document.getElementById("p-kakao");
+      if (p.kakao) { kakaoEl.href = p.kakao; } else { kakaoEl.style.display = "none"; }
+      const callEl = document.getElementById("p-call");
+      if (p.phone) { callEl.href = "tel:" + p.phone.replace(/[^0-9]/g,""); } else { callEl.style.display = "none"; }
+
+      document.getElementById("p-consult").innerHTML = consultPages.map(c =>
+        `<a href="${c.path}?m=${encodeURIComponent(code)}"><div class="cbtn">${c.label}</div></a>`
+      ).join('');
+
+      const contentItems = [];
+      if (p.blog) contentItems.push({ ico: "📝", label: p.name + " 블로그", url: p.blog });
+      if (p.youtube) contentItems.push({ ico: "🎬", label: p.name + " 유튜브", url: p.youtube });
+      if (contentItems.length) {
+        document.getElementById("p-contentSec").style.display = "block";
+        document.getElementById("p-content").innerHTML = contentItems.map(c =>
+          `<a href="${c.url}" target="_blank" rel="noopener"><span class="ico">${c.ico}</span>${c.label}</a>`
+        ).join('');
+      }
+
+      if (p.recruiting) {
+        document.getElementById("p-recruitSec").style.display = "block";
+        document.getElementById("p-recruitText").textContent = p.name + " 팀과 함께 일할 파트너를 찾습니다.";
+        document.getElementById("p-recruitBtn").href = "/join1?m=" + encodeURIComponent(code);
+      }
+    })
+    .catch(() => {
+      document.getElementById("loadingState").style.display = "none";
+      document.getElementById("errorState").style.display = "block";
+    });
+}
+</script>
+</body>
+</html>
