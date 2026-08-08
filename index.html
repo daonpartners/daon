@@ -44,7 +44,11 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .brand{display:flex;align-items:center;gap:9px}
 .brand-mark{height:24px;width:auto;display:block}
 .brand-txt{font-size:13px;color:var(--steel);font-weight:600}
-.topbar a.about-link{font-size:12.5px;color:var(--steel);text-decoration:none;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:2px}
+.topbar a.about-link{font-size:13px;color:#fff;text-decoration:none;font-weight:700;background:var(--orange);padding:8px 16px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
+.topbar a.about-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--deep)}
+.topbar__links{display:flex;gap:8px}
+.topbar a.grow-link{font-size:13px;color:#fff;text-decoration:none;font-weight:700;background:var(--navy);padding:8px 16px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
+.topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
 
 /* ══ ① HERO ══ */
 .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:46px 0 42px;position:relative;overflow:hidden;text-align:center}
@@ -178,11 +182,11 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <body>
 
 <header class="topbar">
-  <div class="brand">
-    <img class="brand-mark" src="/assets/logo.png" alt="다온파트너스">
-    <span class="brand-txt">다온파트너스</span>
+  <img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" style="height:22px;width:auto;">
+  <div class="topbar__links">
+    <a class="grow-link" href="https://grow.io.kr" target="_blank" rel="noopener">그로우사업부</a>
+    <a class="about-link" href="/about">다온지사 소개</a>
   </div>
-  <a class="about-link" href="/about">다온지사 소개</a>
 </header>
 
 <!-- ① HERO -->
