@@ -106,8 +106,8 @@ body{
 
 .facts{display:grid;gap:12px}
 .fact{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 18px 18px 16px;border-left:5px solid var(--orange)}
-.fact h3{font-family:var(--display);font-weight:700;font-size:14px;margin-bottom:6px}
-.fact p{font-size:11.5px;color:var(--ink-2)}
+.fact h3{font-family:var(--display);font-weight:700;font-size:15.5px;margin-bottom:6px}
+.fact p{font-size:14.5px;color:var(--ink-2);font-weight:500}
 
 /* ── 자가진단 ── */
 .quiz{background:var(--ink);color:#fff;padding:0 0 40px}
@@ -144,19 +144,19 @@ body{
 .form__title{font-family:var(--display);font-weight:800;font-size:17px;margin-bottom:6px}
 .form__sub{font-size:11.5px;color:var(--steel);margin-bottom:22px}
 .field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:700;margin-bottom:6px}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px}
 .field input[type=text],.field input[type=tel]{width:100%;font-family:var(--body);font-size:13.5px;padding:15px 14px;border:2px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
 .field input:focus{outline:none;border-color:var(--orange)}
 .radios{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .radio{position:relative}
 .radio input{position:absolute;opacity:0;width:0;height:0}
-.radio span{display:block;text-align:center;padding:14px 8px;border-radius:10px;border:2px solid var(--line);font-size:12px;font-weight:600;cursor:pointer}
+.radio span{display:block;text-align:center;padding:14px 8px;border-radius:10px;border:2px solid var(--line);font-size:14.5px;font-weight:700;cursor:pointer}
 .radio input:checked + span{border-color:var(--orange);background:var(--orange-tint);color:var(--orange-deep)}
 .radio input:focus-visible + span{outline:3px solid var(--orange);outline-offset:2px}
 .radio small{display:block;font-size:9px;color:var(--steel);font-weight:400;margin-top:2px}
 .radio input:checked + span small{color:var(--orange-deep)}
 .consent{border-top:1px solid var(--line);margin-top:22px;padding-top:18px}
-.chk{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px;font-size:11px;line-height:1.5}
+.chk{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px;font-size:13.5px;line-height:1.55}
 .chk input{margin-top:3px;width:19px;height:19px;accent-color:var(--orange);flex-shrink:0}
 .chk .req{color:var(--orange-deep);font-weight:700}
 .chk .opt-tag{color:var(--steel)}
@@ -500,6 +500,7 @@ function submitLead(){
   const payload = {
     name, phone, contactWay: way, consentRequired: agree1, consentMarketing: agree2,
     answers, sourcePage: SOURCE_PAGE,
+    manager: params.get("m") || "",
     utm_source: params.get("utm_source") || "direct",
     utm_medium: params.get("utm_medium") || "",
     utm_campaign: params.get("utm_campaign") || "",
