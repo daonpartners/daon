@@ -58,12 +58,12 @@ h1 em{font-style:normal;color:var(--deep)}
 .cnum{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--orange);letter-spacing:.06em}
 .ctitle{font-size:15px;font-weight:700;letter-spacing:-.03em;margin:0}
 .creq{font-size:9.5px;color:var(--ink2);font-weight:500;margin-left:auto;font-family:var(--mono)}
-.chelp{margin:-7px 0 15px;font-size:11.5px;color:var(--ink2);letter-spacing:-.01em}
+.chelp{margin:-7px 0 15px;font-size:13.5px;color:var(--ink2);font-weight:500;letter-spacing:-.01em}
 
 .field{margin-bottom:13px}
 .field:last-child{margin-bottom:0}
-label.lb{display:block;font-size:10.5px;font-weight:600;color:var(--ink2);margin-bottom:6px;letter-spacing:-.01em}
-.inp,textarea.inp{width:100%;font-family:var(--sans);font-size:14px;color:var(--ink);background:#FFFDFB;border:1.5px solid var(--line);border-radius:10px;padding:12px;outline:none;transition:border-color .15s;letter-spacing:-.01em}
+label.lb{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:6px;letter-spacing:-.01em}
+.inp,textarea.inp{width:100%;font-family:var(--sans);font-size:16.5px;color:var(--ink);background:#FFFDFB;border:1.5px solid var(--line);border-radius:10px;padding:12px;outline:none;transition:border-color .15s;letter-spacing:-.01em}
 .inp::placeholder{color:#B9AEA3}
 .inp:focus{border-color:var(--orange);background:#fff}
 textarea.inp{min-height:78px;resize:vertical;line-height:1.55}
@@ -72,7 +72,7 @@ textarea.inp{min-height:78px;resize:vertical;line-height:1.55}
 .checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .chkopt{position:relative}
 .chkopt input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-.chkopt span{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;border:1.5px solid var(--line);border-radius:11px;padding:13px 6px;background:#FFFDFB;font-size:12.5px;font-weight:600;transition:all .14s}
+.chkopt span{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;border:1.5px solid var(--line);border-radius:11px;padding:13px 6px;background:#FFFDFB;font-size:15px;font-weight:700;transition:all .14s}
 .chkopt span::before{content:'';width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line);flex-shrink:0;background:#fff;transition:all .14s}
 .chkopt input:checked + span{border-color:var(--orange);background:var(--tint);color:var(--deep)}
 .chkopt input:checked + span::before{background:var(--orange);border-color:var(--orange);box-shadow:inset 0 0 0 2.5px #fff}
@@ -81,7 +81,7 @@ textarea.inp{min-height:78px;resize:vertical;line-height:1.55}
 .opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .opt{position:relative}
 .opt input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-.opt span{display:block;text-align:center;border:1.5px solid var(--line);border-radius:11px;padding:13px 4px;background:#FFFDFB;font-size:13px;font-weight:600;transition:all .14s}
+.opt span{display:block;text-align:center;border:1.5px solid var(--line);border-radius:11px;padding:13px 4px;background:#FFFDFB;font-size:15.5px;font-weight:700;transition:all .14s}
 .opt input:checked + span{border-color:var(--orange);background:var(--tint);color:var(--deep);box-shadow:inset 0 0 0 1px var(--orange)}
 .opt input:focus-visible + span{outline:2px solid var(--sky);outline-offset:2px}
 
@@ -328,10 +328,10 @@ const TEL_NUMBER  = "010-4007-7901";
       contactWay: val("contactWay"),
       agree: true,
       sourcePage: "health-consult",
+      manager: params.get("m") || "",
       utm_source: params.get("utm_source") || "direct",
       utm_medium: params.get("utm_medium") || "",
       utm_campaign: params.get("utm_campaign") || "",
-      manager: params.get("m") || "",
       referrer: document.referrer || "",
       submittedAt: kstNow()
     };
