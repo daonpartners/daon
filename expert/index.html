@@ -41,6 +41,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .cta{flex:1;text-align:center;padding:12px 8px;border-radius:11px;font-size:13px;font-weight:700;text-decoration:none}
 .cta--kakao{background:#FEE500;color:#3C1E1E}
 .cta--call{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3)}
+.cta--vcard{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer}
 .cta--card{background:var(--orange);color:#fff}
 
 .sec{padding:30px 0}
@@ -85,6 +86,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
     <div class="ctarow">
       <a class="cta cta--kakao" id="p-kakao" href="#" target="_blank" rel="noopener">카카오톡</a>
       <a class="cta cta--call" id="p-call" href="#">전화</a>
+      <button class="cta cta--vcard" id="p-vcard" type="button">연락처 저장</button>
     </div>
   </section>
 
@@ -97,14 +99,6 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
     <section class="sec" id="p-contentSec" style="display:none;">
       <div class="sec__label">MY CONTENT</div>
       <div class="content" id="p-content"></div>
-    </section>
-
-    <section class="sec" id="p-recruitSec" style="display:none;">
-      <div class="recruitbox">
-        <div class="sec__label" style="color:var(--orange);">WITH DAON</div>
-        <p id="p-recruitText">함께 일할 파트너를 찾습니다.</p>
-        <a class="recruitbtn" id="p-recruitBtn" href="#">입사 지원 알아보기</a>
-      </div>
     </section>
   </div>
 </div>
@@ -137,7 +131,7 @@ if (!code) {
 
       document.getElementById("p-photo").src = p.photo || "/assets/logo.png";
       document.getElementById("p-photo").alt = p.name;
-      document.getElementById("p-badge").innerHTML = p.recruiting ? '<span class="badge">함께할 팀원을 찾고 있어요</span>' : '';
+      document.getElementById("p-badge").innerHTML = '';
       document.getElementById("p-name").textContent = p.name;
       document.getElementById("p-title").textContent = p.title || "";
       document.getElementById("p-intro").textContent = p.intro || "";
@@ -147,6 +141,31 @@ if (!code) {
       if (p.kakao) { kakaoEl.href = p.kakao; } else { kakaoEl.style.display = "none"; }
       const callEl = document.getElementById("p-call");
       if (p.phone) { callEl.href = "tel:" + p.phone.replace(/[^0-9]/g,""); } else { callEl.style.display = "none"; }
+
+      const vcardEl = document.getElementById("p-vcard");
+      vcardEl.addEventListener("click", () => {
+        const lines = [
+          "BEGIN:VCARD",
+          "VERSION:3.0",
+          "FN:" + p.name,
+          "ORG:다온파트너스",
+          "TITLE:" + (p.title || ""),
+          p.phone ? "TEL;TYPE=CELL:" + p.phone : "",
+          p.kakao ? "URL;TYPE=kakao:" + p.kakao : "",
+          "URL:" + location.href,
+          p.intro ? "NOTE:" + p.intro : "",
+          "END:VCARD"
+        ].filter(Boolean).join("\r\n");
+        const blob = new Blob([lines], { type: "text/vcard;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = p.name + "_다온파트너스.vcf";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      });
 
       document.getElementById("p-consult").innerHTML = consultPages.map(c =>
         `<a href="${c.path}?m=${encodeURIComponent(code)}"><div class="cbtn">${c.label}</div></a>`
@@ -160,12 +179,6 @@ if (!code) {
         document.getElementById("p-content").innerHTML = contentItems.map(c =>
           `<a href="${c.url}" target="_blank" rel="noopener"><span class="ico">${c.ico}</span>${c.label}</a>`
         ).join('');
-      }
-
-      if (p.recruiting) {
-        document.getElementById("p-recruitSec").style.display = "block";
-        document.getElementById("p-recruitText").textContent = p.name + " 팀과 함께 일할 파트너를 찾습니다.";
-        document.getElementById("p-recruitBtn").href = "/join1?m=" + encodeURIComponent(code);
       }
     })
     .catch(() => {
