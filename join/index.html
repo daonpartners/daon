@@ -51,7 +51,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .hero h1{font-family:var(--display);font-weight:900;font-size:clamp(20px,6.2vw,30px);line-height:1.35;letter-spacing:-.006em;margin-bottom:16px}
 .hero h1 em{font-style:normal;color:var(--orange)}
 .hero__lead{color:#fff;font-weight:700;font-size:13.5px;line-height:1.6;margin-bottom:24px}
-.hero__story{font-size:12px;color:#C4CAD1;line-height:1.85;border-left:3px solid var(--orange);padding-left:14px;margin-bottom:26px}
+.hero__story{font-size:14.5px;color:#D6DEE8;line-height:1.85;border-left:3px solid var(--orange);padding-left:14px;margin-bottom:26px;font-weight:500}
 .notice{background:rgba(245,130,32,.12);border:1px solid rgba(245,130,32,.35);border-radius:12px;padding:18px 20px;margin-bottom:24px}
 .notice p{font-family:var(--display);font-weight:700;font-size:12px;line-height:1.6;text-align:center}
 
@@ -98,7 +98,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .equip__new{display:inline-block;font-family:var(--display);font-weight:700;font-size:9px;letter-spacing:.04em;background:var(--orange);color:#fff;padding:3px 8px;border-radius:10px;margin-left:6px;vertical-align:middle}
 
 .fit{display:grid;gap:10px}
-.fit__item{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--ink-2)}
+.fit__item{display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2);font-weight:500}
 .fit__check{color:var(--orange-deep);font-weight:700;flex-shrink:0}
 
 .bio__row{display:grid;grid-template-columns:76px 1fr;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
@@ -112,13 +112,13 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .form__title{font-family:var(--display);font-weight:800;font-size:18px;margin-bottom:8px}
 .form__sub{font-size:11.5px;color:#9AA2AC;margin-bottom:22px}
 .field{margin-bottom:14px}
-.field label{display:block;font-size:11px;font-weight:600;margin-bottom:6px;color:#E4E8EC}
+.field label{display:block;font-size:14px;font-weight:700;margin-bottom:6px;color:#E4E8EC}
 .field input[type=text],.field input[type=tel],.field textarea{width:100%;font-family:var(--body);font-size:13.5px;padding:15px 14px;border:2px solid #383F48;border-radius:10px;background:#22272E;color:#fff}
 .field textarea{min-height:90px;resize:vertical;line-height:1.55}
 .field input::placeholder,.field textarea::placeholder{color:#6B7480}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--orange)}
 .consent{border-top:1px solid #333A43;margin-top:20px;padding-top:16px}
-.chk{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px;font-size:11px;line-height:1.5;color:#E4E8EC}
+.chk{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px;font-size:13.5px;line-height:1.55;color:#E4E8EC}
 .chk input{margin-top:3px;width:19px;height:19px;accent-color:var(--orange);flex-shrink:0}
 .chk .req{color:var(--orange);font-weight:700}
 .chk .opt-tag{color:#8A929C}
@@ -270,6 +270,7 @@ function submitLead(){
     consentRequired: agree1,
     consentMarketing: agree2,
     sourcePage: SOURCE_PAGE,
+    manager: params.get("m") || "",
     utm_source: params.get("utm_source") || "direct",
     utm_medium: params.get("utm_medium") || "",
     utm_campaign: params.get("utm_campaign") || "",
