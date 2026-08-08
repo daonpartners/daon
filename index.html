@@ -74,6 +74,26 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .twocol{display:grid;gap:28px}
 .col__label{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.1em;color:var(--deep);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--orange);display:inline-block}
 
+/* 개인 보험 컨설팅 팝업 */
+.modal-overlay{position:fixed;inset:0;background:rgba(11,27,51,.55);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.on{display:flex}
+.modal-sheet{background:#fff;width:100%;max-width:var(--maxw);border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));animation:sheetUp .22s ease-out}
+@keyframes sheetUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.modal-head h3{font-family:var(--display);font-weight:800;font-size:19px}
+.modal-close{background:var(--navygray);border:none;width:32px;height:32px;border-radius:50%;font-size:15px;color:var(--ink-2);cursor:pointer}
+.modal-sub{font-size:13px;color:var(--steel);margin-bottom:16px}
+.modal-list{display:grid;gap:8px}
+.modal-list a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--navygray);border-radius:12px;padding:15px 14px;font-size:15px;font-weight:700}
+.modal-list a:hover{background:var(--tint)}
+.modal-list .emo{font-size:18px}
+.modal-list .chev{margin-left:auto;color:var(--steel);font-weight:700}
+
+@media (min-width:600px){
+  .modal-overlay{align-items:center}
+  .modal-sheet{border-radius:20px;max-width:420px}
+}
+
 .gate{display:grid;gap:12px}
 .gate a{text-decoration:none;color:inherit;display:block}
 .gate-card{
@@ -205,7 +225,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
             </div>
           </a>
 
-          <a href="/news">
+          <a href="/news/2026-08-07.html">
             <div class="gate-card">
               <div class="gate-ico">📰</div>
               <div class="gate-body">
@@ -216,7 +236,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
             </div>
           </a>
 
-          <a href="/letter">
+          <a href="/letter/20260802.html">
             <div class="gate-card">
               <div class="gate-ico">📋</div>
               <div class="gate-body">
@@ -233,23 +253,14 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <div class="col">
         <div class="col__label">고객 전용</div>
         <div class="gate">
-          <div class="gate-card gate-card--group">
-            <div class="group-head">
-              <div class="gate-ico">🛡️</div>
-              <div class="gate-body">
-                <h3>개인 보험 컨설팅</h3>
-                <p>분야별 무료 상담·설계 신청</p>
-              </div>
+          <button type="button" class="gate-card" id="insTrigger" style="width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-family:var(--body);">
+            <div class="gate-ico">🛡️</div>
+            <div class="gate-body">
+              <h3>개인 보험 컨설팅</h3>
+              <p>분야별 무료 상담·설계 신청</p>
             </div>
-            <div class="sublist">
-              <a href="/consult"><span class="emo">☂️</span>보장분석 요청<span class="chev">›</span></a>
-              <a href="/health-consult"><span class="emo">🩺</span>모든보험 상담<span class="chev">›</span></a>
-              <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
-              <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
-              <a href="/pet-consult"><span class="emo">🐶</span>펫보험 설계 요청<span class="chev">›</span></a>
-              <a href="/auto-consult"><span class="emo">🚗</span>자동차보험 설계 요청<span class="chev">›</span></a>
-            </div>
-          </div>
+            <div class="gate-arrow">›</div>
+          </button>
 
           <a href="/business">
             <div class="gate-card">
@@ -321,5 +332,44 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   </div>
 </footer>
 
+<!-- 개인 보험 컨설팅 팝업 -->
+<div class="modal-overlay" id="insModalOverlay">
+  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="insModalTitle">
+    <div class="modal-head">
+      <h3 id="insModalTitle">개인 보험 컨설팅</h3>
+      <button type="button" class="modal-close" id="insModalClose" aria-label="닫기">✕</button>
+    </div>
+    <p class="modal-sub">원하시는 상담을 골라 주세요</p>
+    <div class="modal-list">
+      <a href="/consult"><span class="emo">☂️</span>보장분석 요청<span class="chev">›</span></a>
+      <a href="/health-consult"><span class="emo">🩺</span>모든보험 상담<span class="chev">›</span></a>
+      <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
+      <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
+      <a href="/pet-consult"><span class="emo">🐶</span>펫보험 설계 요청<span class="chev">›</span></a>
+      <a href="/auto-consult"><span class="emo">🚗</span>자동차보험 설계 요청<span class="chev">›</span></a>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var overlay = document.getElementById("insModalOverlay");
+  var trigger = document.getElementById("insTrigger");
+  var closeBtn = document.getElementById("insModalClose");
+
+  function openModal(){
+    overlay.classList.add("on");
+    document.body.style.overflow = "hidden";
+  }
+  function closeModal(){
+    overlay.classList.remove("on");
+    document.body.style.overflow = "";
+  }
+  trigger.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+})();
+</script>
 </body>
 </html>
