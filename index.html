@@ -44,17 +44,19 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .brand{display:flex;align-items:center;gap:9px}
 .brand-mark{height:24px;width:auto;display:block}
 .brand-txt{font-size:13px;color:var(--steel);font-weight:600}
-.topbar a.about-link{font-size:13px;color:#fff;text-decoration:none;font-weight:700;background:var(--orange);padding:8px 16px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px var(--pad);max-width:var(--maxw);margin:0 auto}
+.topbar a.about-link{font-size:11.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--orange);padding:7px 12px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
 .topbar a.about-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--deep)}
-.topbar__links{display:flex;gap:8px}
-.topbar a.grow-link{font-size:13px;color:#fff;text-decoration:none;font-weight:700;background:var(--navy);padding:8px 16px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
+.topbar__links{display:flex;gap:6px;flex-shrink:0}
+.topbar a.grow-link{font-size:11.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--navy);padding:7px 12px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
 .topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
+.brand-mark{height:20px;width:auto;flex-shrink:0}
 
 /* ══ ① HERO ══ */
 .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:46px 0 42px;position:relative;overflow:hidden;text-align:center}
 .hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
-.hero__mean{font-family:var(--display);font-weight:600;font-size:12.5px;letter-spacing:.16em;color:var(--orange);margin-bottom:16px}
-.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(23px,7.2vw,31px);line-height:1.42;letter-spacing:-.006em;margin-bottom:14px}
+.hero__mean{font-family:var(--display);font-weight:600;font-size:clamp(9.5px,3.1vw,12.5px);letter-spacing:.1em;color:var(--orange);margin-bottom:16px;white-space:nowrap}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(20px,6.4vw,27px);line-height:1.42;letter-spacing:-.006em;margin-bottom:14px}
 .hero h1 em{font-style:normal;color:var(--orange)}
 .hero__sub{font-size:15px;color:#D6DEE8;line-height:1.85;max-width:440px;margin:0 auto}
 
@@ -216,7 +218,6 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 
       <!-- 좌측 : 다온지사 전용 -->
       <div class="col">
-        <div class="col__label">다온지사 전용</div>
         <div class="gate">
           <a href="/experts">
             <div class="gate-card">
@@ -295,7 +296,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <div class="recruit__label">PARTNER RECRUITING</div>
       <h3>전국 파트너 조직 확대 중</h3>
       <p>지역 사업단장 · 팀장 · 경력/신입 설계사 파트너 모집</p>
-      <a class="recruit-btn" href="/join1">파트너 모집 자세히 보기 →</a>
+      <a class="recruit-btn" href="https://open.kakao.com/me/daonbranch" target="_blank" rel="noopener">파트너 모집 자세히 보기 →</a>
     </div>
   </div>
 </section>
@@ -324,7 +325,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <a href="/about">회사소개</a>
       <a href="/about#way">오시는 길</a>
       <span>개인정보처리방침</span>
-      <a href="/consult">상담문의</a>
+      <a href="https://open.kakao.com/me/daonbranch" target="_blank" rel="noopener">상담문의</a>
     </div>
   </div>
 
