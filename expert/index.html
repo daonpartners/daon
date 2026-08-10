@@ -165,7 +165,7 @@ if (!code) {
   document.getElementById("loadingState").style.display = "none";
   document.getElementById("errorState").style.display = "block";
 } else {
-  fetch(API + "?a=" + encodeURIComponent(code))
+  fetch(API + "?a=" + encodeURIComponent(code) + "&t=" + Date.now(), { cache: "no-store" })
     .then(r => r.json())
     .then(p => {
       if (!p || p.error || !p.name) throw new Error("not found");
