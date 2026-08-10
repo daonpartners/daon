@@ -78,7 +78,7 @@ fetch(API + "?t=" + Date.now(), { cache: "no-store" })
       <a class="card" href="/expert?a=${encodeURIComponent(p.code)}">
         <img class="photo" src="${p.photo || '/assets/logo.png'}" alt="${p.name}">
         <div class="body">
-          <h3>${p.name}${p.recruiting ? '<span class="badge">모집중</span>' : ''}</h3>
+          <h3>${p.name}</h3>
           <p>${p.title || ''}</p>
           <div class="tags">${(p.specialties || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
         </div>
