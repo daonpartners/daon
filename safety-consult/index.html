@@ -71,6 +71,19 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .topic h3{font-family:var(--display);font-weight:700;font-size:15px;margin-bottom:3px}
 .topic p{font-size:13px;color:var(--ink-2);line-height:1.55}
 
+/* 과태료 안내 */
+.finebox{background:var(--navy);color:#fff;border-radius:16px;padding:22px 18px;margin-top:4px}
+.finebox__label{display:inline-flex;align-items:center;gap:6px;font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.04em;color:var(--orange);margin-bottom:12px}
+.finebox__date{font-size:13.5px;color:#DCE4EE;line-height:1.7;margin-bottom:14px}
+.finebox__date b{color:var(--orange)}
+.finetable{width:100%;border-collapse:collapse;font-size:12.5px}
+.finetable th,.finetable td{padding:9px 6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.14)}
+.finetable th{font-family:var(--display);font-weight:700;color:var(--orange);font-size:11.5px}
+.finetable td:first-child{text-align:left;color:#EAEFF5;font-weight:600}
+.finetable td{color:#C6D0DE}
+.finetable tr:last-child td{color:#fff;font-weight:700}
+.finebox__note{margin-top:14px;font-size:12px;color:#9FB0C1;line-height:1.7}
+
 /* ── 폼 카드 ── */
 .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 17px;margin-top:12px}
 .chead{display:flex;align-items:baseline;gap:10px;margin-bottom:15px}
@@ -166,6 +179,20 @@ textarea.inp{min-height:76px;resize:vertical;line-height:1.55}
       <div class="topic"><div class="topic__ico">🧑‍🔧</div><div><h3>직원·아르바이트 사고</h3><p>산재·근로자 관련 보장 점검</p></div></div>
       <div class="topic"><div class="topic__ico">💳</div><div><h3>보험금 청구</h3><p>사고 발생 시 처리 순서</p></div></div>
       <div class="topic"><div class="topic__ico">👤</div><div><h3>대표자·직원 개인보장</h3><p>사업장과 개인보장 함께 점검</p></div></div>
+    </div>
+
+    <div class="finebox" style="margin-top:16px;">
+      <div class="finebox__label">⚠ 위험성평가 과태료 부과 기준</div>
+      <div class="finebox__date">상시근로자 <b>5인 이상</b>이면 업종 관계없이 전부 적용됩니다. <b>50인 이상은 2027년 1월 1일</b>, <b>5인~49인은 2028년 1월 1일</b>부터 부과됩니다.</div>
+      <table class="finetable">
+        <tr><th>위반 항목</th><th>1차</th><th>2차</th><th>3차 이상</th></tr>
+        <tr><td>위험성평가 미실시</td><td>500만원</td><td>700만원</td><td>1,000만원</td></tr>
+        <tr><td>근로자 참여 의무 위반</td><td>150만원</td><td>300만원</td><td>500만원</td></tr>
+        <tr><td>근로자대표 참여 미보장</td><td>150만원</td><td>300만원</td><td>500만원</td></tr>
+        <tr><td>위험성평가 주요사항 미공유</td><td>150만원</td><td>300만원</td><td>500만원</td></tr>
+        <tr><td>기록·보존 의무 위반</td><td>50만원</td><td>150만원</td><td>300만원</td></tr>
+      </table>
+      <div class="finebox__note">2026년 6월 1일 제도 시행. 세부 기준은 시행 전까지 조정될 수 있어, 정확한 적용 여부는 상담을 통해 확인해 주세요.</div>
     </div>
   </div>
 </section>
