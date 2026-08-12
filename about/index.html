@@ -122,9 +122,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .addr-detail{font-size:14px;color:var(--ink-2);line-height:1.8;margin-top:10px}
 .addr-note{margin-top:12px;background:var(--cream);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--steel);line-height:1.7}
 
-.foot{background:var(--navy);color:#9FB0C1;padding:30px 0 40px;font-size:12px;line-height:1.75}
-.foot__org{font-family:var(--display);font-weight:700;color:#fff;font-size:15px;margin-bottom:8px}
-.foot__legal{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.14);font-size:11px;line-height:1.75}
+.foot{background:var(--navy);color:#9FB0C1;padding:30px 0 0;font-size:12px;line-height:1.75;text-align:center}
+.foot__top{font-size:11px;line-height:1.85;color:#9FB0C1}
+.foot__bottom{margin-top:24px;padding:20px 0 34px;border-top:1px solid rgba(255,255,255,.14)}
+.foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:15px;margin-bottom:6px;letter-spacing:.02em}
 
 @media (min-width:600px){.daon4{grid-template-columns:1fr 1fr}}
 </style>
@@ -268,14 +269,14 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 
 <footer class="foot">
   <div class="wrap">
-    <div class="foot__org">다온지사</div>
-    <div>운영 · 그로우사업부 다온파트너스</div>
-    <div>충청남도 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호</div>
-    <div>연락처 010-4007-7901 · 이메일 sing545@naver.com</div>
-    <div class="foot__legal">
-      <strong style="color:#fff">표기사항</strong><br>
-      보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20260320004953<br><br>
-      개인정보 보호책임자 다온파트너스 · 010-4007-7901
+    <div class="foot__top">
+      보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20260320004953<br>
+      개인정보 보호책임자 다온파트너스 · 010-8183-0010
+    </div>
+    <div class="foot__bottom">
+      <div class="foot__org">DAON PARTNERS</div>
+      <div>다온파트너스(884-14-02999)</div>
+      <div>충청남도 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호</div>
     </div>
   </div>
 </footer>
