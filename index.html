@@ -175,6 +175,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .foot__links a:last-child,.foot__links span:last-child{border-right:none}
 .foot__links span{padding:0 10px;color:#6B7C93}
 .foot__legal{margin-top:20px;padding:16px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.1);font-size:10.5px;color:#6B7C93;line-height:1.8;max-width:var(--maxw);margin-left:auto;margin-right:auto}
+.foot__bottom{margin-top:20px;padding:20px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.12);text-align:center}
+.foot__bottom .foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:15px;letter-spacing:.02em}
+.foot__bottom .foot__sub{font-size:12px;color:#8FA0B3;margin-top:6px}
+.foot__bottom .foot__addr{font-size:11.5px;color:#6B7C93;margin-top:4px}
 
 @media (min-width:860px){
   .wrap:has(.twocol){max-width:960px}
@@ -319,9 +323,12 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <!-- ⑥ FOOTER -->
 <footer class="foot">
   <div class="wrap">
-    <div class="foot__org">DAON PARTNERS</div>
-    <div class="foot__sub">미래에셋금융서비스 그로우사업부 다온지사</div>
-    <div class="foot__addr">충남 아산시 탕정면 용머리길 22<br>브라운스톤갤럭시 C동 301호</div>
+    <div class="foot__legal" style="border-top:none;padding-top:0;margin-top:0;">
+      보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20260320004953<br>
+      전화 041-534-1124 · 팩스 041-534-1126<br>
+      본 사이트는 특정 보험회사나 상품을 광고·비교하지 않으며, 상담·제휴·채용 관련 정보 제공 및 신청 접수를 목적으로 합니다.<br>
+      개인정보 보호책임자 다온파트너스 · 010-8183-0010
+    </div>
 
     <div class="foot__links">
       <a href="/about">회사소개</a>
@@ -331,11 +338,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
     </div>
   </div>
 
-  <div class="foot__legal">
-    보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20260320004953<br>
-    전화 041-534-1124 · 팩스 041-534-1126 · 010-4007-7901 · sing545@naver.com<br>
-    본 사이트는 특정 보험회사나 상품을 광고·비교하지 않으며, 상담·제휴·채용 관련 정보 제공 및 신청 접수를 목적으로 합니다.<br>
-    개인정보 보호책임자 다온파트너스 · 010-4007-7901
+  <div class="foot__bottom">
+    <div class="foot__org">DAON PARTNERS</div>
+    <div class="foot__sub">다온파트너스(884-14-02999)</div>
+    <div class="foot__addr">충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호</div>
   </div>
 </footer>
 
