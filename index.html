@@ -2,386 +2,1774 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>다온파트너스 | 좋은 일이 다 온다</title>
-<meta name="description" content="개인의 보장부터 사업장의 위험관리, 소상공인 비즈니스와 보험 전문가의 성장까지. 다온파트너스가 함께합니다.">
-<meta name="robots" content="index, follow">
-
-<meta name="naver-site-verification" content="[네이버 서치어드바이저 발급값]">
-<meta name="google-site-verification" content="[구글 서치콘솔 발급값]">
-
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:site_name" content="다온파트너스">
-<meta property="og:title" content="다온파트너스 | 좋은 일이 다 온다">
-<meta property="og:description" content="보험을 넘어, 사람과 사업의 더 나은 내일을 연결합니다.">
-<meta property="og:url" content="https://daon.io.kr/">
-<meta name="theme-color" content="#0B1B33">
-
-<link rel="canonical" href="https://daon.io.kr/">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;600;700;900&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700;9..144,900&display=swap" rel="stylesheet">
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>다온 영업관리</title>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{
-  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
-  --paper:#FFFFFF; --navygray:#EEF1F6;
-  --orange:#F58220; --deep:#C2650A; --tint:#FDEEDD;
-  --navy:#0B1B33; --navy2:#132A4D;
-  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
-  --display-en:'Fraunces', 'Noto Serif KR', serif;
-  --maxw:680px; --pad:20px;
+  --org:#F58220; --org-dk:#D96D10; --org-lt:#FFF3E8;
+  --blue:#378ADD; --blue-lt:#EDF5FD;
+  --ink:#1B1D21; --ink2:#5A6069; --ink3:#8E959E;
+  --line:#E6E9ED; --bg:#F5F6F8; --card:#FFFFFF;
+  --red:#E5484D; --green:#2A9D5C; --yellow:#E8A317;
+  --r:14px; --shadow:0 1px 3px rgba(16,24,40,.06),0 1px 2px rgba(16,24,40,.04);
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.68;font-size:16px;word-break:keep-all;-webkit-font-smoothing:antialiased}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
-.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
-
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
-.brand{display:flex;align-items:center;gap:9px}
-.brand-mark{height:24px;width:auto;display:block}
-.brand-txt{font-size:13px;color:var(--steel);font-weight:600}
-.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px var(--pad);max-width:var(--maxw);margin:0 auto}
-.topbar a.about-link{font-size:11.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--orange);padding:7px 12px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
-.topbar a.about-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--deep)}
-.topbar__links{display:flex;gap:6px;flex-shrink:0}
-.topbar a.grow-link{font-size:11.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--navy);padding:7px 12px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
-.topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
-.brand-mark{height:20px;width:auto;flex-shrink:0}
-
-/* ══ ① HERO ══ */
-.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:46px 0 42px;position:relative;overflow:hidden;text-align:center}
-.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
-.hero__mean{font-family:var(--display-en);font-weight:600;font-style:italic;font-size:clamp(10.5px,3.3vw,13.5px);letter-spacing:.04em;color:var(--orange);margin-bottom:16px;white-space:nowrap}
-.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(19px,6.2vw,26px);line-height:1.4;letter-spacing:-.006em;margin-bottom:14px}
-.hero h1 em{font-style:normal;color:var(--orange)}
-.hero__sub{font-size:15px;color:#D6DEE8;line-height:1.85;max-width:440px;margin:0 auto}
-
-/* ══ ② TRUST 스탯바 ══ */
-.trust{background:var(--tint);padding:28px var(--pad) 26px}
-.trustgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:var(--maxw);margin:0 auto;text-align:center}
-.trustgrid > div{padding:0 4px}
-.trustgrid > div:not(:last-child){border-right:1px solid rgba(194,101,10,.22)}
-.trustgrid .tag{font-family:var(--display-en);font-weight:700;font-size:11.5px;letter-spacing:.08em;color:var(--orange);margin-bottom:8px;display:block}
-.trustgrid .th{font-family:var(--display);font-weight:800;font-size:16px;color:var(--navy);line-height:1.4;letter-spacing:-.01em}
-.trustgrid .tl{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.5;font-weight:500}
-
-/* ══ 섹션 공통 ══ */
-.sec{padding:38px 0}
-.sec--navygray{background:var(--navygray)}
-.sec__label{font-family:var(--display);font-weight:600;font-size:11.5px;letter-spacing:.12em;color:var(--steel);margin-bottom:20px;text-align:center}
-.sec__title{font-family:var(--display);font-weight:700;font-size:clamp(19px,5.2vw,23px);line-height:1.45;letter-spacing:-.006em;margin-bottom:22px;text-align:center}
-
-/* ══ ③ SERVICE 4카드 ══ */
-/* 2컬럼: 다온지사 전용 / 고객 전용 */
-.twocol{display:grid;gap:28px}
-.col__label{font-family:var(--display);font-weight:700;font-size:12.5px;letter-spacing:.1em;color:var(--deep);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--orange);display:inline-block}
-
-/* 개인 보험 컨설팅 팝업 */
-.modal-overlay{position:fixed;inset:0;background:rgba(11,27,51,.55);z-index:100;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.on{display:flex}
-.modal-sheet{background:#fff;width:100%;max-width:var(--maxw);border-radius:20px 20px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));animation:sheetUp .22s ease-out}
-@keyframes sheetUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.modal-head h3{font-family:var(--display);font-weight:800;font-size:19px}
-.modal-close{background:var(--navygray);border:none;width:32px;height:32px;border-radius:50%;font-size:15px;color:var(--ink-2);cursor:pointer}
-.modal-sub{font-size:13px;color:var(--steel);margin-bottom:16px}
-.modal-list{display:grid;gap:8px}
-.modal-list a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--navygray);border-radius:12px;padding:15px 14px;font-size:15px;font-weight:700}
-.modal-list a:hover{background:var(--tint)}
-.modal-list .emo{font-size:18px}
-.modal-list .chev{margin-left:auto;color:var(--steel);font-weight:700}
-
-@media (min-width:600px){
-  .modal-overlay{align-items:center}
-  .modal-sheet{border-radius:20px;max-width:420px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  background:var(--bg); color:var(--ink); font-size:15px; line-height:1.5;
+  padding-bottom:82px; -webkit-font-smoothing:antialiased;
 }
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit;font-size:inherit}
+input,select,textarea{font-family:inherit;font-size:16px;width:100%;padding:12px 14px;
+  border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--org)}
+label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 6px}
+.hide{display:none !important}
 
-.gate{display:grid;gap:12px}
-.gate a{text-decoration:none;color:inherit;display:block}
-.gate-card{
-  background:#fff;border:1.5px solid var(--line);border-radius:16px;
-  padding:19px 18px;display:flex;gap:14px;align-items:center;
-  transition:transform .14s,box-shadow .14s,border-color .14s;
+/* ── 상단바 ───────────────────────── */
+.top{position:sticky;top:0;z-index:40;background:#fff;border-bottom:1px solid var(--line)}
+.top-in{max-width:560px;margin:0 auto;padding:13px 16px;display:flex;align-items:center;gap:10px}
+.brand{font-size:17px;font-weight:800;letter-spacing:-.03em}
+.brand em{font-style:normal;color:var(--org)}
+.who{margin-left:auto;font-size:12.5px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.who b{color:var(--ink);font-weight:700}
+.out{font-size:12px;color:var(--ink3);padding:5px 9px;border:1px solid var(--line);border-radius:7px}
+
+/* ── 카드 ─────────────────────────── */
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:12px 0}
+.card-h{display:flex;align-items:center;gap:8px;margin:0 0 12px}
+.card-h h2{font-size:15px}
+.card-h .sub{margin-left:auto;font-size:12px;color:var(--ink3)}
+
+/* ── 버튼 ─────────────────────────── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px 18px;border-radius:11px;font-weight:700;font-size:15px;
+  background:var(--org);color:#fff;width:100%;transition:opacity .15s}
+.btn:active{opacity:.75}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.blue{background:var(--blue)}
+.btn.sm{padding:9px 13px;font-size:13.5px;width:auto;border-radius:9px}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+
+/* ── 오늘 할 일 ───────────────────── */
+.todo{display:flex;gap:11px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+.todo:last-child{border-bottom:0;padding-bottom:0}
+.todo .dot{width:8px;height:8px;border-radius:50%;margin-top:7px;flex:0 0 8px}
+.todo .tx{flex:1;min-width:0}
+.todo .tt{font-weight:650;font-size:14.5px}
+.todo .ts{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.d-red{background:var(--red)} .d-yel{background:var(--yellow)} .d-blu{background:var(--blue)}
+.empty{text-align:center;padding:26px 10px;color:var(--ink3);font-size:14px}
+
+/* ── 진행률 ───────────────────────── */
+.stat{display:flex;gap:10px;margin:2px 0 0}
+.stat div{flex:1;background:var(--bg);border-radius:11px;padding:12px 10px;text-align:center}
+.stat .n{font-size:21px;font-weight:800;letter-spacing:-.03em;line-height:1.2}
+.stat .l{font-size:11.5px;color:var(--ink3);margin-top:3px}
+
+/* ── 원탭 활동 ────────────────────── */
+.taps{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.tap{background:var(--org-lt);border:1.5px solid #FBDCC0;border-radius:12px;
+  padding:15px 6px;text-align:center;transition:transform .1s}
+.tap:active{transform:scale(.94)}
+.tap .ic{font-size:21px;line-height:1}
+.tap .nm{font-size:13px;font-weight:700;margin-top:5px;color:var(--org-dk)}
+.tap .ct{font-size:11.5px;color:var(--ink3);margin-top:1px}
+
+/* ── 고객 목록 ────────────────────── */
+.srch{display:flex;gap:8px;margin:0 0 10px}
+.srch input{flex:1}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;padding:7px 13px;border-radius:20px;font-size:13px;font-weight:600;
+  background:#fff;border:1.5px solid var(--line);color:var(--ink2)}
+.chip.on{background:var(--org);border-color:var(--org);color:#fff}
+.cust{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.cust:last-child{border-bottom:0}
+.av{width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:var(--blue-lt);
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--blue);font-size:14px}
+.cust .info{flex:1;min-width:0}
+.cust .nm{font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px}
+.cust .mt{font-size:12.5px;color:var(--ink3);margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--bg);color:var(--ink2)}
+.tag.A{background:#FDECEC;color:var(--red)} .tag.B{background:var(--org-lt);color:var(--org-dk)}
+.tag.C{background:#FEF7E6;color:#A8751A} .tag.D{background:var(--bg);color:var(--ink3)}
+.tag.warn{background:#FDECEC;color:var(--red)}
+.pick{width:20px;height:20px;flex:0 0 20px;accent-color:var(--org)}
+
+/* ── 모달 ─────────────────────────── */
+.mask{position:fixed;inset:0;background:rgba(20,22,26,.5);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;
+  max-height:92vh;overflow-y:auto;animation:up .22s ease-out}
+@keyframes up{from{transform:translateY(30px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-h{position:sticky;top:0;background:#fff;padding:17px 18px 13px;
+  border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;z-index:2}
+.sheet-h h2{font-size:16.5px}
+.sheet-h .x{margin-left:auto;font-size:24px;color:var(--ink3);line-height:1;padding:0 4px}
+.sheet-b{padding:16px 18px 26px}
+.fld{margin:0 0 13px}
+.fld2{display:flex;gap:9px}
+.fld2>*{flex:1}
+.note{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.45}
+.warnbox{background:#FFF8E6;border:1px solid #F5DFA0;border-radius:10px;
+  padding:11px 13px;font-size:12.5px;color:#8A6415;line-height:1.5;margin:0 0 14px}
+
+/* 주민번호 입력 */
+.rrn{display:flex;align-items:center;gap:8px}
+.rrn input:first-child{flex:2}
+.rrn .dash{color:var(--ink3);font-weight:700}
+.rrn .g{flex:0 0 52px;text-align:center;font-weight:700}
+.rrn .mask6{flex:1;color:var(--ink3);letter-spacing:3px;font-size:17px;user-select:none;padding-left:2px}
+
+/* ── 하단 탭 ──────────────────────── */
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);
+  z-index:50;padding-bottom:env(safe-area-inset-bottom)}
+.nav-in{max-width:560px;margin:0 auto;display:flex}
+.nav button{flex:1;padding:9px 0 10px;text-align:center;color:var(--ink3)}
+.nav button.on{color:var(--org)}
+.nav .ic{font-size:20px;line-height:1.15}
+.nav .lb{font-size:11px;font-weight:650;margin-top:2px}
+
+/* ── 로그인 ───────────────────────── */
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#fff}
+.login .box{width:100%;max-width:330px;text-align:center}
+.login .lg{font-size:27px;font-weight:800;letter-spacing:-.04em;margin:0 0 6px}
+.login .lg em{font-style:normal;color:var(--org)}
+.login .ds{font-size:13.5px;color:var(--ink3);margin:0 0 26px}
+.login input{text-align:center;font-size:19px;letter-spacing:2px;font-weight:700;padding:15px}
+.err{color:var(--red);font-size:13px;margin-top:11px;font-weight:600;min-height:18px}
+
+/* ── 토스트 ───────────────────────── */
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);
+  background:var(--ink);color:#fff;padding:12px 20px;border-radius:11px;font-size:14px;
+  font-weight:600;z-index:300;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+.toast.on{opacity:1}
+.toast.bad{background:var(--red)}
+
+/* ── 라벨 인쇄 ────────────────────── */
+#labelArea{display:none}
+@media print{
+  body>*{display:none !important}
+  #labelArea{display:block !important;position:static}
+  @page{size:A4;margin:12mm 8mm}
+  .lbl-grid{display:grid;gap:0}
+  .lbl-grid.g12{grid-template-columns:repeat(2,1fr)}
+  .lbl-grid.g24{grid-template-columns:repeat(3,1fr)}
+  .lbl{padding:6mm 5mm;break-inside:avoid;font-size:11pt;line-height:1.55;color:#000}
+  .lbl .z{font-size:9.5pt;color:#333}
+  .lbl .n{font-weight:700;margin-top:2mm}
+  .lbl.g24{padding:4mm 3.5mm;font-size:9.5pt}
 }
-.gate-card:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 8px 22px rgba(11,27,51,.08)}
-.gate-ico{flex-shrink:0;width:48px;height:48px;border-radius:13px;background:var(--navygray);display:flex;align-items:center;justify-content:center;font-size:22px}
-.gate-body{flex:1;min-width:0}
-.gate-body h3{font-family:var(--display);font-weight:800;font-size:17.5px;margin-bottom:4px;letter-spacing:-.01em}
-.gate-body p{font-size:13.5px;color:var(--ink-2);line-height:1.55}
-.gate-arrow{flex-shrink:0;font-family:var(--display);font-weight:700;font-size:18px;color:var(--line)}
-.gate-card:hover .gate-arrow{color:var(--orange)}
+/* ── 목표/루틴 ────────────────────── */
+.gbar{height:9px;border-radius:5px;background:var(--bg);overflow:hidden;margin:8px 0}
+.gbar-in{height:100%;background:var(--org);border-radius:5px;transition:width .4s}
+.gnum{display:flex;align-items:baseline;gap:6px}
+.gnum .big{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.gnum .of{font-size:13px;color:var(--ink3)}
+.pct{font-size:14px;font-weight:800;color:var(--org)}
+.needbox{background:var(--org-lt);border-radius:11px;padding:13px 14px;margin-top:12px}
+.needbox .t1{font-size:12.5px;color:var(--org-dk);font-weight:700}
+.needbox .t2{font-size:19px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+.feeline{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.feeline:last-child{border-bottom:0}
+.feeline .v{font-weight:700;color:var(--ink)}
+.feeline .approx{font-size:11px;color:var(--ink3);font-weight:500}
 
-.soon{opacity:.55;pointer-events:none;position:relative}
-.soon .gate-ico::after{content:'준비중';position:absolute;top:-6px;right:-6px;font-family:var(--display);font-weight:700;font-size:9px;background:var(--steel);color:#fff;padding:2px 6px;border-radius:999px}
+.stepbox{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.stepbox:last-child{border-bottom:0}
+.stepbox .nm{font-size:14.5px;font-weight:650;display:flex;align-items:center;gap:7px}
+.stepbox .nm .ic{font-size:17px}
+.step{display:flex;align-items:center;gap:11px}
+.step button{width:30px;height:30px;border-radius:9px;background:var(--bg);font-size:17px;font-weight:700;color:var(--ink2)}
+.step button:active{background:var(--org-lt);color:var(--org)}
+.step .val{width:22px;text-align:center;font-weight:800;font-size:15px}
+.routine-done{background:var(--bg);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.routine-done .ic{font-size:20px}
+.routine-done .tx{flex:1}
+.routine-done .tt{font-weight:700;font-size:13.5px}
+.routine-done .ts{font-size:11.5px;color:var(--ink3);margin-top:1px}
 
-/* 그룹형 카드 (하위 신청페이지 목록) */
-.gate-card--group{flex-direction:column;align-items:stretch}
-.gate-card--group:hover{transform:none;box-shadow:none;border-color:var(--line)}
-.group-head{display:flex;gap:14px;align-items:center}
-.sublist{display:grid;gap:2px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
-.sublist a{display:flex;align-items:center;gap:10px;padding:11px 8px;border-radius:9px;text-decoration:none;color:var(--ink);font-size:14.5px;font-weight:600;transition:background .12s}
-.sublist a:hover{background:var(--navygray)}
-.sublist a .emo{font-size:16px;flex-shrink:0}
-.sublist a .chev{margin-left:auto;color:var(--line);font-family:var(--display);font-weight:700}
-.sublist a:hover .chev{color:var(--orange)}
+/* ── 관리자 ───────────────────────── */
+.fcard{border:1.5px solid var(--line);border-radius:13px;padding:14px;margin:0 0 11px}
+.fcard-h{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.fcard-h .av{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--org-lt);
+  color:var(--org-dk);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.fcard-h .nm{font-weight:700;font-size:14.5px}
+.fcard-h .rl{font-size:11.5px;color:var(--ink3)}
+.fcard-h .pctb{margin-left:auto;font-size:16px;font-weight:800;color:var(--org)}
+.fcard .miniStat{display:flex;gap:7px;margin-top:9px}
+.fcard .miniStat div{flex:1;background:var(--bg);border-radius:8px;padding:7px 4px;text-align:center}
+.fcard .miniStat .n{font-size:15px;font-weight:800}
+.fcard .miniStat .l{font-size:10px;color:var(--ink3);margin-top:1px}
+.riskrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.risk{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;background:#FDECEC;color:var(--red)}
+.risk.ok{background:#E9F7EF;color:var(--green)}
 
-/* ══ ④ RECRUITING (강조 박스) ══ */
-.recruit{
-  margin-top:16px;background:linear-gradient(135deg,var(--navy),var(--navy2));
-  border-radius:18px;padding:26px 22px;text-align:center;
-  box-shadow:0 8px 24px rgba(11,27,51,.16);
+.cust-table{width:100%;border-collapse:collapse;font-size:13px}
+.cust-table th,.cust-table td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.cust-table th{cursor:pointer;color:var(--ink2);font-weight:700;background:var(--bg);user-select:none}
+.cust-table th:hover{color:var(--org)}
+.viewBtnOn{background:var(--org) !important;color:#fff !important;border-color:var(--org) !important}
+#printArea{display:none}
+@media print{
+  body>*{display:none !important}
+  #printArea{display:block !important;position:static}
+  @page{size:A4 landscape;margin:10mm}
+  #printArea table{width:100%;border-collapse:collapse;font-size:10pt}
+  #printArea th,#printArea td{border:1px solid #999;padding:4px 6px;text-align:left}
+  #printArea h2{margin:0 0 8px}
 }
-.recruit__label{font-family:var(--display-en);font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--orange);margin-bottom:10px}
-.recruit h3{font-family:var(--display);font-weight:800;font-size:19px;color:#fff;line-height:1.4;margin-bottom:8px}
-.recruit p{font-size:14.5px;color:#D0D9E4;line-height:1.65;margin-bottom:18px}
-.recruit-btn{display:inline-block;font-family:var(--display);font-weight:700;font-size:14.5px;color:var(--navy);background:var(--orange);padding:12px 22px;border-radius:999px;text-decoration:none}
-
-/* ══ 뉴스 섹션 ══ */
-.news{display:grid;gap:10px}
-.news a{text-decoration:none;color:inherit;display:block}
-.news-card{
-  background:#fff;border:1px solid var(--line);border-radius:14px;
-  padding:16px 17px;display:flex;gap:13px;align-items:center;
-  transition:transform .14s,box-shadow .14s,border-color .14s;
-}
-.news-card:hover{transform:translateY(-2px);border-color:var(--orange);box-shadow:0 6px 18px rgba(11,27,51,.07)}
-.news-ico{flex-shrink:0;width:42px;height:42px;border-radius:11px;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:19px}
-.news-body{flex:1;min-width:0}
-.news-body h3{font-family:var(--display);font-weight:700;font-size:15px;margin-bottom:2px}
-.news-body p{font-size:12px;color:var(--steel)}
-.news-arrow{flex-shrink:0;font-family:var(--display);font-weight:700;font-size:16px;color:var(--line)}
-.news-card:hover .news-arrow{color:var(--orange)}
-
-/* ══ ⑤ ABOUT DAON ══ */
-.about-sec{background:var(--navy);color:#fff;padding:44px 0;text-align:center}
-.about-sec .sec__label{color:var(--orange);font-family:var(--display-en);font-weight:700;letter-spacing:.08em}
-.about-sec h2{font-family:var(--display);font-weight:800;font-size:clamp(20px,5.6vw,24px);line-height:1.5;letter-spacing:-.006em;margin-bottom:18px;color:#fff}
-.about-sec p{font-size:15px;color:#D6DEE8;line-height:1.85;max-width:480px;margin:0 auto 12px}
-.about-btn{display:inline-block;margin-top:14px;font-family:var(--display);font-weight:700;font-size:14.5px;color:#fff;border:1.5px solid var(--orange);padding:12px 24px;border-radius:999px;text-decoration:none}
-.about-btn:hover{background:var(--orange);color:var(--navy)}
-
-/* ══ ⑥ FOOTER ══ */
-.foot{background:var(--navy2);color:#9FB0C1;padding:30px 0 0;font-size:13px;line-height:1.7;text-align:center}
-.foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:16px;letter-spacing:.02em}
-.foot__sub{font-size:12px;color:#8FA0B3;margin-top:4px}
-.foot__addr{margin-top:14px;font-size:12.5px;color:#B9C4D3;line-height:1.7}
-.foot__links{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 0;margin-top:18px;font-size:12.5px}
-.foot__links a{color:#DCE4EE;text-decoration:none;padding:0 10px;border-right:1px solid rgba(255,255,255,.2)}
-.foot__links a:last-child,.foot__links span:last-child{border-right:none}
-.foot__links span{padding:0 10px;color:#6B7C93}
-.foot__legal{margin-top:20px;padding:16px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.1);font-size:10.5px;color:#6B7C93;line-height:1.8;max-width:var(--maxw);margin-left:auto;margin-right:auto}
-.foot__bottom{margin-top:20px;padding:20px var(--pad) 34px;border-top:1px solid rgba(255,255,255,.12);text-align:center}
-.foot__bottom .foot__org{font-family:var(--display);font-weight:800;color:#fff;font-size:15px;letter-spacing:.02em}
-.foot__bottom .foot__sub{font-size:12px;color:#8FA0B3;margin-top:6px}
-.foot__bottom .foot__addr{font-size:11.5px;color:#6B7C93;margin-top:4px}
-
-@media (min-width:860px){
-  .wrap:has(.twocol){max-width:960px}
-  .twocol{grid-template-columns:1fr 1fr;align-items:start}
-}
+@media (max-width:380px){ .taps{gap:7px} .tap{padding:13px 4px} }
 </style>
 </head>
 <body>
 
-<header class="topbar">
-  <img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" style="height:22px;width:auto;">
-  <div class="topbar__links">
-    <a class="grow-link" href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a>
-    <a class="about-link" href="/about">다온지사 소개</a>
+<!-- ═══════ 로그인 ═══════ -->
+<div id="login" class="login">
+  <div class="box">
+    <div class="lg">다온 <em>영업관리</em></div>
+    <p class="ds">접속코드를 입력하세요</p>
+    <input id="code" type="text" inputmode="numeric" placeholder="- - - -" autocomplete="off" maxlength="12">
+    <div class="err" id="loginErr"></div>
+    <button class="btn" style="margin-top:14px" onclick="doLogin()" id="loginBtn">시작하기</button>
+    <button class="btn ghost" style="margin-top:10px" onclick="startDemo()">🔍 샘플로 먼저 둘러보기</button>
+    <p class="note" style="margin-top:18px">코드를 모르면 지사장에게 문의하세요.<br>서버 연결 전이라도 "샘플로 먼저 둘러보기"로 화면을 확인할 수 있어요.</p>
   </div>
-</header>
+</div>
 
-<!-- ① HERO -->
-<section class="hero">
+<!-- ═══════ 본 화면 ═══════ -->
+<div id="app" class="hide">
+  <div class="top"><div class="top-in">
+    <div class="brand">다온 <em>영업관리</em></div>
+    <div class="who"><b id="myName">-</b><button class="out" onclick="logout()">나가기</button></div>
+  </div></div>
+  <div id="demoBanner" class="hide" style="background:#FFF3E8;border-bottom:1px solid #FBDCC0;padding:9px 16px;text-align:center;font-size:12.5px;color:#8A5A22;font-weight:600">
+    🔍 샘플 미리보기 화면입니다. 실제로 저장되지 않아요. 엑셀은 올려서 목록에 뜨는지만 확인할 수 있어요.
+  </div>
+
   <div class="wrap">
-    <div class="hero__mean">DAON PARTNERS · 좋은 일이 다 온다</div>
-    <h1>보험을 넘어,<br>사람과 사업의<br><em>더 나은 내일</em>을<br>연결합니다</h1>
-    <p class="hero__sub">개인의 보장부터 사업장의 위험관리, 소상공인 비즈니스와 보험 전문가의 성장까지<br>다온파트너스가 함께합니다.</p>
-  </div>
-</section>
 
-<!-- ② TRUST -->
-<section class="trust">
-  <div class="trustgrid">
-    <div><span class="tag">CHANNEL</span><div class="th">온라인 기반 전문</div><div class="tl">온라인카페·블로그 외</div></div>
-    <div><span class="tag">PARTNERSHIP</span><div class="th">다양한 오프라인</div><div class="tl">산모교실·펫페어·박람회·소상공인 제휴</div></div>
-    <div><span class="tag">RISK CARE</span><div class="th">사업장 위험관리</div><div class="tl">화재·배상·중대재해·보험관리</div></div>
-  </div>
-</section>
-
-<!-- ③ SERVICE (2컬럼) + ④ RECRUITING -->
-<section class="sec sec--navygray">
-  <div class="wrap">
-    <div class="sec__label">무엇을 도와드릴까요</div>
-
-    <div class="twocol">
-
-      <!-- 좌측 : 다온지사 전용 -->
-      <div class="col">
-        <div class="col__label">다온지사</div>
-        <div class="gate">
-          <a href="/experts">
-            <div class="gate-card">
-              <div class="gate-ico">🔍</div>
-              <div class="gate-body">
-                <h3>전문가 찾기</h3>
-                <p>다온파트너스 소속 보험 전문가를 만나보세요</p>
-              </div>
-              <div class="gate-arrow">›</div>
-            </div>
-          </a>
-
-          <a href="/news/index.html">
-            <div class="gate-card">
-              <div class="gate-ico">📰</div>
-              <div class="gate-body">
-                <h3>다온 보험 데일리</h3>
-                <p>매일 아침 업데이트되는 보험·경제 뉴스</p>
-              </div>
-              <div class="gate-arrow">›</div>
-            </div>
-          </a>
-
-          <a href="/letter/index.html">
-            <div class="gate-card">
-              <div class="gate-ico">📋</div>
-              <div class="gate-body">
-                <h3>사장님 브리핑</h3>
-                <p>소상공인을 위한 주간 뉴스레터</p>
-              </div>
-              <div class="gate-arrow">›</div>
-            </div>
-          </a>
-        </div>
+    <!-- 홈 -->
+    <section id="tab-home">
+      <div class="card" id="goalSummaryCard">
+        <div class="card-h"><h2>🎯 이달의 목표</h2><span class="sub" id="homeGoalYm"></span></div>
+        <div id="goalSummaryBody"><div class="empty">불러오는 중…</div></div>
       </div>
 
-      <!-- 우측 : 고객 전용 -->
-      <div class="col">
-        <div class="col__label">고객 전용</div>
-        <div class="gate">
-          <button type="button" class="gate-card" id="insTrigger" style="width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-family:var(--body);">
-            <div class="gate-ico">🛡️</div>
-            <div class="gate-body">
-              <h3>개인 보험 컨설팅</h3>
-              <p>분야별 무료 상담·설계 신청</p>
-            </div>
-            <div class="gate-arrow">›</div>
-          </button>
+      <div class="card">
+        <div class="card-h"><h2>오늘 꼭 해야 할 일</h2><span class="sub" id="todayStr"></span></div>
+        <div id="reminderList"><div class="empty">불러오는 중…</div></div>
+      </div>
 
-          <a href="/business">
-            <div class="gate-card">
-              <div class="gate-ico">🏢</div>
-              <div class="gate-body">
-                <h3>사업장 위험관리</h3>
-                <p>화재 · 배상책임 · 중대재해 · 위험성평가</p>
-              </div>
-              <div class="gate-arrow">›</div>
-            </div>
-          </a>
+      <div class="card">
+        <div class="card-h"><h2>✅ 오늘의 할일</h2><span class="sub"><a href="javascript:go('act')" style="color:var(--org)">활동 탭에서 관리</a></span></div>
+        <div id="todoBody-home"><div class="empty">불러오는 중…</div></div>
+      </div>
 
-          <div class="gate-card soon">
-            <div class="gate-ico">🤝</div>
-            <div class="gate-body">
-              <h3>소상공인 파트너십</h3>
-              <p>소상공인 제휴 · 사업장 안전점검 · 협업</p>
-            </div>
-            <div class="gate-arrow">›</div>
+      <div class="card">
+        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub"><a href="javascript:go('act')" style="color:var(--org)">활동 탭에서 관리</a></span></div>
+        <div id="routineDone-home" class="hide"></div>
+        <div id="routineBody-home"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 고객 -->
+    <section id="tab-cust" class="hide">
+      <div class="card">
+        <div class="srch">
+          <input id="q" type="search" placeholder="이름·연락처·메모 검색" oninput="renderCust()">
+          <button class="btn sm" onclick="openCust()">＋ 등록</button>
+        </div>
+        <div class="chips" id="filterChips"></div>
+        <div class="row" style="margin:0 0 10px">
+          <button class="btn ghost sm" onclick="setCustView('card')" id="viewBtnCard">카드로 보기</button>
+          <button class="btn ghost sm" onclick="setCustView('table')" id="viewBtnTable">표로 보기</button>
+        </div>
+        <div id="custList"><div class="empty">불러오는 중…</div></div>
+        <div id="custTable" class="hide" style="overflow-x:auto"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>내보내기 · 가져오기</h2></div>
+        <div class="row">
+          <button class="btn ghost sm" onclick="xlsxOut()">엑셀 내려받기</button>
+          <button class="btn ghost sm" onclick="document.getElementById('xlsxIn').click()">엑셀 올리기</button>
+        </div>
+        <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost sm" onclick="openLabel()">주소라벨 인쇄</button>
+          <button class="btn ghost sm" onclick="printCustTable()">고객표 인쇄(가로 한 장)</button>
+        </div>
+        <p class="note" style="margin-top:10px">엑셀을 올리면 먼저 미리보기로 몇 건이 새로 들어가고 몇 건이 바뀌는지 확인한 뒤 반영됩니다.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📄 보유계약</h2><span class="sub" id="ctrCount"></span></div>
+        <div class="chips" id="ctrChips"></div>
+        <div id="ctrList"><div class="empty">불러오는 중…</div></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ghost sm" onclick="ctrXlsxOut()">계약 엑셀 내려받기</button>
+          <button class="btn ghost sm" onclick="document.getElementById('ctrXlsxIn').click()">계약 엑셀 올리기</button>
+        </div>
+        <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
+        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적. 고객명은 이미 등록된 고객과 자동으로 연결됩니다.</p>
+      </div>
+    </section>
+
+    <!-- 활동 -->
+    <section id="tab-act" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>고객을 지정해서 기록</h2><span class="sub" id="actToday"></span></div>
+        <div class="fld">
+          <label>고객</label>
+          <select id="actCust"><option value="">지정 안 함</option></select>
+        </div>
+        <div class="fld fld2">
+          <div><label>활동</label>
+            <select id="actKind"><option>전화</option><option>문자</option><option>방문</option><option>상담</option><option>청약</option><option>증권전달</option><option>AS</option><option>소개요청</option></select>
+          </div>
+          <div><label>결과</label>
+            <select id="actRes"><option value="">-</option><option>연결</option><option>부재</option><option>거절</option><option>재통화약속</option><option>상담확정</option><option>청약</option></select>
           </div>
         </div>
+        <div class="fld"><label>메모</label><input id="actNote" placeholder="예: 자녀 보험 문의, 다음 주 재통화"></div>
+        <button class="btn" onclick="saveAct()">기록하기</button>
       </div>
 
-    </div>
+      <div class="card">
+        <div class="card-h"><h2>✅ 오늘의 할일</h2><span class="sub">직접 추가·수정·삭제</span></div>
+        <div class="srch"><input id="todoInput-act" placeholder="할 일을 입력하세요" onkeydown="if(event.key==='Enter')addTodo('act')">
+          <button class="btn sm" onclick="addTodo('act')">추가</button></div>
+        <div id="todoBody-act"><div class="empty">불러오는 중…</div></div>
+      </div>
 
-    <!-- ④ RECRUITING -->
-    <div class="recruit">
-      <div class="recruit__label">PARTNER RECRUITING</div>
-      <h3>전국 파트너 조직 확대 중</h3>
-      <p>지역 사업단장 · 팀장 · 경력/신입 설계사 파트너 모집</p>
-      <a class="recruit-btn" href="/join1">파트너 모집 자세히 보기 →</a>
+      <div class="card">
+        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub">항목을 직접 추가·삭제할 수 있어요</span></div>
+        <div id="routineDone-act" class="hide"></div>
+        <div id="routineBody-act"><div class="empty">불러오는 중…</div></div>
+        <div class="srch" style="margin-top:10px"><input id="routineNewName-act" placeholder="새 루틴 항목 이름">
+          <button class="btn ghost sm" onclick="addRoutineItem('act')">항목 추가</button></div>
+      </div>
+    </section>
+
+    <!-- 목표 -->
+    <section id="tab-goal" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>이번 달 목표</h2><span class="sub" id="goalYm"></span></div>
+        <div id="goalBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>🚗 손보 청약 실적</h2><span class="sub">보험사·상품 고르면 자동 계산</span></div>
+        <div class="fld"><label>보험사</label>
+          <select id="sonboComp" onchange="onSonboCompChange()"><option value="">선택</option></select>
+        </div>
+        <div class="fld"><label>상품명</label>
+          <select id="sonboProd" onchange="onSonboProdChange()" disabled><option value="">보험사 먼저 선택</option></select>
+        </div>
+        <div class="fld"><label>옵션 (구분·납기)</label>
+          <select id="sonboOpt" onchange="onSonboOptChange()" disabled><option value="">상품 먼저 선택</option></select>
+        </div>
+        <div class="fld fld2">
+          <div><label>월납보험료(원)</label>
+            <input id="sonboPremium" type="number" inputmode="numeric" placeholder="120000" oninput="calcSonboFee()"></div>
+          <div><label>이 건의 시책(원)</label>
+            <input id="sonboIncentive" type="number" inputmode="numeric" placeholder="0"></div>
+        </div>
+        <div id="sonboCalc" class="hide">
+          <div class="feeline"><span>익월 수수료</span><span class="v" id="sonboM0">-</span></div>
+          <div class="feeline"><span>1차년 수수료</span><span class="v" id="sonboY1">-</span></div>
+        </div>
+        <p class="note">시책은 매주 형태가 바뀌어서 자동계산이 안 됩니다. 확인하신 금액을 직접 넣어주세요. 없으면 비워두세요.</p>
+        <button class="btn" style="margin-top:10px" onclick="addSonboDeal()">＋ 손보 실적 추가</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📄 생보 청약 실적</h2><span class="sub">수기입력</span></div>
+        <div class="fld fld2">
+          <div><label>보험사</label><input id="saengboComp" placeholder="삼성생명"></div>
+          <div><label>상품명</label><input id="saengboProd" placeholder="종신보험"></div>
+        </div>
+        <div class="fld fld2">
+          <div><label>월납보험료(원)</label><input id="saengboPremium" type="number" inputmode="numeric" placeholder="150000"></div>
+          <div><label>예상 1차년 수수료(원)</label><input id="saengboFee" type="number" inputmode="numeric" placeholder="180000"></div>
+        </div>
+        <div class="fld"><label>이 건의 시책(원)</label>
+          <input id="saengboIncentive" type="number" inputmode="numeric" placeholder="0"></div>
+        <button class="btn ghost" onclick="addSaengboDeal()">＋ 생보 실적 추가</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>이번 달 입력된 실적</h2><span class="sub" id="dealCount"></span></div>
+        <div id="dealList"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 관리자 -->
+    <section id="tab-admin" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>팀 현황</h2><span class="sub" id="adminDay"></span></div>
+        <div id="adminBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <p class="note" style="padding:0 4px">관리자 화면에는 개인정보 없이 건수·달성률·전환율만 표시됩니다.</p>
+    </section>
+
+  </div>
+
+  <div class="nav"><div class="nav-in">
+    <button class="on" data-tab="home" onclick="go('home')"><div class="ic">🏠</div><div class="lb">홈</div></button>
+    <button data-tab="cust" onclick="go('cust')"><div class="ic">👥</div><div class="lb">고객</div></button>
+    <button data-tab="act" onclick="go('act')"><div class="ic">✏️</div><div class="lb">활동</div></button>
+    <button data-tab="goal" onclick="go('goal')"><div class="ic">🎯</div><div class="lb">목표</div></button>
+    <button id="navAdmin" data-tab="admin" onclick="go('admin')" class="hide"><div class="ic">📋</div><div class="lb">관리자</div></button>
+  </div></div>
+</div>
+
+<!-- 고객 등록/수정 -->
+<div id="custModal" class="mask hide" onclick="if(event.target===this)closeCust()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="custTitle">고객 등록</h2><button class="x" onclick="closeCust()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld2" style="display:flex;gap:8px;margin:0 0 14px">
+        <button type="button" class="chip" id="typeBtnOwner" onclick="setCustType('보유고객')" style="flex:1;text-align:center">보유고객</button>
+        <button type="button" class="chip" id="typeBtnProspect" onclick="setCustType('가망고객')" style="flex:1;text-align:center">가망고객</button>
+      </div>
+      <div class="warnbox">주민등록번호는 저장하지 않습니다. 뒷자리는 <b>첫 1자리</b>만 입력하세요. 나머지 6자리는 입력칸 자체가 없습니다.</div>
+      <div class="fld"><label>이름 *</label><input id="fName" placeholder="김다온"></div>
+      <div class="fld"><label>연락처 *</label><input id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000"></div>
+      <div class="fld">
+        <label>생년월일 · 성별</label>
+        <div class="rrn">
+          <input id="fBirth" type="date">
+          <span class="dash">-</span>
+          <input id="fGcode" class="g" type="text" inputmode="numeric" maxlength="1" placeholder="1">
+          <span class="mask6">● ● ● ● ● ●</span>
+        </div>
+        <p class="note">뒷자리 첫 숫자만 넣으면 성별·연령대가 자동 인식됩니다.</p>
+      </div>
+      <div class="fld"><label>주소</label><input id="fAddr" placeholder="광주광역시 서구 …"></div>
+
+      <!-- 가망고객 전용 -->
+      <div id="prospectFields" class="hide">
+        <div class="fld"><label>분류</label>
+          <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
+        </div>
+        <div class="fld"><label>관심보종</label>
+          <div class="row">
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="자동차"> 자동차</label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="장기"> 장기</label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
+          </div>
+        </div>
+        <div class="fld"><label>비고</label><textarea id="fProspectMemo" rows="2" placeholder="메모"></textarea></div>
+      </div>
+
+      <!-- 보유고객 전용 -->
+      <div id="ownerFields">
+        <div class="fld fld2">
+          <div><label>등급</label><select id="fGrade"><option value="">-</option><option value="A">A 핵심</option><option value="B">B 관리</option><option value="C">C 잠재</option><option value="D">D 휴면</option></select></div>
+          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>소개</option><option>DB</option><option>지인</option><option>제휴업체</option><option>온라인</option><option>기타</option></select></div>
+        </div>
+        <div class="fld fld2">
+          <div><label>우편번호</label><input id="fZip" inputmode="numeric" placeholder="61947"></div>
+          <div><label>직업</label><input id="fJob" placeholder="자영업"></div>
+        </div>
+        <div class="fld"><label>상세주소</label><input id="fAddr2" placeholder="101동 1001호"></div>
+        <div class="fld fld2">
+          <div><label>회사 동의 받은 날</label><input id="fConsent" type="date"></div>
+          <div><label>다음 연락 예정</label><input id="fNext" type="date"></div>
+        </div>
+        <div class="fld"><label>가족관계</label><input id="fFamily" placeholder="배우자, 자녀 2 (초등)"></div>
+        <div class="fld"><label>메모</label><textarea id="fMemo" rows="3" placeholder="상담 내용, 관심 담보 등"></textarea></div>
+      </div>
+
+      <div class="row">
+        <button class="btn ghost" onclick="closeCust()">취소</button>
+        <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
+      </div>
+      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
   </div>
-</section>
 
-<div class="divider"></div>
+</div>
 
-<!-- ⑤ ABOUT DAON -->
-<section class="about-sec">
-  <div class="wrap">
-    <div class="sec__label">ABOUT DAON</div>
-    <h2>좋은 일이 다 온다는 이름처럼<br>함께 성장할 수 있는 연결을 만듭니다.</h2>
-    <p>다온파트너스는 보험 컨설팅을 기반으로 개인의 보장, 사업장의 위험관리, 소상공인과의 제휴, 보험 전문가의 성장을 연결하는 비즈니스 조직입니다.</p>
-    <p>고객에게는 더 정확한 선택을, 사업자에게는 더 안전한 경영환경을, 파트너에게는 더 다양한 성장기회를 만드는 것이 다온파트너스가 추구하는 방향입니다.</p>
-    <a class="about-btn" href="/about">다온파트너스 소개 →</a>
-  </div>
-</section>
-
-<!-- ⑥ FOOTER -->
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot__legal" style="border-top:none;padding-top:0;margin-top:0;">
-      보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20260320004953<br>
-      전화 041-534-1124 · 팩스 041-534-1126<br>
-      본 사이트는 특정 보험회사나 상품을 광고·비교하지 않으며, 상담·제휴·채용 관련 정보 제공 및 신청 접수를 목적으로 합니다.<br>
-      개인정보 보호책임자 다온파트너스 · 010-8183-0010
-    </div>
-
-    <div class="foot__links">
-      <a href="/about">회사소개</a>
-      <a href="/about#way">오시는 길</a>
-      <span>개인정보처리방침</span>
-      <a href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">상담문의</a>
-    </div>
-  </div>
-
-  <div class="foot__bottom">
-    <div class="foot__org">DAON PARTNERS</div>
-    <div class="foot__sub">다온파트너스(884-14-02999)</div>
-    <div class="foot__addr">충남 아산시 탕정면 용머리길 22 브라운스톤갤럭시 C동 301호</div>
-  </div>
-</footer>
-
-<!-- 개인 보험 컨설팅 팝업 -->
-<div class="modal-overlay" id="insModalOverlay">
-  <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="insModalTitle">
-    <div class="modal-head">
-      <h3 id="insModalTitle">개인 보험 컨설팅</h3>
-      <button type="button" class="modal-close" id="insModalClose" aria-label="닫기">✕</button>
-    </div>
-    <p class="modal-sub">원하시는 상담을 골라 주세요</p>
-    <div class="modal-list">
-      <a href="/consult"><span class="emo">☂️</span>보장분석 요청<span class="chev">›</span></a>
-      <a href="/health-consult"><span class="emo">🩺</span>모든보험 상담<span class="chev">›</span></a>
-      <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
-      <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
-      <a href="/pet-consult"><span class="emo">🐶</span>펫보험 설계 요청<span class="chev">›</span></a>
-      <a href="/auto-consult"><span class="emo">🚗</span>자동차보험 설계 요청<span class="chev">›</span></a>
+<!-- 엑셀 미리보기 -->
+<div id="impModal" class="mask hide" onclick="if(event.target===this)closeImp()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>올리기 전 확인</h2><button class="x" onclick="closeImp()">×</button></div>
+    <div class="sheet-b">
+      <div id="impSum"></div>
+      <div id="impList" style="max-height:44vh;overflow-y:auto;margin:12px 0"></div>
+      <div class="row">
+        <button class="btn ghost" onclick="closeImp()">취소</button>
+        <button class="btn" id="impGo" onclick="runImport()">반영하기</button>
+      </div>
     </div>
   </div>
 </div>
 
-<script>
-(function(){
-  var overlay = document.getElementById("insModalOverlay");
-  var trigger = document.getElementById("insTrigger");
-  var closeBtn = document.getElementById("insModalClose");
+<!-- 라벨 인쇄 -->
+<div id="lblModal" class="mask hide" onclick="if(event.target===this)closeLabel()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>주소라벨 인쇄</h2><button class="x" onclick="closeLabel()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld">
+        <label>용지 칸 수</label>
+        <select id="lblSize"><option value="12">2열 × 6행 (12칸)</option><option value="24">3열 × 8행 (24칸)</option></select>
+        <p class="note">인쇄 미리보기에서 여백이 맞는지 확인한 뒤 인쇄하세요. 라벨지 제품마다 여백이 조금씩 다릅니다.</p>
+      </div>
+      <div class="fld">
+        <label>대상 (주소가 있는 고객만 표시)</label>
+        <div id="lblList" style="max-height:38vh;overflow-y:auto;border:1.5px solid var(--line);border-radius:10px;padding:4px 12px"></div>
+      </div>
+      <div class="row">
+        <button class="btn ghost" onclick="lblAll(true)">전체 선택</button>
+        <button class="btn ghost" onclick="lblAll(false)">전체 해제</button>
+      </div>
+      <button class="btn" style="margin-top:8px" onclick="doPrint()">인쇄하기</button>
+    </div>
+  </div>
+</div>
 
-  function openModal(){
-    overlay.classList.add("on");
-    document.body.style.overflow = "hidden";
+<div id="labelArea"></div>
+<div id="printArea"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════
+   설정
+   ═══════════════════════════════════════ */
+const API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
+const SONBO_FEE_URL = './sonbo-fee.json';
+
+let ME = null;          // {name, branch, role}
+let CUSTOMERS = [];     // 고객 배열
+let FILTER = 'all';
+let IMPORT_QUEUE = [];
+let IMPORT_MODE = 'customer';
+let DEMO = false;
+let DEMO_SEQ = 1000;
+
+const SAMPLE_CUSTOMERS = [
+  {id:'d1', name:'김민준', phone:'010-1234-5678', birth:'1985-08-20', gcode:'1',
+   grade:'A', status:'진행중', source:'소개', zip:'61947', addr:'광주광역시 서구 상무중앙로 15',
+   addr2:'다온빌딩 501호', job:'자영업', family:'배우자, 자녀 1', intro:'박서연', custType:'보유고객',
+   consent:'2026-07-10', mktConsent:'2026-07-10', lastTouch:'2026-08-18', nextTouch:'2026-08-25', memo:'종신보험 상담중, 자녀 태아보험 관심'},
+  {id:'d2', name:'박서연', phone:'010-2345-6789', birth:'1990-08-05', gcode:'2',
+   grade:'A', status:'계약완료', source:'DB', zip:'61945', addr:'광주광역시 서구 화정로 88', custType:'보유고객',
+   addr2:'', job:'회사원', family:'미혼', intro:'', consent:'2026-06-01', mktConsent:'',
+   lastTouch:'2026-07-05', nextTouch:'', memo:'실손보험 계약완료'},
+  {id:'d3', name:'이도현', phone:'010-3456-7890', birth:'1978-03-12', gcode:'1',
+   grade:'B', status:'진행중', source:'지인', zip:'', addr:'', addr2:'', job:'', custType:'보유고객',
+   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'', nextTouch:'2026-08-20', memo:'부재중 2회, 재통화 필요'},
+  {id:'d4', name:'최지우', phone:'010-4567-8901', birth:'1995-08-30', gcode:'2',
+   grade:'C', status:'보류', source:'온라인', zip:'', addr:'', addr2:'', job:'', custType:'보유고객',
+   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'2026-07-01', nextTouch:'', memo:''},
+  {id:'d5', name:'정하윤', phone:'010-5678-1234', birth:'1988-02-14', gcode:'2',
+   custType:'가망고객', bizType:'개인', interest:'자동차,장기', addr:'광주광역시 북구 …', memo:'지인 소개, 다음 주 통화 예정'},
+  {id:'d6', name:'㈜다온무역', phone:'010-6789-2345', birth:'', gcode:'',
+   custType:'가망고객', bizType:'사업자', interest:'일반', addr:'광주광역시 서구 …', memo:'사업자 화재보험 문의'}
+];
+
+/* 데모 모드: 서버 없이 화면만 확인 */
+function startDemo(){
+  DEMO = true;
+  ME = {name:'김화진(샘플)', branch:'daon', role:'지사장', feeTable:'2026-08-기본', sonboRatio:97, saengboRatio:100};
+  CUSTOMERS = SAMPLE_CUSTOMERS.map(function(c){ return Object.assign({}, c); });
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('demoBanner').classList.remove('hide');
+  document.getElementById('myName').textContent = ME.name;
+  document.getElementById('navAdmin').classList.remove('hide');
+  const d = new Date(Date.now()+9*3600*1000);
+  const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
+  const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
+  document.getElementById('todayStr').textContent = ds;
+  document.getElementById('actToday').textContent = ds;
+  document.getElementById('adminDay').textContent = ds;
+  drawChips();
+  renderCust(); renderReminders(); fillActSelect();
+  loadGoalSummary();
+  loadTodos('home'); loadTodos('act');
+  loadRoutine('home'); loadRoutine('act');
+  drawCtrChips(); renderContracts();
+}
+
+const TAPS = [
+  {k:'전화', i:'📞'}, {k:'문자', i:'💬'}, {k:'방문', i:'🚗'},
+  {k:'상담', i:'🗣️'}, {k:'청약', i:'✍️'}, {k:'소개요청', i:'🤝'}
+];
+const FILTERS = [
+  {k:'all',   n:'전체'},
+  {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'},
+  {k:'birth', n:'이번 달 생일'},
+  {k:'cold',  n:'30일 이상 미접촉'},
+  {k:'noconsent', n:'동의 미확보'},
+  {k:'A', n:'A 핵심'}, {k:'B', n:'B 관리'}, {k:'C', n:'C 잠재'}
+];
+
+/* ── 공통 ───────────────────────── */
+function api(action, payload){
+  const p = payload || {};
+  if(DEMO){
+    return new Promise(function(resolve){
+      setTimeout(function(){ resolve(demoApi(action, p)); }, 220);
+    });
   }
-  function closeModal(){
-    overlay.classList.remove("on");
-    document.body.style.overflow = "";
+  const body = Object.assign({action:action}, p);
+  return fetch(API, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); });
+}
+
+/* 데모용 상태: 목표·루틴·팀·실적 */
+const DEMO_GOAL = {target:12000000, targetCount:8, targetSalary:4000000};
+let DEMO_DEALS = [
+  {id:'demo-deal-1', category:'손보', company:'현대해상', product:'(무)굿앤굿어린이종합보험Q', option:'세만기 · 표준형', premium:150000, m0Fee:2400, y1Fee:2700, incentive:300000},
+  {id:'demo-deal-2', category:'생보', company:'삼성생명', product:'종신보험', premium:200000, m0Fee:0, y1Fee:180000, incentive:0}
+];
+const DEMO_ROUTINE = {신규명단:2, 전화:6, 방문:1, 상담:2, 청약:0, 소개요청:1, 문자:3};
+let DEMO_TODOS = [
+  {id:'demo-todo-1', content:'박서연님 계약 서류 챙기기', done:false},
+  {id:'demo-todo-2', content:'이도현님 재통화', done:true}
+];
+let DEMO_CONTRACTS = [
+  {id:'demo-ctr-1', custName:'김민준', company:'삼성화재', product:'다이렉트 운전자보험', policyNo:'S123456', contractDate:'2025-08-10', expireDate:'2045-08-10', premium:32000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0},
+  {id:'demo-ctr-2', custName:'박서연', company:'삼성생명', product:'종신보험', policyNo:'L987654', contractDate:'2024-06-01', expireDate:'2054-06-01', premium:150000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0}
+];
+const DEMO_TEAM = [
+  {name:'김화진(샘플)', role:'지사장', target:12000000, actual:7440000, targetCount:8, actualCount:5,
+   todayActivity:15, customers:{진행중:2,계약완료:1,보류:1,거절:0,휴면:0}, risk:[]},
+  {name:'박준영(샘플)', role:'설계사', target:9000000, actual:2100000, targetCount:6, actualCount:1,
+   todayActivity:0, customers:{진행중:3,계약완료:0,보류:1,거절:1,휴면:1}, risk:['오늘 활동 0건','목표달성률 저조']},
+  {name:'이수민(샘플)', role:'설계사', target:9000000, actual:8800000, targetCount:6, actualCount:6,
+   todayActivity:4, customers:{진행중:1,계약완료:5,보류:0,거절:0,휴면:0}, risk:[]}
+];
+
+/* 데모 모드 로컬 처리: 서버 없이 화면 동작만 재현 */
+function demoApi(action, p){
+  if(action === 'customerList'){
+    return {ok:true, count:CUSTOMERS.length, customers:CUSTOMERS};
   }
-  trigger.addEventListener("click", openModal);
-  closeBtn.addEventListener("click", closeModal);
-  overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
-  document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
+  if(action === 'customerSave'){
+    if(!p.name) return {ok:false, error:'이름을 입력하세요.'};
+    if(p.pageId){
+      const idx = CUSTOMERS.findIndex(function(c){return c.id===p.pageId;});
+      if(idx>=0) CUSTOMERS[idx] = Object.assign({}, CUSTOMERS[idx], p, {id:p.pageId});
+      return {ok:true, id:p.pageId};
+    }
+    DEMO_SEQ++;
+    const nid = 'demo'+DEMO_SEQ;
+    const row = Object.assign({}, p, {id:nid});
+    delete row.pageId; delete row.fc; delete row.branch;
+    CUSTOMERS.push(row);
+    return {ok:true, id:nid};
+  }
+  if(action === 'customerDelete'){
+    CUSTOMERS = CUSTOMERS.filter(function(c){return c.id !== p.pageId;});
+    return {ok:true};
+  }
+  if(action === 'activityAdd'){
+    return {ok:true, id:'demo-act-'+(DEMO_SEQ++)};
+  }
+  if(action === 'goalGet'){
+    const g = DEMO_GOAL;
+    const actual = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
+    const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const saengboFee = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const incentiveSum = DEMO_DEALS.reduce(function(s,d){return s+(d.incentive||0);}, 0);
+    const shortfall = Math.max(0, g.target - actual);
+    const perContract = g.targetCount ? g.target / g.targetCount : 1200000;
+    const needContracts = shortfall > 0 ? Math.ceil(shortfall / perContract) : 0;
+    const rate = g.target > 0 ? Math.round(actual / g.target * 100) : 0;
+    return {ok:true, ym:today().slice(0,7), hasGoal:true, goalPageId:'demo-goal',
+      target:g.target, targetCount:g.targetCount, actual:actual, actualCount:DEMO_DEALS.length,
+      targetSalary:g.targetSalary, achieveRate:rate, shortfall:shortfall, needContracts:needContracts,
+      sonboFee:sonboFee, saengboFee:saengboFee, incentiveSum:incentiveSum,
+      estCommission: sonboFee + saengboFee + incentiveSum};
+  }
+  if(action === 'dealList'){
+    const premium = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
+    const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const saengboFee = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const incentiveSum = DEMO_DEALS.reduce(function(s,d){return s+(d.incentive||0);}, 0);
+    return {ok:true, count:DEMO_DEALS.length, premium:premium, sonboFee:sonboFee, saengboFee:saengboFee, incentiveSum:incentiveSum, items:DEMO_DEALS};
+  }
+  if(action === 'dealAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-deal-'+DEMO_SEQ;
+    DEMO_DEALS.push({id:nid, category:p.category, company:p.company, product:p.product, option:p.option||'', premium:Number(p.premium||0), m0Fee:Number(p.m0Fee||0), y1Fee:Number(p.y1Fee||0), incentive:Number(p.incentive||0)});
+    return {ok:true, id:nid};
+  }
+  if(action === 'dealDelete'){
+    DEMO_DEALS = DEMO_DEALS.filter(function(d){return d.id !== p.pageId;});
+    return {ok:true};
+  }
+  if(action === 'routineGet'){
+    return Object.assign({ok:true, day:today(), pageId:'demo-routine'}, DEMO_ROUTINE);
+  }
+  if(action === 'routineSave'){
+    ['신규명단','전화','방문','상담','청약','소개요청','문자'].forEach(function(k){
+      if(p[k] !== undefined) DEMO_ROUTINE[k] = Number(p[k]);
+    });
+    return {ok:true, id:'demo-routine'};
+  }
+  if(action === 'adminTeam'){
+    return {ok:true, day:today(), ym:today().slice(0,7), team:DEMO_TEAM};
+  }
+  if(action === 'todoList'){
+    return {ok:true, count:DEMO_TODOS.length, items:DEMO_TODOS};
+  }
+  if(action === 'todoAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-todo-'+DEMO_SEQ;
+    DEMO_TODOS.push({id:nid, content:p.content, done:false});
+    return {ok:true, id:nid};
+  }
+  if(action === 'todoToggle'){
+    const t = DEMO_TODOS.find(function(x){return x.id===p.pageId;});
+    if(t) t.done = !!p.done;
+    return {ok:true};
+  }
+  if(action === 'todoDelete'){
+    DEMO_TODOS = DEMO_TODOS.filter(function(x){return x.id !== p.pageId;});
+    return {ok:true};
+  }
+  if(action === 'contractList'){
+    return {ok:true, count:DEMO_CONTRACTS.length, items:DEMO_CONTRACTS};
+  }
+  if(action === 'contractAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-ctr-'+DEMO_SEQ;
+    DEMO_CONTRACTS.push(Object.assign({id:nid}, p));
+    return {ok:true, id:nid};
+  }
+  if(action === 'contractDelete'){
+    DEMO_CONTRACTS = DEMO_CONTRACTS.filter(function(x){return x.id !== p.pageId;});
+    return {ok:true};
+  }
+  return {ok:false, error:'샘플 화면에서는 지원하지 않는 동작입니다.'};
+}
+function toast(msg, bad){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast on' + (bad ? ' bad' : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.className = 'toast'; }, 2400);
+}
+function today(){ return new Date(Date.now()+9*3600*1000).toISOString().slice(0,10); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function daysAgo(d){
+  if(!d) return 9999;
+  return Math.floor((new Date(today()) - new Date(d)) / 86400000);
+}
+
+/* ── 로그인 ─────────────────────── */
+function doLogin(){
+  const code = document.getElementById('code').value.trim();
+  const err = document.getElementById('loginErr');
+  if(!code){ err.textContent = '접속코드를 입력하세요.'; return; }
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = '확인 중…';
+  api('auth', {code:code}).then(function(r){
+    btn.disabled = false; btn.textContent = '시작하기';
+    if(!r.ok){ err.textContent = r.error || '로그인에 실패했습니다.'; return; }
+    ME = r;
+    try{ sessionStorage.setItem('crmMe', JSON.stringify(r)); }catch(e){}
+    boot();
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = '시작하기';
+    err.textContent = '연결에 실패했습니다. 잠시 후 다시 시도하세요.';
+  });
+}
+function logout(){
+  try{ sessionStorage.removeItem('crmMe'); }catch(e){}
+  DEMO = false;
+  location.reload();
+}
+function boot(){
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('myName').textContent = ME.name + ' 님';
+  if(ME.role && ME.role !== '설계사') document.getElementById('navAdmin').classList.remove('hide');
+  const d = new Date(Date.now()+9*3600*1000);
+  const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
+  const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
+  document.getElementById('todayStr').textContent = ds;
+  document.getElementById('actToday').textContent = ds;
+  document.getElementById('adminDay').textContent = ds;
+  drawChips();
+  loadCustomers();
+  loadGoalSummary();
+  loadTodos('home'); loadTodos('act');
+  loadRoutine('home'); loadRoutine('act');
+}
+
+/* ── 탭 ─────────────────────────── */
+function go(t){
+  ['home','cust','act','goal','admin'].forEach(function(k){
+    document.getElementById('tab-'+k).classList.toggle('hide', k!==t);
+  });
+  document.querySelectorAll('.nav button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.tab===t);
+  });
+  if(t==='goal') loadGoal();
+  if(t==='admin') loadAdmin();
+  if(t==='home') loadGoalSummary();
+  window.scrollTo(0,0);
+}
+
+function saveAct(){
+  const cid = document.getElementById('actCust').value;
+  const cname = cid ? (CUSTOMERS.find(function(c){return c.id===cid;})||{}).name : '';
+  api('activityAdd', {
+    fc:ME.name, branch:ME.branch, date:today(),
+    kind:document.getElementById('actKind').value,
+    result:document.getElementById('actRes').value,
+    note:document.getElementById('actNote').value,
+    customerId:cid, customerName:cname
+  }).then(function(r){
+    if(r.ok){
+      toast('기록했어요');
+      document.getElementById('actNote').value='';
+    } else toast(r.error||'기록에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 홈 목표금액 요약 ─────────────── */
+function loadGoalSummary(){
+  document.getElementById('homeGoalYm').textContent = today().slice(0,7).replace('-','년 ') + '월';
+  api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
+    const el = document.getElementById('goalSummaryBody');
+    if(!r.ok || !r.hasGoal){
+      el.innerHTML = '<div class="empty">이번 달 목표가 아직 없습니다. <a href="javascript:go(\'goal\')" style="color:var(--org)">목표 탭에서 확인</a></div>';
+      return;
+    }
+    const rate = Math.min(100, r.achieveRate);
+    el.innerHTML = '<div class="gnum"><span class="big">' + fmtWon(r.actual) + '</span>'
+      + '<span class="of">/ 목표 ' + fmtWon(r.target) + '</span></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div style="display:flex;justify-content:space-between"><span class="pct">' + r.achieveRate + '% 달성</span>'
+      + '<span class="note" style="margin:0">예상 수수료 약 ' + fmtWon(r.estCommission) + '</span></div>';
+  }).catch(function(){
+    document.getElementById('goalSummaryBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+
+/* ── 오늘의 할일 (수기 CRUD, 홈·활동 공용) ─── */
+function loadTodos(scope){
+  api('todoList', {fc:ME.name, branch:ME.branch}).then(function(r){
+    const el = document.getElementById('todoBody-'+scope);
+    if(!r.ok){ el.innerHTML = '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderTodoList(scope, r.items||[]);
+  }).catch(function(){
+    document.getElementById('todoBody-'+scope).innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderTodoList(scope, items){
+  const el = document.getElementById('todoBody-'+scope);
+  if(!items.length){
+    el.innerHTML = scope==='home'
+      ? '<div class="empty">할 일이 없습니다.</div>'
+      : '<div class="empty">할 일이 없습니다. 위에서 추가해 보세요.</div>';
+    return;
+  }
+  if(scope === 'home'){
+    el.innerHTML = items.map(function(it){
+      return '<div class="stepbox"><div class="nm" style="' + (it.done?'text-decoration:line-through;color:var(--ink3)':'') + '">'
+        + (it.done ? '✅ ' : '⬜ ') + esc(it.content) + '</div></div>';
+    }).join('');
+    return;
+  }
+  el.innerHTML = items.map(function(it){
+    return '<div class="stepbox"><div class="nm" style="' + (it.done?'text-decoration:line-through;color:var(--ink3)':'') + '">'
+      + '<input type="checkbox" class="pick" ' + (it.done?'checked':'') + ' onchange="toggleTodo(\'' + scope + '\',\'' + it.id + '\',this.checked)" style="margin-right:8px">'
+      + esc(it.content) + '</div>'
+      + '<button class="btn ghost sm" onclick="deleteTodo(\'' + scope + '\',\'' + it.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function addTodo(scope){
+  const input = document.getElementById('todoInput-'+scope);
+  const content = input.value.trim();
+  if(!content) return;
+  api('todoAdd', {fc:ME.name, branch:ME.branch, content:content}).then(function(r){
+    if(r.ok){ input.value=''; loadTodos('home'); loadTodos('act'); }
+    else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function toggleTodo(scope, id, done){
+  api('todoToggle', {pageId:id, done:done}).then(function(r){
+    if(!r.ok) toast(r.error||'변경에 실패했습니다', true);
+    loadTodos('home'); loadTodos('act');
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function deleteTodo(scope, id){
+  api('todoDelete', {pageId:id}).then(function(r){
+    if(r.ok){ loadTodos('home'); loadTodos('act'); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 목표 ───────────────────────── */
+function fmtWon(n){
+  n = Math.round(n||0);
+  if(Math.abs(n) >= 10000) return (n/10000).toFixed(n%10000===0?0:1) + '만원';
+  return n.toLocaleString() + '원';
+}
+let GOAL_PAGE_ID = '';
+let GOAL_YM = today().slice(0,7);
+function loadGoal(){
+  GOAL_YM = today().slice(0,7);
+  document.getElementById('goalYm').textContent = GOAL_YM.replace('-','년 ') + '월';
+  api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('goalBody').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    GOAL_PAGE_ID = r.goalPageId || '';
+    renderGoal(r);
+  }).catch(function(){
+    document.getElementById('goalBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+  loadRoutine();
+  loadDeals();
+  loadSonboFee();
+}
+function renderGoal(r){
+  const el = document.getElementById('goalBody');
+  if(!r.hasGoal){
+    el.innerHTML = '<div class="empty">이번 달 목표가 아직 등록되지 않았습니다.<br>지사장에게 목표 설정을 요청해 보세요.</div>';
+  } else {
+    const rate = Math.min(100, r.achieveRate);
+    let html = '<div class="gnum"><span class="big">' + fmtWon(r.actual) + '</span>'
+      + '<span class="of">/ 목표 ' + fmtWon(r.target) + '</span></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div style="display:flex;justify-content:space-between"><span class="pct">' + r.achieveRate + '% 달성</span>'
+      + '<span class="note" style="margin:0">' + r.actualCount + ' / ' + r.targetCount + '건</span></div>';
+    if(r.shortfall > 0){
+      html += '<div class="needbox"><div class="t1">목표까지 남은 것</div>'
+        + '<div class="t2">환산 ' + fmtWon(r.shortfall) + ' · 약 ' + r.needContracts + '건 더</div></div>';
+    } else {
+      html += '<div class="needbox" style="background:#E9F7EF"><div class="t1" style="color:var(--green)">이번 달 목표 달성!</div>'
+        + '<div class="t2">축하합니다 🎉</div></div>';
+    }
+    el.innerHTML = html;
+  }
+  const feeEl = document.getElementById('goalBody');
+  const feeHtml = '<div style="margin-top:14px">'
+    + '<div class="feeline"><span>손보 수수료</span><span class="v">약 ' + fmtWon(r.sonboFee) + '</span></div>'
+    + '<div class="feeline"><span>생보 수수료</span><span class="v">약 ' + fmtWon(r.saengboFee) + '</span></div>'
+    + (r.incentiveSum ? '<div class="feeline"><span>시책 합계</span><span class="v">' + fmtWon(r.incentiveSum) + '</span></div>' : '')
+    + '<div class="feeline"><span><b>이달 예상 총액</b></span><span class="v">약 <b>' + fmtWon(r.estCommission) + '</b> <span class="approx">(±1~2%, 참고용)</span></span></div>'
+    + (r.targetSalary ? '<div class="feeline"><span>목표 급여</span><span class="v">' + fmtWon(r.targetSalary) + '</span></div>' : '')
+    + '</div>';
+  feeEl.innerHTML += feeHtml;
+}
+
+/* ── 손보 자동계산 ────────────────── */
+let SONBO_FEE = null;
+function loadSonboFee(){
+  if(SONBO_FEE) { fillSonboCompanies(); return; }
+  fetch(SONBO_FEE_URL).then(function(r){ return r.json(); }).then(function(data){
+    SONBO_FEE = data;
+    fillSonboCompanies();
+  }).catch(function(){
+    document.getElementById('sonboComp').innerHTML = '<option value="">불러오기 실패</option>';
+  });
+}
+function fillSonboCompanies(){
+  if(!SONBO_FEE) return;
+  const sel = document.getElementById('sonboComp');
+  sel.innerHTML = '<option value="">선택</option>' + Object.keys(SONBO_FEE).map(function(c){
+    return '<option value="'+esc(c)+'">'+esc(c)+'</option>';
+  }).join('');
+}
+function onSonboCompChange(){
+  const comp = document.getElementById('sonboComp').value;
+  const prodSel = document.getElementById('sonboProd');
+  const optSel = document.getElementById('sonboOpt');
+  optSel.innerHTML = '<option value="">상품 먼저 선택</option>'; optSel.disabled = true;
+  document.getElementById('sonboCalc').classList.add('hide');
+  if(!comp || !SONBO_FEE || !SONBO_FEE[comp]){ prodSel.innerHTML='<option value="">보험사 먼저 선택</option>'; prodSel.disabled=true; return; }
+  const products = [...new Set(SONBO_FEE[comp].map(function(r){return r.p;}))];
+  prodSel.innerHTML = '<option value="">선택</option>' + products.map(function(p){
+    return '<option value="'+esc(p)+'">'+esc(p)+'</option>';
+  }).join('');
+  prodSel.disabled = false;
+}
+function onSonboProdChange(){
+  const comp = document.getElementById('sonboComp').value;
+  const prod = document.getElementById('sonboProd').value;
+  const optSel = document.getElementById('sonboOpt');
+  document.getElementById('sonboCalc').classList.add('hide');
+  if(!comp || !prod){ optSel.innerHTML='<option value="">상품 먼저 선택</option>'; optSel.disabled=true; return; }
+  const rows = SONBO_FEE[comp].filter(function(r){return r.p===prod;});
+  optSel.innerHTML = '<option value="">선택</option>' + rows.map(function(r,i){
+    const label = [r.g1,r.g2,r.term,r.mat].filter(Boolean).join(' · ');
+    return '<option value="'+i+'">'+esc(label)+'</option>';
+  }).join('');
+  optSel.disabled = false;
+  optSel.dataset.rows = JSON.stringify(rows);
+}
+function onSonboOptChange(){ calcSonboFee(); }
+function calcSonboFee(){
+  const optSel = document.getElementById('sonboOpt');
+  const idx = optSel.value;
+  const calcEl = document.getElementById('sonboCalc');
+  if(idx === '' || !optSel.dataset.rows){ calcEl.classList.add('hide'); return; }
+  const rows = JSON.parse(optSel.dataset.rows);
+  const row = rows[idx];
+  const premium = Number(document.getElementById('sonboPremium').value || 0);
+  if(!row || !premium){ calcEl.classList.add('hide'); return; }
+  const ratio = (ME.sonboRatio || 100) / 100;
+  const m0 = Math.round(premium * row.m0 / 100 * ratio);
+  const y1 = Math.round(premium * row.y1 / 100 * ratio);
+  document.getElementById('sonboM0').textContent = fmtWon(m0);
+  document.getElementById('sonboY1').textContent = fmtWon(y1);
+  calcEl.classList.remove('hide');
+}
+function addSonboDeal(){
+  const comp = document.getElementById('sonboComp').value;
+  const prod = document.getElementById('sonboProd').value;
+  const optSel = document.getElementById('sonboOpt');
+  const idx = optSel.value;
+  const premium = Number(document.getElementById('sonboPremium').value || 0);
+  if(!comp || !prod || idx === '' || !premium){ toast('보험사·상품·옵션·보험료를 모두 입력하세요', true); return; }
+  const rows = JSON.parse(optSel.dataset.rows);
+  const row = rows[idx];
+  const ratio = (ME.sonboRatio || 100) / 100;
+  const m0 = Math.round(premium * row.m0 / 100 * ratio);
+  const y1 = Math.round(premium * row.y1 / 100 * ratio);
+  const incentive = Number(document.getElementById('sonboIncentive').value || 0);
+  const optLabel = [row.g1,row.g2,row.term,row.mat].filter(Boolean).join(' · ');
+  api('dealAdd', {
+    fc:ME.name, branch:ME.branch, ym:GOAL_YM, category:'손보',
+    company:comp, product:prod, option:optLabel, premium:premium, m0Fee:m0, y1Fee:y1, incentive:incentive
+  }).then(function(r){
+    if(r.ok){
+      toast('손보 실적 추가했어요');
+      document.getElementById('sonboPremium').value = '';
+      document.getElementById('sonboIncentive').value = '';
+      document.getElementById('sonboCalc').classList.add('hide');
+      loadGoal();
+    } else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function addSaengboDeal(){
+  const comp = document.getElementById('saengboComp').value.trim();
+  const prod = document.getElementById('saengboProd').value.trim();
+  const premium = Number(document.getElementById('saengboPremium').value || 0);
+  const fee = Number(document.getElementById('saengboFee').value || 0);
+  const incentive = Number(document.getElementById('saengboIncentive').value || 0);
+  if(!comp || !prod || !premium || !fee){ toast('보험사·상품명·보험료·수수료를 모두 입력하세요', true); return; }
+  api('dealAdd', {
+    fc:ME.name, branch:ME.branch, ym:GOAL_YM, category:'생보',
+    company:comp, product:prod, option:'', premium:premium, m0Fee:0, y1Fee:fee, incentive:incentive
+  }).then(function(r){
+    if(r.ok){
+      toast('생보 실적 추가했어요');
+      ['saengboComp','saengboProd','saengboPremium','saengboFee','saengboIncentive'].forEach(function(id){ document.getElementById(id).value=''; });
+      loadGoal();
+    } else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function loadDeals(){
+  api('dealList', {fc:ME.name, branch:ME.branch, ym:GOAL_YM}).then(function(r){
+    if(!r.ok){ document.getElementById('dealList').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderDeals(r);
+  }).catch(function(){
+    document.getElementById('dealList').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderDeals(r){
+  document.getElementById('dealCount').textContent = (r.count||0) + '건';
+  const items = r.items || [];
+  if(!items.length){
+    document.getElementById('dealList').innerHTML = '<div class="empty">아직 입력된 실적이 없습니다.</div>';
+    return;
+  }
+  document.getElementById('dealList').innerHTML = items.map(function(it){
+    return '<div class="cust"><div class="av">' + (it.category==='손보'?'🚗':'📄') + '</div>'
+      + '<div class="info"><div class="nm">' + esc(it.company) + ' · ' + esc(it.product) + '</div>'
+      + '<div class="mt">월납 ' + fmtWon(it.premium) + ' · 1차년 ' + fmtWon(it.y1Fee)
+      + (it.incentive ? ' · 시책 ' + fmtWon(it.incentive) : '') + '</div></div>'
+      + '<button class="btn ghost sm" onclick="deleteDeal(\'' + it.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function deleteDeal(id){
+  api('dealDelete', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); loadGoal(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 루틴 (7개 슬롯, 이름·표시여부는 기기별로 직접 커스터마이즈) ── */
+const ROUTINE_DEFAULT = [
+  {k:'신규명단', i:'📇', n:'신규 명단 확보'}, {k:'전화', i:'📞', n:'전화'},
+  {k:'방문', i:'🚗', n:'방문·대면'}, {k:'상담', i:'🗣️', n:'상담(제안)'},
+  {k:'청약', i:'✍️', n:'청약'}, {k:'소개요청', i:'🤝', n:'소개요청'}, {k:'문자', i:'💬', n:'문자'}
+];
+function loadRoutineConfig(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('routineConfig_'+ME.name) || 'null');
+    if(saved && Array.isArray(saved)) return saved;
+  }catch(e){}
+  return ROUTINE_DEFAULT.map(function(it){ return Object.assign({active:true}, it); });
+}
+function saveRoutineConfig(cfg){
+  try{ localStorage.setItem('routineConfig_'+ME.name, JSON.stringify(cfg)); }catch(e){}
+}
+let ROUTINE_CONFIG = [];
+let ROUTINE_STATE = {};
+let ROUTINE_PAGEID = '';
+let routineSaveTimer = null;
+function loadRoutine(scope){
+  if(!ROUTINE_CONFIG.length) ROUTINE_CONFIG = loadRoutineConfig();
+  api('routineGet', {fc:ME.name, branch:ME.branch, date:today()}).then(function(r){
+    if(!r.ok){ document.getElementById('routineBody-'+scope).innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    ROUTINE_PAGEID = r.pageId || '';
+    ROUTINE_STATE = {};
+    ROUTINE_DEFAULT.forEach(function(it){ ROUTINE_STATE[it.k] = r[it.k] || 0; });
+    renderRoutine('home'); renderRoutine('act');
+  }).catch(function(){
+    document.getElementById('routineBody-'+scope).innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderRoutine(scope){
+  const body = document.getElementById('routineBody-'+scope);
+  if(!body) return;
+  const active = ROUTINE_CONFIG.filter(function(it){ return it.active; });
+  const total = active.reduce(function(s,it){ return s + (ROUTINE_STATE[it.k]||0); }, 0);
+  const doneEl = document.getElementById('routineDone-'+scope);
+  if(total > 0){
+    doneEl.classList.remove('hide');
+    doneEl.innerHTML = '<div class="ic">✅</div><div class="tx"><div class="tt">오늘 ' + total + '건 실행했어요</div>'
+      + '<div class="ts">꾸준히 쌓이면 실적이 됩니다</div></div>';
+  } else {
+    doneEl.classList.add('hide');
+  }
+  if(!active.length){
+    body.innerHTML = scope==='home'
+      ? '<div class="empty">표시할 루틴 항목이 없습니다.</div>'
+      : '<div class="empty">표시할 루틴 항목이 없습니다. 아래에서 추가해 보세요.</div>';
+    return;
+  }
+  if(scope === 'home'){
+    body.innerHTML = active.map(function(it){
+      const v = ROUTINE_STATE[it.k] || 0;
+      return '<div class="stepbox"><div class="nm"><span class="ic">' + it.i + '</span>' + esc(it.n) + '</div>'
+        + '<div class="val" style="font-weight:800;font-size:15px">' + v + '</div></div>';
+    }).join('');
+    return;
+  }
+  body.innerHTML = active.map(function(it){
+    const v = ROUTINE_STATE[it.k] || 0;
+    return '<div class="stepbox"><div class="nm"><span class="ic">' + it.i + '</span>'
+      + '<span onclick="renameRoutineItem(\'' + it.k + '\')" style="cursor:pointer">' + esc(it.n) + '</span></div>'
+      + '<div class="step"><button onclick="stepRoutine(\'' + it.k + '\',-1)">−</button>'
+      + '<span class="val" id="rv-' + scope + '-' + it.k + '">' + v + '</span>'
+      + '<button onclick="stepRoutine(\'' + it.k + '\',1)">+</button>'
+      + '<button class="btn ghost sm" style="margin-left:6px" onclick="removeRoutineItem(\'' + it.k + '\')">숨김</button></div></div>';
+  }).join('');
+}
+function stepRoutine(k, delta){
+  ROUTINE_STATE[k] = Math.max(0, (ROUTINE_STATE[k]||0) + delta);
+  ['home','act'].forEach(function(scope){
+    const el = document.getElementById('rv-'+scope+'-'+k);
+    if(el) el.textContent = ROUTINE_STATE[k];
+  });
+  renderRoutine('home'); renderRoutine('act');
+  clearTimeout(routineSaveTimer);
+  routineSaveTimer = setTimeout(function(){
+    const p = Object.assign({fc:ME.name, branch:ME.branch, date:today(), pageId:ROUTINE_PAGEID}, ROUTINE_STATE);
+    api('routineSave', p).then(function(r){
+      if(r.ok){ if(r.id) ROUTINE_PAGEID = ROUTINE_PAGEID || r.id; }
+      else toast(r.error||'저장에 실패했습니다', true);
+    }).catch(function(){ toast('연결에 실패했습니다', true); });
+  }, 500);
+}
+function removeRoutineItem(k){
+  const it = ROUTINE_CONFIG.find(function(x){return x.k===k;});
+  if(it) it.active = false;
+  saveRoutineConfig(ROUTINE_CONFIG);
+  renderRoutine('home'); renderRoutine('act');
+}
+function renameRoutineItem(k){
+  const it = ROUTINE_CONFIG.find(function(x){return x.k===k;});
+  if(!it) return;
+  const name = prompt('항목 이름 변경', it.n);
+  if(name && name.trim()){ it.n = name.trim(); saveRoutineConfig(ROUTINE_CONFIG); renderRoutine('home'); renderRoutine('act'); }
+}
+function addRoutineItem(scope){
+  const input = document.getElementById('routineNewName-'+scope);
+  const name = input.value.trim();
+  if(!name) return;
+  const hidden = ROUTINE_CONFIG.find(function(it){ return !it.active; });
+  if(!hidden){ toast('최대 7개 항목까지 사용할 수 있어요. 기존 항목을 먼저 숨겨주세요.', true); return; }
+  hidden.active = true; hidden.n = name; hidden.i = '📌';
+  saveRoutineConfig(ROUTINE_CONFIG);
+  input.value = '';
+  renderRoutine('home'); renderRoutine('act');
+}
+
+/* ── 관리자 ─────────────────────── */
+function loadAdmin(){
+  api('adminTeam', {branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('adminBody').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderAdmin(r.team||[]);
+  }).catch(function(){
+    document.getElementById('adminBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderAdmin(team){
+  const el = document.getElementById('adminBody');
+  if(!team.length){ el.innerHTML = '<div class="empty">등록된 설계사가 없습니다.</div>'; return; }
+  el.innerHTML = team.map(function(f){
+    const rate = f.target > 0 ? Math.min(100, Math.round(f.actual/f.target*100)) : 0;
+    const risks = (f.risk||[]).length
+      ? f.risk.map(function(r){ return '<span class="risk">' + esc(r) + '</span>'; }).join('')
+      : '<span class="risk ok">정상</span>';
+    return '<div class="fcard"><div class="fcard-h">'
+      + '<div class="av">' + esc((f.name||'?').slice(0,1)) + '</div>'
+      + '<div><div class="nm">' + esc(f.name) + '</div><div class="rl">' + esc(f.role||'') + '</div></div>'
+      + '<div class="pctb">' + rate + '%</div></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div class="miniStat">'
+      + '<div><div class="n">' + f.actualCount + '/' + f.targetCount + '</div><div class="l">계약 건수</div></div>'
+      + '<div><div class="n">' + f.todayActivity + '</div><div class="l">오늘 활동</div></div>'
+      + '<div><div class="n">' + (f.customers?f.customers.진행중:0) + '</div><div class="l">진행중 고객</div></div>'
+      + '</div><div class="riskrow">' + risks + '</div></div>';
+  }).join('');
+}
+
+/* ── 고객 ───────────────────────── */
+function loadCustomers(){
+  api('customerList', {fc:ME.name, branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('custList').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    CUSTOMERS = r.customers || [];
+    renderCust(); renderReminders(); fillActSelect();
+  }).catch(function(){
+    document.getElementById('custList').innerHTML =
+      '<div class="empty">연결에 실패했습니다. 새로고침 해보세요.</div>';
+  });
+  loadContracts();
+}
+
+/* ── 보유계약 ───────────────────── */
+let CONTRACTS = [];
+let CTR_FILTER = 'all';
+const CTR_FILTERS = [
+  {k:'all', n:'전체'}, {k:'expiring', n:'만기임박(60일)'}, {k:'anniv', n:'가입 1주년'}
+];
+function daysUntil(d){
+  if(!d) return 99999;
+  return Math.round((new Date(d) - new Date(today())) / 86400000);
+}
+function isAnniversary(contractDate){
+  if(!contractDate) return false;
+  const t = today();
+  const md = function(s){ return s.slice(5,10); };
+  const target = new Date(t.slice(0,4) + '-' + md(contractDate));
+  const diff = Math.abs((target - new Date(t)) / 86400000);
+  return diff <= 14;
+}
+function drawCtrChips(){
+  document.getElementById('ctrChips').innerHTML = CTR_FILTERS.map(function(f){
+    return '<button class="chip' + (f.k===CTR_FILTER?' on':'') + '" onclick="setCtrFilter(\'' + f.k + '\')">' + f.n + '</button>';
+  }).join('');
+}
+function setCtrFilter(k){ CTR_FILTER = k; drawCtrChips(); renderContracts(); }
+function loadContracts(){
+  api('contractList', {fc:ME.name, branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('ctrList').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    CONTRACTS = r.items || [];
+    drawCtrChips();
+    renderContracts();
+  }).catch(function(){
+    document.getElementById('ctrList').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderContracts(){
+  let list = CONTRACTS;
+  if(CTR_FILTER==='expiring') list = list.filter(function(c){ const d=daysUntil(c.expireDate); return d>=0 && d<=60; });
+  if(CTR_FILTER==='anniv') list = list.filter(function(c){ return isAnniversary(c.contractDate); });
+  document.getElementById('ctrCount').textContent = list.length + '건';
+  const el = document.getElementById('ctrList');
+  if(!list.length){ el.innerHTML = '<div class="empty">해당하는 계약이 없습니다.</div>'; return; }
+  el.innerHTML = list.map(function(c){
+    const dLeft = daysUntil(c.expireDate);
+    const meta = [c.company, c.product].filter(Boolean).join(' · ');
+    const sub = [c.premium?fmtWon(c.premium)+'/월':'', c.expireDate?('만기 '+c.expireDate):''].filter(Boolean).join(' · ');
+    return '<div class="cust"><div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
+      + '<div class="info"><div class="nm">' + esc(c.custName||'미상') + (c.status&&c.status!=='정상'?' <span class="tag warn">'+esc(c.status)+'</span>':'')
+      + (CTR_FILTER==='expiring' && dLeft>=0 ? ' <span class="tag warn">D-'+dLeft+'</span>' : '') + '</div>'
+      + '<div class="mt">' + esc(meta) + '<br>' + esc(sub) + '</div></div>'
+      + '<button class="btn ghost sm" onclick="deleteContract(\'' + c.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function deleteContract(id){
+  if(!confirm('이 계약을 삭제할까요?')) return;
+  api('contractDelete', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); loadContracts(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+const CTR_XCOL = [['고객명','custName'],['보험사','company'],['상품명','product'],['증권번호','policyNo'],
+  ['계약일','contractDate'],['만기일','expireDate'],['월납보험료','premium'],['납입방법','payMethod'],
+  ['보험기간','term'],['계약상태','status'],['환산실적','convertedValue']];
+const CTR_SYN = {
+  custName: ['고객명','계약자','피보험자','이름','성명'],
+  company: ['보험사','회사','원수사'],
+  product: ['상품명','상품','보험상품'],
+  premium: ['월납보험료','영수보험료','보험료','수정보험료'],
+  payMethod: ['납입방법'],
+  status: ['계약상태','상태']
+};
+function findCtrCol(row, key){
+  const syns = CTR_SYN[key] || [key];
+  for (const s of syns) { if (row[s] !== undefined && row[s] !== '') return String(row[s]).trim(); }
+  return '';
+}
+/* "2016-07-20 ~ 2063-07-20" 처럼 한 칸에 같이 있으면 계약일·만기일로 쪼갭니다 */
+function splitDateRange(row){
+  const raw = row['보험기간'] || row['보장기간'] || '';
+  const s = String(raw);
+  const m = s.match(/(\d{4}-\d{2}-\d{2}).*?~.*?(\d{4}-\d{2}-\d{2})/);
+  if (m) return { start: m[1], end: m[2] };
+  return null;
+}
+function ctrXlsxOut(){
+  const rows = CONTRACTS.map(function(c){
+    const o = {};
+    CTR_XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
+    return o;
+  });
+  const ws = XLSX.utils.json_to_sheet(rows, {header:CTR_XCOL.map(function(p){return p[0];})});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '보유계약');
+  XLSX.writeFile(wb, '다온_계약_' + today() + '.xlsx');
+  toast('엑셀을 내려받았어요');
+}
+function ctrXlsxIn(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(e){
+    const wb = XLSX.read(e.target.result, {type:'array'});
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    input.value = '';
+    prepImportContract(rows);
+  };
+  rd.readAsArrayBuffer(f);
+}
+function prepImportContract(rows){
+  IMPORT_MODE = 'contract';
+  IMPORT_QUEUE = [];
+  let add=0, skip=0, unmatched=0, rangeSplit=0, noCompany=0;
+  rows.forEach(function(r){
+    const o = {};
+    Object.keys(CTR_SYN).forEach(function(key){ o[key] = findCtrCol(r, key); });
+    CTR_XCOL.forEach(function(p){ if(o[p[1]]===undefined && r[p[0]]!==undefined) o[p[1]] = String(r[p[0]]).trim(); });
+    if(!o.custName){ skip++; return; }
+    if(!o.contractDate || !o.expireDate){
+      const range = splitDateRange(r);
+      if(range){ if(!o.contractDate) o.contractDate = range.start; if(!o.expireDate) o.expireDate = range.end; rangeSplit++; }
+    }
+    if(!o.company){ o.company = '기타'; noCompany++; }
+    const hit = CUSTOMERS.find(function(c){ return c.name === o.custName; });
+    if(!hit) unmatched++;
+    o.customerId = hit ? hit.id : '';
+    add++;
+    IMPORT_QUEUE.push(o);
+  });
+  document.getElementById('impSum').innerHTML =
+    '<div class="stat"><div><div class="n" style="color:var(--green)">'+add+'</div><div class="l">등록될 계약</div></div>'
+    + '<div><div class="n" style="color:var(--yellow)">'+unmatched+'</div><div class="l">미등록 고객</div></div>'
+    + '<div><div class="n" style="color:var(--ink3)">'+skip+'</div><div class="l">건너뜀</div></div></div>'
+    + (unmatched ? '<p class="note" style="margin-top:10px">미등록 고객은 계약만 저장되고 고객 목록과는 연결되지 않습니다. 먼저 고객을 등록하시면 자동으로 연결됩니다.</p>' : '')
+    + (rangeSplit ? '<p class="note" style="margin-top:6px">"2016-07-20 ~ 2063-07-20" 형식의 보험기간을 '+rangeSplit+'건 자동으로 계약일·만기일로 나눴습니다.</p>' : '')
+    + (noCompany ? '<p class="note" style="margin-top:6px">보험사 칼럼이 없는 '+noCompany+'건은 "기타"로 넣었습니다. 나중에 계약 상세에서 고쳐주세요.</p>' : '');
+  document.getElementById('impList').innerHTML = IMPORT_QUEUE.slice(0,60).map(function(o){
+    return '<div class="cust"><div class="av">'+esc((o.custName||'?').slice(0,1))+'</div><div class="info">'
+      + '<div class="nm">'+esc(o.custName)+' <span class="tag">'+(o.customerId?'연결됨':'미등록')+'</span></div>'
+      + '<div class="mt">'+esc([o.company,o.product,o.contractDate,o.expireDate].filter(Boolean).join(' · '))+'</div></div></div>';
+  }).join('') + (IMPORT_QUEUE.length>60 ? '<p class="note">외 '+(IMPORT_QUEUE.length-60)+'건</p>' : '');
+  document.getElementById('impModal').classList.remove('hide');
+}
+function drawChips(){
+  document.getElementById('filterChips').innerHTML = FILTERS.map(function(f){
+    return '<button class="chip' + (f.k===FILTER?' on':'') + '" onclick="setFilter(\'' + f.k + '\')">' + f.n + '</button>';
+  }).join('');
+}
+function setFilter(k){ FILTER = k; drawChips(); renderCust(); }
+function matchFilter(c){
+  if(FILTER==='all') return true;
+  if(FILTER==='owner') return (c.custType||'보유고객') === '보유고객';
+  if(FILTER==='prospect') return c.custType === '가망고객';
+  if(FILTER==='birth'){
+    if(!c.birth) return false;
+    return Number(c.birth.slice(5,7)) === (new Date(today()).getMonth()+1);
+  }
+  if(FILTER==='cold') return daysAgo(c.lastTouch) >= 30;
+  if(FILTER==='noconsent') return !c.consent;
+  return c.grade === FILTER;
+}
+function renderCust(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  const list = CUSTOMERS.filter(function(c){
+    if(!matchFilter(c)) return false;
+    if(!q) return true;
+    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
+  });
+  const el = document.getElementById('custList');
+  if(!list.length){
+    el.innerHTML = '<div class="empty">' +
+      (CUSTOMERS.length ? '조건에 맞는 고객이 없습니다.' : '아직 등록된 고객이 없습니다.<br>＋ 등록 버튼으로 첫 고객을 추가해 보세요.') +
+      '</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(c){
+    const d = daysAgo(c.lastTouch);
+    const meta = [];
+    if(c.phone) meta.push(c.phone);
+    if(c.custType==='가망고객') meta.push((c.bizType||'개인') + (c.interest?' · 관심:'+c.interest:''));
+    else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
+    else meta.push('접촉 기록 없음');
+    if(c.job) meta.push(c.job);
+    return '<div class="cust" onclick="openCust(\'' + c.id + '\')">'
+      + '<div class="av">' + esc((c.name||'?').slice(0,1)) + '</div>'
+      + '<div class="info"><div class="nm">' + esc(c.name)
+      + (c.custType==='가망고객' ? ' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>' : '')
+      + (c.grade ? ' <span class="tag ' + c.grade + '">' + c.grade + '</span>' : '')
+      + (c.custType!=='가망고객' && !c.consent ? ' <span class="tag warn">동의 전</span>' : '')
+      + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></div>';
+  }).join('');
+  if(CUST_VIEW === 'table') renderCustTable();
+}
+
+/* ── 고객 표 보기 · 정렬 · 인쇄 ────── */
+let CUST_VIEW = 'card';
+let CUST_SORT = {key:'name', dir:1};
+const CUST_TABLE_COLS = [
+  {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'birth', l:'생년월일'},
+  {k:'grade', l:'등급'}, {k:'status', l:'상태'}, {k:'job', l:'직업'},
+  {k:'lastTouch', l:'최근접촉'}, {k:'memo', l:'메모'}
+];
+function setCustView(mode){
+  CUST_VIEW = mode;
+  document.getElementById('custList').classList.toggle('hide', mode!=='card');
+  document.getElementById('custTable').classList.toggle('hide', mode!=='table');
+  document.getElementById('viewBtnCard').classList.toggle('viewBtnOn', mode==='card');
+  document.getElementById('viewBtnTable').classList.toggle('viewBtnOn', mode==='table');
+  if(mode==='table') renderCustTable();
+}
+function sortCustBy(key){
+  if(CUST_SORT.key===key) CUST_SORT.dir *= -1; else CUST_SORT = {key:key, dir:1};
+  renderCustTable();
+}
+function renderCustTable(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  let list = CUSTOMERS.filter(function(c){
+    if(!matchFilter(c)) return false;
+    if(!q) return true;
+    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
+  });
+  list = list.slice().sort(function(a,b){
+    const av = (a[CUST_SORT.key]||''), bv = (b[CUST_SORT.key]||'');
+    return av < bv ? -1*CUST_SORT.dir : av > bv ? 1*CUST_SORT.dir : 0;
+  });
+  const el = document.getElementById('custTable');
+  if(!list.length){ el.innerHTML = '<div class="empty">표시할 고객이 없습니다.</div>'; return; }
+  let html = '<table class="cust-table"><thead><tr>' + CUST_TABLE_COLS.map(function(c){
+    const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
+    return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
+  }).join('') + '</tr></thead><tbody>';
+  html += list.map(function(c){
+    return '<tr onclick="openCust(\''+c.id+'\')" style="cursor:pointer">' + CUST_TABLE_COLS.map(function(col){
+      return '<td>'+esc(c[col.k]||'-')+'</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+function printCustTable(){
+  if(CUST_VIEW !== 'table') setCustView('table');
+  const tableHtml = document.getElementById('custTable').innerHTML;
+  document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 고객 목록 (' + today() + ')</h2>' + tableHtml;
+  setTimeout(function(){ window.print(); }, 100);
+}
+function renderReminders(){
+  const t = today(), mm = t.slice(5,7), dd = t.slice(8,10);
+  const items = [];
+  CUSTOMERS.forEach(function(c){
+    if(c.birth && c.birth.slice(5,7)===mm && c.birth.slice(8,10)===dd)
+      items.push({d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?'});
+    if(c.nextTouch && c.nextTouch===t)
+      items.push({d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다'});
+  });
+  CUSTOMERS.forEach(function(c){
+    if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<6)
+      items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도'});
+  });
+  const el = document.getElementById('reminderList');
+  if(!items.length){
+    el.innerHTML = '<div class="empty">오늘 급한 일은 없습니다.<br>새 고객을 만나기 좋은 날이에요.</div>';
+    return;
+  }
+  el.innerHTML = items.slice(0,6).map(function(i){
+    return '<div class="todo"><div class="dot ' + i.d + '"></div><div class="tx">'
+      + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div></div>';
+  }).join('');
+}
+function fillActSelect(){
+  document.getElementById('actCust').innerHTML = '<option value="">지정 안 함</option>'
+    + CUSTOMERS.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+'</option>'; }).join('');
+}
+
+/* ── 고객 등록/수정 ─────────────── */
+let EDIT_ID = '';
+let CUR_CUST_TYPE = '보유고객';
+const FLD = {fName:'name',fPhone:'phone',fBirth:'birth',fGcode:'gcode',fGrade:'grade',
+  fSource:'source',fZip:'zip',fJob:'job',fAddr:'addr',fAddr2:'addr2',
+  fConsent:'consent',fNext:'nextTouch',fFamily:'family',fMemo:'memo'};
+function setCustType(t){
+  CUR_CUST_TYPE = t;
+  document.getElementById('typeBtnOwner').classList.toggle('on', t==='보유고객');
+  document.getElementById('typeBtnProspect').classList.toggle('on', t==='가망고객');
+  document.getElementById('ownerFields').classList.toggle('hide', t!=='보유고객');
+  document.getElementById('prospectFields').classList.toggle('hide', t!=='가망고객');
+}
+function openCust(id){
+  EDIT_ID = id || '';
+  const c = id ? CUSTOMERS.find(function(x){return x.id===id;}) : null;
+  document.getElementById('custTitle').textContent = c ? '고객 정보' : '고객 등록';
+  Object.keys(FLD).forEach(function(k){
+    document.getElementById(k).value = c ? (c[FLD[k]] || '') : '';
+  });
+  document.getElementById('fBizType').value = c ? (c.bizType || '개인') : '개인';
+  document.getElementById('fProspectMemo').value = c ? (c.memo || '') : '';
+  const interests = c && c.interest ? c.interest.split(',') : [];
+  document.querySelectorAll('.fInterest').forEach(function(cb){ cb.checked = interests.indexOf(cb.value) >= 0; });
+  setCustType(c ? (c.custType || '보유고객') : '보유고객');
+  document.getElementById('custDelBtn').classList.toggle('hide', !c);
+  document.getElementById('custModal').classList.remove('hide');
+}
+function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
+function deleteCust(){
+  if(!EDIT_ID) return;
+  if(!confirm('이 고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
+  api('customerDelete', {pageId:EDIT_ID}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); closeCust(); loadCustomers(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function saveCust(){
+  const p = {fc:ME.name, branch:ME.branch, custType:CUR_CUST_TYPE};
+  if(EDIT_ID) p.pageId = EDIT_ID;
+  Object.keys(FLD).forEach(function(k){
+    p[FLD[k]] = document.getElementById(k).value.trim();
+  });
+  if(CUR_CUST_TYPE === '가망고객'){
+    p.bizType = document.getElementById('fBizType').value;
+    p.memo = document.getElementById('fProspectMemo').value.trim();
+    const checked = [];
+    document.querySelectorAll('.fInterest:checked').forEach(function(cb){ checked.push(cb.value); });
+    p.interest = checked.join(',');
+  }
+  if(!p.name){ toast('이름을 입력하세요', true); return; }
+  if(!p.status) p.status = '진행중';
+  const b = document.getElementById('custSaveBtn');
+  b.disabled = true; b.textContent = '저장 중…';
+  api('customerSave', p).then(function(r){
+    b.disabled = false; b.textContent = '저장';
+    if(r.ok){ toast('저장했어요'); closeCust(); loadCustomers(); }
+    else toast(r.error||'저장에 실패했습니다', true);
+  }).catch(function(){
+    b.disabled = false; b.textContent = '저장';
+    toast('연결에 실패했습니다', true);
+  });
+}
+
+/* ── 엑셀 ───────────────────────── */
+const XCOL = [['이름','name'],['연락처','phone'],['생년월일','birth'],['성별코드','gcode'],
+  ['등급','grade'],['상태','status'],['유입경로','source'],['우편번호','zip'],['주소','addr'],
+  ['상세주소','addr2'],['직업','job'],['가족관계','family'],['소개자','intro'],
+  ['회사동의완료','consent'],['다음접촉예정','nextTouch'],['최근접촉일','lastTouch'],['메모','memo']];
+/* 자주 쓰이는 다른 이름의 칼럼도 자동으로 알아봅니다 */
+const XCOL_SYN = {
+  name: ['이름','계약자','성명','고객명','피보험자'],
+  phone: ['연락처','전화번호','휴대폰번호','휴대전화','핸드폰번호','핸드폰'],
+  birth: ['생년월일','생일'],
+  gcode: ['성별코드','성별'],
+  addr: ['주소','거주지'],
+  job: ['직업'],
+  memo: ['메모','비고','특이사항']
+};
+function findCol(row, key){
+  const syns = XCOL_SYN[key] || [key];
+  for (const s of syns) { if (row[s] !== undefined && row[s] !== '') return String(row[s]).trim(); }
+  return '';
+}
+/* 주민등록번호에서 생년월일·성별코드만 뽑고, 나머지 6자리는 절대 저장·전송하지 않습니다 */
+function parseRRN(row){
+  const raw = row['주민등록번호'] || row['주민번호'] || '';
+  const digits = String(raw).replace(/[^0-9]/g, '');
+  if (digits.length < 7) return null;
+  const yy = digits.slice(0,2), mm = digits.slice(2,4), dd = digits.slice(4,6), g = digits.slice(6,7);
+  const century = (g==='1'||g==='2') ? '19' : (g==='3'||g==='4') ? '20' : (g==='5'||g==='6') ? '19' : (g==='7'||g==='8') ? '20' : '';
+  if (!century) return null;
+  return { birth: century+yy+'-'+mm+'-'+dd, gcode: g };
+}
+function xlsxOut(){
+  const rows = CUSTOMERS.map(function(c){
+    const o = {};
+    XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
+    return o;
+  });
+  const ws = XLSX.utils.json_to_sheet(rows, {header:XCOL.map(function(p){return p[0];})});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '고객');
+  XLSX.writeFile(wb, '다온_고객_' + today() + '.xlsx');
+  toast('엑셀을 내려받았어요');
+}
+function xlsxIn(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(e){
+    const wb = XLSX.read(e.target.result, {type:'array'});
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    input.value = '';
+    prepImport(rows);
+  };
+  rd.readAsArrayBuffer(f);
+}
+function prepImport(rows){
+  IMPORT_MODE = 'customer';
+  IMPORT_QUEUE = [];
+  let add=0, upd=0, skip=0, rrnUsed=0;
+  rows.forEach(function(r){
+    const o = {};
+    Object.keys(XCOL_SYN).forEach(function(key){ o[key] = findCol(r, key); });
+    // XCOL_SYN에 없는 나머지 항목은 정확한 칼럼명으로만 매칭
+    XCOL.forEach(function(p){ if(o[p[1]]===undefined && r[p[0]]!==undefined) o[p[1]] = String(r[p[0]]).trim(); });
+    if(!o.name){ skip++; return; }
+    if(!o.birth){
+      const rrn = parseRRN(r);
+      if(rrn){ o.birth = rrn.birth; if(!o.gcode) o.gcode = rrn.gcode; rrnUsed++; }
+    }
+    if(o.gcode) o.gcode = o.gcode.slice(0,1);
+    const hit = CUSTOMERS.find(function(c){
+      return c.name===o.name && (!o.birth || !c.birth || c.birth===o.birth);
+    });
+    if(hit){ o.pageId = hit.id; upd++; } else add++;
+    IMPORT_QUEUE.push(o);
+  });
+  document.getElementById('impSum').innerHTML =
+    '<div class="stat"><div><div class="n" style="color:var(--green)">'+add+'</div><div class="l">새로 추가</div></div>'
+    + '<div><div class="n" style="color:var(--blue)">'+upd+'</div><div class="l">기존 수정</div></div>'
+    + '<div><div class="n" style="color:var(--ink3)">'+skip+'</div><div class="l">건너뜀</div></div></div>'
+    + (skip ? '<p class="note" style="margin-top:10px">이름(또는 계약자·성명)이 비어 있는 줄은 건너뜁니다.</p>' : '')
+    + (rrnUsed ? '<p class="note" style="margin-top:6px">주민등록번호에서 생년월일·성별만 뽑아 '+rrnUsed+'건에 채웠습니다. 뒷 6자리는 저장하지 않습니다.</p>' : '');
+  document.getElementById('impList').innerHTML = IMPORT_QUEUE.slice(0,60).map(function(o){
+    return '<div class="cust"><div class="av">'+esc((o.name||'?').slice(0,1))+'</div><div class="info">'
+      + '<div class="nm">'+esc(o.name)+' <span class="tag">'+(o.pageId?'수정':'신규')+'</span></div>'
+      + '<div class="mt">'+esc([o.phone,o.birth,o.addr].filter(Boolean).join(' · '))+'</div></div></div>';
+  }).join('') + (IMPORT_QUEUE.length>60 ? '<p class="note">외 '+(IMPORT_QUEUE.length-60)+'건</p>' : '');
+  document.getElementById('impModal').classList.remove('hide');
+}
+function closeImp(){ document.getElementById('impModal').classList.add('hide'); }
+function runImport(){
+  const btn = document.getElementById('impGo');
+  btn.disabled = true;
+  let done = 0, fail = 0, next = 0;
+  const total = IMPORT_QUEUE.length;
+  const action = IMPORT_MODE === 'contract' ? 'contractAdd' : 'customerSave';
+  const CONCURRENCY = 3; // Notion API가 초당 약 3건으로 제한되어 있어 이 이상 늘려도 빨라지지 않습니다
+  function updateBtn(){
+    const pct = Math.round((done+fail) / total * 100);
+    btn.textContent = '반영 중… ' + (done+fail) + '/' + total + ' (' + pct + '%)';
+  }
+  function runOne(){
+    if(next >= total) return Promise.resolve();
+    const i = next++;
+    const p = Object.assign({fc:ME.name, branch:ME.branch}, IMPORT_QUEUE[i]);
+    return api(action, p).then(function(r){
+      if(r.ok) done++; else fail++;
+      updateBtn();
+      return runOne();
+    }).catch(function(){
+      fail++; updateBtn();
+      return runOne();
+    });
+  }
+  const workers = [];
+  for(let w=0; w<CONCURRENCY; w++) workers.push(runOne());
+  Promise.all(workers).then(function(){
+    btn.disabled = false;
+    closeImp();
+    toast(done + '건 반영' + (fail ? ' · ' + fail + '건 실패' : ''), fail>0);
+    if(IMPORT_MODE === 'contract') loadContracts(); else loadCustomers();
+  });
+}
+
+/* ── 주소라벨 ───────────────────── */
+function openLabel(){
+  const has = CUSTOMERS.filter(function(c){ return c.addr; });
+  document.getElementById('lblList').innerHTML = has.length
+    ? has.map(function(c){
+        return '<div class="cust"><input type="checkbox" class="pick" data-id="'+c.id+'" checked>'
+          + '<div class="info"><div class="nm">'+esc(c.name)+'</div>'
+          + '<div class="mt">'+esc((c.zip?'('+c.zip+') ':'')+c.addr+' '+(c.addr2||''))+'</div></div></div>';
+      }).join('')
+    : '<div class="empty">주소가 입력된 고객이 없습니다.</div>';
+  document.getElementById('lblModal').classList.remove('hide');
+}
+function closeLabel(){ document.getElementById('lblModal').classList.add('hide'); }
+function lblAll(v){
+  document.querySelectorAll('#lblList .pick').forEach(function(x){ x.checked = v; });
+}
+function doPrint(){
+  const ids = [];
+  document.querySelectorAll('#lblList .pick').forEach(function(x){ if(x.checked) ids.push(x.dataset.id); });
+  if(!ids.length){ toast('인쇄할 고객을 선택하세요', true); return; }
+  const size = document.getElementById('lblSize').value;
+  const cls = size === '24' ? 'g24' : 'g12';
+  const html = ids.map(function(id){
+    const c = CUSTOMERS.find(function(x){return x.id===id;});
+    return '<div class="lbl ' + (size==='24'?'g24':'') + '">'
+      + (c.zip ? '<div class="z">' + esc(c.zip) + '</div>' : '')
+      + '<div>' + esc(c.addr) + '</div>'
+      + (c.addr2 ? '<div>' + esc(c.addr2) + '</div>' : '')
+      + '<div class="n">' + esc(c.name) + ' 귀하</div></div>';
+  }).join('');
+  document.getElementById('labelArea').innerHTML = '<div class="lbl-grid ' + cls + '">' + html + '</div>';
+  closeLabel();
+  setTimeout(function(){ window.print(); }, 120);
+}
+
+/* ── 시작 ───────────────────────── */
+(function(){
+  try{
+    const s = sessionStorage.getItem('crmMe');
+    if(s){ ME = JSON.parse(s); boot(); return; }
+  }catch(e){}
+  document.getElementById('code').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') doLogin();
+  });
 })();
 </script>
 </body>
