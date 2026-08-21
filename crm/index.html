@@ -496,7 +496,8 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn ghost" onclick="closeCust()">취소</button>
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
-      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
+      <button class="btn ghost sm hide" id="custSmsBtn" style="margin-top:10px;width:100%;color:var(--blue)" onclick="openSms()">💬 문자 보내기</button>
+      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:8px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
   </div>
 
@@ -536,6 +537,47 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn ghost" onclick="lblAll(false)">전체 해제</button>
       </div>
       <button class="btn" style="margin-top:8px" onclick="doPrint()">인쇄하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 문자 보내기 -->
+<div id="smsModal" class="mask hide" onclick="if(event.target===this)closeSms()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>💬 문자 보내기</h2><button class="x" onclick="closeSms()">×</button></div>
+    <div class="sheet-b">
+      <div class="warnbox" id="smsNotReady">문자 API 연결 준비 중입니다. 알리고 API키를 받으면 실제 발송이 활성화됩니다. 지금은 화면만 미리 확인하실 수 있어요.</div>
+      <div class="fld">
+        <label>받는 사람</label>
+        <div class="cust" style="border:1.5px solid var(--line);border-radius:10px;padding:10px 12px">
+          <div class="av" id="smsAv">?</div>
+          <div class="info"><div class="nm" id="smsName">-</div><div class="mt" id="smsPhone">-</div></div>
+        </div>
+      </div>
+      <div class="fld">
+        <label>문구 템플릿</label>
+        <div class="chips">
+          <button class="chip" onclick="fillSmsTemplate('birthday')">🎂 생일</button>
+          <button class="chip" onclick="fillSmsTemplate('expire')">📄 만기안내</button>
+          <button class="chip" onclick="fillSmsTemplate('thanks')">🙏 소개감사</button>
+          <button class="chip" onclick="fillSmsTemplate('followup')">📞 안부</button>
+          <button class="chip" onclick="fillSmsTemplate('')">직접입력</button>
+        </div>
+      </div>
+      <div class="fld">
+        <label>메시지</label>
+        <textarea id="smsMsg" rows="5" placeholder="메시지를 입력하세요" oninput="updateSmsCount()"></textarea>
+        <p class="note" id="smsCount" style="margin-top:6px">0자 (0바이트) · SMS</p>
+      </div>
+      <div class="fld">
+        <label>이미지 첨부 (선택, MMS로 전환됩니다)</label>
+        <input id="smsImg" type="file" accept="image/*" onchange="onSmsImgPick(this)">
+        <div id="smsImgPreview" class="hide" style="margin-top:8px">
+          <img id="smsImgThumb" style="max-width:100%;border-radius:10px;border:1px solid var(--line)">
+          <button class="btn ghost sm" style="margin-top:6px" onclick="removeSmsImg()">이미지 제거</button>
+        </div>
+      </div>
+      <button class="btn" id="smsSendBtn" onclick="sendSms()">발송하기</button>
     </div>
   </div>
 </div>
@@ -1566,6 +1608,7 @@ function openCust(id){
   document.querySelectorAll('.fInterest').forEach(function(cb){ cb.checked = interests.indexOf(cb.value) >= 0; });
   setCustType(c ? (c.custType || '보유고객') : '보유고객');
   document.getElementById('custDelBtn').classList.toggle('hide', !c);
+  document.getElementById('custSmsBtn').classList.toggle('hide', !(c && c.phone));
   document.getElementById('custModal').classList.remove('hide');
 }
 function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
@@ -1577,6 +1620,88 @@ function deleteCust(){
     else toast(r.error||'삭제에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
+
+/* ── 문자 보내기 ────────────────── */
+const SMS_READY = false; // 알리고 API키가 연결되면 true로 바뀝니다
+const SMS_TEMPLATES = {
+  birthday: function(c){ return c.name+'님, 생일 진심으로 축하드립니다! 오늘 하루 행복 가득하시길 바라요 🎂 - 다온지사 '+ME.name+' 드림'; },
+  expire: function(c){ return c.name+'님, 안녕하세요. 가입하신 보험 만기가 얼마 남지 않아 안내드립니다. 편하신 시간에 연락 부탁드려요 :) - 다온지사 '+ME.name+' 드림'; },
+  thanks: function(c){ return c.name+'님, 소개해주셔서 정말 감사합니다! 도움 필요하실 때 언제든 편하게 연락 주세요 🙏 - 다온지사 '+ME.name+' 드림'; },
+  followup: function(c){ return c.name+'님, 안녕하세요! 잘 지내고 계신가요? 궁금한 점 있으시면 언제든 편하게 문의 주세요 :) - 다온지사 '+ME.name+' 드림'; }
+};
+let SMS_TARGET = null;
+let SMS_IMG_DATA = '';
+function openSms(){
+  if(!EDIT_ID) return;
+  const c = CUSTOMERS.find(function(x){ return x.id===EDIT_ID; });
+  if(!c || !c.phone){ toast('연락처가 없는 고객입니다', true); return; }
+  SMS_TARGET = c;
+  document.getElementById('smsAv').textContent = (c.name||'?').slice(0,1);
+  document.getElementById('smsName').textContent = c.name;
+  document.getElementById('smsPhone').textContent = c.phone;
+  document.getElementById('smsMsg').value = '';
+  removeSmsImg();
+  updateSmsCount();
+  document.getElementById('smsNotReady').classList.toggle('hide', SMS_READY);
+  document.getElementById('smsModal').classList.remove('hide');
+}
+function closeSms(){ document.getElementById('smsModal').classList.add('hide'); }
+function fillSmsTemplate(key){
+  if(!SMS_TARGET) return;
+  const fn = SMS_TEMPLATES[key];
+  document.getElementById('smsMsg').value = fn ? fn(SMS_TARGET) : '';
+  updateSmsCount();
+}
+function byteLen(s){
+  let n = 0;
+  for(let i=0; i<s.length; i++){ n += s.charCodeAt(i) > 127 ? 2 : 1; }
+  return n;
+}
+function updateSmsCount(){
+  const s = document.getElementById('smsMsg').value;
+  const b = byteLen(s);
+  const type = SMS_IMG_DATA ? 'MMS(사진)' : (b <= 90 ? 'SMS' : 'LMS(장문)');
+  document.getElementById('smsCount').textContent = s.length + '자 (' + b + '바이트) · ' + type;
+}
+function onSmsImgPick(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(e){
+    SMS_IMG_DATA = e.target.result;
+    document.getElementById('smsImgThumb').src = SMS_IMG_DATA;
+    document.getElementById('smsImgPreview').classList.remove('hide');
+    updateSmsCount();
+  };
+  rd.readAsDataURL(f);
+}
+function removeSmsImg(){
+  SMS_IMG_DATA = '';
+  document.getElementById('smsImg').value = '';
+  document.getElementById('smsImgPreview').classList.add('hide');
+  updateSmsCount();
+}
+function sendSms(){
+  const msg = document.getElementById('smsMsg').value.trim();
+  if(!msg){ toast('메시지를 입력하세요', true); return; }
+  if(!SMS_READY){
+    toast('문자 API 연결 준비 중입니다. 화면만 미리 확인하신 거예요.', true);
+    return;
+  }
+  const btn = document.getElementById('smsSendBtn');
+  btn.disabled = true; btn.textContent = '발송 중…';
+  api('smsSend', {
+    fc:ME.name, branch:ME.branch, customerId:SMS_TARGET.id, customerName:SMS_TARGET.name,
+    phone:SMS_TARGET.phone, msg:msg, image:SMS_IMG_DATA
+  }).then(function(r){
+    btn.disabled = false; btn.textContent = '발송하기';
+    if(r.ok){ toast('문자를 보냈어요'); closeSms(); }
+    else toast(r.error||'발송에 실패했습니다', true);
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = '발송하기';
+    toast('연결에 실패했습니다', true);
+  });
+}
+
 function saveCust(){
   const p = {fc:ME.name, branch:ME.branch, custType:CUR_CUST_TYPE};
   if(EDIT_ID) p.pageId = EDIT_ID;
@@ -1695,25 +1820,35 @@ function closeImp(){ document.getElementById('impModal').classList.add('hide'); 
 function runImport(){
   const btn = document.getElementById('impGo');
   btn.disabled = true;
-  let done = 0, fail = 0;
+  let done = 0, fail = 0, next = 0;
   const total = IMPORT_QUEUE.length;
   const action = IMPORT_MODE === 'contract' ? 'contractAdd' : 'customerSave';
-  function step(i){
-    if(i >= total){
-      btn.disabled = false;
-      closeImp();
-      toast(done + '건 반영' + (fail ? ' · ' + fail + '건 실패' : ''), fail>0);
-      if(IMPORT_MODE === 'contract') loadContracts(); else loadCustomers();
-      return;
-    }
-    btn.textContent = '반영 중… ' + (i+1) + '/' + total;
-    const p = Object.assign({fc:ME.name, branch:ME.branch}, IMPORT_QUEUE[i]);
-    api(action, p).then(function(r){
-      if(r.ok) done++; else fail++;
-      step(i+1);
-    }).catch(function(){ fail++; step(i+1); });
+  const CONCURRENCY = 3; // Notion API가 초당 약 3건으로 제한되어 있어 이 이상 늘려도 빨라지지 않습니다
+  function updateBtn(){
+    const pct = Math.round((done+fail) / total * 100);
+    btn.textContent = '반영 중… ' + (done+fail) + '/' + total + ' (' + pct + '%)';
   }
-  step(0);
+  function runOne(){
+    if(next >= total) return Promise.resolve();
+    const i = next++;
+    const p = Object.assign({fc:ME.name, branch:ME.branch}, IMPORT_QUEUE[i]);
+    return api(action, p).then(function(r){
+      if(r.ok) done++; else fail++;
+      updateBtn();
+      return runOne();
+    }).catch(function(){
+      fail++; updateBtn();
+      return runOne();
+    });
+  }
+  const workers = [];
+  for(let w=0; w<CONCURRENCY; w++) workers.push(runOne());
+  Promise.all(workers).then(function(){
+    btn.disabled = false;
+    closeImp();
+    toast(done + '건 반영' + (fail ? ' · ' + fail + '건 실패' : ''), fail>0);
+    if(IMPORT_MODE === 'contract') loadContracts(); else loadCustomers();
+  });
 }
 
 /* ── 주소라벨 ───────────────────── */
