@@ -315,6 +315,18 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
         <p class="note" style="margin-top:10px">엑셀을 올리면 먼저 미리보기로 몇 건이 새로 들어가고 몇 건이 바뀌는지 확인한 뒤 반영됩니다.</p>
       </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📄 보유계약</h2><span class="sub" id="ctrCount"></span></div>
+        <div class="chips" id="ctrChips"></div>
+        <div id="ctrList"><div class="empty">불러오는 중…</div></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ghost sm" onclick="ctrXlsxOut()">계약 엑셀 내려받기</button>
+          <button class="btn ghost sm" onclick="document.getElementById('ctrXlsxIn').click()">계약 엑셀 올리기</button>
+        </div>
+        <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
+        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적. 고객명은 이미 등록된 고객과 자동으로 연결됩니다.</p>
+      </div>
     </section>
 
     <!-- 활동 -->
@@ -521,6 +533,7 @@ let ME = null;          // {name, branch, role}
 let CUSTOMERS = [];     // 고객 배열
 let FILTER = 'all';
 let IMPORT_QUEUE = [];
+let IMPORT_MODE = 'customer';
 let DEMO = false;
 let DEMO_SEQ = 1000;
 
@@ -562,6 +575,7 @@ function startDemo(){
   loadGoalSummary();
   loadTodos('home'); loadTodos('act');
   loadRoutine('home'); loadRoutine('act');
+  drawCtrChips(); renderContracts();
 }
 
 const TAPS = [
@@ -602,6 +616,10 @@ const DEMO_ROUTINE = {신규명단:2, 전화:6, 방문:1, 상담:2, 청약:0, �
 let DEMO_TODOS = [
   {id:'demo-todo-1', content:'박서연님 계약 서류 챙기기', done:false},
   {id:'demo-todo-2', content:'이도현님 재통화', done:true}
+];
+let DEMO_CONTRACTS = [
+  {id:'demo-ctr-1', custName:'김민준', company:'삼성화재', product:'다이렉트 운전자보험', policyNo:'S123456', contractDate:'2025-08-10', expireDate:'2045-08-10', premium:32000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0},
+  {id:'demo-ctr-2', custName:'박서연', company:'삼성생명', product:'종신보험', policyNo:'L987654', contractDate:'2024-06-01', expireDate:'2054-06-01', premium:150000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0}
 ];
 const DEMO_TEAM = [
   {name:'김화진(샘플)', role:'지사장', target:12000000, actual:7440000, targetCount:8, actualCount:5,
@@ -695,6 +713,19 @@ function demoApi(action, p){
   }
   if(action === 'todoDelete'){
     DEMO_TODOS = DEMO_TODOS.filter(function(x){return x.id !== p.pageId;});
+    return {ok:true};
+  }
+  if(action === 'contractList'){
+    return {ok:true, count:DEMO_CONTRACTS.length, items:DEMO_CONTRACTS};
+  }
+  if(action === 'contractAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-ctr-'+DEMO_SEQ;
+    DEMO_CONTRACTS.push(Object.assign({id:nid}, p));
+    return {ok:true, id:nid};
+  }
+  if(action === 'contractDelete'){
+    DEMO_CONTRACTS = DEMO_CONTRACTS.filter(function(x){return x.id !== p.pageId;});
     return {ok:true};
   }
   return {ok:false, error:'샘플 화면에서는 지원하지 않는 동작입니다.'};
@@ -1182,6 +1213,120 @@ function loadCustomers(){
     document.getElementById('custList').innerHTML =
       '<div class="empty">연결에 실패했습니다. 새로고침 해보세요.</div>';
   });
+  loadContracts();
+}
+
+/* ── 보유계약 ───────────────────── */
+let CONTRACTS = [];
+let CTR_FILTER = 'all';
+const CTR_FILTERS = [
+  {k:'all', n:'전체'}, {k:'expiring', n:'만기임박(60일)'}, {k:'anniv', n:'가입 1주년'}
+];
+function daysUntil(d){
+  if(!d) return 99999;
+  return Math.round((new Date(d) - new Date(today())) / 86400000);
+}
+function isAnniversary(contractDate){
+  if(!contractDate) return false;
+  const t = today();
+  const md = function(s){ return s.slice(5,10); };
+  const target = new Date(t.slice(0,4) + '-' + md(contractDate));
+  const diff = Math.abs((target - new Date(t)) / 86400000);
+  return diff <= 14;
+}
+function drawCtrChips(){
+  document.getElementById('ctrChips').innerHTML = CTR_FILTERS.map(function(f){
+    return '<button class="chip' + (f.k===CTR_FILTER?' on':'') + '" onclick="setCtrFilter(\'' + f.k + '\')">' + f.n + '</button>';
+  }).join('');
+}
+function setCtrFilter(k){ CTR_FILTER = k; drawCtrChips(); renderContracts(); }
+function loadContracts(){
+  api('contractList', {fc:ME.name, branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('ctrList').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    CONTRACTS = r.items || [];
+    drawCtrChips();
+    renderContracts();
+  }).catch(function(){
+    document.getElementById('ctrList').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderContracts(){
+  let list = CONTRACTS;
+  if(CTR_FILTER==='expiring') list = list.filter(function(c){ const d=daysUntil(c.expireDate); return d>=0 && d<=60; });
+  if(CTR_FILTER==='anniv') list = list.filter(function(c){ return isAnniversary(c.contractDate); });
+  document.getElementById('ctrCount').textContent = list.length + '건';
+  const el = document.getElementById('ctrList');
+  if(!list.length){ el.innerHTML = '<div class="empty">해당하는 계약이 없습니다.</div>'; return; }
+  el.innerHTML = list.map(function(c){
+    const dLeft = daysUntil(c.expireDate);
+    const meta = [c.company, c.product].filter(Boolean).join(' · ');
+    const sub = [c.premium?fmtWon(c.premium)+'/월':'', c.expireDate?('만기 '+c.expireDate):''].filter(Boolean).join(' · ');
+    return '<div class="cust"><div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
+      + '<div class="info"><div class="nm">' + esc(c.custName||'미상') + (c.status&&c.status!=='정상'?' <span class="tag warn">'+esc(c.status)+'</span>':'')
+      + (CTR_FILTER==='expiring' && dLeft>=0 ? ' <span class="tag warn">D-'+dLeft+'</span>' : '') + '</div>'
+      + '<div class="mt">' + esc(meta) + '<br>' + esc(sub) + '</div></div>'
+      + '<button class="btn ghost sm" onclick="deleteContract(\'' + c.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function deleteContract(id){
+  if(!confirm('이 계약을 삭제할까요?')) return;
+  api('contractDelete', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); loadContracts(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+const CTR_XCOL = [['고객명','custName'],['보험사','company'],['상품명','product'],['증권번호','policyNo'],
+  ['계약일','contractDate'],['만기일','expireDate'],['월납보험료','premium'],['납입방법','payMethod'],
+  ['보험기간','term'],['계약상태','status'],['환산실적','convertedValue']];
+function ctrXlsxOut(){
+  const rows = CONTRACTS.map(function(c){
+    const o = {};
+    CTR_XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
+    return o;
+  });
+  const ws = XLSX.utils.json_to_sheet(rows, {header:CTR_XCOL.map(function(p){return p[0];})});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '보유계약');
+  XLSX.writeFile(wb, '다온_계약_' + today() + '.xlsx');
+  toast('엑셀을 내려받았어요');
+}
+function ctrXlsxIn(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(e){
+    const wb = XLSX.read(e.target.result, {type:'array'});
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    input.value = '';
+    prepImportContract(rows);
+  };
+  rd.readAsArrayBuffer(f);
+}
+function prepImportContract(rows){
+  IMPORT_MODE = 'contract';
+  IMPORT_QUEUE = [];
+  let add=0, skip=0, unmatched=0;
+  rows.forEach(function(r){
+    const o = {};
+    CTR_XCOL.forEach(function(p){ if(r[p[0]]!==undefined) o[p[1]] = String(r[p[0]]).trim(); });
+    if(!o.custName){ skip++; return; }
+    const hit = CUSTOMERS.find(function(c){ return c.name === o.custName; });
+    if(!hit) unmatched++;
+    o.customerId = hit ? hit.id : '';
+    add++;
+    IMPORT_QUEUE.push(o);
+  });
+  document.getElementById('impSum').innerHTML =
+    '<div class="stat"><div><div class="n" style="color:var(--green)">'+add+'</div><div class="l">등록될 계약</div></div>'
+    + '<div><div class="n" style="color:var(--yellow)">'+unmatched+'</div><div class="l">미등록 고객</div></div>'
+    + '<div><div class="n" style="color:var(--ink3)">'+skip+'</div><div class="l">건너뜀</div></div></div>'
+    + (unmatched ? '<p class="note" style="margin-top:10px">미등록 고객은 계약만 저장되고 고객 목록과는 연결되지 않습니다. 먼저 고객을 등록하시면 자동으로 연결됩니다.</p>' : '');
+  document.getElementById('impList').innerHTML = IMPORT_QUEUE.slice(0,60).map(function(o){
+    return '<div class="cust"><div class="av">'+esc((o.custName||'?').slice(0,1))+'</div><div class="info">'
+      + '<div class="nm">'+esc(o.custName)+' <span class="tag">'+(o.customerId?'연결됨':'미등록')+'</span></div>'
+      + '<div class="mt">'+esc([o.company,o.product,o.expireDate].filter(Boolean).join(' · '))+'</div></div></div>';
+  }).join('') + (IMPORT_QUEUE.length>60 ? '<p class="note">외 '+(IMPORT_QUEUE.length-60)+'건</p>' : '');
+  document.getElementById('impModal').classList.remove('hide');
 }
 function drawChips(){
   document.getElementById('filterChips').innerHTML = FILTERS.map(function(f){
@@ -1373,6 +1518,7 @@ function xlsxIn(input){
   rd.readAsArrayBuffer(f);
 }
 function prepImport(rows){
+  IMPORT_MODE = 'customer';
   IMPORT_QUEUE = [];
   let add=0, upd=0, skip=0;
   rows.forEach(function(r){
@@ -1404,17 +1550,18 @@ function runImport(){
   btn.disabled = true;
   let done = 0, fail = 0;
   const total = IMPORT_QUEUE.length;
+  const action = IMPORT_MODE === 'contract' ? 'contractAdd' : 'customerSave';
   function step(i){
     if(i >= total){
       btn.disabled = false;
       closeImp();
       toast(done + '건 반영' + (fail ? ' · ' + fail + '건 실패' : ''), fail>0);
-      loadCustomers();
+      if(IMPORT_MODE === 'contract') loadContracts(); else loadCustomers();
       return;
     }
     btn.textContent = '반영 중… ' + (i+1) + '/' + total;
     const p = Object.assign({fc:ME.name, branch:ME.branch}, IMPORT_QUEUE[i]);
-    api('customerSave', p).then(function(r){
+    api(action, p).then(function(r){
       if(r.ok) done++; else fail++;
       step(i+1);
     }).catch(function(){ fail++; step(i+1); });
