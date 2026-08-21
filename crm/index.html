@@ -169,6 +169,51 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   .lbl .n{font-weight:700;margin-top:2mm}
   .lbl.g24{padding:4mm 3.5mm;font-size:9.5pt}
 }
+/* ── 목표/루틴 ────────────────────── */
+.gbar{height:9px;border-radius:5px;background:var(--bg);overflow:hidden;margin:8px 0}
+.gbar-in{height:100%;background:var(--org);border-radius:5px;transition:width .4s}
+.gnum{display:flex;align-items:baseline;gap:6px}
+.gnum .big{font-size:26px;font-weight:800;letter-spacing:-.03em}
+.gnum .of{font-size:13px;color:var(--ink3)}
+.pct{font-size:14px;font-weight:800;color:var(--org)}
+.needbox{background:var(--org-lt);border-radius:11px;padding:13px 14px;margin-top:12px}
+.needbox .t1{font-size:12.5px;color:var(--org-dk);font-weight:700}
+.needbox .t2{font-size:19px;font-weight:800;margin-top:3px;letter-spacing:-.02em}
+.feeline{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.feeline:last-child{border-bottom:0}
+.feeline .v{font-weight:700;color:var(--ink)}
+.feeline .approx{font-size:11px;color:var(--ink3);font-weight:500}
+
+.stepbox{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+.stepbox:last-child{border-bottom:0}
+.stepbox .nm{font-size:14.5px;font-weight:650;display:flex;align-items:center;gap:7px}
+.stepbox .nm .ic{font-size:17px}
+.step{display:flex;align-items:center;gap:11px}
+.step button{width:30px;height:30px;border-radius:9px;background:var(--bg);font-size:17px;font-weight:700;color:var(--ink2)}
+.step button:active{background:var(--org-lt);color:var(--org)}
+.step .val{width:22px;text-align:center;font-weight:800;font-size:15px}
+.routine-done{background:var(--bg);border-radius:11px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.routine-done .ic{font-size:20px}
+.routine-done .tx{flex:1}
+.routine-done .tt{font-weight:700;font-size:13.5px}
+.routine-done .ts{font-size:11.5px;color:var(--ink3);margin-top:1px}
+
+/* ── 관리자 ───────────────────────── */
+.fcard{border:1.5px solid var(--line);border-radius:13px;padding:14px;margin:0 0 11px}
+.fcard-h{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.fcard-h .av{width:34px;height:34px;flex:0 0 34px;border-radius:10px;background:var(--org-lt);
+  color:var(--org-dk);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px}
+.fcard-h .nm{font-weight:700;font-size:14.5px}
+.fcard-h .rl{font-size:11.5px;color:var(--ink3)}
+.fcard-h .pctb{margin-left:auto;font-size:16px;font-weight:800;color:var(--org)}
+.fcard .miniStat{display:flex;gap:7px;margin-top:9px}
+.fcard .miniStat div{flex:1;background:var(--bg);border-radius:8px;padding:7px 4px;text-align:center}
+.fcard .miniStat .n{font-size:15px;font-weight:800}
+.fcard .miniStat .l{font-size:10px;color:var(--ink3);margin-top:1px}
+.riskrow{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.risk{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;background:#FDECEC;color:var(--red)}
+.risk.ok{background:#E9F7EF;color:var(--green)}
+
 @media (max-width:380px){ .taps{gap:7px} .tap{padding:13px 4px} }
 </style>
 </head>
@@ -182,7 +227,8 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <input id="code" type="text" inputmode="numeric" placeholder="- - - -" autocomplete="off" maxlength="12">
     <div class="err" id="loginErr"></div>
     <button class="btn" style="margin-top:14px" onclick="doLogin()" id="loginBtn">시작하기</button>
-    <p class="note" style="margin-top:18px">코드를 모르면 지사장에게 문의하세요.</p>
+    <button class="btn ghost" style="margin-top:10px" onclick="startDemo()">🔍 샘플로 먼저 둘러보기</button>
+    <p class="note" style="margin-top:18px">코드를 모르면 지사장에게 문의하세요.<br>서버 연결 전이라도 "샘플로 먼저 둘러보기"로 화면을 확인할 수 있어요.</p>
   </div>
 </div>
 
@@ -192,6 +238,9 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <div class="brand">다온 <em>영업관리</em></div>
     <div class="who"><b id="myName">-</b><button class="out" onclick="logout()">나가기</button></div>
   </div></div>
+  <div id="demoBanner" class="hide" style="background:#FFF3E8;border-bottom:1px solid #FBDCC0;padding:9px 16px;text-align:center;font-size:12.5px;color:#8A5A22;font-weight:600">
+    🔍 샘플 미리보기 화면입니다. 실제로 저장되지 않아요. 엑셀은 올려서 목록에 뜨는지만 확인할 수 있어요.
+  </div>
 
   <div class="wrap">
 
@@ -269,12 +318,84 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       </div>
     </section>
 
+    <!-- 목표 -->
+    <section id="tab-goal" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>이번 달 목표</h2><span class="sub" id="goalYm"></span></div>
+        <div id="goalBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>🚗 손보 청약 실적</h2><span class="sub">보험사·상품 고르면 자동 계산</span></div>
+        <div class="fld"><label>보험사</label>
+          <select id="sonboComp" onchange="onSonboCompChange()"><option value="">선택</option></select>
+        </div>
+        <div class="fld"><label>상품명</label>
+          <select id="sonboProd" onchange="onSonboProdChange()" disabled><option value="">보험사 먼저 선택</option></select>
+        </div>
+        <div class="fld"><label>옵션 (구분·납기)</label>
+          <select id="sonboOpt" onchange="onSonboOptChange()" disabled><option value="">상품 먼저 선택</option></select>
+        </div>
+        <div class="fld"><label>월납보험료(원)</label>
+          <input id="sonboPremium" type="number" inputmode="numeric" placeholder="120000" oninput="calcSonboFee()"></div>
+        <div id="sonboCalc" class="hide">
+          <div class="feeline"><span>익월 수수료</span><span class="v" id="sonboM0">-</span></div>
+          <div class="feeline"><span>1차년 수수료</span><span class="v" id="sonboY1">-</span></div>
+        </div>
+        <button class="btn" style="margin-top:10px" onclick="addSonboDeal()">＋ 손보 실적 추가</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>📄 생보 청약 실적</h2><span class="sub">수기입력</span></div>
+        <div class="fld fld2">
+          <div><label>보험사</label><input id="saengboComp" placeholder="삼성생명"></div>
+          <div><label>상품명</label><input id="saengboProd" placeholder="종신보험"></div>
+        </div>
+        <div class="fld fld2">
+          <div><label>월납보험료(원)</label><input id="saengboPremium" type="number" inputmode="numeric" placeholder="150000"></div>
+          <div><label>예상 1차년 수수료(원)</label><input id="saengboFee" type="number" inputmode="numeric" placeholder="180000"></div>
+        </div>
+        <button class="btn ghost" onclick="addSaengboDeal()">＋ 생보 실적 추가</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>이번 달 입력된 실적</h2><span class="sub" id="dealCount"></span></div>
+        <div id="dealList"><div class="empty">불러오는 중…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>🎁 이달의 시책</h2><span class="sub">화진님이 확인한 금액을 입력</span></div>
+        <div class="fld fld2">
+          <div><label>생보시책금액(원)</label><input id="incenSaengbo" type="number" inputmode="numeric" placeholder="0"></div>
+          <div><label>손보시책금액(원)</label><input id="incenSonbo" type="number" inputmode="numeric" placeholder="0"></div>
+        </div>
+        <button class="btn ghost" onclick="saveIncentive()">시책 저장</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub">누른 만큼 바로 저장돼요</span></div>
+        <div id="routineDone" class="hide"></div>
+        <div id="routineBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 관리자 -->
+    <section id="tab-admin" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>팀 현황</h2><span class="sub" id="adminDay"></span></div>
+        <div id="adminBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <p class="note" style="padding:0 4px">관리자 화면에는 개인정보 없이 건수·달성률·전환율만 표시됩니다.</p>
+    </section>
+
   </div>
 
   <div class="nav"><div class="nav-in">
     <button class="on" data-tab="home" onclick="go('home')"><div class="ic">🏠</div><div class="lb">홈</div></button>
     <button data-tab="cust" onclick="go('cust')"><div class="ic">👥</div><div class="lb">고객</div></button>
     <button data-tab="act" onclick="go('act')"><div class="ic">✏️</div><div class="lb">활동</div></button>
+    <button data-tab="goal" onclick="go('goal')"><div class="ic">🎯</div><div class="lb">목표</div></button>
+    <button id="navAdmin" data-tab="admin" onclick="go('admin')" class="hide"><div class="ic">📋</div><div class="lb">관리자</div></button>
   </div></div>
 </div>
 
@@ -365,12 +486,52 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 /* ═══════════════════════════════════════
    설정
    ═══════════════════════════════════════ */
-const API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm';
+const API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
+const SONBO_FEE_URL = './sonbo-fee.json';
 
 let ME = null;          // {name, branch, role}
 let CUSTOMERS = [];     // 고객 배열
 let FILTER = 'all';
 let IMPORT_QUEUE = [];
+let DEMO = false;
+let DEMO_SEQ = 1000;
+
+const SAMPLE_CUSTOMERS = [
+  {id:'d1', name:'김민준', phone:'010-1234-5678', birth:'1985-08-20', gcode:'1',
+   grade:'A', status:'진행중', source:'소개', zip:'61947', addr:'광주광역시 서구 상무중앙로 15',
+   addr2:'다온빌딩 501호', job:'자영업', family:'배우자, 자녀 1', intro:'박서연',
+   consent:'2026-07-10', mktConsent:'2026-07-10', lastTouch:'2026-08-18', nextTouch:'2026-08-25', memo:'종신보험 상담중, 자녀 태아보험 관심'},
+  {id:'d2', name:'박서연', phone:'010-2345-6789', birth:'1990-08-05', gcode:'2',
+   grade:'A', status:'계약완료', source:'DB', zip:'61945', addr:'광주광역시 서구 화정로 88',
+   addr2:'', job:'회사원', family:'미혼', intro:'', consent:'2026-06-01', mktConsent:'',
+   lastTouch:'2026-07-05', nextTouch:'', memo:'실손보험 계약완료'},
+  {id:'d3', name:'이도현', phone:'010-3456-7890', birth:'1978-03-12', gcode:'1',
+   grade:'B', status:'진행중', source:'지인', zip:'', addr:'', addr2:'', job:'',
+   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'', nextTouch:'2026-08-20', memo:'부재중 2회, 재통화 필요'},
+  {id:'d4', name:'최지우', phone:'010-4567-8901', birth:'1995-08-30', gcode:'2',
+   grade:'C', status:'보류', source:'온라인', zip:'', addr:'', addr2:'', job:'',
+   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'2026-07-01', nextTouch:'', memo:''}
+];
+
+/* 데모 모드: 서버 없이 화면만 확인 */
+function startDemo(){
+  DEMO = true;
+  ME = {name:'김화진(샘플)', branch:'daon', role:'지사장', feeTable:'2026-08-기본'};
+  CUSTOMERS = SAMPLE_CUSTOMERS.map(function(c){ return Object.assign({}, c); });
+  document.getElementById('login').classList.add('hide');
+  document.getElementById('app').classList.remove('hide');
+  document.getElementById('demoBanner').classList.remove('hide');
+  document.getElementById('myName').textContent = ME.name;
+  document.getElementById('navAdmin').classList.remove('hide');
+  const d = new Date(Date.now()+9*3600*1000);
+  const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
+  const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
+  document.getElementById('todayStr').textContent = ds;
+  document.getElementById('actToday').textContent = ds;
+  document.getElementById('adminDay').textContent = ds;
+  drawTaps('tapGrid'); drawTaps('tapGrid2'); drawChips();
+  renderCust(); renderTodo(); fillActSelect();
+}
 
 const TAPS = [
   {k:'전화', i:'📞'}, {k:'문자', i:'💬'}, {k:'방문', i:'🚗'},
@@ -386,12 +547,107 @@ const FILTERS = [
 
 /* ── 공통 ───────────────────────── */
 function api(action, payload){
-  const body = Object.assign({action:action}, payload||{});
+  const p = payload || {};
+  if(DEMO){
+    return new Promise(function(resolve){
+      setTimeout(function(){ resolve(demoApi(action, p)); }, 220);
+    });
+  }
+  const body = Object.assign({action:action}, p);
   return fetch(API, {
     method:'POST',
     headers:{'Content-Type':'text/plain;charset=UTF-8'},
     body: JSON.stringify(body)
   }).then(function(r){ return r.json(); });
+}
+
+/* 데모용 상태: 목표·루틴·팀·실적 */
+const DEMO_GOAL = {target:12000000, targetCount:8, targetSalary:4000000, saengboIncentive:0, sonboIncentive:0};
+let DEMO_DEALS = [
+  {id:'demo-deal-1', category:'손보', company:'현대해상', product:'(무)굿앤굿어린이종합보험Q', option:'세만기 · 표준형', premium:150000, m0Fee:2400, y1Fee:2700},
+  {id:'demo-deal-2', category:'생보', company:'삼성생명', product:'종신보험', premium:200000, m0Fee:0, y1Fee:180000}
+];
+const DEMO_ROUTINE = {신규명단:2, 전화:6, 방문:1, 상담:2, 청약:0, 소개요청:1, 문자:3};
+const DEMO_TEAM = [
+  {name:'김화진(샘플)', role:'지사장', target:12000000, actual:7440000, targetCount:8, actualCount:5,
+   todayActivity:15, customers:{진행중:2,계약완료:1,보류:1,거절:0,휴면:0}, risk:[]},
+  {name:'박준영(샘플)', role:'설계사', target:9000000, actual:2100000, targetCount:6, actualCount:1,
+   todayActivity:0, customers:{진행중:3,계약완료:0,보류:1,거절:1,휴면:1}, risk:['오늘 활동 0건','목표달성률 저조']},
+  {name:'이수민(샘플)', role:'설계사', target:9000000, actual:8800000, targetCount:6, actualCount:6,
+   todayActivity:4, customers:{진행중:1,계약완료:5,보류:0,거절:0,휴면:0}, risk:[]}
+];
+
+/* 데모 모드 로컬 처리: 서버 없이 화면 동작만 재현 */
+function demoApi(action, p){
+  if(action === 'customerList'){
+    return {ok:true, count:CUSTOMERS.length, customers:CUSTOMERS};
+  }
+  if(action === 'customerSave'){
+    if(!p.name) return {ok:false, error:'이름을 입력하세요.'};
+    if(p.pageId){
+      const idx = CUSTOMERS.findIndex(function(c){return c.id===p.pageId;});
+      if(idx>=0) CUSTOMERS[idx] = Object.assign({}, CUSTOMERS[idx], p, {id:p.pageId});
+      return {ok:true, id:p.pageId};
+    }
+    DEMO_SEQ++;
+    const nid = 'demo'+DEMO_SEQ;
+    const row = Object.assign({}, p, {id:nid});
+    delete row.pageId; delete row.fc; delete row.branch;
+    CUSTOMERS.push(row);
+    return {ok:true, id:nid};
+  }
+  if(action === 'activityAdd'){
+    return {ok:true, id:'demo-act-'+(DEMO_SEQ++)};
+  }
+  if(action === 'goalGet'){
+    const g = DEMO_GOAL;
+    const actual = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
+    const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const saengboFee = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const shortfall = Math.max(0, g.target - actual);
+    const perContract = g.targetCount ? g.target / g.targetCount : 1200000;
+    const needContracts = shortfall > 0 ? Math.ceil(shortfall / perContract) : 0;
+    const rate = g.target > 0 ? Math.round(actual / g.target * 100) : 0;
+    return {ok:true, ym:today().slice(0,7), hasGoal:true, goalPageId:'demo-goal',
+      target:g.target, targetCount:g.targetCount, actual:actual, actualCount:DEMO_DEALS.length,
+      targetSalary:g.targetSalary, achieveRate:rate, shortfall:shortfall, needContracts:needContracts,
+      sonboFee:sonboFee, saengboFee:saengboFee, saengboIncentive:g.saengboIncentive, sonboIncentive:g.sonboIncentive,
+      estCommission: sonboFee + saengboFee + g.saengboIncentive + g.sonboIncentive};
+  }
+  if(action === 'dealList'){
+    const premium = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
+    const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    const saengboFee = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
+    return {ok:true, count:DEMO_DEALS.length, premium:premium, sonboFee:sonboFee, saengboFee:saengboFee, items:DEMO_DEALS};
+  }
+  if(action === 'dealAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-deal-'+DEMO_SEQ;
+    DEMO_DEALS.push({id:nid, category:p.category, company:p.company, product:p.product, option:p.option||'', premium:Number(p.premium||0), m0Fee:Number(p.m0Fee||0), y1Fee:Number(p.y1Fee||0)});
+    return {ok:true, id:nid};
+  }
+  if(action === 'dealDelete'){
+    DEMO_DEALS = DEMO_DEALS.filter(function(d){return d.id !== p.pageId;});
+    return {ok:true};
+  }
+  if(action === 'goalSaveIncentive'){
+    DEMO_GOAL.saengboIncentive = Number(p.saengboIncentive||0);
+    DEMO_GOAL.sonboIncentive = Number(p.sonboIncentive||0);
+    return {ok:true, id:'demo-goal'};
+  }
+  if(action === 'routineGet'){
+    return Object.assign({ok:true, day:today(), pageId:'demo-routine'}, DEMO_ROUTINE);
+  }
+  if(action === 'routineSave'){
+    ['신규명단','전화','방문','상담','청약','소개요청','문자'].forEach(function(k){
+      if(p[k] !== undefined) DEMO_ROUTINE[k] = Number(p[k]);
+    });
+    return {ok:true, id:'demo-routine'};
+  }
+  if(action === 'adminTeam'){
+    return {ok:true, day:today(), ym:today().slice(0,7), team:DEMO_TEAM};
+  }
+  return {ok:false, error:'샘플 화면에서는 지원하지 않는 동작입니다.'};
 }
 function toast(msg, bad){
   const t = document.getElementById('toast');
@@ -428,29 +684,34 @@ function doLogin(){
 }
 function logout(){
   try{ sessionStorage.removeItem('crmMe'); }catch(e){}
+  DEMO = false;
   location.reload();
 }
 function boot(){
   document.getElementById('login').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
   document.getElementById('myName').textContent = ME.name + ' 님';
+  if(ME.role && ME.role !== '설계사') document.getElementById('navAdmin').classList.remove('hide');
   const d = new Date(Date.now()+9*3600*1000);
   const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
   const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
   document.getElementById('todayStr').textContent = ds;
   document.getElementById('actToday').textContent = ds;
+  document.getElementById('adminDay').textContent = ds;
   drawTaps('tapGrid'); drawTaps('tapGrid2'); drawChips();
   loadCustomers();
 }
 
 /* ── 탭 ─────────────────────────── */
 function go(t){
-  ['home','cust','act'].forEach(function(k){
+  ['home','cust','act','goal','admin'].forEach(function(k){
     document.getElementById('tab-'+k).classList.toggle('hide', k!==t);
   });
   document.querySelectorAll('.nav button').forEach(function(b){
     b.classList.toggle('on', b.dataset.tab===t);
   });
+  if(t==='goal') loadGoal();
+  if(t==='admin') loadAdmin();
   window.scrollTo(0,0);
 }
 
@@ -498,6 +759,292 @@ function saveAct(){
       bumpCount(document.getElementById('actKind').value);
     } else toast(r.error||'기록에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 목표 ───────────────────────── */
+function fmtWon(n){
+  n = Math.round(n||0);
+  if(Math.abs(n) >= 10000) return (n/10000).toFixed(n%10000===0?0:1) + '만원';
+  return n.toLocaleString() + '원';
+}
+let GOAL_PAGE_ID = '';
+let GOAL_YM = today().slice(0,7);
+function loadGoal(){
+  GOAL_YM = today().slice(0,7);
+  document.getElementById('goalYm').textContent = GOAL_YM.replace('-','년 ') + '월';
+  api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('goalBody').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    GOAL_PAGE_ID = r.goalPageId || '';
+    renderGoal(r);
+    document.getElementById('incenSaengbo').value = r.saengboIncentive || '';
+    document.getElementById('incenSonbo').value = r.sonboIncentive || '';
+  }).catch(function(){
+    document.getElementById('goalBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+  loadRoutine();
+  loadDeals();
+  loadSonboFee();
+}
+function renderGoal(r){
+  const el = document.getElementById('goalBody');
+  if(!r.hasGoal){
+    el.innerHTML = '<div class="empty">이번 달 목표가 아직 등록되지 않았습니다.<br>지사장에게 목표 설정을 요청해 보세요.</div>';
+  } else {
+    const rate = Math.min(100, r.achieveRate);
+    let html = '<div class="gnum"><span class="big">' + fmtWon(r.actual) + '</span>'
+      + '<span class="of">/ 목표 ' + fmtWon(r.target) + '</span></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div style="display:flex;justify-content:space-between"><span class="pct">' + r.achieveRate + '% 달성</span>'
+      + '<span class="note" style="margin:0">' + r.actualCount + ' / ' + r.targetCount + '건</span></div>';
+    if(r.shortfall > 0){
+      html += '<div class="needbox"><div class="t1">목표까지 남은 것</div>'
+        + '<div class="t2">환산 ' + fmtWon(r.shortfall) + ' · 약 ' + r.needContracts + '건 더</div></div>';
+    } else {
+      html += '<div class="needbox" style="background:#E9F7EF"><div class="t1" style="color:var(--green)">이번 달 목표 달성!</div>'
+        + '<div class="t2">축하합니다 🎉</div></div>';
+    }
+    el.innerHTML = html;
+  }
+  const feeEl = document.getElementById('goalBody');
+  const feeHtml = '<div style="margin-top:14px">'
+    + '<div class="feeline"><span>손보 수수료</span><span class="v">약 ' + fmtWon(r.sonboFee) + '</span></div>'
+    + '<div class="feeline"><span>생보 수수료</span><span class="v">약 ' + fmtWon(r.saengboFee) + '</span></div>'
+    + (r.saengboIncentive ? '<div class="feeline"><span>생보시책</span><span class="v">' + fmtWon(r.saengboIncentive) + '</span></div>' : '')
+    + (r.sonboIncentive ? '<div class="feeline"><span>손보시책</span><span class="v">' + fmtWon(r.sonboIncentive) + '</span></div>' : '')
+    + '<div class="feeline"><span><b>이달 예상 총액</b></span><span class="v">약 <b>' + fmtWon(r.estCommission) + '</b> <span class="approx">(±1~2%, 참고용)</span></span></div>'
+    + (r.targetSalary ? '<div class="feeline"><span>목표 급여</span><span class="v">' + fmtWon(r.targetSalary) + '</span></div>' : '')
+    + '</div>';
+  feeEl.innerHTML += feeHtml;
+}
+
+/* ── 손보 자동계산 ────────────────── */
+let SONBO_FEE = null;
+function loadSonboFee(){
+  if(SONBO_FEE) { fillSonboCompanies(); return; }
+  fetch(SONBO_FEE_URL).then(function(r){ return r.json(); }).then(function(data){
+    SONBO_FEE = data;
+    fillSonboCompanies();
+  }).catch(function(){
+    document.getElementById('sonboComp').innerHTML = '<option value="">불러오기 실패</option>';
+  });
+}
+function fillSonboCompanies(){
+  if(!SONBO_FEE) return;
+  const sel = document.getElementById('sonboComp');
+  sel.innerHTML = '<option value="">선택</option>' + Object.keys(SONBO_FEE).map(function(c){
+    return '<option value="'+esc(c)+'">'+esc(c)+'</option>';
+  }).join('');
+}
+function onSonboCompChange(){
+  const comp = document.getElementById('sonboComp').value;
+  const prodSel = document.getElementById('sonboProd');
+  const optSel = document.getElementById('sonboOpt');
+  optSel.innerHTML = '<option value="">상품 먼저 선택</option>'; optSel.disabled = true;
+  document.getElementById('sonboCalc').classList.add('hide');
+  if(!comp || !SONBO_FEE || !SONBO_FEE[comp]){ prodSel.innerHTML='<option value="">보험사 먼저 선택</option>'; prodSel.disabled=true; return; }
+  const products = [...new Set(SONBO_FEE[comp].map(function(r){return r.p;}))];
+  prodSel.innerHTML = '<option value="">선택</option>' + products.map(function(p){
+    return '<option value="'+esc(p)+'">'+esc(p)+'</option>';
+  }).join('');
+  prodSel.disabled = false;
+}
+function onSonboProdChange(){
+  const comp = document.getElementById('sonboComp').value;
+  const prod = document.getElementById('sonboProd').value;
+  const optSel = document.getElementById('sonboOpt');
+  document.getElementById('sonboCalc').classList.add('hide');
+  if(!comp || !prod){ optSel.innerHTML='<option value="">상품 먼저 선택</option>'; optSel.disabled=true; return; }
+  const rows = SONBO_FEE[comp].filter(function(r){return r.p===prod;});
+  optSel.innerHTML = '<option value="">선택</option>' + rows.map(function(r,i){
+    const label = [r.g1,r.g2,r.term,r.mat].filter(Boolean).join(' · ');
+    return '<option value="'+i+'">'+esc(label)+'</option>';
+  }).join('');
+  optSel.disabled = false;
+  optSel.dataset.rows = JSON.stringify(rows);
+}
+function onSonboOptChange(){ calcSonboFee(); }
+function calcSonboFee(){
+  const optSel = document.getElementById('sonboOpt');
+  const idx = optSel.value;
+  const calcEl = document.getElementById('sonboCalc');
+  if(idx === '' || !optSel.dataset.rows){ calcEl.classList.add('hide'); return; }
+  const rows = JSON.parse(optSel.dataset.rows);
+  const row = rows[idx];
+  const premium = Number(document.getElementById('sonboPremium').value || 0);
+  if(!row || !premium){ calcEl.classList.add('hide'); return; }
+  const ratio = (ME.sonboRatio || 100) / 100;
+  const m0 = Math.round(premium * row.m0 / 100 * ratio);
+  const y1 = Math.round(premium * row.y1 / 100 * ratio);
+  document.getElementById('sonboM0').textContent = fmtWon(m0);
+  document.getElementById('sonboY1').textContent = fmtWon(y1);
+  calcEl.classList.remove('hide');
+}
+function addSonboDeal(){
+  const comp = document.getElementById('sonboComp').value;
+  const prod = document.getElementById('sonboProd').value;
+  const optSel = document.getElementById('sonboOpt');
+  const idx = optSel.value;
+  const premium = Number(document.getElementById('sonboPremium').value || 0);
+  if(!comp || !prod || idx === '' || !premium){ toast('보험사·상품·옵션·보험료를 모두 입력하세요', true); return; }
+  const rows = JSON.parse(optSel.dataset.rows);
+  const row = rows[idx];
+  const ratio = (ME.sonboRatio || 100) / 100;
+  const m0 = Math.round(premium * row.m0 / 100 * ratio);
+  const y1 = Math.round(premium * row.y1 / 100 * ratio);
+  const optLabel = [row.g1,row.g2,row.term,row.mat].filter(Boolean).join(' · ');
+  api('dealAdd', {
+    fc:ME.name, branch:ME.branch, ym:GOAL_YM, category:'손보',
+    company:comp, product:prod, option:optLabel, premium:premium, m0Fee:m0, y1Fee:y1
+  }).then(function(r){
+    if(r.ok){
+      toast('손보 실적 추가했어요');
+      document.getElementById('sonboPremium').value = '';
+      document.getElementById('sonboCalc').classList.add('hide');
+      loadGoal();
+    } else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function addSaengboDeal(){
+  const comp = document.getElementById('saengboComp').value.trim();
+  const prod = document.getElementById('saengboProd').value.trim();
+  const premium = Number(document.getElementById('saengboPremium').value || 0);
+  const fee = Number(document.getElementById('saengboFee').value || 0);
+  if(!comp || !prod || !premium || !fee){ toast('보험사·상품명·보험료·수수료를 모두 입력하세요', true); return; }
+  api('dealAdd', {
+    fc:ME.name, branch:ME.branch, ym:GOAL_YM, category:'생보',
+    company:comp, product:prod, option:'', premium:premium, m0Fee:0, y1Fee:fee
+  }).then(function(r){
+    if(r.ok){
+      toast('생보 실적 추가했어요');
+      ['saengboComp','saengboProd','saengboPremium','saengboFee'].forEach(function(id){ document.getElementById(id).value=''; });
+      loadGoal();
+    } else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function loadDeals(){
+  api('dealList', {fc:ME.name, branch:ME.branch, ym:GOAL_YM}).then(function(r){
+    if(!r.ok){ document.getElementById('dealList').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderDeals(r);
+  }).catch(function(){
+    document.getElementById('dealList').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderDeals(r){
+  document.getElementById('dealCount').textContent = (r.count||0) + '건';
+  const items = r.items || [];
+  if(!items.length){
+    document.getElementById('dealList').innerHTML = '<div class="empty">아직 입력된 실적이 없습니다.</div>';
+    return;
+  }
+  document.getElementById('dealList').innerHTML = items.map(function(it){
+    return '<div class="cust"><div class="av">' + (it.category==='손보'?'🚗':'📄') + '</div>'
+      + '<div class="info"><div class="nm">' + esc(it.company) + ' · ' + esc(it.product) + '</div>'
+      + '<div class="mt">월납 ' + fmtWon(it.premium) + ' · 1차년 ' + fmtWon(it.y1Fee) + '</div></div>'
+      + '<button class="btn ghost sm" onclick="deleteDeal(\'' + it.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function deleteDeal(id){
+  api('dealDelete', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); loadGoal(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function saveIncentive(){
+  const p = {
+    fc:ME.name, branch:ME.branch, ym:GOAL_YM, goalPageId:GOAL_PAGE_ID,
+    saengboIncentive:Number(document.getElementById('incenSaengbo').value||0),
+    sonboIncentive:Number(document.getElementById('incenSonbo').value||0)
+  };
+  api('goalSaveIncentive', p).then(function(r){
+    if(r.ok){ toast('시책을 저장했어요'); loadGoal(); }
+    else toast(r.error||'저장에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 루틴 ───────────────────────── */
+const ROUTINE_ITEMS = [
+  {k:'신규명단', i:'📇', n:'신규 명단 확보'}, {k:'전화', i:'📞', n:'전화'},
+  {k:'방문', i:'🚗', n:'방문·대면'}, {k:'상담', i:'🗣️', n:'상담(제안)'},
+  {k:'청약', i:'✍️', n:'청약'}, {k:'소개요청', i:'🤝', n:'소개요청'}
+];
+let ROUTINE_STATE = {};
+let ROUTINE_PAGEID = '';
+let routineSaveTimer = null;
+function loadRoutine(){
+  api('routineGet', {fc:ME.name, branch:ME.branch, date:today()}).then(function(r){
+    if(!r.ok){ document.getElementById('routineBody').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    ROUTINE_PAGEID = r.pageId || '';
+    ROUTINE_STATE = {};
+    ROUTINE_ITEMS.forEach(function(it){ ROUTINE_STATE[it.k] = r[it.k] || 0; });
+    renderRoutine();
+  }).catch(function(){
+    document.getElementById('routineBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderRoutine(){
+  const total = ROUTINE_ITEMS.reduce(function(s,it){ return s + (ROUTINE_STATE[it.k]||0); }, 0);
+  const doneEl = document.getElementById('routineDone');
+  if(total > 0){
+    doneEl.classList.remove('hide');
+    doneEl.innerHTML = '<div class="ic">✅</div><div class="tx"><div class="tt">오늘 ' + total + '건 실행했어요</div>'
+      + '<div class="ts">꾸준히 쌓이면 실적이 됩니다</div></div>';
+  } else {
+    doneEl.classList.add('hide');
+  }
+  document.getElementById('routineBody').innerHTML = ROUTINE_ITEMS.map(function(it){
+    const v = ROUTINE_STATE[it.k] || 0;
+    return '<div class="stepbox"><div class="nm"><span class="ic">' + it.i + '</span>' + it.n + '</div>'
+      + '<div class="step"><button onclick="stepRoutine(\'' + it.k + '\',-1)">−</button>'
+      + '<span class="val" id="rv-' + it.k + '">' + v + '</span>'
+      + '<button onclick="stepRoutine(\'' + it.k + '\',1)">+</button></div></div>';
+  }).join('');
+}
+function stepRoutine(k, delta){
+  ROUTINE_STATE[k] = Math.max(0, (ROUTINE_STATE[k]||0) + delta);
+  document.getElementById('rv-'+k).textContent = ROUTINE_STATE[k];
+  renderRoutine();
+  clearTimeout(routineSaveTimer);
+  routineSaveTimer = setTimeout(function(){
+    const p = Object.assign({fc:ME.name, branch:ME.branch, date:today(), pageId:ROUTINE_PAGEID}, ROUTINE_STATE);
+    api('routineSave', p).then(function(r){
+      if(r.ok){ if(r.id) ROUTINE_PAGEID = ROUTINE_PAGEID || r.id; }
+      else toast(r.error||'저장에 실패했습니다', true);
+    }).catch(function(){ toast('연결에 실패했습니다', true); });
+  }, 500);
+}
+
+/* ── 관리자 ─────────────────────── */
+function loadAdmin(){
+  api('adminTeam', {branch:ME.branch}).then(function(r){
+    if(!r.ok){ document.getElementById('adminBody').innerHTML =
+      '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderAdmin(r.team||[]);
+  }).catch(function(){
+    document.getElementById('adminBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderAdmin(team){
+  const el = document.getElementById('adminBody');
+  if(!team.length){ el.innerHTML = '<div class="empty">등록된 설계사가 없습니다.</div>'; return; }
+  el.innerHTML = team.map(function(f){
+    const rate = f.target > 0 ? Math.min(100, Math.round(f.actual/f.target*100)) : 0;
+    const risks = (f.risk||[]).length
+      ? f.risk.map(function(r){ return '<span class="risk">' + esc(r) + '</span>'; }).join('')
+      : '<span class="risk ok">정상</span>';
+    return '<div class="fcard"><div class="fcard-h">'
+      + '<div class="av">' + esc((f.name||'?').slice(0,1)) + '</div>'
+      + '<div><div class="nm">' + esc(f.name) + '</div><div class="rl">' + esc(f.role||'') + '</div></div>'
+      + '<div class="pctb">' + rate + '%</div></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div class="miniStat">'
+      + '<div><div class="n">' + f.actualCount + '/' + f.targetCount + '</div><div class="l">계약 건수</div></div>'
+      + '<div><div class="n">' + f.todayActivity + '</div><div class="l">오늘 활동</div></div>'
+      + '<div><div class="n">' + (f.customers?f.customers.진행중:0) + '</div><div class="l">진행중 고객</div></div>'
+      + '</div><div class="riskrow">' + risks + '</div></div>';
+  }).join('');
 }
 
 /* ── 고객 ───────────────────────── */
