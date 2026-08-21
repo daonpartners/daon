@@ -214,6 +214,20 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .risk{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;background:#FDECEC;color:var(--red)}
 .risk.ok{background:#E9F7EF;color:var(--green)}
 
+.cust-table{width:100%;border-collapse:collapse;font-size:13px}
+.cust-table th,.cust-table td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.cust-table th{cursor:pointer;color:var(--ink2);font-weight:700;background:var(--bg);user-select:none}
+.cust-table th:hover{color:var(--org)}
+.viewBtnOn{background:var(--org) !important;color:#fff !important;border-color:var(--org) !important}
+#printArea{display:none}
+@media print{
+  body>*{display:none !important}
+  #printArea{display:block !important;position:static}
+  @page{size:A4 landscape;margin:10mm}
+  #printArea table{width:100%;border-collapse:collapse;font-size:10pt}
+  #printArea th,#printArea td{border:1px solid #999;padding:4px 6px;text-align:left}
+  #printArea h2{margin:0 0 8px}
+}
 @media (max-width:380px){ .taps{gap:7px} .tap{padding:13px 4px} }
 </style>
 </head>
@@ -246,25 +260,29 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 
     <!-- 홈 -->
     <section id="tab-home">
+      <div class="card" id="goalSummaryCard">
+        <div class="card-h"><h2>🎯 이달의 목표</h2><span class="sub" id="homeGoalYm"></span></div>
+        <div id="goalSummaryBody"><div class="empty">불러오는 중…</div></div>
+      </div>
+
       <div class="card">
         <div class="card-h"><h2>오늘 꼭 해야 할 일</h2><span class="sub" id="todayStr"></span></div>
-        <div id="todoList"><div class="empty">불러오는 중…</div></div>
+        <div id="reminderList"><div class="empty">불러오는 중…</div></div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>이번 달 활동</h2><span class="sub">직접 기록한 건수</span></div>
-        <div class="stat">
-          <div><div class="n" id="stCall">0</div><div class="l">전화</div></div>
-          <div><div class="n" id="stMeet">0</div><div class="l">방문·상담</div></div>
-          <div><div class="n" id="stSign">0</div><div class="l">청약</div></div>
-        </div>
-        <p class="note" style="margin-top:11px">환산실적·수수료 계산은 수수료표를 등록하면 켜집니다.</p>
+        <div class="card-h"><h2>✅ 오늘의 할일</h2><span class="sub">직접 추가·수정·삭제</span></div>
+        <div class="srch"><input id="todoInput-home" placeholder="할 일을 입력하세요" onkeydown="if(event.key==='Enter')addTodo('home')">
+          <button class="btn sm" onclick="addTodo('home')">추가</button></div>
+        <div id="todoBody-home"><div class="empty">불러오는 중…</div></div>
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>지금 한 일 기록</h2><span class="sub">한 번 누르면 끝</span></div>
-        <div class="taps" id="tapGrid"></div>
-        <p class="note" style="margin-top:11px">고객을 지정하지 않아도 기록됩니다. 나중에 연결할 수 있어요.</p>
+        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub">항목을 직접 추가·삭제할 수 있어요</span></div>
+        <div id="routineDone-home" class="hide"></div>
+        <div id="routineBody-home"><div class="empty">불러오는 중…</div></div>
+        <div class="srch" style="margin-top:10px"><input id="routineNewName-home" placeholder="새 루틴 항목 이름">
+          <button class="btn ghost sm" onclick="addRoutineItem('home')">항목 추가</button></div>
       </div>
     </section>
 
@@ -276,7 +294,12 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn sm" onclick="openCust()">＋ 등록</button>
         </div>
         <div class="chips" id="filterChips"></div>
+        <div class="row" style="margin:0 0 10px">
+          <button class="btn ghost sm" onclick="setCustView('card')" id="viewBtnCard">카드로 보기</button>
+          <button class="btn ghost sm" onclick="setCustView('table')" id="viewBtnTable">표로 보기</button>
+        </div>
         <div id="custList"><div class="empty">불러오는 중…</div></div>
+        <div id="custTable" class="hide" style="overflow-x:auto"></div>
       </div>
 
       <div class="card">
@@ -288,6 +311,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
         <div class="row" style="margin-top:8px">
           <button class="btn ghost sm" onclick="openLabel()">주소라벨 인쇄</button>
+          <button class="btn ghost sm" onclick="printCustTable()">고객표 인쇄(가로 한 장)</button>
         </div>
         <p class="note" style="margin-top:10px">엑셀을 올리면 먼저 미리보기로 몇 건이 새로 들어가고 몇 건이 바뀌는지 확인한 뒤 반영됩니다.</p>
       </div>
@@ -296,11 +320,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <!-- 활동 -->
     <section id="tab-act" class="hide">
       <div class="card">
-        <div class="card-h"><h2>활동 기록</h2><span class="sub" id="actToday"></span></div>
-        <div class="taps" id="tapGrid2"></div>
-      </div>
-      <div class="card">
-        <div class="card-h"><h2>고객을 지정해서 기록</h2></div>
+        <div class="card-h"><h2>고객을 지정해서 기록</h2><span class="sub" id="actToday"></span></div>
         <div class="fld">
           <label>고객</label>
           <select id="actCust"><option value="">지정 안 함</option></select>
@@ -315,6 +335,21 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
         <div class="fld"><label>메모</label><input id="actNote" placeholder="예: 자녀 보험 문의, 다음 주 재통화"></div>
         <button class="btn" onclick="saveAct()">기록하기</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>✅ 오늘의 할일</h2><span class="sub">직접 추가·수정·삭제</span></div>
+        <div class="srch"><input id="todoInput-act" placeholder="할 일을 입력하세요" onkeydown="if(event.key==='Enter')addTodo('act')">
+          <button class="btn sm" onclick="addTodo('act')">추가</button></div>
+        <div id="todoBody-act"><div class="empty">불러오는 중…</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub">항목을 직접 추가·삭제할 수 있어요</span></div>
+        <div id="routineDone-act" class="hide"></div>
+        <div id="routineBody-act"><div class="empty">불러오는 중…</div></div>
+        <div class="srch" style="margin-top:10px"><input id="routineNewName-act" placeholder="새 루틴 항목 이름">
+          <button class="btn ghost sm" onclick="addRoutineItem('act')">항목 추가</button></div>
       </div>
     </section>
 
@@ -368,12 +403,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div class="card">
         <div class="card-h"><h2>이번 달 입력된 실적</h2><span class="sub" id="dealCount"></span></div>
         <div id="dealList"><div class="empty">불러오는 중…</div></div>
-      </div>
-
-      <div class="card">
-        <div class="card-h"><h2>오늘의 루틴 체크</h2><span class="sub">누른 만큼 바로 저장돼요</span></div>
-        <div id="routineDone" class="hide"></div>
-        <div id="routineBody"><div class="empty">불러오는 중…</div></div>
       </div>
     </section>
 
@@ -478,6 +507,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 </div>
 
 <div id="labelArea"></div>
+<div id="printArea"></div>
 <div id="toast" class="toast"></div>
 
 <script>
@@ -514,7 +544,7 @@ const SAMPLE_CUSTOMERS = [
 /* 데모 모드: 서버 없이 화면만 확인 */
 function startDemo(){
   DEMO = true;
-  ME = {name:'김화진(샘플)', branch:'daon', role:'지사장', feeTable:'2026-08-기본'};
+  ME = {name:'김화진(샘플)', branch:'daon', role:'지사장', feeTable:'2026-08-기본', sonboRatio:97, saengboRatio:100};
   CUSTOMERS = SAMPLE_CUSTOMERS.map(function(c){ return Object.assign({}, c); });
   document.getElementById('login').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
@@ -527,8 +557,11 @@ function startDemo(){
   document.getElementById('todayStr').textContent = ds;
   document.getElementById('actToday').textContent = ds;
   document.getElementById('adminDay').textContent = ds;
-  drawTaps('tapGrid'); drawTaps('tapGrid2'); drawChips();
-  renderCust(); renderTodo(); fillActSelect();
+  drawChips();
+  renderCust(); renderReminders(); fillActSelect();
+  loadGoalSummary();
+  loadTodos('home'); loadTodos('act');
+  loadRoutine('home'); loadRoutine('act');
 }
 
 const TAPS = [
@@ -566,6 +599,10 @@ let DEMO_DEALS = [
   {id:'demo-deal-2', category:'생보', company:'삼성생명', product:'종신보험', premium:200000, m0Fee:0, y1Fee:180000, incentive:0}
 ];
 const DEMO_ROUTINE = {신규명단:2, 전화:6, 방문:1, 상담:2, 청약:0, 소개요청:1, 문자:3};
+let DEMO_TODOS = [
+  {id:'demo-todo-1', content:'박서연님 계약 서류 챙기기', done:false},
+  {id:'demo-todo-2', content:'이도현님 재통화', done:true}
+];
 const DEMO_TEAM = [
   {name:'김화진(샘플)', role:'지사장', target:12000000, actual:7440000, targetCount:8, actualCount:5,
    todayActivity:15, customers:{진행중:2,계약완료:1,보류:1,거절:0,휴면:0}, risk:[]},
@@ -642,6 +679,24 @@ function demoApi(action, p){
   if(action === 'adminTeam'){
     return {ok:true, day:today(), ym:today().slice(0,7), team:DEMO_TEAM};
   }
+  if(action === 'todoList'){
+    return {ok:true, count:DEMO_TODOS.length, items:DEMO_TODOS};
+  }
+  if(action === 'todoAdd'){
+    DEMO_SEQ++;
+    const nid = 'demo-todo-'+DEMO_SEQ;
+    DEMO_TODOS.push({id:nid, content:p.content, done:false});
+    return {ok:true, id:nid};
+  }
+  if(action === 'todoToggle'){
+    const t = DEMO_TODOS.find(function(x){return x.id===p.pageId;});
+    if(t) t.done = !!p.done;
+    return {ok:true};
+  }
+  if(action === 'todoDelete'){
+    DEMO_TODOS = DEMO_TODOS.filter(function(x){return x.id !== p.pageId;});
+    return {ok:true};
+  }
   return {ok:false, error:'샘플 화면에서는 지원하지 않는 동작입니다.'};
 }
 function toast(msg, bad){
@@ -693,8 +748,11 @@ function boot(){
   document.getElementById('todayStr').textContent = ds;
   document.getElementById('actToday').textContent = ds;
   document.getElementById('adminDay').textContent = ds;
-  drawTaps('tapGrid'); drawTaps('tapGrid2'); drawChips();
+  drawChips();
   loadCustomers();
+  loadGoalSummary();
+  loadTodos('home'); loadTodos('act');
+  loadRoutine('home'); loadRoutine('act');
 }
 
 /* ── 탭 ─────────────────────────── */
@@ -707,37 +765,10 @@ function go(t){
   });
   if(t==='goal') loadGoal();
   if(t==='admin') loadAdmin();
+  if(t==='home') loadGoalSummary();
   window.scrollTo(0,0);
 }
 
-/* ── 원탭 활동 ──────────────────── */
-function drawTaps(id){
-  const g = document.getElementById(id);
-  g.innerHTML = TAPS.map(function(t){
-    return '<button class="tap" onclick="quickAct(\'' + t.k + '\')">'
-      + '<div class="ic">' + t.i + '</div><div class="nm">' + t.k + '</div>'
-      + '<div class="ct" id="ct-' + id + '-' + t.k + '"></div></button>';
-  }).join('');
-}
-function quickAct(kind){
-  api('activityAdd', {fc:ME.name, branch:ME.branch, kind:kind, date:today()})
-    .then(function(r){
-      if(r.ok){ toast(kind + ' 1건 기록했어요'); bumpCount(kind); }
-      else toast(r.error || '기록에 실패했습니다', true);
-    })
-    .catch(function(){ toast('연결에 실패했습니다', true); });
-}
-const COUNTS = {};
-function bumpCount(kind){
-  COUNTS[kind] = (COUNTS[kind]||0) + 1;
-  ['tapGrid','tapGrid2'].forEach(function(g){
-    const el = document.getElementById('ct-'+g+'-'+kind);
-    if(el) el.textContent = '오늘 ' + COUNTS[kind];
-  });
-  document.getElementById('stCall').textContent = COUNTS['전화']||0;
-  document.getElementById('stMeet').textContent = (COUNTS['방문']||0)+(COUNTS['상담']||0);
-  document.getElementById('stSign').textContent = COUNTS['청약']||0;
-}
 function saveAct(){
   const cid = document.getElementById('actCust').value;
   const cname = cid ? (CUSTOMERS.find(function(c){return c.id===cid;})||{}).name : '';
@@ -751,8 +782,69 @@ function saveAct(){
     if(r.ok){
       toast('기록했어요');
       document.getElementById('actNote').value='';
-      bumpCount(document.getElementById('actKind').value);
     } else toast(r.error||'기록에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 홈 목표금액 요약 ─────────────── */
+function loadGoalSummary(){
+  document.getElementById('homeGoalYm').textContent = today().slice(0,7).replace('-','년 ') + '월';
+  api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
+    const el = document.getElementById('goalSummaryBody');
+    if(!r.ok || !r.hasGoal){
+      el.innerHTML = '<div class="empty">이번 달 목표가 아직 없습니다. <a href="javascript:go(\'goal\')" style="color:var(--org)">목표 탭에서 확인</a></div>';
+      return;
+    }
+    const rate = Math.min(100, r.achieveRate);
+    el.innerHTML = '<div class="gnum"><span class="big">' + fmtWon(r.actual) + '</span>'
+      + '<span class="of">/ 목표 ' + fmtWon(r.target) + '</span></div>'
+      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
+      + '<div style="display:flex;justify-content:space-between"><span class="pct">' + r.achieveRate + '% 달성</span>'
+      + '<span class="note" style="margin:0">예상 수수료 약 ' + fmtWon(r.estCommission) + '</span></div>';
+  }).catch(function(){
+    document.getElementById('goalSummaryBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+
+/* ── 오늘의 할일 (수기 CRUD, 홈·활동 공용) ─── */
+function loadTodos(scope){
+  api('todoList', {fc:ME.name, branch:ME.branch}).then(function(r){
+    const el = document.getElementById('todoBody-'+scope);
+    if(!r.ok){ el.innerHTML = '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    renderTodoList(scope, r.items||[]);
+  }).catch(function(){
+    document.getElementById('todoBody-'+scope).innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+  });
+}
+function renderTodoList(scope, items){
+  const el = document.getElementById('todoBody-'+scope);
+  if(!items.length){ el.innerHTML = '<div class="empty">할 일이 없습니다. 위에서 추가해 보세요.</div>'; return; }
+  el.innerHTML = items.map(function(it){
+    return '<div class="stepbox"><div class="nm" style="' + (it.done?'text-decoration:line-through;color:var(--ink3)':'') + '">'
+      + '<input type="checkbox" class="pick" ' + (it.done?'checked':'') + ' onchange="toggleTodo(\'' + scope + '\',\'' + it.id + '\',this.checked)" style="margin-right:8px">'
+      + esc(it.content) + '</div>'
+      + '<button class="btn ghost sm" onclick="deleteTodo(\'' + scope + '\',\'' + it.id + '\')">삭제</button></div>';
+  }).join('');
+}
+function addTodo(scope){
+  const input = document.getElementById('todoInput-'+scope);
+  const content = input.value.trim();
+  if(!content) return;
+  api('todoAdd', {fc:ME.name, branch:ME.branch, content:content}).then(function(r){
+    if(r.ok){ input.value=''; loadTodos('home'); loadTodos('act'); }
+    else toast(r.error||'추가에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function toggleTodo(scope, id, done){
+  api('todoToggle', {pageId:id, done:done}).then(function(r){
+    if(!r.ok) toast(r.error||'변경에 실패했습니다', true);
+    loadTodos('home'); loadTodos('act');
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function deleteTodo(scope, id){
+  api('todoDelete', {pageId:id}).then(function(r){
+    if(r.ok){ loadTodos('home'); loadTodos('act'); }
+    else toast(r.error||'삭제에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
 
@@ -948,30 +1040,45 @@ function deleteDeal(id){
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
 
-/* ── 루틴 ───────────────────────── */
-const ROUTINE_ITEMS = [
+/* ── 루틴 (7개 슬롯, 이름·표시여부는 기기별로 직접 커스터마이즈) ── */
+const ROUTINE_DEFAULT = [
   {k:'신규명단', i:'📇', n:'신규 명단 확보'}, {k:'전화', i:'📞', n:'전화'},
   {k:'방문', i:'🚗', n:'방문·대면'}, {k:'상담', i:'🗣️', n:'상담(제안)'},
-  {k:'청약', i:'✍️', n:'청약'}, {k:'소개요청', i:'🤝', n:'소개요청'}
+  {k:'청약', i:'✍️', n:'청약'}, {k:'소개요청', i:'🤝', n:'소개요청'}, {k:'문자', i:'💬', n:'문자'}
 ];
+function loadRoutineConfig(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('routineConfig_'+ME.name) || 'null');
+    if(saved && Array.isArray(saved)) return saved;
+  }catch(e){}
+  return ROUTINE_DEFAULT.map(function(it){ return Object.assign({active:true}, it); });
+}
+function saveRoutineConfig(cfg){
+  try{ localStorage.setItem('routineConfig_'+ME.name, JSON.stringify(cfg)); }catch(e){}
+}
+let ROUTINE_CONFIG = [];
 let ROUTINE_STATE = {};
 let ROUTINE_PAGEID = '';
 let routineSaveTimer = null;
-function loadRoutine(){
+function loadRoutine(scope){
+  if(!ROUTINE_CONFIG.length) ROUTINE_CONFIG = loadRoutineConfig();
   api('routineGet', {fc:ME.name, branch:ME.branch, date:today()}).then(function(r){
-    if(!r.ok){ document.getElementById('routineBody').innerHTML =
+    if(!r.ok){ document.getElementById('routineBody-'+scope).innerHTML =
       '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
     ROUTINE_PAGEID = r.pageId || '';
     ROUTINE_STATE = {};
-    ROUTINE_ITEMS.forEach(function(it){ ROUTINE_STATE[it.k] = r[it.k] || 0; });
-    renderRoutine();
+    ROUTINE_DEFAULT.forEach(function(it){ ROUTINE_STATE[it.k] = r[it.k] || 0; });
+    renderRoutine('home'); renderRoutine('act');
   }).catch(function(){
-    document.getElementById('routineBody').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
+    document.getElementById('routineBody-'+scope).innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
   });
 }
-function renderRoutine(){
-  const total = ROUTINE_ITEMS.reduce(function(s,it){ return s + (ROUTINE_STATE[it.k]||0); }, 0);
-  const doneEl = document.getElementById('routineDone');
+function renderRoutine(scope){
+  const body = document.getElementById('routineBody-'+scope);
+  if(!body) return;
+  const active = ROUTINE_CONFIG.filter(function(it){ return it.active; });
+  const total = active.reduce(function(s,it){ return s + (ROUTINE_STATE[it.k]||0); }, 0);
+  const doneEl = document.getElementById('routineDone-'+scope);
   if(total > 0){
     doneEl.classList.remove('hide');
     doneEl.innerHTML = '<div class="ic">✅</div><div class="tx"><div class="tt">오늘 ' + total + '건 실행했어요</div>'
@@ -979,18 +1086,27 @@ function renderRoutine(){
   } else {
     doneEl.classList.add('hide');
   }
-  document.getElementById('routineBody').innerHTML = ROUTINE_ITEMS.map(function(it){
+  if(!active.length){
+    body.innerHTML = '<div class="empty">표시할 루틴 항목이 없습니다. 아래에서 추가해 보세요.</div>';
+    return;
+  }
+  body.innerHTML = active.map(function(it){
     const v = ROUTINE_STATE[it.k] || 0;
-    return '<div class="stepbox"><div class="nm"><span class="ic">' + it.i + '</span>' + it.n + '</div>'
+    return '<div class="stepbox"><div class="nm"><span class="ic">' + it.i + '</span>'
+      + '<span onclick="renameRoutineItem(\'' + it.k + '\')" style="cursor:pointer">' + esc(it.n) + '</span></div>'
       + '<div class="step"><button onclick="stepRoutine(\'' + it.k + '\',-1)">−</button>'
-      + '<span class="val" id="rv-' + it.k + '">' + v + '</span>'
-      + '<button onclick="stepRoutine(\'' + it.k + '\',1)">+</button></div></div>';
+      + '<span class="val" id="rv-' + scope + '-' + it.k + '">' + v + '</span>'
+      + '<button onclick="stepRoutine(\'' + it.k + '\',1)">+</button>'
+      + '<button class="btn ghost sm" style="margin-left:6px" onclick="removeRoutineItem(\'' + it.k + '\')">숨김</button></div></div>';
   }).join('');
 }
 function stepRoutine(k, delta){
   ROUTINE_STATE[k] = Math.max(0, (ROUTINE_STATE[k]||0) + delta);
-  document.getElementById('rv-'+k).textContent = ROUTINE_STATE[k];
-  renderRoutine();
+  ['home','act'].forEach(function(scope){
+    const el = document.getElementById('rv-'+scope+'-'+k);
+    if(el) el.textContent = ROUTINE_STATE[k];
+  });
+  renderRoutine('home'); renderRoutine('act');
   clearTimeout(routineSaveTimer);
   routineSaveTimer = setTimeout(function(){
     const p = Object.assign({fc:ME.name, branch:ME.branch, date:today(), pageId:ROUTINE_PAGEID}, ROUTINE_STATE);
@@ -999,6 +1115,29 @@ function stepRoutine(k, delta){
       else toast(r.error||'저장에 실패했습니다', true);
     }).catch(function(){ toast('연결에 실패했습니다', true); });
   }, 500);
+}
+function removeRoutineItem(k){
+  const it = ROUTINE_CONFIG.find(function(x){return x.k===k;});
+  if(it) it.active = false;
+  saveRoutineConfig(ROUTINE_CONFIG);
+  renderRoutine('home'); renderRoutine('act');
+}
+function renameRoutineItem(k){
+  const it = ROUTINE_CONFIG.find(function(x){return x.k===k;});
+  if(!it) return;
+  const name = prompt('항목 이름 변경', it.n);
+  if(name && name.trim()){ it.n = name.trim(); saveRoutineConfig(ROUTINE_CONFIG); renderRoutine('home'); renderRoutine('act'); }
+}
+function addRoutineItem(scope){
+  const input = document.getElementById('routineNewName-'+scope);
+  const name = input.value.trim();
+  if(!name) return;
+  const hidden = ROUTINE_CONFIG.find(function(it){ return !it.active; });
+  if(!hidden){ toast('최대 7개 항목까지 사용할 수 있어요. 기존 항목을 먼저 숨겨주세요.', true); return; }
+  hidden.active = true; hidden.n = name; hidden.i = '📌';
+  saveRoutineConfig(ROUTINE_CONFIG);
+  input.value = '';
+  renderRoutine('home'); renderRoutine('act');
 }
 
 /* ── 관리자 ─────────────────────── */
@@ -1038,7 +1177,7 @@ function loadCustomers(){
     if(!r.ok){ document.getElementById('custList').innerHTML =
       '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
     CUSTOMERS = r.customers || [];
-    renderCust(); renderTodo(); fillActSelect();
+    renderCust(); renderReminders(); fillActSelect();
   }).catch(function(){
     document.getElementById('custList').innerHTML =
       '<div class="empty">연결에 실패했습니다. 새로고침 해보세요.</div>';
@@ -1088,8 +1227,61 @@ function renderCust(){
       + (!c.consent ? ' <span class="tag warn">동의 전</span>' : '')
       + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></div>';
   }).join('');
+  if(CUST_VIEW === 'table') renderCustTable();
 }
-function renderTodo(){
+
+/* ── 고객 표 보기 · 정렬 · 인쇄 ────── */
+let CUST_VIEW = 'card';
+let CUST_SORT = {key:'name', dir:1};
+const CUST_TABLE_COLS = [
+  {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'birth', l:'생년월일'},
+  {k:'grade', l:'등급'}, {k:'status', l:'상태'}, {k:'job', l:'직업'},
+  {k:'lastTouch', l:'최근접촉'}, {k:'memo', l:'메모'}
+];
+function setCustView(mode){
+  CUST_VIEW = mode;
+  document.getElementById('custList').classList.toggle('hide', mode!=='card');
+  document.getElementById('custTable').classList.toggle('hide', mode!=='table');
+  document.getElementById('viewBtnCard').classList.toggle('viewBtnOn', mode==='card');
+  document.getElementById('viewBtnTable').classList.toggle('viewBtnOn', mode==='table');
+  if(mode==='table') renderCustTable();
+}
+function sortCustBy(key){
+  if(CUST_SORT.key===key) CUST_SORT.dir *= -1; else CUST_SORT = {key:key, dir:1};
+  renderCustTable();
+}
+function renderCustTable(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  let list = CUSTOMERS.filter(function(c){
+    if(!matchFilter(c)) return false;
+    if(!q) return true;
+    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
+  });
+  list = list.slice().sort(function(a,b){
+    const av = (a[CUST_SORT.key]||''), bv = (b[CUST_SORT.key]||'');
+    return av < bv ? -1*CUST_SORT.dir : av > bv ? 1*CUST_SORT.dir : 0;
+  });
+  const el = document.getElementById('custTable');
+  if(!list.length){ el.innerHTML = '<div class="empty">표시할 고객이 없습니다.</div>'; return; }
+  let html = '<table class="cust-table"><thead><tr>' + CUST_TABLE_COLS.map(function(c){
+    const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
+    return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
+  }).join('') + '</tr></thead><tbody>';
+  html += list.map(function(c){
+    return '<tr onclick="openCust(\''+c.id+'\')" style="cursor:pointer">' + CUST_TABLE_COLS.map(function(col){
+      return '<td>'+esc(c[col.k]||'-')+'</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+function printCustTable(){
+  if(CUST_VIEW !== 'table') setCustView('table');
+  const tableHtml = document.getElementById('custTable').innerHTML;
+  document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 고객 목록 (' + today() + ')</h2>' + tableHtml;
+  setTimeout(function(){ window.print(); }, 100);
+}
+function renderReminders(){
   const t = today(), mm = t.slice(5,7), dd = t.slice(8,10);
   const items = [];
   CUSTOMERS.forEach(function(c){
@@ -1102,7 +1294,7 @@ function renderTodo(){
     if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<6)
       items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도'});
   });
-  const el = document.getElementById('todoList');
+  const el = document.getElementById('reminderList');
   if(!items.length){
     el.innerHTML = '<div class="empty">오늘 급한 일은 없습니다.<br>새 고객을 만나기 좋은 날이에요.</div>';
     return;
