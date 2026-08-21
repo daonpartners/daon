@@ -443,6 +443,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   <div class="sheet">
     <div class="sheet-h"><h2 id="custTitle">고객 등록</h2><button class="x" onclick="closeCust()">×</button></div>
     <div class="sheet-b">
+      <div class="fld2" style="display:flex;gap:8px;margin:0 0 14px">
+        <button type="button" class="chip" id="typeBtnOwner" onclick="setCustType('보유고객')" style="flex:1;text-align:center">보유고객</button>
+        <button type="button" class="chip" id="typeBtnProspect" onclick="setCustType('가망고객')" style="flex:1;text-align:center">가망고객</button>
+      </div>
       <div class="warnbox">주민등록번호는 저장하지 않습니다. 뒷자리는 <b>첫 1자리</b>만 입력하세요. 나머지 6자리는 입력칸 자체가 없습니다.</div>
       <div class="fld"><label>이름 *</label><input id="fName" placeholder="김다온"></div>
       <div class="fld"><label>연락처 *</label><input id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000"></div>
@@ -456,28 +460,50 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
         <p class="note">뒷자리 첫 숫자만 넣으면 성별·연령대가 자동 인식됩니다.</p>
       </div>
-      <div class="fld fld2">
-        <div><label>등급</label><select id="fGrade"><option value="">-</option><option value="A">A 핵심</option><option value="B">B 관리</option><option value="C">C 잠재</option><option value="D">D 휴면</option></select></div>
-        <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>소개</option><option>DB</option><option>지인</option><option>제휴업체</option><option>온라인</option><option>기타</option></select></div>
-      </div>
-      <div class="fld fld2">
-        <div><label>우편번호</label><input id="fZip" inputmode="numeric" placeholder="61947"></div>
-        <div><label>직업</label><input id="fJob" placeholder="자영업"></div>
-      </div>
       <div class="fld"><label>주소</label><input id="fAddr" placeholder="광주광역시 서구 …"></div>
-      <div class="fld"><label>상세주소</label><input id="fAddr2" placeholder="101동 1001호"></div>
-      <div class="fld fld2">
-        <div><label>회사 동의 받은 날</label><input id="fConsent" type="date"></div>
-        <div><label>다음 연락 예정</label><input id="fNext" type="date"></div>
+
+      <!-- 가망고객 전용 -->
+      <div id="prospectFields" class="hide">
+        <div class="fld"><label>분류</label>
+          <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
+        </div>
+        <div class="fld"><label>관심보종</label>
+          <div class="row">
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="자동차"> 자동차</label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="장기"> 장기</label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
+          </div>
+        </div>
+        <div class="fld"><label>비고</label><textarea id="fProspectMemo" rows="2" placeholder="메모"></textarea></div>
       </div>
-      <div class="fld"><label>가족관계</label><input id="fFamily" placeholder="배우자, 자녀 2 (초등)"></div>
-      <div class="fld"><label>메모</label><textarea id="fMemo" rows="3" placeholder="상담 내용, 관심 담보 등"></textarea></div>
+
+      <!-- 보유고객 전용 -->
+      <div id="ownerFields">
+        <div class="fld fld2">
+          <div><label>등급</label><select id="fGrade"><option value="">-</option><option value="A">A 핵심</option><option value="B">B 관리</option><option value="C">C 잠재</option><option value="D">D 휴면</option></select></div>
+          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>소개</option><option>DB</option><option>지인</option><option>제휴업체</option><option>온라인</option><option>기타</option></select></div>
+        </div>
+        <div class="fld fld2">
+          <div><label>우편번호</label><input id="fZip" inputmode="numeric" placeholder="61947"></div>
+          <div><label>직업</label><input id="fJob" placeholder="자영업"></div>
+        </div>
+        <div class="fld"><label>상세주소</label><input id="fAddr2" placeholder="101동 1001호"></div>
+        <div class="fld fld2">
+          <div><label>회사 동의 받은 날</label><input id="fConsent" type="date"></div>
+          <div><label>다음 연락 예정</label><input id="fNext" type="date"></div>
+        </div>
+        <div class="fld"><label>가족관계</label><input id="fFamily" placeholder="배우자, 자녀 2 (초등)"></div>
+        <div class="fld"><label>메모</label><textarea id="fMemo" rows="3" placeholder="상담 내용, 관심 담보 등"></textarea></div>
+      </div>
+
       <div class="row">
         <button class="btn ghost" onclick="closeCust()">취소</button>
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
+      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
   </div>
+
 </div>
 
 <!-- 엑셀 미리보기 -->
@@ -540,18 +566,22 @@ let DEMO_SEQ = 1000;
 const SAMPLE_CUSTOMERS = [
   {id:'d1', name:'김민준', phone:'010-1234-5678', birth:'1985-08-20', gcode:'1',
    grade:'A', status:'진행중', source:'소개', zip:'61947', addr:'광주광역시 서구 상무중앙로 15',
-   addr2:'다온빌딩 501호', job:'자영업', family:'배우자, 자녀 1', intro:'박서연',
+   addr2:'다온빌딩 501호', job:'자영업', family:'배우자, 자녀 1', intro:'박서연', custType:'보유고객',
    consent:'2026-07-10', mktConsent:'2026-07-10', lastTouch:'2026-08-18', nextTouch:'2026-08-25', memo:'종신보험 상담중, 자녀 태아보험 관심'},
   {id:'d2', name:'박서연', phone:'010-2345-6789', birth:'1990-08-05', gcode:'2',
-   grade:'A', status:'계약완료', source:'DB', zip:'61945', addr:'광주광역시 서구 화정로 88',
+   grade:'A', status:'계약완료', source:'DB', zip:'61945', addr:'광주광역시 서구 화정로 88', custType:'보유고객',
    addr2:'', job:'회사원', family:'미혼', intro:'', consent:'2026-06-01', mktConsent:'',
    lastTouch:'2026-07-05', nextTouch:'', memo:'실손보험 계약완료'},
   {id:'d3', name:'이도현', phone:'010-3456-7890', birth:'1978-03-12', gcode:'1',
-   grade:'B', status:'진행중', source:'지인', zip:'', addr:'', addr2:'', job:'',
+   grade:'B', status:'진행중', source:'지인', zip:'', addr:'', addr2:'', job:'', custType:'보유고객',
    family:'', intro:'', consent:'', mktConsent:'', lastTouch:'', nextTouch:'2026-08-20', memo:'부재중 2회, 재통화 필요'},
   {id:'d4', name:'최지우', phone:'010-4567-8901', birth:'1995-08-30', gcode:'2',
-   grade:'C', status:'보류', source:'온라인', zip:'', addr:'', addr2:'', job:'',
-   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'2026-07-01', nextTouch:'', memo:''}
+   grade:'C', status:'보류', source:'온라인', zip:'', addr:'', addr2:'', job:'', custType:'보유고객',
+   family:'', intro:'', consent:'', mktConsent:'', lastTouch:'2026-07-01', nextTouch:'', memo:''},
+  {id:'d5', name:'정하윤', phone:'010-5678-1234', birth:'1988-02-14', gcode:'2',
+   custType:'가망고객', bizType:'개인', interest:'자동차,장기', addr:'광주광역시 북구 …', memo:'지인 소개, 다음 주 통화 예정'},
+  {id:'d6', name:'㈜다온무역', phone:'010-6789-2345', birth:'', gcode:'',
+   custType:'가망고객', bizType:'사업자', interest:'일반', addr:'광주광역시 서구 …', memo:'사업자 화재보험 문의'}
 ];
 
 /* 데모 모드: 서버 없이 화면만 확인 */
@@ -584,6 +614,7 @@ const TAPS = [
 ];
 const FILTERS = [
   {k:'all',   n:'전체'},
+  {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'},
   {k:'birth', n:'이번 달 생일'},
   {k:'cold',  n:'30일 이상 미접촉'},
   {k:'noconsent', n:'동의 미확보'},
@@ -648,6 +679,10 @@ function demoApi(action, p){
     delete row.pageId; delete row.fc; delete row.branch;
     CUSTOMERS.push(row);
     return {ok:true, id:nid};
+  }
+  if(action === 'customerDelete'){
+    CUSTOMERS = CUSTOMERS.filter(function(c){return c.id !== p.pageId;});
+    return {ok:true};
   }
   if(action === 'activityAdd'){
     return {ok:true, id:'demo-act-'+(DEMO_SEQ++)};
@@ -1336,6 +1371,8 @@ function drawChips(){
 function setFilter(k){ FILTER = k; drawChips(); renderCust(); }
 function matchFilter(c){
   if(FILTER==='all') return true;
+  if(FILTER==='owner') return (c.custType||'보유고객') === '보유고객';
+  if(FILTER==='prospect') return c.custType === '가망고객';
   if(FILTER==='birth'){
     if(!c.birth) return false;
     return Number(c.birth.slice(5,7)) === (new Date(today()).getMonth()+1);
@@ -1362,14 +1399,16 @@ function renderCust(){
     const d = daysAgo(c.lastTouch);
     const meta = [];
     if(c.phone) meta.push(c.phone);
-    if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
+    if(c.custType==='가망고객') meta.push((c.bizType||'개인') + (c.interest?' · 관심:'+c.interest:''));
+    else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
     else meta.push('접촉 기록 없음');
     if(c.job) meta.push(c.job);
     return '<div class="cust" onclick="openCust(\'' + c.id + '\')">'
       + '<div class="av">' + esc((c.name||'?').slice(0,1)) + '</div>'
       + '<div class="info"><div class="nm">' + esc(c.name)
+      + (c.custType==='가망고객' ? ' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>' : '')
       + (c.grade ? ' <span class="tag ' + c.grade + '">' + c.grade + '</span>' : '')
-      + (!c.consent ? ' <span class="tag warn">동의 전</span>' : '')
+      + (c.custType!=='가망고객' && !c.consent ? ' <span class="tag warn">동의 전</span>' : '')
       + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></div>';
   }).join('');
   if(CUST_VIEW === 'table') renderCustTable();
@@ -1456,9 +1495,17 @@ function fillActSelect(){
 
 /* ── 고객 등록/수정 ─────────────── */
 let EDIT_ID = '';
+let CUR_CUST_TYPE = '보유고객';
 const FLD = {fName:'name',fPhone:'phone',fBirth:'birth',fGcode:'gcode',fGrade:'grade',
   fSource:'source',fZip:'zip',fJob:'job',fAddr:'addr',fAddr2:'addr2',
   fConsent:'consent',fNext:'nextTouch',fFamily:'family',fMemo:'memo'};
+function setCustType(t){
+  CUR_CUST_TYPE = t;
+  document.getElementById('typeBtnOwner').classList.toggle('on', t==='보유고객');
+  document.getElementById('typeBtnProspect').classList.toggle('on', t==='가망고객');
+  document.getElementById('ownerFields').classList.toggle('hide', t!=='보유고객');
+  document.getElementById('prospectFields').classList.toggle('hide', t!=='가망고객');
+}
 function openCust(id){
   EDIT_ID = id || '';
   const c = id ? CUSTOMERS.find(function(x){return x.id===id;}) : null;
@@ -1466,15 +1513,36 @@ function openCust(id){
   Object.keys(FLD).forEach(function(k){
     document.getElementById(k).value = c ? (c[FLD[k]] || '') : '';
   });
+  document.getElementById('fBizType').value = c ? (c.bizType || '개인') : '개인';
+  document.getElementById('fProspectMemo').value = c ? (c.memo || '') : '';
+  const interests = c && c.interest ? c.interest.split(',') : [];
+  document.querySelectorAll('.fInterest').forEach(function(cb){ cb.checked = interests.indexOf(cb.value) >= 0; });
+  setCustType(c ? (c.custType || '보유고객') : '보유고객');
+  document.getElementById('custDelBtn').classList.toggle('hide', !c);
   document.getElementById('custModal').classList.remove('hide');
 }
 function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
+function deleteCust(){
+  if(!EDIT_ID) return;
+  if(!confirm('이 고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
+  api('customerDelete', {pageId:EDIT_ID}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); closeCust(); loadCustomers(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
 function saveCust(){
-  const p = {fc:ME.name, branch:ME.branch};
+  const p = {fc:ME.name, branch:ME.branch, custType:CUR_CUST_TYPE};
   if(EDIT_ID) p.pageId = EDIT_ID;
   Object.keys(FLD).forEach(function(k){
     p[FLD[k]] = document.getElementById(k).value.trim();
   });
+  if(CUR_CUST_TYPE === '가망고객'){
+    p.bizType = document.getElementById('fBizType').value;
+    p.memo = document.getElementById('fProspectMemo').value.trim();
+    const checked = [];
+    document.querySelectorAll('.fInterest:checked').forEach(function(cb){ checked.push(cb.value); });
+    p.interest = checked.join(',');
+  }
   if(!p.name){ toast('이름을 입력하세요', true); return; }
   if(!p.status) p.status = '진행중';
   const b = document.getElementById('custSaveBtn');
