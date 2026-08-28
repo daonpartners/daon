@@ -293,6 +293,11 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div class="row" style="margin:0 0 10px">
           <button class="btn ghost sm" onclick="setCustView('card')" id="viewBtnCard">카드로 보기</button>
           <button class="btn ghost sm" onclick="setCustView('table')" id="viewBtnTable">표로 보기</button>
+          <button class="btn ghost sm" onclick="toggleCustPick()" id="pickModeBtn">선택 모드</button>
+        </div>
+        <div id="custPickBar" class="hide" style="display:flex;gap:8px;align-items:center;margin:0 0 10px;background:var(--org-lt);border-radius:10px;padding:8px 12px">
+          <span class="note" style="margin:0;flex:1" id="pickCount">0명 선택됨</span>
+          <button class="btn sm" onclick="openBulkSms()">💬 선택 고객에 문자</button>
         </div>
         <div id="custList"><div class="empty">불러오는 중…</div></div>
         <div id="custTable" class="hide" style="overflow-x:auto"></div>
@@ -301,15 +306,24 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div class="card">
         <div class="card-h"><h2>내보내기 · 가져오기</h2></div>
         <div class="row">
-          <button class="btn ghost sm" onclick="xlsxOut()">엑셀 내려받기</button>
-          <button class="btn ghost sm" onclick="document.getElementById('xlsxIn').click()">엑셀 올리기</button>
+          <button class="btn ghost sm" onclick="xlsxOut()">고객목록 다운로드</button>
+          <button class="btn ghost sm" onclick="addrXlsxOut()">주소만 다운로드</button>
         </div>
-        <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
         <div class="row" style="margin-top:8px">
           <button class="btn ghost sm" onclick="openLabel()">주소라벨 인쇄</button>
           <button class="btn ghost sm" onclick="printCustTable()">고객표 인쇄(가로 한 장)</button>
         </div>
-        <p class="note" style="margin-top:10px">엑셀을 올리면 먼저 미리보기로 몇 건이 새로 들어가고 몇 건이 바뀌는지 확인한 뒤 반영됩니다.</p>
+        <p class="note" style="margin-top:10px">위 다운로드는 지금 화면에 걸린 검색·필터 결과만 담깁니다.</p>
+        <div class="row" style="margin-top:14px">
+          <button class="btn ghost sm" onclick="templateXlsxOut()">📋 등록양식 다운로드</button>
+          <button class="btn sm" onclick="document.getElementById('aiXlsxIn').click()">🤖 AI로 자동정리 올리기</button>
+        </div>
+        <input id="aiXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="aiXlsxIn(this)">
+        <p class="note" style="margin-top:10px">양식 없이 아무 엑셀이나 올리면 AI가 이름·연락처·생년월일·보유/가망 여부 등을 알아서 읽어 정리합니다. 결과는 저장 전에 먼저 확인시켜 드립니다.</p>
+        <div class="row" style="margin-top:8px">
+          <button class="btn ghost sm" onclick="document.getElementById('xlsxIn').click()">정형 엑셀 올리기(정확한 칼럼명)</button>
+        </div>
+        <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
       </div>
 
       <div class="card">
@@ -321,7 +335,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm" onclick="document.getElementById('ctrXlsxIn').click()">계약 엑셀 올리기</button>
         </div>
         <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
-        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적. 고객명은 이미 등록된 고객과 자동으로 연결됩니다.</p>
+        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·보종(장기/자동차/화재/일반)·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적.</p>
       </div>
     </section>
 
@@ -467,6 +481,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <div class="row">
             <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="자동차"> 자동차</label>
             <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="장기"> 장기</label>
+            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="화재"> 화재</label>
             <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
           </div>
         </div>
@@ -497,6 +512,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
       <button class="btn ghost sm hide" id="custSmsBtn" style="margin-top:10px;width:100%;color:var(--blue)" onclick="openSms()">💬 문자 보내기</button>
+      <div id="custCtrBox" class="hide" style="margin-top:14px">
+        <label style="font-size:13px;font-weight:600;color:var(--ink2)">보유계약</label>
+        <div id="custCtrList" style="margin-top:6px"></div>
+      </div>
       <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:8px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
   </div>
@@ -653,6 +672,7 @@ const TAPS = [
 const FILTERS = [
   {k:'all',   n:'전체'},
   {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'},
+  {k:'cat-장기', n:'장기'}, {k:'cat-자동차', n:'자동차'}, {k:'cat-화재', n:'화재'}, {k:'cat-일반', n:'일반'},
   {k:'birth', n:'이번 달 생일'},
   {k:'cold',  n:'30일 이상 미접촉'},
   {k:'noconsent', n:'동의 미확보'},
@@ -687,8 +707,8 @@ let DEMO_TODOS = [
   {id:'demo-todo-2', content:'이도현님 재통화', done:true}
 ];
 let DEMO_CONTRACTS = [
-  {id:'demo-ctr-1', custName:'김민준', company:'삼성화재', product:'다이렉트 운전자보험', policyNo:'S123456', contractDate:'2025-08-10', expireDate:'2045-08-10', premium:32000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0},
-  {id:'demo-ctr-2', custName:'박서연', company:'삼성생명', product:'종신보험', policyNo:'L987654', contractDate:'2024-06-01', expireDate:'2054-06-01', premium:150000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0}
+  {id:'demo-ctr-1', custName:'김민준', company:'삼성화재', product:'다이렉트 운전자보험', category:'자동차', policyNo:'S123456', contractDate:'2025-08-10', expireDate:today(), premium:32000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0},
+  {id:'demo-ctr-2', custName:'박서연', company:'삼성생명', product:'종신보험', category:'장기', policyNo:'L987654', contractDate:'2024-06-01', expireDate:'2054-06-01', premium:150000, payMethod:'월납', term:'20년납', status:'정상', convertedValue:0}
 ];
 const DEMO_TEAM = [
   {name:'김화진(샘플)', role:'지사장', target:12000000, actual:7440000, targetCount:8, actualCount:5,
@@ -800,6 +820,21 @@ function demoApi(action, p){
   if(action === 'contractDelete'){
     DEMO_CONTRACTS = DEMO_CONTRACTS.filter(function(x){return x.id !== p.pageId;});
     return {ok:true};
+  }
+  if(action === 'aiClassify'){
+    const items = (p.rows||[]).map(function(row){
+      const name = row['이름']||row['성명']||row['고객명']||row['계약자']||'';
+      const phone = row['연락처']||row['전화번호']||row['휴대폰']||'';
+      const addr = row['주소']||'';
+      const memo = row['비고']||row['메모']||'';
+      const rrn = row['주민등록번호']||row['주민번호']||'';
+      const parsed = parseRRN({'주민등록번호':rrn});
+      const hasPolicy = /증권|보험료|계약일/.test(JSON.stringify(row));
+      return {name:name, phone:phone, birth:parsed?parsed.birth:'', gcode:parsed?parsed.gcode:'',
+        addr:addr, job:row['직업']||'', memo:memo, custType:hasPolicy?'보유고객':'가망고객',
+        bizType:/\(주\)|주식회사|㈜/.test(name)?'사업자':'개인', interest:''};
+    });
+    return {ok:true, count:items.length, items:items};
   }
   return {ok:false, error:'샘플 화면에서는 지원하지 않는 동작입니다.'};
 }
@@ -1342,6 +1377,7 @@ function loadContracts(){
     CONTRACTS = r.items || [];
     drawCtrChips();
     renderContracts();
+    renderReminders();
   }).catch(function(){
     document.getElementById('ctrList').innerHTML = '<div class="empty">연결에 실패했습니다.</div>';
   });
@@ -1462,6 +1498,11 @@ function matchFilter(c){
   if(FILTER==='all') return true;
   if(FILTER==='owner') return (c.custType||'보유고객') === '보유고객';
   if(FILTER==='prospect') return c.custType === '가망고객';
+  if(FILTER.indexOf('cat-')===0){
+    const cat = FILTER.slice(4);
+    if(c.custType==='가망고객') return (c.interest||'').indexOf(cat) >= 0;
+    return CONTRACTS.some(function(ct){ return ct.custName===c.name && ct.category===cat; });
+  }
   if(FILTER==='birth'){
     if(!c.birth) return false;
     return Number(c.birth.slice(5,7)) === (new Date(today()).getMonth()+1);
@@ -1469,6 +1510,34 @@ function matchFilter(c){
   if(FILTER==='cold') return daysAgo(c.lastTouch) >= 30;
   if(FILTER==='noconsent') return !c.consent;
   return c.grade === FILTER;
+}
+let PICK_MODE = false;
+let PICKED_IDS = {};
+function toggleCustPick(){
+  PICK_MODE = !PICK_MODE;
+  PICKED_IDS = {};
+  document.getElementById('pickModeBtn').classList.toggle('viewBtnOn', PICK_MODE);
+  document.getElementById('custPickBar').classList.toggle('hide', !PICK_MODE);
+  updatePickCount();
+  renderCust();
+}
+function togglePick(id){
+  if(PICKED_IDS[id]) delete PICKED_IDS[id]; else PICKED_IDS[id] = true;
+  updatePickCount();
+  renderCust();
+}
+function updatePickCount(){
+  document.getElementById('pickCount').textContent = Object.keys(PICKED_IDS).length + '명 선택됨';
+}
+function catBadge(c){
+  const cats = {};
+  if(c.custType==='가망고객'){
+    (c.interest||'').split(',').forEach(function(x){ if(x) cats[x]=true; });
+  } else {
+    CONTRACTS.forEach(function(ct){ if(ct.custName===c.name && ct.category) cats[ct.category]=true; });
+  }
+  const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
+  return Object.keys(cats).map(function(k){ return '<span class="tag" style="background:var(--bg)">'+(ic[k]||'')+k+'</span>'; }).join(' ');
 }
 function renderCust(){
   const q = document.getElementById('q').value.trim().toLowerCase();
@@ -1488,17 +1557,19 @@ function renderCust(){
     const d = daysAgo(c.lastTouch);
     const meta = [];
     if(c.phone) meta.push(c.phone);
-    if(c.custType==='가망고객') meta.push((c.bizType||'개인') + (c.interest?' · 관심:'+c.interest:''));
+    if(c.custType==='가망고객') meta.push(c.bizType||'개인');
     else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
     else meta.push('접촉 기록 없음');
     if(c.job) meta.push(c.job);
-    return '<div class="cust" onclick="openCust(\'' + c.id + '\')">'
+    const clickAttr = PICK_MODE ? "togglePick('"+c.id+"')" : "openCust('"+c.id+"')";
+    const checkbox = PICK_MODE ? '<input type="checkbox" class="pick" style="margin-right:10px" ' + (PICKED_IDS[c.id]?'checked':'') + ' onclick="event.stopPropagation();togglePick(\''+c.id+'\')">' : '';
+    return '<div class="cust" onclick="' + clickAttr + '">' + checkbox
       + '<div class="av">' + esc((c.name||'?').slice(0,1)) + '</div>'
       + '<div class="info"><div class="nm">' + esc(c.name)
       + (c.custType==='가망고객' ? ' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>' : '')
       + (c.grade ? ' <span class="tag ' + c.grade + '">' + c.grade + '</span>' : '')
       + (c.custType!=='가망고객' && !c.consent ? ' <span class="tag warn">동의 전</span>' : '')
-      + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + '</div></div></div>';
+      + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + ' ' + catBadge(c) + '</div></div></div>';
   }).join('');
   if(CUST_VIEW === 'table') renderCustTable();
 }
@@ -1563,8 +1634,15 @@ function renderReminders(){
     if(c.nextTouch && c.nextTouch===t)
       items.push({d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다'});
   });
+  const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
+  CONTRACTS.forEach(function(ct){
+    const dLeft = daysUntil(ct.expireDate);
+    if(dLeft>=0 && dLeft<=30){
+      items.push({d:'d-yel', t:(ic[ct.category]||'')+' '+esc(ct.custName)+'님 '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product)});
+    }
+  });
   CUSTOMERS.forEach(function(c){
-    if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<6)
+    if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<8)
       items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도'});
   });
   const el = document.getElementById('reminderList');
@@ -1572,7 +1650,7 @@ function renderReminders(){
     el.innerHTML = '<div class="empty">오늘 급한 일은 없습니다.<br>새 고객을 만나기 좋은 날이에요.</div>';
     return;
   }
-  el.innerHTML = items.slice(0,6).map(function(i){
+  el.innerHTML = items.slice(0,8).map(function(i){
     return '<div class="todo"><div class="dot ' + i.d + '"></div><div class="tx">'
       + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div></div>';
   }).join('');
@@ -1609,6 +1687,22 @@ function openCust(id){
   setCustType(c ? (c.custType || '보유고객') : '보유고객');
   document.getElementById('custDelBtn').classList.toggle('hide', !c);
   document.getElementById('custSmsBtn').classList.toggle('hide', !(c && c.phone));
+  const ctrBox = document.getElementById('custCtrBox');
+  if(c){
+    const myCtr = CONTRACTS.filter(function(ct){ return ct.custName === c.name; });
+    if(myCtr.length){
+      ctrBox.classList.remove('hide');
+      const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
+      document.getElementById('custCtrList').innerHTML = myCtr.map(function(ct){
+        return '<div class="feeline"><span>' + (ic[ct.category]||'') + ' ' + esc(ct.company) + ' · ' + esc(ct.product) + '</span>'
+          + '<span class="v">' + (ct.expireDate ? '만기 '+ct.expireDate : '') + '</span></div>';
+      }).join('');
+    } else {
+      ctrBox.classList.add('hide');
+    }
+  } else {
+    ctrBox.classList.add('hide');
+  }
   document.getElementById('custModal').classList.remove('hide');
 }
 function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
@@ -1635,6 +1729,7 @@ function openSms(){
   if(!EDIT_ID) return;
   const c = CUSTOMERS.find(function(x){ return x.id===EDIT_ID; });
   if(!c || !c.phone){ toast('연락처가 없는 고객입니다', true); return; }
+  IS_BULK_SMS = false;
   SMS_TARGET = c;
   document.getElementById('smsAv').textContent = (c.name||'?').slice(0,1);
   document.getElementById('smsName').textContent = c.name;
@@ -1645,11 +1740,12 @@ function openSms(){
   document.getElementById('smsNotReady').classList.toggle('hide', SMS_READY);
   document.getElementById('smsModal').classList.remove('hide');
 }
-function closeSms(){ document.getElementById('smsModal').classList.add('hide'); }
+function closeSms(){ document.getElementById('smsModal').classList.add('hide'); IS_BULK_SMS = false; }
 function fillSmsTemplate(key){
   if(!SMS_TARGET) return;
   const fn = SMS_TEMPLATES[key];
-  document.getElementById('smsMsg').value = fn ? fn(SMS_TARGET) : '';
+  const sample = IS_BULK_SMS ? Object.assign({}, SMS_TARGET, {name:'고객'}) : SMS_TARGET;
+  document.getElementById('smsMsg').value = fn ? fn(sample) : '';
   updateSmsCount();
 }
 function byteLen(s){
@@ -1661,7 +1757,7 @@ function updateSmsCount(){
   const s = document.getElementById('smsMsg').value;
   const b = byteLen(s);
   const type = SMS_IMG_DATA ? 'MMS(사진)' : (b <= 90 ? 'SMS' : 'LMS(장문)');
-  document.getElementById('smsCount').textContent = s.length + '자 (' + b + '바이트) · ' + type;
+  document.getElementById('smsCount').textContent = s.length + '자 (' + b + '바이트) · ' + type + (IS_BULK_SMS ? ' · '+BULK_TARGETS.length+'명에게 각각 발송' : '');
 }
 function onSmsImgPick(input){
   const f = input.files[0]; if(!f) return;
@@ -1688,7 +1784,27 @@ function sendSms(){
     return;
   }
   const btn = document.getElementById('smsSendBtn');
-  btn.disabled = true; btn.textContent = '발송 중…';
+  btn.disabled = true;
+  if(IS_BULK_SMS){
+    let done = 0, fail = 0, i = 0;
+    function step(){
+      if(i >= BULK_TARGETS.length){
+        btn.disabled = false; btn.textContent = '발송하기';
+        toast(done + '명 발송 완료' + (fail?' · '+fail+'명 실패':''), fail>0);
+        closeSms();
+        return;
+      }
+      const c = BULK_TARGETS[i++];
+      const personalMsg = msg.split('고객').join(c.name);
+      btn.textContent = '발송 중… ' + i + '/' + BULK_TARGETS.length;
+      api('smsSend', {fc:ME.name, branch:ME.branch, customerId:c.id, customerName:c.name, phone:c.phone, msg:personalMsg, image:SMS_IMG_DATA})
+        .then(function(r){ if(r.ok) done++; else fail++; step(); })
+        .catch(function(){ fail++; step(); });
+    }
+    step();
+    return;
+  }
+  btn.textContent = '발송 중…';
   api('smsSend', {
     fc:ME.name, branch:ME.branch, customerId:SMS_TARGET.id, customerName:SMS_TARGET.name,
     phone:SMS_TARGET.phone, msg:msg, image:SMS_IMG_DATA
@@ -1759,8 +1875,16 @@ function parseRRN(row){
   if (!century) return null;
   return { birth: century+yy+'-'+mm+'-'+dd, gcode: g };
 }
+function getFilteredCustomers(){
+  const q = document.getElementById('q').value.trim().toLowerCase();
+  return CUSTOMERS.filter(function(c){
+    if(!matchFilter(c)) return false;
+    if(!q) return true;
+    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
+  });
+}
 function xlsxOut(){
-  const rows = CUSTOMERS.map(function(c){
+  const rows = getFilteredCustomers().map(function(c){
     const o = {};
     XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
     return o;
@@ -1769,7 +1893,25 @@ function xlsxOut(){
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '고객');
   XLSX.writeFile(wb, '다온_고객_' + today() + '.xlsx');
-  toast('엑셀을 내려받았어요');
+  toast(rows.length + '명 다운로드했어요');
+}
+function addrXlsxOut(){
+  const rows = getFilteredCustomers().filter(function(c){ return c.addr; }).map(function(c){
+    return {'이름':c.name, '우편번호':c.zip||'', '주소':c.addr||'', '상세주소':c.addr2||'', '연락처':c.phone||''};
+  });
+  if(!rows.length){ toast('주소가 있는 고객이 없습니다', true); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '주소');
+  XLSX.writeFile(wb, '다온_주소_' + today() + '.xlsx');
+  toast(rows.length + '명 주소 다운로드했어요');
+}
+function templateXlsxOut(){
+  const ws = XLSX.utils.json_to_sheet([{}], {header:XCOL.map(function(p){return p[0];})});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '고객등록양식');
+  XLSX.writeFile(wb, '다온_고객등록양식.xlsx');
+  toast('양식을 내려받았어요');
 }
 function xlsxIn(input){
   const f = input.files[0]; if(!f) return;
@@ -1817,6 +1959,76 @@ function prepImport(rows){
   document.getElementById('impModal').classList.remove('hide');
 }
 function closeImp(){ document.getElementById('impModal').classList.add('hide'); }
+
+/* ── AI 자동정리 업로드 ─────────── */
+function aiXlsxIn(input){
+  const f = input.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(e){
+    const wb = XLSX.read(e.target.result, {type:'array'});
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    input.value = '';
+    if(!rows.length){ toast('빈 파일입니다', true); return; }
+    runAiClassify(rows);
+  };
+  rd.readAsArrayBuffer(f);
+}
+function runAiClassify(rows){
+  toast('AI가 정리 중이에요… (' + rows.length + '건, 시간이 좀 걸려요)');
+  const BATCH = 25;
+  const batches = [];
+  for(let i=0; i<rows.length; i+=BATCH) batches.push(rows.slice(i, i+BATCH));
+  let all = [];
+  let idx = 0;
+  function next(){
+    if(idx >= batches.length){
+      IMPORT_MODE = 'customer';
+      IMPORT_QUEUE = all;
+      let add=0, upd=0;
+      all.forEach(function(o){
+        const hit = CUSTOMERS.find(function(c){ return c.name===o.name && (!o.birth||!c.birth||c.birth===o.birth); });
+        if(hit){ o.pageId = hit.id; upd++; } else add++;
+      });
+      document.getElementById('impSum').innerHTML =
+        '<div class="stat"><div><div class="n" style="color:var(--green)">'+add+'</div><div class="l">새로 추가</div></div>'
+        + '<div><div class="n" style="color:var(--blue)">'+upd+'</div><div class="l">기존 수정</div></div></div>'
+        + '<p class="note" style="margin-top:10px">AI가 보유/가망 여부·관심보종·생년월일 등을 자동으로 채웠습니다. 이상한 부분은 목록에서 직접 눌러 고칠 수 있어요.</p>';
+      document.getElementById('impList').innerHTML = all.slice(0,60).map(function(o){
+        return '<div class="cust"><div class="av">'+esc((o.name||'?').slice(0,1))+'</div><div class="info">'
+          + '<div class="nm">'+esc(o.name||'이름없음')+' <span class="tag">'+(o.pageId?'수정':'신규')+'</span>'
+          + (o.custType==='가망고객'?' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>':'')+'</div>'
+          + '<div class="mt">'+esc([o.phone,o.birth,o.interest].filter(Boolean).join(' · '))+'</div></div></div>';
+      }).join('') + (all.length>60 ? '<p class="note">외 '+(all.length-60)+'건</p>' : '');
+      document.getElementById('impModal').classList.remove('hide');
+      return;
+    }
+    api('aiClassify', {rows: batches[idx]}).then(function(r){
+      if(r.ok && r.items) all = all.concat(r.items);
+      idx++;
+      next();
+    }).catch(function(){ idx++; next(); });
+  }
+  next();
+}
+
+/* ── 선택 고객 대량 문자 ───────── */
+let BULK_TARGETS = [];
+function openBulkSms(){
+  BULK_TARGETS = CUSTOMERS.filter(function(c){ return PICKED_IDS[c.id] && c.phone; });
+  if(!BULK_TARGETS.length){ toast('연락처가 있는 고객을 선택하세요', true); return; }
+  SMS_TARGET = {name: BULK_TARGETS.length + '명', phone: '대량발송'};
+  document.getElementById('smsAv').textContent = '👥';
+  document.getElementById('smsName').textContent = BULK_TARGETS.length + '명에게 보내기';
+  document.getElementById('smsPhone').textContent = BULK_TARGETS.map(function(c){return c.name;}).join(', ');
+  document.getElementById('smsMsg').value = '';
+  removeSmsImg();
+  updateSmsCount();
+  document.getElementById('smsNotReady').classList.toggle('hide', SMS_READY);
+  document.getElementById('smsModal').classList.remove('hide');
+  IS_BULK_SMS = true;
+}
+let IS_BULK_SMS = false;
+
 function runImport(){
   const btn = document.getElementById('impGo');
   btn.disabled = true;
