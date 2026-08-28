@@ -16,10 +16,12 @@
 <meta property="og:title" content="전국 사업단·설계사 모집">
 <meta property="og:description" content="지금 이 글을 보신 분, 기회입니다. 이름·지역·연락처만 남겨주세요.">
 <meta property="og:url" content="https://daon.io.kr/join1">
-<meta name="theme-color" content="#0B1B33">
+<meta name="theme-color" content="#0B1E42">
 
 <link rel="canonical" href="https://daon.io.kr/join1">
 
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -28,8 +30,10 @@
 <style>
 :root{
   --ink:#0B1B33; --ink2:#5B6B82; --paper:#F5F7FA; --card:#FFFFFF;
-  --tint:#FDEEDD; --line:#DEE4EC; --orange:#F58220; --deep:#C2650A;
-  --navy:#0B1B33; --navy2:#132A4D; --red:#D0342C; --r:14px;
+  /* 다온파트너스 브랜드 컬러 : --orange = 네이비(주요 액션), --pink = 베이비핑크(강조) */
+  --tint:#F9E9EC; --line:#DEE4EC; --orange:#0B1E42; --deep:#061229;
+  --pink:#E39BA5; --pink-deep:#A85F6C;
+  --navy:#0B1E42; --navy2:#16305C; --red:#C4472F; --r:14px;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
   --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Malgun Gothic",sans-serif;
 }
@@ -51,7 +55,7 @@ h1 em{font-style:normal;color:var(--orange)}
 .regionpills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
 .pill{font-family:var(--mono);font-size:11px;font-weight:600;color:#DCE4EE;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:6px 10px;border-radius:999px}
 
-.winbox{background:rgba(245,130,32,.14);border:1px solid rgba(245,130,32,.4);border-radius:12px;padding:14px 16px;margin-bottom:4px}
+.winbox{background:rgba(227,155,165,.16);border:1px solid rgba(227,155,165,.45);border-radius:12px;padding:14px 16px;margin-bottom:4px}
 .winbox p{margin:0;font-size:13.5px;color:#FFD9AE;font-weight:600;line-height:1.6}
 .winbox b{color:var(--orange);font-weight:800}
 
@@ -96,6 +100,16 @@ label.lb{display:block;font-size:14.5px;font-weight:700;color:var(--ink2);margin
 
 .foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#94A0B0;line-height:1.7;text-align:center}
 
+/* ══ 다온파트너스 브랜드 컬러 보정 : 어두운 배경 위 강조는 베이비핑크 ══ */
+.hero::after{background:var(--pink)}
+.tagchip{background:var(--pink);color:#3A1A20}
+h1 em{color:var(--pink)}
+.winbox p{color:#F3DDE1}
+.winbox b{color:var(--pink)}
+.opt input:checked + span{border-color:var(--pink);background:var(--tint);color:var(--navy)}
+.chk b{color:var(--pink-deep)}
+.inp:focus{border-color:var(--pink)}
+
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important} html{scroll-behavior:auto}}
 </style>
 </head>
@@ -103,7 +117,8 @@ label.lb{display:block;font-size:14.5px;font-weight:700;color:var(--ink2);margin
 
 <section class="hero">
   <div class="hero-in">
-    <img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" style="height:20px;width:auto;display:block;margin-left:auto;margin-bottom:8px;">
+    <img src="/assets/logo-daon-wordmark-white.png" alt="다온파트너스" width="59" height="20"
+         decoding="async" style="height:20px;width:auto;display:block;margin-left:auto;margin-bottom:8px;">
     <span class="tagchip">전국 사업단 모집 · 권역별 진행</span>
     <h1>전국 제휴 소상공인영업<br>및 <em>온라인 영업조직</em></h1>
     <p class="hero__sub">네이버카페 입점 운영 · 온라인+오프라인 제휴 기반<br>모집 직책 : 팀장 · 사업단장</p>
