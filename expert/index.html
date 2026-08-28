@@ -5,8 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title id="pageTitle">전문가 프로필 | 다온파트너스</title>
 <meta name="robots" content="noindex, follow">
-<meta name="theme-color" content="#0B1B33">
+<meta name="theme-color" content="#0B1E42">
 
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
@@ -15,8 +17,8 @@
 :root{
   --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
   --paper:#FFFFFF; --cream:#F5F7FA;
-  --orange:#F58220; --deep:#C2650A; --tint:#FDEEDD;
-  --navy:#0B1B33; --navy2:#132A4D;
+  --orange:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
+  --navy:#0B1E42; --navy2:#16305C;
   --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
   --maxw:560px; --pad:20px;
 }
@@ -35,7 +37,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .hero .role{font-size:16px;color:#D6DEE8;font-weight:600;margin-top:5px}
 .hero .intro{margin-top:14px;font-size:17px;color:#EAEFF5;max-width:420px;margin-left:auto;margin-right:auto;line-height:1.75}
 .tags{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:14px}
-.tag{font-size:13.5px;font-weight:700;background:rgba(245,130,32,.16);color:var(--orange);border:1px solid rgba(245,130,32,.35);padding:5px 12px;border-radius:999px}
+.tag{font-size:13.5px;font-weight:700;background:rgba(227,155,165,.16);color:var(--orange);border:1px solid rgba(227,155,165,.35);padding:5px 12px;border-radius:999px}
 
 .ctarow{display:flex;gap:8px;margin-top:20px;padding:0 var(--pad)}
 .cta{flex:1;text-align:center;padding:14px 8px;border-radius:11px;font-size:15.5px;font-weight:700;text-decoration:none}
@@ -106,13 +108,20 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .bc-row{display:flex;gap:52px}
 
 .bizcard-btn{display:block;width:100%;margin-top:12px;background:var(--navy);color:#fff;text-align:center;padding:16px;border-radius:11px;font-size:17px;font-weight:700;border:none;cursor:pointer}
+
+/* ══ 다온파트너스 브랜드 컬러 보정 ══ */
+:root{ --pink:#E39BA5; --pink-deep:#A85F6C; }
+.badge{background:var(--pink);color:#0B1E42}
+.photo{border-color:var(--pink)}
+.hero::after{background:var(--pink)}
+.tag{background:rgba(227,155,165,.18);color:#F2C6CD;border-color:rgba(227,155,165,.4)}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
 
 <header class="topbar">
-  <img class="brand-mark" src="/assets/logo.png" alt="다온파트너스">
+  <img class="brand-mark" src="/assets/logo.png" alt="다온파트너스" width="65" height="22" decoding="async">
   <span class="brand-txt">다온파트너스</span>
 </header>
 
