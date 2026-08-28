@@ -217,7 +217,7 @@ footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font
 <div class="topbar">
   <div class="wrap">
     <div class="brand"><b>다온파트너스</b><span>미래에셋금융서비스</span></div>
-    <a class="tel" href="tel:000-0000-0000">전화 상담</a>
+    <a class="tel" href="tel:041-534-1124">전화 상담</a>
   </div>
 </div>
 
@@ -267,7 +267,7 @@ footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font
       <div><b>②</b><span>사업 중 생긴 <b>사장님 본인의 손해</b>까지 대비합니다.</span></div>
       <div><b>③</b><span>업종마다 필요한 담보 구성이 다릅니다.</span></div>
     </div>
-    <h2 class="serif" style="font-size:19px;margin-bottom:14px">주요 일반보험 6종</h2>
+    <h2 class="serif" style="font-size:19px;margin-bottom:14px">주요 일반보험 7종</h2>
     <div class="cards" id="generalCards"></div>
     <p class="note">보장 여부·범위·한도는 가입하시는 상품의 약관에 따라 달라집니다. 청약 전 상품설명서와 약관을 반드시 확인해 주세요.</p>
   </div></section>
@@ -349,7 +349,7 @@ footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font
         <input id="f_store" type="text" placeholder="예) 다온식당 / 천안 서북구" /></div>
       <div class="field"><label for="f_biz">업종 <span class="req">*</span></label>
         <select id="f_biz"><option value="">선택해 주세요</option></select></div>
-      <div class="field"><label>상담받고 싶은 분야</label><div class="covers" id="covers"></div></div>
+      <div class="field"><label>상담받고 싶은 분야 <span class="hint" style="display:inline;font-weight:400">(여러 개 선택하실 수 있습니다)</span></label><div class="covers" id="covers"></div></div>
       <div class="field"><label for="f_time">통화 가능한 시간대</label>
         <select id="f_time"><option value="아무때나">아무 때나 괜찮아요</option><option value="오전">오전 (9시~12시)</option>
         <option value="오후">오후 (13시~18시)</option><option value="저녁">저녁 (18시 이후)</option>
@@ -377,8 +377,8 @@ footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font
 <footer>
   <div class="wrap">
     <strong>다온파트너스 · 미래에셋금융서비스㈜</strong>
-    대표: 김화진<br>주소: (주소를 입력하세요)<br>대표번호: (번호를 입력하세요)<br>
-    보험대리점 등록번호: (등록번호를 입력하세요)
+    대표: 김화진<br>주소: 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호<br>대표번호: 041-534-1124<br>
+    보험대리점 등록번호: 2014048012
     <div class="legal">
       본 페이지는 보험상품의 청약이나 가입을 진행하는 페이지가 아니며, 보험 상담 신청을 접수하기 위한 페이지입니다.<br>
       셀프체크 결과는 법령상 일반 기준에 따른 참고 정보이며, 법적 판단이나 가입 확약이 아닙니다.<br>
@@ -505,9 +505,10 @@ const GENERAL=[
  {n:"영업배상책임보험",who:"오프라인 매장을 운영하는 사업자",law:"선택 가입",cover:"시설의 결함이나 업무 수행 중 타인에게 입힌 신체·재산 피해에 대한 배상책임",tip:"손님이 매장에서 미끄러져 다치는 사고가 대표적입니다."},
  {n:"생산물배상책임보험",who:"제품이나 음식물을 만들거나 판매하는 사업자",law:"선택 가입",cover:"판매·제공한 제품이나 음식으로 소비자에게 발생한 피해에 대한 배상책임",tip:"식중독처럼 제공한 뒤에 발생하는 사고가 대상입니다."},
  {n:"이·미용 배상책임보험",who:"이·미용 자격을 보유하고 시술 업장을 운영하는 사업자",law:"선택 가입",cover:"시술 과정에서 고객에게 발생한 신체 피해에 대한 배상책임",tip:"시술 종류에 따라 인수 여부와 보장 범위가 달라집니다."},
- {n:"단체상해보험",who:"직원의 건강과 복지를 챙기려는 사업자",law:"선택 가입",cover:"직원의 업무상·업무외 상해로 인한 치료비 및 후유장해",tip:"산재보험이 보장하지 않는 부분을 보완하는 용도로 활용됩니다."}
+ {n:"단체상해보험",who:"직원의 건강과 복지를 챙기려는 사업자",law:"선택 가입",cover:"직원의 업무상·업무외 상해로 인한 치료비 및 후유장해",tip:"산재보험이 보장하지 않는 부분을 보완하는 용도로 활용됩니다."},
+ {n:"사장님 건강보험",who:"본인이 빠지면 가게가 멈추는 사장님",law:"선택 가입 (사업자보험이 아닌 개인 보험입니다)",cover:"실손의료비, 암·뇌혈관·심장질환 진단비, 수술비, 입원일당 등",tip:"직장인과 달리 자영업자에게는 유급 병가가 없습니다. 치료비보다 가게를 못 여는 기간의 소득 공백이 더 큰 부담이 되는 경우가 많습니다. 가입 가능 여부와 보험료는 나이·건강 상태에 따라 달라지며, 심사 결과에 따라 인수가 거절될 수 있습니다."}
 ];
-const COVER_OPTIONS=["의무보험 대상 확인","화재보험","풍수해보험","영업배상책임","생산물배상책임","이·미용 배상책임","단체상해","중대재해 대응","기존 계약 점검","기타 문의"];
+const COVER_OPTIONS=["의무보험 대상 확인","화재보험","풍수해보험","영업배상책임","생산물배상책임","이·미용 배상책임","단체상해","사장님 건강보험","중대재해 대응","기존 계약 점검","기타 문의"];
 
 /* ───────── 위저드 상태 ───────── */
 let S = {};
@@ -689,6 +690,9 @@ function calcResult(){
   gen.push({n:"풍수해보험", why:"태풍·호우·지진 피해에 대비합니다. 정부·지자체 보험료 지원이 있습니다."});
   if(S.emp && S.emp!=="없음 (혼자 운영)")
     gen.push({n:"단체상해보험", why:"직원의 상해 치료비를 산재보험과 별도로 보완합니다."});
+  gen.push({n:"사장님 건강보험", why: S.emp==="없음 (혼자 운영)"
+    ? "혼자 운영하시면 사장님이 아플 때 가게를 대신 열 사람이 없습니다."
+    : "자영업자에게는 유급 병가가 없어, 치료 기간의 소득 공백에 대비가 필요합니다."});
 
   const severe = (S.emp==="5~49명" || S.emp==="50명 이상");
   return {mandatory:uniq, general:gen, severe};
