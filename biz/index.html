@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>사장님 보험 가이드 | 다온파트너스</title>
 <meta name="description" content="의무보험 셀프체크로 내 사업장이 어떤 보험에 가입해야 하는지 1분 만에 확인하세요." />
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +31,7 @@ body.locked{overflow:hidden}
   backdrop-filter:saturate(160%) blur(8px);border-bottom:1px solid var(--line)}
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
 .brand{display:flex;align-items:baseline;gap:8px}
+.brand-mark{height:22px;width:auto;display:block}
 .brand b{font-size:17px;font-weight:800;letter-spacing:-.03em}
 .brand span{font-size:11px;color:var(--ink-soft)}
 .tel{font-size:13px;font-weight:700;color:var(--awning);border:1px solid var(--line);
@@ -224,6 +227,7 @@ body.locked{overflow:hidden}
 #done p{color:var(--ink-soft);font-size:15px;margin:0}
 
 footer{background:var(--ink);color:#9EAAA4;font-size:12.5px;padding:32px 0 44px;line-height:1.75}
+footer .foot-logo{display:block;height:24px;width:auto;margin-bottom:14px;opacity:.95}
 footer strong{color:#fff;display:block;font-size:14px;margin-bottom:8px}
 footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font-size:11.5px;color:#7C8781}
 footer .legal-toggle{display:block;margin-top:12px;background:none;border:1px solid #3A4741;color:#9EAAA4;
@@ -240,7 +244,7 @@ footer .legal-full p:last-child{margin-bottom:0}
 
 <div class="topbar">
   <div class="wrap">
-    <div class="brand"><b>다온파트너스</b><span>미래에셋금융서비스</span></div>
+    <div class="brand"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22" decoding="async"><span>미래에셋금융서비스</span></div>
     <a class="tel" href="tel:041-534-1124">전화 상담</a>
   </div>
 </div>
@@ -431,6 +435,8 @@ footer .legal-full p:last-child{margin-bottom:0}
 
 <footer>
   <div class="wrap">
+    <img class="foot-logo" src="/assets/logo-daon-wordmark-white.png" alt="DAON PARTNERS"
+         width="177" height="60" decoding="async">
     <strong>다온파트너스 · 미래에셋금융서비스㈜</strong>
     대표: 김화진<br>주소: 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호<br>대표번호: 041-534-1124<br>
     보험대리점 등록번호: 2014048012<br>
@@ -869,8 +875,8 @@ function fallback(t,done){
   mk(MANDATORY,'mandatoryCards'); mk(GENERAL,'generalCards');
 
   /* 설계사 정보 반영 */
-  const hk=document.getElementById('heroKakao'); if(hk) hk.href=ME.kakao;
-  const mk=document.getElementById('mainKakao'); if(mk) mk.href=ME.kakao;
+  const heroLink=document.getElementById('heroKakao'); if(heroLink) heroLink.href=ME.kakao;
+  const mainLink=document.getElementById('mainKakao'); if(mainLink) mainLink.href=ME.kakao;
   const fcLine=document.getElementById('fcLine');
   if(ME.name && ME.code){
     document.getElementById('fcName').textContent=ME.name;
