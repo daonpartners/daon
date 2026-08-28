@@ -336,6 +336,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
         <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
         <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·보종(장기/자동차/화재/일반)·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적.</p>
+        <button class="btn ghost sm" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteUnnamedContracts()">이름 없는(미상) 계약 한꺼번에 삭제</button>
       </div>
     </section>
 
@@ -597,6 +598,26 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
       </div>
       <button class="btn" id="smsSendBtn" onclick="sendSms()">발송하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 계약 수정 -->
+<div id="ctrEditModal" class="mask hide" onclick="if(event.target===this)closeCtrEdit()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>계약 수정</h2><button class="x" onclick="closeCtrEdit()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>고객명 *</label><input id="ctrEName" placeholder="예: 홍길동"></div>
+      <div class="fld fld2">
+        <div><label>보험사</label><input id="ctrECompany" placeholder="삼성화재"></div>
+        <div><label>보종</label><select id="ctrECategory"><option>장기</option><option>자동차</option><option>화재</option><option>일반</option></select></div>
+      </div>
+      <div class="fld"><label>상품명</label><input id="ctrEProduct" placeholder="상품명"></div>
+      <div class="fld fld2">
+        <div><label>만기일</label><input id="ctrEExpire" type="date"></div>
+        <div><label>월납보험료</label><input id="ctrEPremium" type="number" inputmode="numeric"></div>
+      </div>
+      <button class="btn" onclick="saveCtrEdit()">저장</button>
     </div>
   </div>
 </div>
@@ -1393,11 +1414,11 @@ function renderContracts(){
     const dLeft = daysUntil(c.expireDate);
     const meta = [c.company, c.product].filter(Boolean).join(' · ');
     const sub = [c.premium?fmtWon(c.premium)+'/월':'', c.expireDate?('만기 '+c.expireDate):''].filter(Boolean).join(' · ');
-    return '<div class="cust"><div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
+    return '<div class="cust" onclick="openCtrEdit(\'' + c.id + '\')" style="cursor:pointer"><div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
       + '<div class="info"><div class="nm">' + esc(c.custName||'미상') + (c.status&&c.status!=='정상'?' <span class="tag warn">'+esc(c.status)+'</span>':'')
       + (CTR_FILTER==='expiring' && dLeft>=0 ? ' <span class="tag warn">D-'+dLeft+'</span>' : '') + '</div>'
       + '<div class="mt">' + esc(meta) + '<br>' + esc(sub) + '</div></div>'
-      + '<button class="btn ghost sm" onclick="deleteContract(\'' + c.id + '\')">삭제</button></div>';
+      + '<button class="btn ghost sm" onclick="event.stopPropagation();deleteContract(\'' + c.id + '\')">삭제</button></div>';
   }).join('');
 }
 function deleteContract(id){
@@ -1405,6 +1426,48 @@ function deleteContract(id){
   api('contractDelete', {pageId:id}).then(function(r){
     if(r.ok){ toast('삭제했어요'); loadContracts(); }
     else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function deleteUnnamedContracts(){
+  const bad = CONTRACTS.filter(function(c){ return !c.custName; });
+  if(!bad.length){ toast('이름 없는 계약이 없습니다', true); return; }
+  if(!confirm(bad.length + '건을 전부 삭제할까요? 되돌릴 수 없습니다.')) return;
+  toast(bad.length + '건 삭제 중…');
+  let i = 0, done = 0;
+  function step(){
+    if(i >= bad.length){ toast(done+'건 삭제 완료'); loadContracts(); return; }
+    api('contractDelete', {pageId: bad[i++].id}).then(function(r){ if(r.ok) done++; step(); }).catch(step);
+  }
+  step();
+}
+let CTR_EDIT_ID = '';
+function openCtrEdit(id){
+  const c = CONTRACTS.find(function(x){ return x.id===id; });
+  if(!c) return;
+  CTR_EDIT_ID = id;
+  document.getElementById('ctrEName').value = c.custName || '';
+  document.getElementById('ctrECompany').value = c.company || '';
+  document.getElementById('ctrEProduct').value = c.product || '';
+  document.getElementById('ctrECategory').value = c.category || '장기';
+  document.getElementById('ctrEExpire').value = c.expireDate || '';
+  document.getElementById('ctrEPremium').value = c.premium || '';
+  document.getElementById('ctrEditModal').classList.remove('hide');
+}
+function closeCtrEdit(){ document.getElementById('ctrEditModal').classList.add('hide'); }
+function saveCtrEdit(){
+  const custName = document.getElementById('ctrEName').value.trim();
+  if(!custName){ toast('고객명을 입력하세요', true); return; }
+  const hit = CUSTOMERS.find(function(c){ return c.name===custName; });
+  api('contractAdd', {
+    fc:ME.name, branch:ME.branch, pageId:CTR_EDIT_ID,
+    customerName:custName, company:document.getElementById('ctrECompany').value.trim()||'기타',
+    product:document.getElementById('ctrEProduct').value.trim(),
+    category:document.getElementById('ctrECategory').value,
+    expireDate:document.getElementById('ctrEExpire').value,
+    premium:Number(document.getElementById('ctrEPremium').value||0)
+  }).then(function(r){
+    if(r.ok){ toast('수정했어요'); closeCtrEdit(); loadContracts(); }
+    else toast(r.error||'수정에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
 const CTR_XCOL = [['고객명','custName'],['보험사','company'],['상품명','product'],['증권번호','policyNo'],
