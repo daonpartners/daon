@@ -16,7 +16,7 @@
 <meta property="og:title" content="다온파트너스 | 좋은 일이 다 온다">
 <meta property="og:description" content="보험을 넘어, 사람과 사업의 더 나은 내일을 연결합니다.">
 <meta property="og:url" content="https://daon.io.kr/">
-<meta name="theme-color" content="#0B1B33">
+<meta name="theme-color" content="#0B1E42">
 
 <link rel="canonical" href="https://daon.io.kr/">
 
@@ -29,8 +29,10 @@
 :root{
   --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
   --paper:#FFFFFF; --navygray:#EEF1F6;
-  --orange:#F58220; --deep:#C2650A; --tint:#FDEEDD;
-  --navy:#0B1B33; --navy2:#132A4D;
+  /* ── 다온파트너스 브랜드 컬러 (네이비 · 베이비핑크) ──
+     --orange = 베이비핑크, --deep = 딥로즈(글자용), --tint = 연핑크 배경 */
+  --orange:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
+  --navy:#0B1E42; --navy2:#16305C; --gold:#D0A880; --kakao:#FEE500;
   --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
   --display-en:'Fraunces', 'Noto Serif KR', serif;
   --maxw:680px; --pad:20px;
@@ -53,6 +55,13 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
 .brand-mark{height:20px;width:auto;flex-shrink:0}
 
+/* ══ 브랜드 컬러 대비 보정 ══ */
+.topbar a.about-link{background:var(--orange);color:var(--navy);box-shadow:0 2px 0 var(--deep)}
+.topbar a.about-link:hover{box-shadow:0 1px 0 var(--deep)}
+.trustgrid .tag{color:var(--deep)}
+.recruit-btn{color:var(--navy)}
+.about-btn:hover{color:var(--navy)}
+
 /* ══ ① HERO ══ */
 .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:46px 0 42px;position:relative;overflow:hidden;text-align:center}
 .hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
@@ -65,7 +74,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .trust{background:var(--tint);padding:28px var(--pad) 26px}
 .trustgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:var(--maxw);margin:0 auto;text-align:center}
 .trustgrid > div{padding:0 4px}
-.trustgrid > div:not(:last-child){border-right:1px solid rgba(194,101,10,.22)}
+.trustgrid > div:not(:last-child){border-right:1px solid rgba(168,95,108,.25)}
 .trustgrid .tag{font-family:var(--display-en);font-weight:700;font-size:11.5px;letter-spacing:.08em;color:var(--orange);margin-bottom:8px;display:block}
 .trustgrid .th{font-family:var(--display);font-weight:800;font-size:16px;color:var(--navy);line-height:1.4;letter-spacing:-.01em}
 .trustgrid .tl{font-size:12.5px;color:var(--ink-2);margin-top:6px;line-height:1.5;font-weight:500}
@@ -93,6 +102,8 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .modal-list{display:grid;gap:8px}
 .modal-list a{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:var(--navygray);border-radius:12px;padding:15px 14px;font-size:15px;font-weight:700}
 .modal-list a:hover{background:var(--tint)}
+.modal-list a.kakao-direct{background:var(--kakao);font-weight:800}
+.modal-list a.kakao-direct:hover{background:#F5DC00}
 .modal-list .emo{font-size:18px}
 .modal-list .chev{margin-left:auto;color:var(--steel);font-weight:700}
 
@@ -267,18 +278,18 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
           <button type="button" class="gate-card" id="insTrigger" style="width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-family:var(--body);">
             <div class="gate-ico">🛡️</div>
             <div class="gate-body">
-              <h3>개인 보험 컨설팅</h3>
-              <p>분야별 무료 상담·설계 신청</p>
+              <h3>개인 보험 상담문의</h3>
+              <p>분야별 상담 · 카카오톡으로 문의</p>
             </div>
             <div class="gate-arrow">›</div>
           </button>
 
-          <a href="/business">
+          <a href="/insu/">
             <div class="gate-card">
               <div class="gate-ico">🏢</div>
               <div class="gate-body">
-                <h3>사업장 위험관리</h3>
-                <p>화재 · 배상책임 · 중대재해 · 위험성평가</p>
+                <h3>사장님 보험 가이드</h3>
+                <p>의무보험 · 일반보험 · 중대재해 셀프체크</p>
               </div>
               <div class="gate-arrow">›</div>
             </div>
@@ -349,12 +360,13 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <div class="modal-overlay" id="insModalOverlay">
   <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="insModalTitle">
     <div class="modal-head">
-      <h3 id="insModalTitle">개인 보험 컨설팅</h3>
+      <h3 id="insModalTitle">개인 보험 상담문의</h3>
       <button type="button" class="modal-close" id="insModalClose" aria-label="닫기">✕</button>
     </div>
     <p class="modal-sub">원하시는 상담을 골라 주세요</p>
     <div class="modal-list">
-      <a href="/consult"><span class="emo">☂️</span>보장분석 요청<span class="chev">›</span></a>
+      <a class="kakao-direct" href="https://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener"><span class="emo">💬</span>카카오톡으로 바로 문의<span class="chev">›</span></a>
+      <a href="/consult"><span class="emo">☂️</span>보장분석 자가점검<span class="chev">›</span></a>
       <a href="/health-consult"><span class="emo">🩺</span>모든보험 상담<span class="chev">›</span></a>
       <a href="/cancer-consult"><span class="emo">🔎</span>암보험 무료 비교 상담<span class="chev">›</span></a>
       <a href="/fire-consult"><span class="emo">🔥</span>화재보험 가설계 신청<span class="chev">›</span></a>
