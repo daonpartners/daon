@@ -229,6 +229,35 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   #printArea h2{margin:0 0 8px}
 }
 @media (max-width:380px){ .taps{gap:7px} .tap{padding:13px 4px} }
+
+/* ── 3단계 확장 ───────────────────── */
+.drawer{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:80;display:flex;align-items:flex-end}
+.drawer.hide{display:none}
+.drawer-in{width:100%;max-width:560px;margin:0 auto;background:#fff;border-radius:18px 18px 0 0;
+  padding:14px 14px calc(18px + env(safe-area-inset-bottom))}
+.dr-h{font-size:15px;font-weight:800;padding:4px 6px 12px}
+.dr-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dr-grid button{padding:13px 4px;border-radius:12px;background:var(--bg);text-align:center;color:var(--ink)}
+.dr-grid button.on{background:var(--org-lt);color:var(--org)}
+.dr-grid .ic{font-size:20px;line-height:1.15}
+.dr-grid .lb{font-size:11px;font-weight:700;margin-top:3px;letter-spacing:-.03em}
+.pipe{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.pipe-col{min-width:138px;flex:0 0 auto;background:var(--bg);border-radius:12px;padding:8px}
+.pipe-col h4{font-size:12px;font-weight:800;margin:0 0 7px;display:flex;justify-content:space-between}
+.pipe-col h4 span{color:var(--ink3);font-weight:700}
+.pipe-card{background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 9px;
+  margin-bottom:6px;font-size:12.5px;width:100%;text-align:left}
+.pipe-card b{display:block;font-size:13px;margin-bottom:2px}
+.pipe-card small{color:var(--ink3);font-size:11px}
+.kv{display:flex;justify-content:space-between;align-items:center;padding:8px 0;
+  border-bottom:1px solid var(--line);font-size:13.5px}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:800}
+.mini{font-size:11.5px;color:var(--ink3);margin:0}
+.blockbox{background:#FDEDED;border:1px solid #F5C2C2;border-radius:10px;padding:10px 12px;
+  font-size:12.5px;color:#9B2C2C;margin-top:10px}
+.okbox{background:#EAF7EF;border:1px solid #BFE3CD;border-radius:10px;padding:10px 12px;
+  font-size:12.5px;color:#1F6B41;margin-top:10px}
 </style>
 </head>
 <body>
@@ -326,18 +355,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
       </div>
 
-      <div class="card">
-        <div class="card-h"><h2>📄 보유계약</h2><span class="sub" id="ctrCount"></span></div>
-        <div class="chips" id="ctrChips"></div>
-        <div id="ctrList"><div class="empty">불러오는 중…</div></div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn ghost sm" onclick="ctrXlsxOut()">계약 엑셀 내려받기</button>
-          <button class="btn ghost sm" onclick="document.getElementById('ctrXlsxIn').click()">계약 엑셀 올리기</button>
-        </div>
-        <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
-        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·보종(장기/자동차/화재/일반)·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적.</p>
-        <button class="btn ghost sm" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteUnnamedContracts()">이름 없는(미상) 계약 한꺼번에 삭제</button>
-      </div>
     </section>
 
     <!-- 활동 -->
@@ -430,6 +447,107 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     </section>
 
     <!-- 관리자 -->
+
+    <!-- 영업단계 -->
+    <section id="tab-pipe" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>영업 파이프라인</h2><span class="sub" id="pipeCount"></span></div>
+        <p class="mini" style="margin-bottom:10px">고객 카드를 누르면 다음 단계로 옮길 수 있어요. 옆으로 밀어서 다른 단계를 보세요.</p>
+        <div class="pipe" id="pipeBoard"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>오늘 챙길 고객</h2></div>
+        <div id="pipeDue"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 계약·유지 -->
+    <section id="tab-ctr" class="hide">
+
+      <div class="card">
+        <div class="card-h"><h2>📄 보유계약</h2><span class="sub" id="ctrCount"></span></div>
+        <div class="chips" id="ctrChips"></div>
+        <div id="ctrList"><div class="empty">불러오는 중…</div></div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ghost sm" onclick="ctrXlsxOut()">계약 엑셀 내려받기</button>
+          <button class="btn ghost sm" onclick="document.getElementById('ctrXlsxIn').click()">계약 엑셀 올리기</button>
+        </div>
+        <input id="ctrXlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="ctrXlsxIn(this)">
+        <p class="note" style="margin-top:10px">엑셀 칼럼: 고객명·보험사·상품명·보종(장기/자동차/화재/일반)·증권번호·계약일·만기일·월납보험료·납입방법·보험기간·계약상태·환산실적.</p>
+        <button class="btn ghost sm" style="margin-top:10px;width:100%;color:var(--red)" onclick="deleteUnnamedContracts()">이름 없는(미상) 계약 한꺼번에 삭제</button>
+      </div>
+
+      <div class="card">
+        <div class="card-h"><h2>유지 점검</h2><span class="sub" id="keepAsOf"></span></div>
+        <div id="keepBody"><div class="empty">유지율 탭에서 확인하세요.</div></div>
+      </div>
+    </section>
+
+    <!-- 유지율 -->
+    <section id="tab-keep" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>유지율</h2><span class="sub" id="keepDay"></span></div>
+        <div id="keepSummary"><div class="empty">불러오는 중…</div></div>
+        <p class="note" style="margin-top:12px">지사에서 입력한 13회차·25회차 체크값으로 계산한 <b>내부 관리용 수치</b>입니다.
+        보험사 정산 자료나 감독당국 공시 유지율과는 산출 기준이 다르므로 대외용으로 쓰지 마세요.</p>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>챙겨야 할 계약</h2></div>
+        <div id="keepAlerts"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 문자 -->
+    <section id="tab-sms" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>문자 템플릿</h2><button class="btn sm" onclick="openTpl()">＋ 새 템플릿</button></div>
+        <div id="tplList"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>발송 기록</h2><span class="sub" id="smsLogCount"></span></div>
+        <div id="smsLogList"><div class="empty">불러오는 중…</div></div>
+        <p class="note" style="margin-top:10px">광고성 문자는 수신동의·야간발송(21~08시)·(광고) 표기·무료거부 안내를 자동으로 검사해
+        위반이면 발송하지 않고 사유를 남깁니다.</p>
+      </div>
+    </section>
+
+    <!-- 설계사 관리 -->
+    <section id="tab-fc" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>설계사</h2><button class="btn sm" onclick="openFc()">＋ 등록</button></div>
+        <div id="fcList"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 리쿠르팅 -->
+    <section id="tab-recruit" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>리쿠르팅 후보</h2><button class="btn sm" onclick="openRec()">＋ 등록</button></div>
+        <div id="recList"><div class="empty">불러오는 중…</div></div>
+      </div>
+    </section>
+
+    <!-- 지사 현황 -->
+    <section id="tab-dash" class="hide">
+      <div class="card">
+        <div class="card-h"><h2>이번 달 지사 실적</h2><span class="sub" id="dashYm"></span></div>
+        <div id="dashTotal"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>설계사별</h2></div>
+        <div id="dashTeam"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>영업단계 분포</h2></div>
+        <div id="dashFunnel"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h2>놓치면 안 되는 것</h2></div>
+        <div id="dashAlert"><div class="empty">불러오는 중…</div></div>
+      </div>
+      <p class="note" style="padding:0 4px">예상수수료는 계약에 입력된 값의 단순 합계이며 확정 지급액이 아닙니다.</p>
+    </section>
+
     <section id="tab-admin" class="hide">
       <div class="card">
         <div class="card-h"><h2>팀 현황</h2><span class="sub" id="adminDay"></span></div>
@@ -443,10 +561,18 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   <div class="nav"><div class="nav-in">
     <button class="on" data-tab="home" onclick="go('home')"><div class="ic">🏠</div><div class="lb">홈</div></button>
     <button data-tab="cust" onclick="go('cust')"><div class="ic">👥</div><div class="lb">고객</div></button>
+    <button data-tab="pipe" onclick="go('pipe')"><div class="ic">📊</div><div class="lb">영업</div></button>
     <button data-tab="act" onclick="go('act')"><div class="ic">✏️</div><div class="lb">활동</div></button>
-    <button data-tab="goal" onclick="go('goal')"><div class="ic">🎯</div><div class="lb">목표</div></button>
-    <button id="navAdmin" data-tab="admin" onclick="go('admin')" class="hide"><div class="ic">📋</div><div class="lb">관리자</div></button>
+    <button id="navMore" onclick="openMenu()"><div class="ic">☰</div><div class="lb">더보기</div></button>
   </div></div>
+
+  <div id="drawer" class="drawer hide" onclick="if(event.target===this)closeMenu()">
+    <div class="drawer-in">
+      <div class="dr-h">메뉴</div>
+      <div class="dr-grid" id="drGrid"></div>
+      <button class="btn ghost" style="margin-top:12px" onclick="closeMenu()">닫기</button>
+    </div>
+  </div>
 </div>
 
 <!-- 고객 등록/수정 -->
@@ -513,6 +639,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
       <button class="btn ghost sm hide" id="custSmsBtn" style="margin-top:10px;width:100%;color:var(--blue)" onclick="openSms()">💬 문자 보내기</button>
+      <div class="row hide" id="custExtraRow" style="margin-top:8px">
+        <button class="btn ghost sm" onclick="closeCust();openStage(EDIT_ID)">📊 단계 옮기기</button>
+        <button class="btn ghost sm" onclick="closeCust();openExtra(EDIT_ID)">🛡️ 관리 정보</button>
+      </div>
       <div id="custCtrBox" class="hide" style="margin-top:14px">
         <label style="font-size:13px;font-weight:600;color:var(--ink2)">보유계약</label>
         <div id="custCtrList" style="margin-top:6px"></div>
@@ -566,7 +696,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   <div class="sheet">
     <div class="sheet-h"><h2>💬 문자 보내기</h2><button class="x" onclick="closeSms()">×</button></div>
     <div class="sheet-b">
-      <div class="warnbox" id="smsNotReady">문자 API 연결 준비 중입니다. 알리고 API키를 받으면 실제 발송이 활성화됩니다. 지금은 화면만 미리 확인하실 수 있어요.</div>
+      <div class="warnbox" id="smsNotReady">실제 발송은 알리고 승인 후에 열립니다. 지금 누르면 <b>발송 전 점검</b>만 하고 기록에 남습니다.</div>
       <div class="fld">
         <label>받는 사람</label>
         <div class="cust" style="border:1.5px solid var(--line);border-radius:10px;padding:10px 12px">
@@ -583,10 +713,22 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="chip" onclick="fillSmsTemplate('followup')">📞 안부</button>
           <button class="chip" onclick="fillSmsTemplate('')">직접입력</button>
         </div>
+        <select id="smsTplSel" style="margin-top:8px" onchange="useSavedTpl(this.value)">
+          <option value="">저장한 템플릿 불러오기…</option>
+        </select>
       </div>
       <div class="fld">
+        <label>문자 구분</label>
+        <select id="smsCat" onchange="checkSmsAd()">
+          <option value="정보성">정보성 (계약·만기·청구 안내 등)</option>
+          <option value="광고성">광고성 (상품 권유·이벤트 등)</option>
+        </select>
+        <p class="mini">광고성은 수신동의를 받은 고객에게만, 08~21시에만 보낼 수 있습니다.</p>
+      </div>
+      <div id="smsAdWarn" class="blockbox hide"></div>
+      <div class="fld">
         <label>메시지</label>
-        <textarea id="smsMsg" rows="5" placeholder="메시지를 입력하세요" oninput="updateSmsCount()"></textarea>
+        <textarea id="smsMsg" rows="5" placeholder="메시지를 입력하세요" oninput="updateSmsCount();checkSmsAd()"></textarea>
         <p class="note" id="smsCount" style="margin-top:6px">0자 (0바이트) · SMS</p>
       </div>
       <div class="fld">
@@ -618,6 +760,149 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div><label>월납보험료</label><input id="ctrEPremium" type="number" inputmode="numeric"></div>
       </div>
       <button class="btn" onclick="saveCtrEdit()">저장</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- 영업단계 이동 -->
+<div id="stageModal" class="mask hide" onclick="if(event.target===this)closeStage()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="stageTitle">단계 옮기기</h2><button class="x" onclick="closeStage()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>영업단계</label>
+        <select id="stgSel"><option>신규</option><option>접촉</option><option>상담예정</option><option>상담완료</option><option>제안</option><option>계약검토</option><option>계약완료</option><option>보류</option><option>실패</option></select>
+      </div>
+      <div class="fld"><label>다음 관리일</label><input id="stgNext" type="date"></div>
+      <p class="mini">단계를 옮기면 최근접촉일이 오늘로 자동 기록됩니다.</p>
+      <button class="btn" style="margin-top:12px" onclick="saveStage()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 고객 부가정보 -->
+<div id="extraModal" class="mask hide" onclick="if(event.target===this)closeExtra()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="extraTitle">관리 정보</h2><button class="x" onclick="closeExtra()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld fld2">
+        <div><label>관리상태</label><select id="exCare"><option>정상</option><option>추가상담</option><option>보험금청구</option><option>해지위험</option><option>휴면</option></select></div>
+        <div><label>소개 가능성</label><select id="exRef"><option>높음</option><option>보통</option><option>낮음</option></select></div>
+      </div>
+      <div class="fld fld2">
+        <div><label>보장점검 예정</label><input id="exReview" type="date"></div>
+        <div><label>갱신 예정</label><input id="exRenew" type="date"></div>
+      </div>
+      <div class="fld"><label>다음 관리일</label><input id="exNext" type="date"></div>
+      <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="exAgree" style="width:18px;height:18px;padding:0"> 광고성 문자 수신에 동의함</label>
+        <p class="mini">동의를 받지 않은 고객에게는 광고 문자가 자동 차단됩니다.</p>
+      </div>
+      <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="exOptout" style="width:18px;height:18px;padding:0"> 수신거부 고객</label>
+      </div>
+      <button class="btn" onclick="saveExtra()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 유지상태 -->
+<div id="keepModal" class="mask hide" onclick="if(event.target===this)closeKeep()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="keepTitle">유지 상태</h2><button class="x" onclick="closeKeep()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>유지상태</label>
+        <select id="kpSel"><option>정상유지</option><option>실효</option><option>해지</option><option>부활</option><option>미확인</option></select>
+      </div>
+      <div class="fld"><label>확인한 날짜</label><input id="kpDate" type="date"></div>
+      <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="kp13" style="width:18px;height:18px;padding:0"> 13회차까지 유지됨</label></div>
+      <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="kp25" style="width:18px;height:18px;padding:0"> 25회차까지 유지됨</label></div>
+      <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="kpBack" style="width:18px;height:18px;padding:0"> 수수료 환수됨</label></div>
+      <button class="btn" onclick="saveKeep()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 문자 템플릿 -->
+<div id="tplModal" class="mask hide" onclick="if(event.target===this)closeTpl()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="tplTitle">문자 템플릿</h2><button class="x" onclick="closeTpl()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>템플릿 이름 *</label><input id="tpName" placeholder="예: 만기 안내"></div>
+      <div class="fld"><label>분류</label><select id="tpCat"><option>정보성</option><option>광고성</option></select></div>
+      <div class="fld"><label>내용</label><textarea id="tpBody" rows="5" placeholder="{이름} 을 넣으면 고객 이름으로 바뀝니다."></textarea></div>
+      <div id="tpWarn" class="blockbox hide"></div>
+      <div class="fld" style="margin-top:12px"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="tpShared" style="width:18px;height:18px;padding:0"> 지사 전체가 함께 쓰는 공용 템플릿</label></div>
+      <button class="btn" onclick="saveTpl()">저장</button>
+      <button class="btn ghost" id="tpDelBtn" style="margin-top:8px;color:var(--red)" onclick="delTpl()">삭제</button>
+    </div>
+  </div>
+</div>
+
+<!-- 설계사 -->
+<div id="fcModal" class="mask hide" onclick="if(event.target===this)closeFc()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="fcTitle">설계사</h2><button class="x" onclick="closeFc()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>이름 *</label><input id="fcName" placeholder="예: 홍영산"></div>
+      <div class="fld fld2">
+        <div><label>역할</label><select id="fcRole"><option>설계사</option><option>지사장</option><option>관리자</option></select></div>
+        <div><label>직급</label><select id="fcRank"><option>FC</option><option>팀장</option><option>지사장</option><option>수습</option></select></div>
+      </div>
+      <div class="fld fld2">
+        <div><label>활동상태</label><select id="fcWork"><option>활동</option><option>휴면</option><option>퇴사</option></select></div>
+        <div><label>소속</label><input id="fcDept" placeholder="예: 1팀"></div>
+      </div>
+      <div class="fld fld2">
+        <div><label>연락처</label><input id="fcPhone" inputmode="tel" placeholder="010-0000-0000"></div>
+        <div><label>입사일</label><input id="fcJoin" type="date"></div>
+      </div>
+      <div class="fld"><label>보유 자격 (여러 개 선택 가능)</label>
+        <select id="fcLic" multiple size="5">
+          <option>생명보험</option><option>손해보험</option><option>제3보험</option><option>변액</option><option>자동차</option>
+        </select>
+      </div>
+      <div class="fld fld2">
+        <div><label>손보 배분율(%)</label><input id="fcSonbo" type="number" inputmode="numeric" value="100"></div>
+        <div><label>생보 배분율(%)</label><input id="fcSaengbo" type="number" inputmode="numeric" value="100"></div>
+      </div>
+      <div class="fld"><label>문자 발신번호</label><input id="fcSendNo" placeholder="041-534-1124"></div>
+      <div id="fcNewOnly">
+        <div class="fld"><label>접속코드 *</label><input id="fcCode" placeholder="설계사가 로그인할 때 쓰는 코드"></div>
+        <p class="mini">접속코드는 등록할 때만 정할 수 있습니다. 나중에 바꾸려면 Notion에서 직접 수정하세요.</p>
+      </div>
+      <div class="fld" style="margin-top:12px"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
+        <input type="checkbox" id="fcActive" checked style="width:18px;height:18px;padding:0"> 로그인 허용(활성)</label></div>
+      <button class="btn" onclick="saveFc()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 리쿠르팅 -->
+<div id="recModal" class="mask hide" onclick="if(event.target===this)closeRec()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="recTitle">리쿠르팅 후보</h2><button class="x" onclick="closeRec()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>이름 *</label><input id="rcName" placeholder="예: 김후보"></div>
+      <div class="fld fld2">
+        <div><label>연락처</label><input id="rcPhone" inputmode="tel" placeholder="010-0000-0000"></div>
+        <div><label>단계</label><input id="rcStage" placeholder="예: 신규후보"></div>
+      </div>
+      <div class="fld fld2">
+        <div><label>유입경로</label><input id="rcSource" placeholder="예: 지인 소개"></div>
+        <div><label>현재 직업</label><input id="rcJob" placeholder="예: 자영업"></div>
+      </div>
+      <div class="fld fld2">
+        <div><label>다음 연락일</label><input id="rcNext" type="date"></div>
+        <div><label>면접 예정일</label><input id="rcItv" type="date"></div>
+      </div>
+      <div class="fld"><label>메모</label><textarea id="rcMemo" rows="3"></textarea></div>
+      <button class="btn" onclick="saveRec()">저장</button>
+      <button class="btn ghost" id="rcDelBtn" style="margin-top:8px;color:var(--red)" onclick="delRec()">삭제</button>
     </div>
   </div>
 </div>
@@ -671,7 +956,7 @@ function startDemo(){
   document.getElementById('app').classList.remove('hide');
   document.getElementById('demoBanner').classList.remove('hide');
   document.getElementById('myName').textContent = ME.name;
-  document.getElementById('navAdmin').classList.remove('hide');
+  drawMenu();
   const d = new Date(Date.now()+9*3600*1000);
   const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
   const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
@@ -885,7 +1170,8 @@ function doLogin(){
     btn.disabled = false; btn.textContent = '시작하기';
     if(!r.ok){ err.textContent = r.error || '로그인에 실패했습니다.'; return; }
     ME = r;
-    try{ sessionStorage.setItem('crmMe', JSON.stringify(r)); }catch(e){}
+    ME.code = code;
+    try{ sessionStorage.setItem('crmMe', JSON.stringify(ME)); }catch(e){}
     boot();
   }).catch(function(){
     btn.disabled = false; btn.textContent = '시작하기';
@@ -901,7 +1187,7 @@ function boot(){
   document.getElementById('login').classList.add('hide');
   document.getElementById('app').classList.remove('hide');
   document.getElementById('myName').textContent = ME.name + ' 님';
-  if(ME.role && ME.role !== '설계사') document.getElementById('navAdmin').classList.remove('hide');
+  drawMenu();
   const d = new Date(Date.now()+9*3600*1000);
   const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
   const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
@@ -916,16 +1202,53 @@ function boot(){
 }
 
 /* ── 탭 ─────────────────────────── */
+const TABS = [
+  {k:'home',    ic:'🏠', lb:'홈'},
+  {k:'cust',    ic:'👥', lb:'고객'},
+  {k:'pipe',    ic:'📊', lb:'영업단계'},
+  {k:'act',     ic:'✏️', lb:'활동'},
+  {k:'ctr',     ic:'📄', lb:'계약'},
+  {k:'keep',    ic:'🛡️', lb:'유지율'},
+  {k:'sms',     ic:'💬', lb:'문자'},
+  {k:'goal',    ic:'🎯', lb:'목표'},
+  {k:'dash',    ic:'📈', lb:'지사현황', admin:true},
+  {k:'fc',      ic:'🧑‍💼', lb:'설계사',  admin:true},
+  {k:'recruit', ic:'🌱', lb:'리쿠르팅', admin:true}
+];
+function isAdmin(){ return !!(ME && ME.role && ME.role !== '설계사'); }
+function drawMenu(){
+  const box = document.getElementById('drGrid');
+  box.innerHTML = TABS.filter(function(t){ return !t.admin || isAdmin(); })
+    .map(function(t){
+      return '<button data-mtab="' + t.k + '" onclick="go(\'' + t.k + '\')">'
+        + '<div class="ic">' + t.ic + '</div><div class="lb">' + t.lb + '</div></button>';
+    }).join('');
+}
+function openMenu(){ drawMenu(); document.getElementById('drawer').classList.remove('hide'); }
+function closeMenu(){ document.getElementById('drawer').classList.add('hide'); }
+
 function go(t){
-  ['home','cust','act','goal','admin'].forEach(function(k){
-    document.getElementById('tab-'+k).classList.toggle('hide', k!==t);
+  const all = TABS.map(function(x){ return x.k; }).concat(['admin']);
+  all.forEach(function(k){
+    const el = document.getElementById('tab-'+k);
+    if(el) el.classList.toggle('hide', k!==t);
   });
   document.querySelectorAll('.nav button').forEach(function(b){
     b.classList.toggle('on', b.dataset.tab===t);
   });
+  document.querySelectorAll('#drGrid button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.mtab===t);
+  });
+  closeMenu();
   if(t==='goal') loadGoal();
-  if(t==='admin') loadAdmin();
   if(t==='home') loadGoalSummary();
+  if(t==='pipe') renderPipe();
+  if(t==='ctr') loadContracts();
+  if(t==='keep') loadKeep();
+  if(t==='sms'){ loadTpl(); loadSmsLog(); }
+  if(t==='fc') loadFcList();
+  if(t==='recruit') loadRec();
+  if(t==='dash') loadDash();
   window.scrollTo(0,0);
 }
 
@@ -1418,6 +1741,7 @@ function renderContracts(){
       + '<div class="info"><div class="nm">' + esc(c.custName||'미상') + (c.status&&c.status!=='정상'?' <span class="tag warn">'+esc(c.status)+'</span>':'')
       + (CTR_FILTER==='expiring' && dLeft>=0 ? ' <span class="tag warn">D-'+dLeft+'</span>' : '') + '</div>'
       + '<div class="mt">' + esc(meta) + '<br>' + esc(sub) + '</div></div>'
+      + '<button class="btn ghost sm" onclick="event.stopPropagation();openKeep(\'' + c.id + '\')">유지</button>'
       + '<button class="btn ghost sm" onclick="event.stopPropagation();deleteContract(\'' + c.id + '\')">삭제</button></div>';
   }).join('');
 }
@@ -1766,9 +2090,14 @@ function openCust(id){
   } else {
     ctrBox.classList.add('hide');
   }
+  syncCustExtraRow();
   document.getElementById('custModal').classList.remove('hide');
 }
 function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
+function syncCustExtraRow(){
+  const row = document.getElementById('custExtraRow');
+  if(row) row.classList.toggle('hide', !EDIT_ID);
+}
 function deleteCust(){
   if(!EDIT_ID) return;
   if(!confirm('이 고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
@@ -1801,7 +2130,16 @@ function openSms(){
   removeSmsImg();
   updateSmsCount();
   document.getElementById('smsNotReady').classList.toggle('hide', SMS_READY);
+  prepSmsModal();
   document.getElementById('smsModal').classList.remove('hide');
+}
+function prepSmsModal(){
+  document.getElementById('smsCat').value = '정보성';
+  document.getElementById('smsAdWarn').classList.add('hide');
+  document.getElementById('smsSendBtn').textContent = SMS_READY ? '발송하기' : '발송 전 점검하기';
+  if(!TPLS.length) loadTpl().then(fillSmsTplSelect);
+  else fillSmsTplSelect();
+  checkSmsAd();
 }
 function closeSms(){ document.getElementById('smsModal').classList.add('hide'); IS_BULK_SMS = false; }
 function fillSmsTemplate(key){
@@ -1839,42 +2177,64 @@ function removeSmsImg(){
   document.getElementById('smsImgPreview').classList.add('hide');
   updateSmsCount();
 }
+function useSavedTpl(id){
+  if(!id) return;
+  const t = TPLS.find(function(x){ return x.id===id; });
+  if(!t) return;
+  const nm = (IS_BULK_SMS || !SMS_TARGET) ? '고객' : (SMS_TARGET.name||'고객');
+  document.getElementById('smsMsg').value = String(t.body||'').split('{이름}').join(nm);
+  document.getElementById('smsCat').value = t.cat || '정보성';
+  updateSmsCount(); checkSmsAd();
+}
+function fillSmsTplSelect(){
+  const sel = document.getElementById('smsTplSel');
+  if(!sel) return;
+  sel.innerHTML = '<option value="">저장한 템플릿 불러오기…</option>'
+    + TPLS.map(function(t){ return '<option value="' + t.id + '">' + esc(t.name) + '</option>'; }).join('');
+}
+function checkSmsAd(){
+  const box = document.getElementById('smsAdWarn');
+  if(!box) return;
+  const cat = document.getElementById('smsCat').value;
+  const msg = document.getElementById('smsMsg').value;
+  const warn = adCheck(cat, msg);
+  const targets = IS_BULK_SMS ? BULK_TARGETS : (SMS_TARGET ? [SMS_TARGET] : []);
+  const noAgree = cat === '광고성' ? targets.filter(function(c){ return c.adAgree !== true; }).length : 0;
+  const optout = targets.filter(function(c){ return c.optout === true; }).length;
+  const msgs = [];
+  if(warn) msgs.push(warn);
+  if(noAgree) msgs.push('광고수신에 동의하지 않은 고객 ' + noAgree + '명은 자동으로 제외됩니다.');
+  if(optout) msgs.push('수신거부 고객 ' + optout + '명은 자동으로 제외됩니다.');
+  if(msgs.length){ box.innerHTML = msgs.join('<br>'); box.classList.remove('hide'); }
+  else box.classList.add('hide');
+}
 function sendSms(){
   const msg = document.getElementById('smsMsg').value.trim();
   if(!msg){ toast('메시지를 입력하세요', true); return; }
-  if(!SMS_READY){
-    toast('문자 API 연결 준비 중입니다. 화면만 미리 확인하신 거예요.', true);
-    return;
-  }
+  const cat = document.getElementById('smsCat').value;
+  const targets = IS_BULK_SMS ? BULK_TARGETS : (SMS_TARGET ? [SMS_TARGET] : []);
+  if(!targets.length){ toast('받는 사람이 없습니다', true); return; }
   const btn = document.getElementById('smsSendBtn');
-  btn.disabled = true;
-  if(IS_BULK_SMS){
-    let done = 0, fail = 0, i = 0;
-    function step(){
-      if(i >= BULK_TARGETS.length){
-        btn.disabled = false; btn.textContent = '발송하기';
-        toast(done + '명 발송 완료' + (fail?' · '+fail+'명 실패':''), fail>0);
-        closeSms();
-        return;
-      }
-      const c = BULK_TARGETS[i++];
-      const personalMsg = msg.split('고객').join(c.name);
-      btn.textContent = '발송 중… ' + i + '/' + BULK_TARGETS.length;
-      api('smsSend', {fc:ME.name, branch:ME.branch, customerId:c.id, customerName:c.name, phone:c.phone, msg:personalMsg, image:SMS_IMG_DATA})
-        .then(function(r){ if(r.ok) done++; else fail++; step(); })
-        .catch(function(){ fail++; step(); });
-    }
-    step();
-    return;
-  }
-  btn.textContent = '발송 중…';
-  api('smsSend', {
-    fc:ME.name, branch:ME.branch, customerId:SMS_TARGET.id, customerName:SMS_TARGET.name,
-    phone:SMS_TARGET.phone, msg:msg, image:SMS_IMG_DATA
+  btn.disabled = true; btn.textContent = SMS_READY ? '발송 중…' : '점검 중…';
+  api('smsLog', {
+    branch: ME.branch, fc: ME.name, cat: cat, content: msg,
+    targets: targets.map(function(c){
+      return {name:c.name, phone:c.phone, agree:c.adAgree === true, optout:c.optout === true};
+    })
   }).then(function(r){
-    btn.disabled = false; btn.textContent = '발송하기';
-    if(r.ok){ toast('문자를 보냈어요'); closeSms(); }
-    else toast(r.error||'발송에 실패했습니다', true);
+    btn.disabled = false; btn.textContent = SMS_READY ? '발송하기' : '발송 전 점검하기';
+    if(!r.ok){ toast(r.error||'처리에 실패했습니다', true); return; }
+    if(r.blockedCount){
+      const box = document.getElementById('smsAdWarn');
+      box.innerHTML = '<b>' + r.blockedCount + '명 발송 불가</b><br>'
+        + (r.blocked||[]).map(function(b){ return esc(b.name||'') + ' — ' + esc(b.reason); }).join('<br>');
+      box.classList.remove('hide');
+      toast(r.sent + '명 통과 · ' + r.blockedCount + '명 차단', true);
+    } else {
+      toast(SMS_READY ? (r.sent + '명 발송했어요') : (r.sent + '명 발송 가능 · 기록에 남겼어요'));
+      closeSms();
+    }
+    loadSmsLog();
   }).catch(function(){
     btn.disabled = false; btn.textContent = '발송하기';
     toast('연결에 실패했습니다', true);
@@ -2087,8 +2447,9 @@ function openBulkSms(){
   removeSmsImg();
   updateSmsCount();
   document.getElementById('smsNotReady').classList.toggle('hide', SMS_READY);
-  document.getElementById('smsModal').classList.remove('hide');
   IS_BULK_SMS = true;
+  prepSmsModal();
+  document.getElementById('smsModal').classList.remove('hide');
 }
 let IS_BULK_SMS = false;
 
@@ -2160,6 +2521,426 @@ function doPrint(){
   closeLabel();
   setTimeout(function(){ window.print(); }, 120);
 }
+
+
+/* ═══════════════════════════════════════
+   3단계 확장 기능
+   ═══════════════════════════════════════ */
+const STAGES = ['신규','접촉','상담예정','상담완료','제안','계약검토','계약완료','보류','실패'];
+
+/* ── 영업 파이프라인 ─────────────── */
+function renderPipe(){
+  const board = document.getElementById('pipeBoard');
+  if(!CUSTOMERS.length){
+    board.innerHTML = '<div class="empty">고객을 먼저 등록하세요.</div>';
+    document.getElementById('pipeDue').innerHTML = '<div class="empty">-</div>';
+    return;
+  }
+  const group = {};
+  STAGES.forEach(function(k){ group[k] = []; });
+  CUSTOMERS.forEach(function(c){
+    const st = STAGES.indexOf(c.stage) >= 0 ? c.stage : '신규';
+    group[st].push(c);
+  });
+  board.innerHTML = STAGES.map(function(st){
+    const list = group[st];
+    const cards = list.length ? list.map(function(c){
+      const due = c.nextDate ? '<small>다음 ' + esc(c.nextDate.slice(5)) + '</small>' : '';
+      return '<button class="pipe-card" onclick="openStage(\'' + c.id + '\')">'
+        + '<b>' + esc(c.name||'이름없음') + '</b>' + due + '</button>';
+    }).join('') : '<p class="mini" style="padding:4px 2px">없음</p>';
+    return '<div class="pipe-col"><h4>' + st + '<span>' + list.length + '</span></h4>' + cards + '</div>';
+  }).join('');
+  document.getElementById('pipeCount').textContent = CUSTOMERS.length + '명';
+
+  const t = today();
+  const due = CUSTOMERS.filter(function(c){ return c.nextDate && c.nextDate <= t; })
+    .sort(function(a,b){ return String(a.nextDate).localeCompare(String(b.nextDate)); });
+  document.getElementById('pipeDue').innerHTML = due.length
+    ? due.map(function(c){
+        return '<div class="kv"><span>' + esc(c.name) + ' <small class="mini">' + esc(c.stage||'') + '</small></span>'
+          + '<b style="color:var(--red)">' + esc(c.nextDate) + '</b></div>';
+      }).join('')
+    : '<div class="empty">오늘 챙길 고객이 없습니다.</div>';
+}
+
+let STAGE_ID = null;
+function openStage(id){
+  const c = CUSTOMERS.find(function(x){ return x.id===id; });
+  if(!c) return;
+  STAGE_ID = id;
+  document.getElementById('stageTitle').textContent = (c.name||'고객') + ' 단계 옮기기';
+  document.getElementById('stgSel').value = STAGES.indexOf(c.stage)>=0 ? c.stage : '신규';
+  document.getElementById('stgNext').value = c.nextDate || '';
+  document.getElementById('stageModal').classList.remove('hide');
+}
+function closeStage(){ document.getElementById('stageModal').classList.add('hide'); }
+function saveStage(){
+  if(!STAGE_ID) return;
+  const stage = document.getElementById('stgSel').value;
+  const nextDate = document.getElementById('stgNext').value;
+  api('stageMove', {pageId:STAGE_ID, stage:stage, nextDate:nextDate}).then(function(r){
+    if(!r.ok){ toast(r.error||'변경에 실패했습니다', true); return; }
+    const c = CUSTOMERS.find(function(x){ return x.id===STAGE_ID; });
+    if(c){ c.stage = stage; c.nextDate = nextDate; c.status = r.status || c.status; c.lastTouch = today(); }
+    toast('단계를 옮겼어요');
+    closeStage(); renderPipe();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 고객 관리정보(동의·점검일) ──── */
+let EXTRA_ID = null;
+function openExtra(id){
+  const c = CUSTOMERS.find(function(x){ return x.id===id; });
+  if(!c) return;
+  EXTRA_ID = id;
+  document.getElementById('extraTitle').textContent = (c.name||'고객') + ' 관리 정보';
+  document.getElementById('exCare').value = c.careStatus || '정상';
+  document.getElementById('exRef').value = c.referral || '보통';
+  document.getElementById('exReview').value = c.reviewDate || '';
+  document.getElementById('exRenew').value = c.renewDate || '';
+  document.getElementById('exNext').value = c.nextDate || '';
+  document.getElementById('exAgree').checked = c.adAgree === true;
+  document.getElementById('exOptout').checked = c.optout === true;
+  document.getElementById('extraModal').classList.remove('hide');
+}
+function closeExtra(){ document.getElementById('extraModal').classList.add('hide'); }
+function saveExtra(){
+  if(!EXTRA_ID) return;
+  const p = {
+    pageId: EXTRA_ID,
+    careStatus: document.getElementById('exCare').value,
+    referral: document.getElementById('exRef').value,
+    reviewDate: document.getElementById('exReview').value,
+    renewDate: document.getElementById('exRenew').value,
+    nextDate: document.getElementById('exNext').value,
+    adAgree: document.getElementById('exAgree').checked,
+    optout: document.getElementById('exOptout').checked
+  };
+  api('custExtra', p).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다', true); return; }
+    const c = CUSTOMERS.find(function(x){ return x.id===EXTRA_ID; });
+    if(c) Object.assign(c, {careStatus:p.careStatus, referral:p.referral, reviewDate:p.reviewDate,
+      renewDate:p.renewDate, nextDate:p.nextDate, adAgree:p.adAgree, optout:p.optout});
+    toast('저장했어요'); closeExtra();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 유지율 ─────────────────────── */
+function loadKeep(){
+  document.getElementById('keepDay').textContent = today();
+  const box = document.getElementById('keepSummary');
+  const al = document.getElementById('keepAlerts');
+  box.innerHTML = '<div class="empty">불러오는 중…</div>';
+  api('persistency', {branch:ME.branch, fc: isAdmin() ? '' : ME.name}).then(function(r){
+    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    const su = r.summary || {};
+    const pct = function(v){ return (v===null||v===undefined) ? '집계 없음' : v + '%'; };
+    box.innerHTML =
+      '<div class="kv"><span>전체 계약</span><b>' + (su.total||0) + '건</b></div>'
+      + '<div class="kv"><span>유효 계약</span><b>' + (su.alive||0) + '건</b></div>'
+      + '<div class="kv"><span>13회차 유지율</span><b>' + pct(su.rate13) + ' <small class="mini">('
+      + (su.keep13||0) + '/' + (su.base13||0) + ')</small></b></div>'
+      + '<div class="kv"><span>25회차 유지율</span><b>' + pct(su.rate25) + ' <small class="mini">('
+      + (su.keep25||0) + '/' + (su.base25||0) + ')</small></b></div>'
+      + '<div class="kv"><span>실효</span><b style="color:var(--red)">' + (su.lapse||0) + '건</b></div>'
+      + '<div class="kv"><span>해지</span><b style="color:var(--red)">' + (su.cancel||0) + '건</b></div>'
+      + '<div class="kv"><span>환수</span><b>' + (su.clawback||0) + '건</b></div>'
+      + (isAdmin() && (r.byFc||[]).length
+          ? '<div style="margin-top:14px"><div class="dr-h" style="padding:0 0 6px">설계사별</div>'
+            + r.byFc.map(function(f){
+                return '<div class="kv"><span>' + esc(f.fc||'(미지정)') + '</span><b>'
+                  + (f.rate13===null?'-':f.rate13+'%') + ' <small class="mini">' + f.total + '건</small></b></div>';
+              }).join('') + '</div>'
+          : '');
+    const alerts = r.alerts || [];
+    al.innerHTML = alerts.length
+      ? alerts.map(function(a){
+          return '<div class="kv"><span>' + esc(a.customer||a.name||'') + ' <small class="mini">'
+            + esc(a.fc||'') + '</small></span><b class="mini" style="color:var(--red)">' + esc(a.reason) + '</b></div>';
+        }).join('')
+      : '<div class="empty">지금은 챙길 계약이 없습니다.</div>';
+  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+
+let KEEP_ID = null;
+function openKeep(id){
+  KEEP_ID = id;
+  document.getElementById('kpDate').value = today();
+  document.getElementById('keepModal').classList.remove('hide');
+}
+function closeKeep(){ document.getElementById('keepModal').classList.add('hide'); }
+function saveKeep(){
+  if(!KEEP_ID) return;
+  api('keepSave', {
+    pageId: KEEP_ID,
+    keepStatus: document.getElementById('kpSel').value,
+    checkDate: document.getElementById('kpDate').value,
+    keep13: document.getElementById('kp13').checked,
+    keep25: document.getElementById('kp25').checked,
+    clawback: document.getElementById('kpBack').checked
+  }).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다', true); return; }
+    toast('유지상태를 저장했어요'); closeKeep(); loadContracts();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 문자 템플릿 ─────────────────── */
+let TPLS = [];
+let TPL_ID = null;
+function loadTpl(){
+  const box = document.getElementById('tplList');
+  return api('tplList', {branch:ME.branch, fc:ME.name}).then(function(r){
+    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    TPLS = r.items || [];
+    box.innerHTML = TPLS.length ? TPLS.map(function(t){
+      const tag = t.cat === '광고성' ? '<span class="tag warn">광고성</span>' : '<span class="tag">정보성</span>';
+      return '<div class="kv"><span><b>' + esc(t.name) + '</b> ' + tag
+        + (t.shared ? ' <small class="mini">공용</small>' : '')
+        + '<br><small class="mini">' + esc(String(t.body||'').slice(0,40)) + '</small></span>'
+        + '<button class="btn ghost sm" onclick="openTpl(\'' + t.id + '\')">수정</button></div>';
+    }).join('') : '<div class="empty">저장된 템플릿이 없습니다.</div>';
+  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+function openTpl(id){
+  TPL_ID = id || null;
+  const t = id ? TPLS.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('tplTitle').textContent = t ? '템플릿 수정' : '새 템플릿';
+  document.getElementById('tpName').value = t ? t.name : '';
+  document.getElementById('tpCat').value = t ? (t.cat||'정보성') : '정보성';
+  document.getElementById('tpBody').value = t ? t.body : '';
+  document.getElementById('tpShared').checked = t ? !!t.shared : false;
+  document.getElementById('tpDelBtn').classList.toggle('hide', !t);
+  document.getElementById('tpWarn').classList.add('hide');
+  document.getElementById('tplModal').classList.remove('hide');
+}
+function closeTpl(){ document.getElementById('tplModal').classList.add('hide'); }
+function adCheck(cat, body){
+  if(cat !== '광고성') return '';
+  const miss = [];
+  if(!/^\(광고\)/.test(String(body).trim())) miss.push('맨 앞에 (광고) 표기');
+  if(!/무료거부|수신거부|080/.test(body)) miss.push('무료 수신거부 안내');
+  return miss.length ? ('광고 문자는 다음이 빠지면 발송이 차단됩니다 → ' + miss.join(', ')) : '';
+}
+function saveTpl(){
+  const name = document.getElementById('tpName').value.trim();
+  if(!name){ toast('템플릿 이름을 입력하세요', true); return; }
+  const cat = document.getElementById('tpCat').value;
+  const body = document.getElementById('tpBody').value;
+  const warn = adCheck(cat, body);
+  const w = document.getElementById('tpWarn');
+  if(warn){ w.textContent = warn; w.classList.remove('hide'); }
+  else w.classList.add('hide');
+  const p = {branch:ME.branch, fc:ME.name, name:name, cat:cat, body:body,
+    shared: document.getElementById('tpShared').checked};
+  if(TPL_ID) p.pageId = TPL_ID;
+  api('tplSave', p).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다', true); return; }
+    toast('저장했어요'); closeTpl(); loadTpl();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function delTpl(){
+  if(!TPL_ID) return;
+  if(!confirm('이 템플릿을 삭제할까요?')) return;
+  api('tplDelete', {pageId:TPL_ID}).then(function(r){
+    if(!r.ok){ toast(r.error||'삭제에 실패했습니다', true); return; }
+    toast('삭제했어요'); closeTpl(); loadTpl();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 발송 기록 ───────────────────── */
+function loadSmsLog(){
+  const box = document.getElementById('smsLogList');
+  api('smsLogList', {branch:ME.branch, fc: isAdmin() ? '' : ME.name}).then(function(r){
+    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    const items = r.items || [];
+    document.getElementById('smsLogCount').textContent = items.length + '건';
+    box.innerHTML = items.length ? items.slice(0,50).map(function(m){
+      const bad = m.result === '실패';
+      return '<div class="kv"><span><b>' + esc(m.customer||'') + '</b> '
+        + '<small class="mini">' + esc(String(m.sendAt||'').slice(0,10)) + ' · ' + esc(m.cat||'') + '</small>'
+        + (bad ? '<br><small class="mini" style="color:var(--red)">' + esc(m.reason||'') + '</small>' : '')
+        + '</span><b style="color:' + (bad?'var(--red)':'var(--green)') + '">' + esc(m.result||'') + '</b></div>';
+    }).join('') : '<div class="empty">발송 기록이 없습니다.</div>';
+  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+
+/* ── 설계사 관리 ─────────────────── */
+let FCS = [];
+let FC_ID = null;
+function loadFcList(){
+  const box = document.getElementById('fcList');
+  api('fcList', {branch:ME.branch}).then(function(r){
+    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    FCS = r.items || [];
+    box.innerHTML = FCS.length ? FCS.map(function(f){
+      return '<div class="kv"><span><b>' + esc(f.name) + '</b> <small class="mini">'
+        + esc(f.rank||'') + ' · ' + esc(f.workStatus||'') + (f.active?'':' · 로그인 잠김') + '</small>'
+        + '<br><small class="mini">' + esc(f.phone||'') + '</small></span>'
+        + '<button class="btn ghost sm" onclick="openFc(\'' + f.id + '\')">수정</button></div>';
+    }).join('') : '<div class="empty">등록된 설계사가 없습니다.</div>';
+  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+function openFc(id){
+  FC_ID = id || null;
+  const f = id ? FCS.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('fcTitle').textContent = f ? '설계사 수정' : '설계사 등록';
+  document.getElementById('fcName').value = f ? f.name : '';
+  document.getElementById('fcRole').value = f ? (f.role||'설계사') : '설계사';
+  document.getElementById('fcRank').value = f ? (f.rank||'FC') : 'FC';
+  document.getElementById('fcWork').value = f ? (f.workStatus||'활동') : '활동';
+  document.getElementById('fcDept').value = f ? (f.dept||'') : '';
+  document.getElementById('fcPhone').value = f ? (f.phone||'') : '';
+  document.getElementById('fcJoin').value = f ? (f.joinDate||'') : '';
+  document.getElementById('fcSonbo').value = f ? (f.sonboRatio||100) : 100;
+  document.getElementById('fcSaengbo').value = f ? (f.saengboRatio||100) : 100;
+  document.getElementById('fcSendNo').value = f ? (f.sendNo||'') : '';
+  document.getElementById('fcActive').checked = f ? !!f.active : true;
+  document.getElementById('fcCode').value = '';
+  document.getElementById('fcNewOnly').classList.toggle('hide', !!f);
+  const lic = f ? String(f.license||'').split(',') : [];
+  Array.prototype.forEach.call(document.getElementById('fcLic').options, function(o){
+    o.selected = lic.indexOf(o.value) >= 0;
+  });
+  document.getElementById('fcModal').classList.remove('hide');
+}
+function closeFc(){ document.getElementById('fcModal').classList.add('hide'); }
+function saveFc(){
+  const name = document.getElementById('fcName').value.trim();
+  if(!name){ toast('이름을 입력하세요', true); return; }
+  const lic = Array.prototype.filter.call(document.getElementById('fcLic').options, function(o){ return o.selected; })
+    .map(function(o){ return o.value; });
+  const p = {
+    by: ME.code, branch: ME.branch, name: name,
+    role: document.getElementById('fcRole').value,
+    rank: document.getElementById('fcRank').value,
+    workStatus: document.getElementById('fcWork').value,
+    dept: document.getElementById('fcDept').value,
+    phone: document.getElementById('fcPhone').value,
+    joinDate: document.getElementById('fcJoin').value,
+    sonboRatio: Number(document.getElementById('fcSonbo').value || 100),
+    saengboRatio: Number(document.getElementById('fcSaengbo').value || 100),
+    sendNo: document.getElementById('fcSendNo').value,
+    license: lic,
+    active: document.getElementById('fcActive').checked
+  };
+  if(FC_ID) p.pageId = FC_ID;
+  else {
+    const code = document.getElementById('fcCode').value.trim();
+    if(!code){ toast('접속코드를 입력하세요', true); return; }
+    p.loginCode = code;
+    p.appointDate = p.joinDate;
+  }
+  api('fcSave', p).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다', true); return; }
+    toast('저장했어요'); closeFc(); loadFcList();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 리쿠르팅 ───────────────────── */
+let RECS = [];
+let REC_ID = null;
+function loadRec(){
+  const box = document.getElementById('recList');
+  api('recruitList', {branch:ME.branch}).then(function(r){
+    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    RECS = r.items || [];
+    box.innerHTML = RECS.length ? RECS.map(function(c){
+      return '<div class="kv"><span><b>' + esc(c.name) + '</b> <small class="mini">'
+        + esc(c.stage||'') + (c.nextContact ? ' · 다음 ' + esc(c.nextContact.slice(5)) : '') + '</small>'
+        + '<br><small class="mini">' + esc(c.job||'') + ' ' + esc(c.source||'') + '</small></span>'
+        + '<button class="btn ghost sm" onclick="openRec(\'' + c.id + '\')">수정</button></div>';
+    }).join('') : '<div class="empty">등록된 후보가 없습니다.</div>';
+  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+function openRec(id){
+  REC_ID = id || null;
+  const c = id ? RECS.find(function(x){ return x.id===id; }) : null;
+  document.getElementById('recTitle').textContent = c ? '후보 수정' : '후보 등록';
+  document.getElementById('rcName').value = c ? c.name : '';
+  document.getElementById('rcPhone').value = c ? (c.phone||'') : '';
+  document.getElementById('rcStage').value = c ? (c.stage||'신규후보') : '신규후보';
+  document.getElementById('rcSource').value = c ? (c.source||'') : '';
+  document.getElementById('rcJob').value = c ? (c.job||'') : '';
+  document.getElementById('rcNext').value = c ? (c.nextContact||'') : '';
+  document.getElementById('rcItv').value = c ? (c.interviewDate||'') : '';
+  document.getElementById('rcMemo').value = c ? (c.memo||'') : '';
+  document.getElementById('rcDelBtn').classList.toggle('hide', !c);
+  document.getElementById('recModal').classList.remove('hide');
+}
+function closeRec(){ document.getElementById('recModal').classList.add('hide'); }
+function saveRec(){
+  const name = document.getElementById('rcName').value.trim();
+  if(!name){ toast('이름을 입력하세요', true); return; }
+  const p = {branch:ME.branch, fc:ME.name, name:name,
+    phone: document.getElementById('rcPhone').value,
+    stage: document.getElementById('rcStage').value,
+    source: document.getElementById('rcSource').value,
+    job: document.getElementById('rcJob').value,
+    nextContact: document.getElementById('rcNext').value,
+    interviewDate: document.getElementById('rcItv').value,
+    memo: document.getElementById('rcMemo').value};
+  if(REC_ID) p.pageId = REC_ID;
+  api('recruitSave', p).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다', true); return; }
+    toast('저장했어요'); closeRec(); loadRec();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function delRec(){
+  if(!REC_ID) return;
+  if(!confirm('이 후보를 삭제할까요?')) return;
+  api('recruitDelete', {pageId:REC_ID}).then(function(r){
+    if(!r.ok){ toast(r.error||'삭제에 실패했습니다', true); return; }
+    toast('삭제했어요'); closeRec(); loadRec();
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+
+/* ── 지사 현황 ───────────────────── */
+function loadDash(){
+  const tot = document.getElementById('dashTotal');
+  tot.innerHTML = '<div class="empty">불러오는 중…</div>';
+  api('adminDash', {branch:ME.branch}).then(function(r){
+    if(!r.ok){ tot.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
+    document.getElementById('dashYm').textContent = r.ym || '';
+    const m = r.monthTotal || {};
+    tot.innerHTML =
+      '<div class="kv"><span>계약 건수</span><b>' + (m.count||0) + '건</b></div>'
+      + '<div class="kv"><span>환산실적</span><b>' + fmtWon(m.conv||0) + '</b></div>'
+      + '<div class="kv"><span>월납보험료</span><b>' + fmtWon(m.premium||0) + '</b></div>'
+      + '<div class="kv"><span>예상수수료</span><b>' + fmtWon(m.comm||0) + '</b></div>';
+    const team = r.team || [];
+    document.getElementById('dashTeam').innerHTML = team.length ? team.map(function(t){
+      return '<div class="kv"><span><b>' + esc(t.fc||'(미지정)') + '</b> <small class="mini">'
+        + esc(t.rank||'') + '</small><br><small class="mini">가망 ' + (t.prospect||0)
+        + '명 · 보류 ' + (t.hold||0) + '명</small></span>'
+        + '<b>' + (t.count||0) + '건<br><small class="mini">' + fmtWon(t.conv||0) + '</small></b></div>';
+    }).join('') : '<div class="empty">데이터가 없습니다.</div>';
+    const f = r.funnel || {};
+    document.getElementById('dashFunnel').innerHTML = STAGES.map(function(k){
+      return '<div class="kv"><span>' + k + '</span><b>' + (f[k]||0) + '명</b></div>';
+    }).join('');
+    const od = r.overdue || [], rn = r.renewSoon || [], rv = r.reviewSoon || [];
+    let html = '';
+    html += '<div class="kv"><span>관리일이 지난 고객</span><b style="color:var(--red)">' + (r.overdueCount||0) + '명</b></div>';
+    html += '<div class="kv"><span>30일 내 갱신 예정</span><b>' + rn.length + '명</b></div>';
+    html += '<div class="kv"><span>30일 내 보장점검</span><b>' + rv.length + '명</b></div>';
+    if(od.length){
+      html += '<div class="dr-h" style="padding:12px 0 4px">가장 오래 밀린 고객</div>';
+      html += od.slice(0,10).map(function(c){
+        return '<div class="kv"><span>' + esc(c.name) + ' <small class="mini">' + esc(c.fc||'') + '</small></span>'
+          + '<b class="mini">' + esc(c.date) + '</b></div>';
+      }).join('');
+    }
+    const rc = r.recruit || {};
+    const rk = Object.keys(rc);
+    if(rk.length){
+      html += '<div class="dr-h" style="padding:12px 0 4px">리쿠르팅 단계</div>';
+      html += rk.map(function(k){ return '<div class="kv"><span>' + esc(k) + '</span><b>' + rc[k] + '명</b></div>'; }).join('');
+    }
+    document.getElementById('dashAlert').innerHTML = html;
+  }).catch(function(){ tot.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
+}
+
 
 /* ── 시작 ───────────────────────── */
 (function(){
