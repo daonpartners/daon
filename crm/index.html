@@ -2956,7 +2956,7 @@ function runImport(){
     createCustomers().then(runContracts).then(function(res){
       btn.disabled = false;
       closeImp();
-      showImpResult(res.done, res.fail, newNames.length - custFail, FAILED);
+      showImpResult(res.done, res.fail + custFail, newNames.length - custFail, FAILED);
       loadContracts(); loadCustomers();
     });
   } else {
