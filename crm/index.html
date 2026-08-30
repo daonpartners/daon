@@ -718,6 +718,24 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   </div>
 </div>
 
+<!-- 반영 결과(실패 목록) -->
+<div id="impResultModal" class="mask hide" onclick="if(event.target===this)closeImpResult()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>반영 결과</h2><button class="x" onclick="closeImpResult()">×</button></div>
+    <div class="sheet-b">
+      <div id="impResultSum" class="stat"></div>
+      <div id="impResultFailBox" class="hide" style="margin-top:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <b style="font-size:13.5px">실패한 항목</b>
+          <button class="btn ghost sm" onclick="failedXlsxOut()">실패 목록 엑셀로 다운로드</button>
+        </div>
+        <div id="impResultFailList" style="max-height:40vh;overflow-y:auto;margin-top:8px"></div>
+      </div>
+      <button class="btn" style="margin-top:14px" onclick="closeImpResult()">확인</button>
+    </div>
+  </div>
+</div>
+
 <!-- 라벨 인쇄 -->
 <div id="lblModal" class="mask hide" onclick="if(event.target===this)closeLabel()">
   <div class="sheet">
@@ -2875,6 +2893,7 @@ function runImport(){
   const btn = document.getElementById('impGo');
   btn.disabled = true;
   const action = IMPORT_MODE === 'contract' ? 'contractAdd' : 'customerSave';
+  const FAILED = [];
 
   function runContracts(){
     let done = 0, fail = 0, next = 0;
@@ -2887,13 +2906,17 @@ function runImport(){
     function runOne(){
       if(next >= total) return Promise.resolve();
       const i = next++;
-      const p = Object.assign({fc:ME.name, branch:ME.branch}, IMPORT_QUEUE[i]);
+      const item = IMPORT_QUEUE[i];
+      const p = Object.assign({fc:ME.name, branch:ME.branch}, item);
       return api(action, p).then(function(r){
-        if(r.ok) done++; else fail++;
+        if(r.ok) done++;
+        else { fail++; FAILED.push({ name: item.custName || item.name || '(이름없음)', detail: item.product || item.dept || '', reason: r.error || '저장 실패(이유 없음)' }); }
         updateBtn();
         return runOne();
       }).catch(function(){
-        fail++; updateBtn();
+        fail++;
+        FAILED.push({ name: item.custName || item.name || '(이름없음)', detail: item.product || item.dept || '', reason: '연결 실패(네트워크)' });
+        updateBtn();
         return runOne();
       });
     }
@@ -2905,7 +2928,7 @@ function runImport(){
   if(IMPORT_MODE === 'contract'){
     // 1단계: 고객 목록에 없는 이름을 먼저 신규 고객으로 등록하고, 그 ID로 계약을 연결합니다.
     const newNames = [...new Set(IMPORT_QUEUE.filter(function(o){ return o.matchReason==='no-name'; }).map(function(o){ return o.custName; }))];
-    let ni = 0;
+    let ni = 0, custFail = 0;
     function createCustomers(){
       if(!newNames.length) return Promise.resolve();
       btn.textContent = '신규 고객 등록 중… 0/' + newNames.length;
@@ -2915,10 +2938,17 @@ function runImport(){
         return api('customerSave', {fc:ME.name, branch:ME.branch, name:name, custType:'보유고객'}).then(function(r){
           if(r.ok && r.id){
             IMPORT_QUEUE.forEach(function(o){ if(o.custName===name && o.matchReason==='no-name') o.customerId = r.id; });
+          } else {
+            custFail++;
+            FAILED.push({ name: name, detail: '고객 신규 등록', reason: (r&&r.error) || '고객 등록 실패 - 이 이름의 계약은 고객과 연결되지 못했습니다' });
           }
           btn.textContent = '신규 고객 등록 중… ' + ni + '/' + newNames.length;
           return one();
-        }).catch(one);
+        }).catch(function(){
+          custFail++;
+          FAILED.push({ name: name, detail: '고객 신규 등록', reason: '연결 실패(네트워크) - 이 이름의 계약은 고객과 연결되지 못했습니다' });
+          return one();
+        });
       }
       const workers = [one(), one(), one()];
       return Promise.all(workers);
@@ -2926,18 +2956,47 @@ function runImport(){
     createCustomers().then(runContracts).then(function(res){
       btn.disabled = false;
       closeImp();
-      const msg = res.done + '건 반영' + (newNames.length ? ' · 신규 고객 ' + newNames.length + '명 등록' : '') + (res.fail ? ' · ' + res.fail + '건 실패' : '');
-      toast(msg, res.fail>0);
+      showImpResult(res.done, res.fail, newNames.length - custFail, FAILED);
       loadContracts(); loadCustomers();
     });
   } else {
     runContracts().then(function(res){
       btn.disabled = false;
       closeImp();
-      toast(res.done + '건 반영' + (res.fail ? ' · ' + res.fail + '건 실패' : ''), res.fail>0);
+      showImpResult(res.done, res.fail, 0, FAILED);
       loadCustomers();
     });
   }
+}
+function showImpResult(done, fail, newCustCount, failed){
+  document.getElementById('impResultSum').innerHTML =
+    '<div><div class="n" style="color:var(--green)">'+done+'</div><div class="l">반영됨</div></div>'
+    + (newCustCount ? '<div><div class="n" style="color:var(--org)">'+newCustCount+'</div><div class="l">신규 고객 등록</div></div>' : '')
+    + '<div><div class="n" style="color:'+(fail?'var(--red)':'var(--ink3)')+'">'+fail+'</div><div class="l">실패</div></div>';
+  const box = document.getElementById('impResultFailBox');
+  if(fail && failed.length){
+    box.classList.remove('hide');
+    IMPFAIL_LIST = failed;
+    document.getElementById('impResultFailList').innerHTML = failed.map(function(f){
+      return '<div class="kv"><span><b>'+esc(f.name)+'</b>'+(f.detail?' <small class="mini">'+esc(f.detail)+'</small>':'')
+        + '<br><small class="mini" style="color:var(--red)">'+esc(f.reason)+'</small></span></div>';
+    }).join('');
+  } else {
+    box.classList.add('hide');
+    IMPFAIL_LIST = [];
+  }
+  document.getElementById('impResultModal').classList.remove('hide');
+}
+function closeImpResult(){ document.getElementById('impResultModal').classList.add('hide'); }
+let IMPFAIL_LIST = [];
+function failedXlsxOut(){
+  if(!IMPFAIL_LIST.length){ toast('실패한 항목이 없습니다', true); return; }
+  const rows = IMPFAIL_LIST.map(function(f){ return { '이름':f.name, '항목':f.detail, '실패사유':f.reason }; });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '실패목록');
+  XLSX.writeFile(wb, '다온_업로드실패_' + today() + '.xlsx');
+  toast(rows.length + '건 다운로드했어요');
 }
 
 /* ── 주소라벨 ───────────────────── */
