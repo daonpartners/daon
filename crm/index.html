@@ -1889,6 +1889,11 @@ function renderCtrTable(list){
   el.innerHTML = html;
 }
 function ctrXlsxOutFiltered(){
+  if(!CONTRACTS.length){
+    toast('계약 목록을 아직 불러오는 중이에요. 잠시 후 다시 눌러주세요.', true);
+    loadContracts();
+    return;
+  }
   const rows = ctrFilteredList().map(function(c){
     const o = {};
     CTR_XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
@@ -2027,6 +2032,11 @@ function splitDateRange(row){
   return null;
 }
 function ctrXlsxOut(){
+  if(!CONTRACTS.length){
+    toast('계약 목록을 아직 불러오는 중이에요. 잠시 후 다시 눌러주세요.', true);
+    loadContracts();
+    return;
+  }
   const rows = CONTRACTS.map(function(c){
     const o = {};
     CTR_XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
@@ -2036,7 +2046,7 @@ function ctrXlsxOut(){
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '보유계약');
   XLSX.writeFile(wb, '다온_계약_' + today() + '.xlsx');
-  toast('엑셀을 내려받았어요');
+  toast(rows.length + '건 다운로드했어요');
 }
 /* 엑셀 맨 위에 빈 줄이나 제목줄이 몇 줄 섞여 있어도, 실제 칼럼명이 있는 줄을 스스로 찾아서 읽습니다.
    (칸의 절반 이상이 채워져 있는 첫 번째 줄을 "진짜 헤더"로 봅니다) */
@@ -2645,6 +2655,11 @@ function getFilteredCustomers(){
   return list;
 }
 function xlsxOut(){
+  if(!CUSTOMERS.length){
+    toast('고객 목록을 아직 불러오는 중이에요. 잠시 후 다시 눌러주세요.', true);
+    loadCustomers();
+    return;
+  }
   const rows = getFilteredCustomers().map(function(c){
     const o = {};
     XCOL.forEach(function(p){ o[p[0]] = c[p[1]] || ''; });
