@@ -2020,12 +2020,38 @@ function ctrXlsxOut(){
   XLSX.writeFile(wb, '다온_계약_' + today() + '.xlsx');
   toast('엑셀을 내려받았어요');
 }
+/* 엑셀 맨 위에 빈 줄이나 제목줄이 몇 줄 섞여 있어도, 실제 칼럼명이 있는 줄을 스스로 찾아서 읽습니다.
+   (칸의 절반 이상이 채워져 있는 첫 번째 줄을 "진짜 헤더"로 봅니다) */
+function smartSheetToJson(sheet){
+  const grid = XLSX.utils.sheet_to_json(sheet, {header:1, defval:'', blankrows:false});
+  if(!grid.length) return [];
+  let headerIdx = 0;
+  for (let i=0; i<Math.min(grid.length,10); i++){
+    const row = grid[i];
+    const filled = row.filter(function(v){ return String(v).trim()!==''; }).length;
+    if(filled >= Math.max(2, Math.ceil(row.length*0.4))){ headerIdx = i; break; }
+  }
+  const headers = grid[headerIdx].map(function(h){ return String(h).trim(); });
+  const out = [];
+  for (let i=headerIdx+1; i<grid.length; i++){
+    const row = grid[i];
+    const o = {};
+    let hasVal = false;
+    headers.forEach(function(h, j){
+      const v = row[j]===undefined ? '' : row[j];
+      if(h){ o[h] = v; }
+      if(String(v).trim()!=='') hasVal = true;
+    });
+    if(hasVal) out.push(o);
+  }
+  return out;
+}
 function ctrXlsxIn(input){
   const f = input.files[0]; if(!f) return;
   const rd = new FileReader();
   rd.onload = function(e){
     const wb = XLSX.read(e.target.result, {type:'array'});
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    const rows = smartSheetToJson(wb.Sheets[wb.SheetNames[0]]);
     input.value = '';
     prepImportContract(rows);
   };
@@ -2600,7 +2626,7 @@ function xlsxIn(input){
   const rd = new FileReader();
   rd.onload = function(e){
     const wb = XLSX.read(e.target.result, {type:'array'});
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    const rows = smartSheetToJson(wb.Sheets[wb.SheetNames[0]]);
     input.value = '';
     prepImport(rows);
   };
@@ -2648,7 +2674,7 @@ function aiXlsxIn(input){
   const rd = new FileReader();
   rd.onload = function(e){
     const wb = XLSX.read(e.target.result, {type:'array'});
-    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], {defval:''});
+    const rows = smartSheetToJson(wb.Sheets[wb.SheetNames[0]]);
     input.value = '';
     if(!rows.length){ toast('빈 파일입니다', true); return; }
     runAiClassify(rows);
