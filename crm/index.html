@@ -694,7 +694,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn ghost sm" onclick="closeCust();openExtra(EDIT_ID)">🛡️ 관리 정보</button>
       </div>
       <div id="custCtrBox" class="hide" style="margin-top:14px">
-        <label style="font-size:13px;font-weight:600;color:var(--ink2)">보유계약</label>
+        <label style="font-size:13px;font-weight:600;color:var(--ink2)" id="custCtrLabel">보유계약</label>
         <div id="custCtrList" style="margin-top:6px"></div>
       </div>
       <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:8px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
@@ -2316,10 +2316,17 @@ function openCust(id){
     const myCtr = CONTRACTS.filter(function(ct){ return ct.customerId ? ct.customerId === c.id : ct.custName === c.name; });
     if(myCtr.length){
       ctrBox.classList.remove('hide');
+      document.getElementById('custCtrLabel').textContent =
+        (c.custType==='가망고객' ? '관련 계약' : '보유계약') + ' (' + myCtr.length + '건)';
       const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
       document.getElementById('custCtrList').innerHTML = myCtr.map(function(ct){
-        return '<div class="feeline"><span>' + (ic[ct.category]||'') + ' ' + esc(ct.company) + ' · ' + esc(ct.product) + '</span>'
-          + '<span class="v">' + (ct.expireDate ? '만기 '+ct.expireDate : '') + '</span></div>';
+        const sub = [ct.contractDate?('계약 '+ct.contractDate):'', ct.expireDate?('만기 '+ct.expireDate):'',
+          ct.premium?fmtWon(ct.premium)+'/월':''].filter(Boolean).join(' · ');
+        return '<div class="cust" onclick="closeCust();openCtrEdit(\'' + ct.id + '\')" style="cursor:pointer;padding:10px 4px">'
+          + '<div class="av">' + (ic[ct.category]||'📄') + '</div>'
+          + '<div class="info"><div class="nm">' + esc(ct.company||'미상') + ' · ' + esc(ct.product||'')
+          + (ct.status && ct.status!=='정상' ? ' <span class="tag warn">'+esc(ct.status)+'</span>' : '') + '</div>'
+          + '<div class="mt">' + esc(sub) + '</div></div></div>';
       }).join('');
     } else {
       ctrBox.classList.add('hide');
