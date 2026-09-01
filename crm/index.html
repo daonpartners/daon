@@ -2005,15 +2005,16 @@ function renderCtrTable(list){
     + CTR_TABLE_COLS.map(function(c){
     const arrow = CTR_SORT.key===c.k ? (CTR_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCtrBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
-  }).join('') + '</tr></thead><tbody>';
+  }).join('') + (CTR_PICK_MODE ? '' : '<th style="width:60px"></th>') + '</tr></thead><tbody>';
   html += list.map(function(c){
     const clickAttr = CTR_PICK_MODE ? "toggleCtrPickOne('"+c.id+"')" : "openCtrEdit('"+c.id+"')";
     const checkTd = CTR_PICK_MODE ? '<td onclick="event.stopPropagation();toggleCtrPickOne(\''+c.id+'\')" style="text-align:center"><input type="checkbox" class="pick" '
       + (CTR_PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
+    const delTd = CTR_PICK_MODE ? '' : '<td style="text-align:center"><button class="btn ghost sm" onclick="event.stopPropagation();deleteContract(\''+c.id+'\')" style="color:var(--red);padding:4px 10px">삭제</button></td>';
     return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(CTR_PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CTR_TABLE_COLS.map(function(col){
       const v = col.k==='premium' ? (c.premium?fmtWon(c.premium):'-') : (c[col.k]||'-');
       return '<td>'+esc(v)+'</td>';
-    }).join('') + '</tr>';
+    }).join('') + delTd + '</tr>';
   }).join('');
   html += '</tbody></table>';
   el.innerHTML = html;
@@ -2596,6 +2597,14 @@ function sortCustBy(key){
   if(CUST_SORT.key===key) CUST_SORT.dir *= -1; else CUST_SORT = {key:key, dir:1};
   renderCustTable();
 }
+function deleteCustDirect(id){
+  const c = CUSTOMERS.find(function(x){ return x.id===id; });
+  if(!confirm((c?c.name+' ':'')+'고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
+  api('customerDelete', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요'); loadCustomers(); }
+    else toast(r.error||'삭제에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
 function renderCustTable(){
   const q = document.getElementById('q').value.trim().toLowerCase();
   let list = CUSTOMERS.filter(function(c){
@@ -2614,14 +2623,15 @@ function renderCustTable(){
     + CUST_TABLE_COLS.map(function(c){
     const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
-  }).join('') + '</tr></thead><tbody>';
+  }).join('') + (PICK_MODE ? '' : '<th style="width:60px"></th>') + '</tr></thead><tbody>';
   html += list.map(function(c){
     const clickAttr = PICK_MODE ? "togglePick('"+c.id+"')" : "openCust('"+c.id+"')";
     const checkTd = PICK_MODE ? '<td onclick="event.stopPropagation();togglePick(\''+c.id+'\')" style="text-align:center"><input type="checkbox" class="pick" '
       + (PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
+    const delTd = PICK_MODE ? '' : '<td style="text-align:center"><button class="btn ghost sm" onclick="event.stopPropagation();deleteCustDirect(\''+c.id+'\')" style="color:var(--red);padding:4px 10px">삭제</button></td>';
     return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CUST_TABLE_COLS.map(function(col){
       return '<td>'+esc(c[col.k]||'-')+'</td>';
-    }).join('') + '</tr>';
+    }).join('') + delTd + '</tr>';
   }).join('');
   html += '</tbody></table>';
   el.innerHTML = html;
