@@ -226,7 +226,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .risk{font-size:11px;font-weight:700;padding:4px 9px;border-radius:7px;background:#FDECEC;color:var(--red)}
 .risk.ok{background:#E9F7EF;color:var(--green)}
 
-.cust-table{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--line)}
+.cust-table{min-width:100%;width:max-content;border-collapse:collapse;font-size:13px;border:1px solid var(--line)}
 .cust-table th,.cust-table td{padding:8px 10px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);text-align:left;white-space:nowrap}
 .cust-table th:last-child,.cust-table td:last-child{border-right:none}
 .cust-table th{cursor:pointer;color:var(--ink2);font-weight:700;background:var(--bg);user-select:none;position:sticky;top:0;z-index:2}
@@ -359,7 +359,8 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm" onclick="bulkDeleteCust()" style="color:var(--red)">🗑 선택 삭제</button>
         </div>
         <div id="custList" class="hide"><div class="empty">불러오는 중…</div></div>
-        <div id="custTable" style="overflow-x:auto"></div>
+        <div id="custTable" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
+        <p class="mini" style="margin:4px 2px 0">👉 표를 옆으로 밀면(스크롤하면) 나머지 칸도 볼 수 있어요.</p>
         <button class="btn ghost sm" style="margin-top:10px;width:100%" onclick="xlsxOut()">지금 보이는 목록 엑셀로 다운로드 (검색·정렬 그대로)</button>
       </div>
 
@@ -548,7 +549,8 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm" onclick="bulkDeleteCtr()" style="color:var(--red)">🗑 선택 삭제</button>
         </div>
         <div id="ctrList" class="hide"><div class="empty">불러오는 중…</div></div>
-        <div id="ctrTable" style="overflow-x:auto"></div>
+        <div id="ctrTable" style="overflow-x:auto;-webkit-overflow-scrolling:touch"></div>
+        <p class="mini" style="margin:4px 2px 0">👉 표를 옆으로 밀면(스크롤하면) 나머지 칸도 볼 수 있어요.</p>
         <button class="btn ghost sm" style="margin-top:10px;width:100%" onclick="ctrXlsxOutFiltered()">지금 보이는 목록 엑셀로 다운로드 (검색·정렬 그대로)</button>
       </div>
 
