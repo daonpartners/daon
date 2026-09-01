@@ -429,6 +429,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div class="card">
         <div class="card-h"><h2>이번 달 목표</h2><span class="sub" id="goalYm"></span></div>
         <div id="goalBody"><div class="empty">불러오는 중…</div></div>
+        <button class="btn ghost sm" style="margin-top:12px;width:100%" onclick="openGoalSet()">🎯 내 목표 설정/수정</button>
       </div>
 
       <div class="card">
@@ -738,6 +739,20 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn ghost" onclick="closeImp()">취소</button>
         <button class="btn" id="impGo" onclick="runImport()">반영하기</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 내 목표 설정 -->
+<div id="goalSetModal" class="mask hide" onclick="if(event.target===this)closeGoalSet()">
+  <div class="sheet">
+    <div class="sheet-h"><h2>내 목표 설정 · <span id="goalSetYm"></span></h2><button class="x" onclick="closeGoalSet()">×</button></div>
+    <div class="sheet-b">
+      <p class="mini">이번 달 목표는 본인이 직접 정하고 언제든 수정할 수 있습니다. 관리자가 넣은 보정값(시책 등)은 이 화면에서 바뀌지 않습니다.</p>
+      <div class="fld"><label>목표 환산실적(원)</label><input id="goalSetTarget" type="number" inputmode="numeric" placeholder="예: 10000000"></div>
+      <div class="fld"><label>목표 계약 건수</label><input id="goalSetCount" type="number" inputmode="numeric" placeholder="예: 8"></div>
+      <div class="fld"><label>목표 급여(원, 참고용)</label><input id="goalSetSalary" type="number" inputmode="numeric" placeholder="예: 4000000"></div>
+      <button class="btn" onclick="saveGoalSet()">저장</button>
     </div>
   </div>
 </div>
@@ -1200,6 +1215,12 @@ function demoApi(action, p){
       sonboFee:sonboFee, saengboFee:saengboFee, incentiveSum:incentiveSum,
       estCommission: sonboFee + saengboFee + incentiveSum};
   }
+  if(action === 'goalSave'){
+    DEMO_GOAL.target = Number(p.target||0);
+    DEMO_GOAL.targetCount = Number(p.targetCount||0);
+    DEMO_GOAL.targetSalary = Number(p.targetSalary||0);
+    return {ok:true, id:'demo-goal'};
+  }
   if(action === 'dealList'){
     const premium = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
     const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
@@ -1488,6 +1509,7 @@ function fmtWon(n){
   return n.toLocaleString() + '원';
 }
 let GOAL_PAGE_ID = '';
+let GOAL_LAST = null;
 let GOAL_YM = today().slice(0,7);
 function loadGoal(){
   GOAL_YM = today().slice(0,7);
@@ -1495,6 +1517,7 @@ function loadGoal(){
   api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
     if(!r.ok){ document.getElementById('goalBody').innerHTML =
       '<div class="empty">' + esc(r.error||'불러오지 못했습니다') + '</div>'; return; }
+    GOAL_LAST = r;
     GOAL_PAGE_ID = r.goalPageId || '';
     renderGoal(r);
   }).catch(function(){
@@ -1503,6 +1526,27 @@ function loadGoal(){
   loadRoutine();
   loadDeals();
   loadSonboFee();
+}
+function openGoalSet(){
+  document.getElementById('goalSetYm').textContent = GOAL_YM.replace('-','년 ') + '월';
+  document.getElementById('goalSetTarget').value = (GOAL_LAST && GOAL_LAST.target) || '';
+  document.getElementById('goalSetCount').value = (GOAL_LAST && GOAL_LAST.targetCount) || '';
+  document.getElementById('goalSetSalary').value = (GOAL_LAST && GOAL_LAST.targetSalary) || '';
+  document.getElementById('goalSetModal').classList.remove('hide');
+}
+function closeGoalSet(){ document.getElementById('goalSetModal').classList.add('hide'); }
+function saveGoalSet(){
+  const target = Number(document.getElementById('goalSetTarget').value||0);
+  const targetCount = Number(document.getElementById('goalSetCount').value||0);
+  const targetSalary = Number(document.getElementById('goalSetSalary').value||0);
+  if(!target && !targetCount){ toast('목표 환산실적이나 건수 중 하나는 입력해주세요', true); return; }
+  api('goalSave', {
+    fc:ME.name, branch:ME.branch, pageId: GOAL_PAGE_ID || '',
+    target:target, targetCount:targetCount, targetSalary:targetSalary
+  }).then(function(r){
+    if(r.ok){ toast('목표를 저장했어요'); closeGoalSet(); loadGoal(); }
+    else toast(r.error||'저장에 실패했습니다', true);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
 function renderGoal(r){
   const el = document.getElementById('goalBody');
