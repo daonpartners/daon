@@ -762,7 +762,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <div class="sheet-h"><h2>내 목표 설정 · <span id="goalSetYm"></span></h2><button class="x" onclick="closeGoalSet()">×</button></div>
     <div class="sheet-b">
       <p class="mini">이번 달 목표는 본인이 직접 정하고 언제든 수정할 수 있습니다. 관리자가 넣은 보정값(시책 등)은 이 화면에서 바뀌지 않습니다.</p>
-      <div class="fld"><label>목표 환산실적(원)</label><input id="goalSetTarget" type="number" inputmode="numeric" placeholder="예: 10000000"></div>
+      <div class="fld fld2">
+        <div><label>손보 목표금액(원)</label><input id="goalSetSonbo" type="number" inputmode="numeric" placeholder="예: 6000000"></div>
+        <div><label>생보 목표금액(원)</label><input id="goalSetSaengbo" type="number" inputmode="numeric" placeholder="예: 3000000"></div>
+      </div>
       <div class="fld"><label>목표 계약 건수</label><input id="goalSetCount" type="number" inputmode="numeric" placeholder="예: 8"></div>
       <div class="fld"><label>목표 급여(원, 참고용)</label><input id="goalSetSalary" type="number" inputmode="numeric" placeholder="예: 4000000"></div>
       <button class="btn" onclick="saveGoalSet()">저장</button>
@@ -1163,7 +1166,7 @@ function api(action, payload){
 }
 
 /* 데모용 상태: 목표·루틴·팀·실적 */
-const DEMO_GOAL = {target:12000000, targetCount:8, targetSalary:4000000};
+const DEMO_GOAL = {sonboTarget:8000000, saengboTarget:4000000, targetCount:8, targetSalary:4000000};
 let DEMO_DEALS = [
   {id:'demo-deal-1', category:'손보', company:'현대해상', product:'(무)굿앤굿어린이종합보험Q', option:'세만기 · 표준형', premium:150000, m0Fee:2400, y1Fee:2700, incentive:300000},
   {id:'demo-deal-2', category:'생보', company:'삼성생명', product:'종신보험', premium:200000, m0Fee:0, y1Fee:180000, incentive:0}
@@ -1214,22 +1217,30 @@ function demoApi(action, p){
   }
   if(action === 'goalGet'){
     const g = DEMO_GOAL;
+    const target = (g.sonboTarget||0) + (g.saengboTarget||0);
     const actual = DEMO_DEALS.reduce(function(s,d){return s+d.premium;}, 0);
+    const sonboActual = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.premium;}, 0);
+    const saengboActual = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.premium;}, 0);
     const sonboFee = DEMO_DEALS.filter(function(d){return d.category==='손보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
     const saengboFee = DEMO_DEALS.filter(function(d){return d.category==='생보';}).reduce(function(s,d){return s+d.y1Fee;}, 0);
     const incentiveSum = DEMO_DEALS.reduce(function(s,d){return s+(d.incentive||0);}, 0);
-    const shortfall = Math.max(0, g.target - actual);
-    const perContract = g.targetCount ? g.target / g.targetCount : 1200000;
+    const shortfall = Math.max(0, target - actual);
+    const perContract = g.targetCount ? target / g.targetCount : 1200000;
     const needContracts = shortfall > 0 ? Math.ceil(shortfall / perContract) : 0;
-    const rate = g.target > 0 ? Math.round(actual / g.target * 100) : 0;
+    const rate = target > 0 ? Math.round(actual / target * 100) : 0;
+    const sonboRate = g.sonboTarget > 0 ? Math.round(sonboActual / g.sonboTarget * 100) : 0;
+    const saengboRate = g.saengboTarget > 0 ? Math.round(saengboActual / g.saengboTarget * 100) : 0;
     return {ok:true, ym:today().slice(0,7), hasGoal:true, goalPageId:'demo-goal',
-      target:g.target, targetCount:g.targetCount, actual:actual, actualCount:DEMO_DEALS.length,
+      target:target, sonboTarget:g.sonboTarget, saengboTarget:g.saengboTarget,
+      targetCount:g.targetCount, actual:actual, actualCount:DEMO_DEALS.length,
+      sonboActual:sonboActual, saengboActual:saengboActual, sonboRate:sonboRate, saengboRate:saengboRate,
       targetSalary:g.targetSalary, achieveRate:rate, shortfall:shortfall, needContracts:needContracts,
       sonboFee:sonboFee, saengboFee:saengboFee, incentiveSum:incentiveSum,
       estCommission: sonboFee + saengboFee + incentiveSum};
   }
   if(action === 'goalSave'){
-    DEMO_GOAL.target = Number(p.target||0);
+    DEMO_GOAL.sonboTarget = Number(p.sonboTarget||0);
+    DEMO_GOAL.saengboTarget = Number(p.saengboTarget||0);
     DEMO_GOAL.targetCount = Number(p.targetCount||0);
     DEMO_GOAL.targetSalary = Number(p.targetSalary||0);
     return {ok:true, id:'demo-goal'};
@@ -1447,7 +1458,7 @@ function loadGoalSummary(){
   api('goalGet', {fc:ME.name, branch:ME.branch}).then(function(r){
     const el = document.getElementById('goalSummaryBody');
     if(!r.ok || !r.hasGoal){
-      el.innerHTML = '<div class="empty">이번 달 목표가 아직 없습니다. <a href="javascript:go(\'goal\')" style="color:var(--org)">목표 탭에서 확인</a></div>';
+      el.innerHTML = '<div class="empty">이번 달 목표가 아직 없습니다. <a href="javascript:go(\'goal\')" style="color:var(--org)">목표 탭에서 직접 설정</a></div>';
       return;
     }
     const rate = Math.min(100, r.achieveRate);
@@ -1542,20 +1553,22 @@ function loadGoal(){
 }
 function openGoalSet(){
   document.getElementById('goalSetYm').textContent = GOAL_YM.replace('-','년 ') + '월';
-  document.getElementById('goalSetTarget').value = (GOAL_LAST && GOAL_LAST.target) || '';
+  document.getElementById('goalSetSonbo').value = (GOAL_LAST && GOAL_LAST.sonboTarget) || '';
+  document.getElementById('goalSetSaengbo').value = (GOAL_LAST && GOAL_LAST.saengboTarget) || '';
   document.getElementById('goalSetCount').value = (GOAL_LAST && GOAL_LAST.targetCount) || '';
   document.getElementById('goalSetSalary').value = (GOAL_LAST && GOAL_LAST.targetSalary) || '';
   document.getElementById('goalSetModal').classList.remove('hide');
 }
 function closeGoalSet(){ document.getElementById('goalSetModal').classList.add('hide'); }
 function saveGoalSet(){
-  const target = Number(document.getElementById('goalSetTarget').value||0);
+  const sonboTarget = Number(document.getElementById('goalSetSonbo').value||0);
+  const saengboTarget = Number(document.getElementById('goalSetSaengbo').value||0);
   const targetCount = Number(document.getElementById('goalSetCount').value||0);
   const targetSalary = Number(document.getElementById('goalSetSalary').value||0);
-  if(!target && !targetCount){ toast('목표 환산실적이나 건수 중 하나는 입력해주세요', true); return; }
+  if(!sonboTarget && !saengboTarget && !targetCount){ toast('손보·생보 목표금액이나 건수 중 하나는 입력해주세요', true); return; }
   api('goalSave', {
     fc:ME.name, branch:ME.branch, pageId: GOAL_PAGE_ID || '',
-    target:target, targetCount:targetCount, targetSalary:targetSalary
+    sonboTarget:sonboTarget, saengboTarget:saengboTarget, targetCount:targetCount, targetSalary:targetSalary
   }).then(function(r){
     if(r.ok){ toast('목표를 저장했어요'); closeGoalSet(); loadGoal(); }
     else toast(r.error||'저장에 실패했습니다', true);
@@ -1564,18 +1577,24 @@ function saveGoalSet(){
 function renderGoal(r){
   const el = document.getElementById('goalBody');
   if(!r.hasGoal){
-    el.innerHTML = '<div class="empty">이번 달 목표가 아직 등록되지 않았습니다.<br>지사장에게 목표 설정을 요청해 보세요.</div>';
+    el.innerHTML = '<div class="empty">이번 달 목표가 아직 등록되지 않았습니다.<br>내 목표 설정에서 손보·생보 목표를 각각 정해보세요.</div>';
   } else {
-    const rate = Math.min(100, r.achieveRate);
-    let html = '<div class="gnum"><span class="big">' + fmtWon(r.actual) + '</span>'
-      + '<span class="of">/ 목표 ' + fmtWon(r.target) + '</span></div>'
-      + '<div class="gbar"><div class="gbar-in" style="width:' + rate + '%"></div></div>'
-      + '<div style="display:flex;justify-content:space-between"><span class="pct">' + r.achieveRate + '% 달성</span>'
+    const mkBar = function(label, actual, target, rate){
+      if(!target) return '';
+      const r2 = Math.min(100, rate);
+      return '<div style="margin-bottom:12px"><div class="gnum"><span class="big" style="font-size:18px">'+esc(label)+' '+fmtWon(actual)+'</span>'
+        + '<span class="of">/ 목표 ' + fmtWon(target) + '</span></div>'
+        + '<div class="gbar"><div class="gbar-in" style="width:' + r2 + '%"></div></div>'
+        + '<div class="pct" style="margin-top:2px">' + rate + '% 달성</div></div>';
+    };
+    let html = mkBar('손보', r.sonboActual||0, r.sonboTarget||0, r.sonboRate||0)
+      + mkBar('생보', r.saengboActual||0, r.saengboTarget||0, r.saengboRate||0);
+    html += '<div style="display:flex;justify-content:space-between;margin-top:6px"><span class="note" style="margin:0">합계 ' + fmtWon(r.actual) + ' / 목표 ' + fmtWon(r.target) + '</span>'
       + '<span class="note" style="margin:0">' + r.actualCount + ' / ' + r.targetCount + '건</span></div>';
     if(r.shortfall > 0){
-      html += '<div class="needbox"><div class="t1">목표까지 남은 것</div>'
-        + '<div class="t2">환산 ' + fmtWon(r.shortfall) + ' · 약 ' + r.needContracts + '건 더</div></div>';
-    } else {
+      html += '<div class="needbox"><div class="t1">목표까지 남은 것(합계)</div>'
+        + '<div class="t2">' + fmtWon(r.shortfall) + ' · 약 ' + r.needContracts + '건 더</div></div>';
+    } else if(r.target > 0) {
       html += '<div class="needbox" style="background:#E9F7EF"><div class="t1" style="color:var(--green)">이번 달 목표 달성!</div>'
         + '<div class="t2">축하합니다 🎉</div></div>';
     }
