@@ -296,7 +296,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 <!-- ═══════ 본 화면 ═══════ -->
 <div id="app" class="hide">
   <div class="top"><div class="top-in">
-    <div class="brand">다온 <em>영업관리</em></div>
+    <div class="brand" onclick="closeAllModals();closeMenu();go('home')" style="cursor:pointer">다온 <em>영업관리</em></div>
     <div class="who">
       <button class="bell" onclick="go('notif')" title="알림">🔔<span id="bellBadge" class="hide"></span></button>
       <b id="myName">-</b><button class="out" onclick="logout()">나가기</button>
