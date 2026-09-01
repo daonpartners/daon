@@ -2651,20 +2651,21 @@ function renderReminders(){
   const items = [];
   CUSTOMERS.forEach(function(c){
     if(c.birth && c.birth.slice(5,7)===mm && c.birth.slice(8,10)===dd)
-      items.push({d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?'});
+      items.push({d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
     if(c.nextTouch && c.nextTouch===t)
-      items.push({d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다'});
+      items.push({d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
   });
   const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
   CONTRACTS.forEach(function(ct){
     const dLeft = daysUntil(ct.expireDate);
     if(dLeft>=0 && dLeft<=30){
-      items.push({d:'d-yel', t:(ic[ct.category]||'')+' '+esc(ct.custName)+'님 '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product)});
+      const nm = ct.custName ? esc(ct.custName)+'님' : '(고객명 없음)';
+      items.push({d:'d-yel', t:(ic[ct.category]||'')+' '+nm+' '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product), click:"closeAllModals();openCtrEdit('"+ct.id+"')"});
     }
   });
   CUSTOMERS.forEach(function(c){
     if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<8)
-      items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도'});
+      items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도', click:"closeAllModals();openCust('"+c.id+"')"});
   });
   const el = document.getElementById('reminderList');
   if(!items.length){
@@ -2672,9 +2673,12 @@ function renderReminders(){
     return;
   }
   el.innerHTML = items.slice(0,8).map(function(i){
-    return '<div class="todo"><div class="dot ' + i.d + '"></div><div class="tx">'
+    return '<div class="todo" onclick="' + i.click + '" style="cursor:pointer"><div class="dot ' + i.d + '"></div><div class="tx">'
       + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div></div>';
   }).join('');
+}
+function closeAllModals(){
+  document.querySelectorAll('.mask').forEach(function(m){ m.classList.add('hide'); });
 }
 function fillActSelect(){
   document.getElementById('actCust').innerHTML = '<option value="">지정 안 함</option>'
