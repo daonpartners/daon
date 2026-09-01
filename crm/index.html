@@ -115,7 +115,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .tag.A{background:#FDECEC;color:var(--red)} .tag.B{background:var(--org-lt);color:var(--org-dk)}
 .tag.C{background:#FEF7E6;color:#A8751A} .tag.D{background:var(--bg);color:var(--ink3)}
 .tag.warn{background:#FDECEC;color:var(--red)}
-.pick{width:20px;height:20px;flex:0 0 20px;accent-color:var(--org)}
+.pick{width:20px;height:20px;flex:0 0 20px;accent-color:var(--org);display:inline-block;vertical-align:middle}
 
 /* ── 모달 ─────────────────────────── */
 .mask{position:fixed;inset:0;background:rgba(20,22,26,.5);z-index:100;
@@ -352,9 +352,11 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm viewBtnOn" onclick="setCustView('table')" id="viewBtnTable">표로 보기(정렬 가능)</button>
           <button class="btn ghost sm" onclick="toggleCustPick()" id="pickModeBtn">선택 모드</button>
         </div>
-        <div id="custPickBar" class="hide" style="display:flex;gap:8px;align-items:center;margin:0 0 10px;background:var(--org-lt);border-radius:10px;padding:8px 12px">
-          <span class="note" style="margin:0;flex:1" id="pickCount">0명 선택됨</span>
+        <div id="custPickBar" class="hide" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;background:var(--org-lt);border-radius:10px;padding:8px 12px">
+          <span class="note" style="margin:0;flex:1 1 100%" id="pickCount">0명 선택됨</span>
           <button class="btn sm" onclick="openBulkSms()">💬 선택 고객에 문자</button>
+          <button class="btn ghost sm" onclick="bulkPrintLabel()">🏷️ 선택 주소라벨 인쇄</button>
+          <button class="btn ghost sm" onclick="bulkDeleteCust()" style="color:var(--red)">🗑 선택 삭제</button>
         </div>
         <div id="custList" class="hide"><div class="empty">불러오는 중…</div></div>
         <div id="custTable" style="overflow-x:auto"></div>
@@ -2402,12 +2404,17 @@ function renderCustTable(){
   });
   const el = document.getElementById('custTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 고객이 없습니다.</div>'; return; }
-  let html = '<table class="cust-table"><thead><tr>' + CUST_TABLE_COLS.map(function(c){
+  let html = '<table class="cust-table"><thead><tr>'
+    + (PICK_MODE ? '<th style="width:44px;text-align:center">✓</th>' : '')
+    + CUST_TABLE_COLS.map(function(c){
     const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
   }).join('') + '</tr></thead><tbody>';
   html += list.map(function(c){
-    return '<tr onclick="openCust(\''+c.id+'\')" style="cursor:pointer">' + CUST_TABLE_COLS.map(function(col){
+    const clickAttr = PICK_MODE ? "togglePick('"+c.id+"')" : "openCust('"+c.id+"')";
+    const checkTd = PICK_MODE ? '<td onclick="event.stopPropagation();togglePick(\''+c.id+'\')" style="text-align:center"><input type="checkbox" class="pick" '
+      + (PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
+    return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CUST_TABLE_COLS.map(function(col){
       return '<td>'+esc(c[col.k]||'-')+'</td>';
     }).join('') + '</tr>';
   }).join('');
@@ -2415,9 +2422,23 @@ function renderCustTable(){
   el.innerHTML = html;
 }
 function printCustTable(){
-  if(CUST_VIEW !== 'table') setCustView('table');
-  const tableHtml = document.getElementById('custTable').innerHTML;
-  document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 고객 목록 (' + today() + ')</h2>' + tableHtml;
+  const pickedList = (PICK_MODE && Object.keys(PICKED_IDS).length)
+    ? CUSTOMERS.filter(function(c){ return PICKED_IDS[c.id]; })
+    : null;
+  if(pickedList){
+    let html = '<table class="cust-table"><thead><tr>' + CUST_TABLE_COLS.map(function(c){
+      return '<th>'+esc(c.l)+'</th>';
+    }).join('') + '</tr></thead><tbody>';
+    html += pickedList.map(function(c){
+      return '<tr>' + CUST_TABLE_COLS.map(function(col){ return '<td>'+esc(c[col.k]||'-')+'</td>'; }).join('') + '</tr>';
+    }).join('');
+    html += '</tbody></table>';
+    document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 선택 고객 목록 (' + today() + ' · ' + pickedList.length + '명)</h2>' + html;
+  } else {
+    if(CUST_VIEW !== 'table') setCustView('table');
+    const tableHtml = document.getElementById('custTable').innerHTML;
+    document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 고객 목록 (' + today() + ')</h2>' + tableHtml;
+  }
   setTimeout(function(){ window.print(); }, 100);
 }
 function renderReminders(){
@@ -2975,6 +2996,46 @@ function combinePeople(list, confidence){
 
 /* ── 선택 고객 대량 문자 ───────── */
 let BULK_TARGETS = [];
+function bulkPrintLabel(){
+  const picked = CUSTOMERS.filter(function(c){ return PICKED_IDS[c.id]; });
+  if(!picked.length){ toast('먼저 고객을 선택하세요', true); return; }
+  const withAddr = picked.filter(function(c){ return c.addr; });
+  if(!withAddr.length){ toast('선택한 고객 중 주소가 입력된 사람이 없습니다', true); return; }
+  document.getElementById('lblList').innerHTML = withAddr.map(function(c){
+    return '<div class="cust"><input type="checkbox" class="pick" data-id="'+c.id+'" checked>'
+      + '<div class="info"><div class="nm">'+esc(c.name)+'</div>'
+      + '<div class="mt">'+esc((c.zip?'('+c.zip+') ':'')+c.addr+' '+(c.addr2||''))+'</div></div></div>';
+  }).join('');
+  document.getElementById('lblModal').classList.remove('hide');
+  if(withAddr.length < picked.length) toast((picked.length-withAddr.length)+'명은 주소가 없어 라벨에서 제외했어요');
+}
+function bulkDeleteCust(){
+  const ids = Object.keys(PICKED_IDS);
+  if(!ids.length){ toast('먼저 고객을 선택하세요', true); return; }
+  if(!confirm(ids.length + '명을 삭제할까요? 되돌릴 수 없습니다.')) return;
+  let done = 0, fail = 0, next = 0;
+  const FAILED = [];
+  const nameOf = {};
+  CUSTOMERS.forEach(function(c){ nameOf[c.id] = c.name; });
+  function runOne(){
+    if(next >= ids.length) return Promise.resolve();
+    const id = ids[next++];
+    return api('customerDelete', {pageId:id}).then(function(r){
+      if(r.ok) done++;
+      else { fail++; FAILED.push({name: nameOf[id]||'(이름없음)', detail:'고객 삭제', reason: r.error||'삭제 실패'}); }
+      return runOne();
+    }).catch(function(){
+      fail++; FAILED.push({name: nameOf[id]||'(이름없음)', detail:'고객 삭제', reason:'연결 실패(네트워크)'});
+      return runOne();
+    });
+  }
+  Promise.all([runOne(), runOne(), runOne()]).then(function(){
+    PICKED_IDS = {};
+    updatePickCount();
+    showImpResult(done, fail, 0, FAILED);
+    loadCustomers();
+  });
+}
 function openBulkSms(){
   BULK_TARGETS = CUSTOMERS.filter(function(c){ return PICKED_IDS[c.id] && c.phone; });
   if(!BULK_TARGETS.length){ toast('연락처가 있는 고객을 선택하세요', true); return; }
