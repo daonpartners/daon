@@ -525,6 +525,17 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm" onclick="backToCtrLanding()">◀ 다른 항목 보기</button>
         </div>
         <div class="srch"><input id="ctrQ" type="search" placeholder="고객명·상품명·보험사 검색" oninput="renderContracts()"></div>
+        <div class="fld" style="margin:0 0 10px">
+          <label>만기(갱신)월로 찾기</label>
+          <select id="ctrMonthFilter" onchange="renderContracts()">
+            <option value="">전체 월</option>
+            <option value="01">1월</option><option value="02">2월</option><option value="03">3월</option>
+            <option value="04">4월</option><option value="05">5월</option><option value="06">6월</option>
+            <option value="07">7월</option><option value="08">8월</option><option value="09">9월</option>
+            <option value="10">10월</option><option value="11">11월</option><option value="12">12월</option>
+          </select>
+          <p class="mini">자동차·일반은 보통 1년마다 갱신되니, 월을 골라서 "다음달 갱신될 분들"을 미리 찾아보세요.</p>
+        </div>
         <div class="row" style="margin:0 0 10px">
           <button class="btn ghost sm" onclick="setCtrView('card')" id="ctrViewBtnCard">카드로 보기</button>
           <button class="btn ghost sm viewBtnOn" onclick="setCtrView('table')" id="ctrViewBtnTable">표로 보기(정렬 가능)</button>
@@ -1931,11 +1942,13 @@ function loadContracts(){
 }
 function ctrFilteredList(){
   const q = (document.getElementById('ctrQ').value||'').trim().toLowerCase();
+  const month = document.getElementById('ctrMonthFilter').value;
   let list = CONTRACTS.filter(function(c){
     if(CTR_FILTER==='expiring'){ const d=daysUntil(c.expireDate); if(!(d>=0 && d<=60)) return false; }
     else if(CTR_FILTER==='anniv'){ if(!isAnniversary(c.contractDate)) return false; }
     else if(CTR_FILTER==='unmatched'){ if(c.customerId) return false; }
     else if(CTR_FILTER!=='all'){ if(c.category!==CTR_FILTER) return false; }
+    if(month && (!c.expireDate || c.expireDate.slice(5,7)!==month)) return false;
     if(!q) return true;
     return ((c.custName||'')+(c.company||'')+(c.product||'')).toLowerCase().indexOf(q) >= 0;
   });
