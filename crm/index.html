@@ -527,6 +527,13 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div class="row" style="margin:0 0 10px">
           <button class="btn ghost sm" onclick="setCtrView('card')" id="ctrViewBtnCard">카드로 보기</button>
           <button class="btn ghost sm viewBtnOn" onclick="setCtrView('table')" id="ctrViewBtnTable">표로 보기(정렬 가능)</button>
+          <button class="btn ghost sm" onclick="toggleCtrPick()" id="ctrPickModeBtn">선택 모드</button>
+        </div>
+        <div id="ctrPickBar" class="hide" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px;background:var(--org-lt);border-radius:10px;padding:8px 12px">
+          <span class="note" style="margin:0;flex:1 1 100%" id="ctrPickCount">0건 선택됨</span>
+          <button class="btn sm" onclick="openCtrBulkEdit()">✏️ 선택 일괄수정</button>
+          <button class="btn ghost sm" onclick="bulkPrintCtr()">🖨 선택 출력</button>
+          <button class="btn ghost sm" onclick="bulkDeleteCtr()" style="color:var(--red)">🗑 선택 삭제</button>
         </div>
         <div id="ctrList" class="hide"><div class="empty">불러오는 중…</div></div>
         <div id="ctrTable" style="overflow-x:auto"></div>
@@ -731,6 +738,26 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn ghost" onclick="closeImp()">취소</button>
         <button class="btn" id="impGo" onclick="runImport()">반영하기</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- 계약 선택 일괄수정 -->
+<div id="ctrBulkModal" class="mask hide" onclick="if(event.target===this)closeCtrBulk()">
+  <div class="sheet">
+    <div class="sheet-h"><h2 id="ctrBulkTitle">선택 계약 일괄수정</h2><button class="x" onclick="closeCtrBulk()">×</button></div>
+    <div class="sheet-b">
+      <div class="fld"><label>바꿀 항목</label>
+        <select id="ctrBulkField" onchange="renderCtrBulkValue()">
+          <option value="status">계약상태</option>
+          <option value="company">보험사</option>
+          <option value="payMethod">납입방법</option>
+          <option value="category">보종</option>
+        </select>
+      </div>
+      <div class="fld" id="ctrBulkValueBox"></div>
+      <p class="mini">선택한 계약 <b id="ctrBulkN">0</b>건에 한꺼번에 적용됩니다. 되돌릴 수 없으니 신중하게 확인해주세요.</p>
+      <button class="btn" onclick="runCtrBulkEdit()">적용하기</button>
     </div>
   </div>
 </div>
@@ -1876,6 +1903,24 @@ function ctrFilteredList(){
   }
   return list;
 }
+let CTR_PICK_MODE = false;
+let CTR_PICKED_IDS = {};
+function toggleCtrPick(){
+  CTR_PICK_MODE = !CTR_PICK_MODE;
+  CTR_PICKED_IDS = {};
+  document.getElementById('ctrPickModeBtn').classList.toggle('viewBtnOn', CTR_PICK_MODE);
+  document.getElementById('ctrPickBar').classList.toggle('hide', !CTR_PICK_MODE);
+  updateCtrPickCount();
+  renderContracts();
+}
+function toggleCtrPickOne(id){
+  if(CTR_PICKED_IDS[id]) delete CTR_PICKED_IDS[id]; else CTR_PICKED_IDS[id] = true;
+  updateCtrPickCount();
+  renderContracts();
+}
+function updateCtrPickCount(){
+  document.getElementById('ctrPickCount').textContent = Object.keys(CTR_PICKED_IDS).length + '건 선택됨';
+}
 function setCtrView(mode){
   CTR_VIEW = mode;
   document.getElementById('ctrList').classList.toggle('hide', mode!=='card');
@@ -1897,30 +1942,146 @@ function renderContracts(){
     const dLeft = daysUntil(c.expireDate);
     const meta = [c.company, c.product].filter(Boolean).join(' · ');
     const sub = [c.premium?fmtWon(c.premium)+'/월':'', c.expireDate?('만기 '+c.expireDate):''].filter(Boolean).join(' · ');
-    return '<div class="cust" onclick="openCtrEdit(\'' + c.id + '\')" style="cursor:pointer"><div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
+    const clickAttr = CTR_PICK_MODE ? "toggleCtrPickOne('"+c.id+"')" : "openCtrEdit('"+c.id+"')";
+    const checkbox = CTR_PICK_MODE ? '<input type="checkbox" class="pick" style="margin-right:10px" ' + (CTR_PICKED_IDS[c.id]?'checked':'') + ' onclick="event.stopPropagation();toggleCtrPickOne(\''+c.id+'\')">' : '';
+    return '<div class="cust" onclick="' + clickAttr + '" style="cursor:pointer' + (CTR_PICKED_IDS[c.id]?';background:var(--org-lt)':'') + '">' + checkbox + '<div class="av">' + esc((c.custName||'?').slice(0,1)) + '</div>'
       + '<div class="info"><div class="nm">' + esc(c.custName||'미상') + (c.status&&c.status!=='정상'?' <span class="tag warn">'+esc(c.status)+'</span>':'')
       + (!c.customerId ? ' <span class="tag warn">고객 미연결</span>' : '')
       + (CTR_FILTER==='expiring' && dLeft>=0 ? ' <span class="tag warn">D-'+dLeft+'</span>' : '') + '</div>'
       + '<div class="mt">' + esc(meta) + '<br>' + esc(sub) + '</div></div>'
-      + '<button class="btn ghost sm" onclick="event.stopPropagation();openKeep(\'' + c.id + '\')">유지</button>'
-      + '<button class="btn ghost sm" onclick="event.stopPropagation();deleteContract(\'' + c.id + '\')">삭제</button></div>';
+      + (CTR_PICK_MODE ? '' : '<button class="btn ghost sm" onclick="event.stopPropagation();openKeep(\'' + c.id + '\')">유지</button>'
+      + '<button class="btn ghost sm" onclick="event.stopPropagation();deleteContract(\'' + c.id + '\')">삭제</button>') + '</div>';
   }).join('');
 }
 function renderCtrTable(list){
   const el = document.getElementById('ctrTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 계약이 없습니다.</div>'; return; }
-  let html = '<table class="cust-table"><thead><tr>' + CTR_TABLE_COLS.map(function(c){
+  let html = '<table class="cust-table"><thead><tr>'
+    + (CTR_PICK_MODE ? '<th style="width:44px;text-align:center">✓</th>' : '')
+    + CTR_TABLE_COLS.map(function(c){
     const arrow = CTR_SORT.key===c.k ? (CTR_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCtrBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
   }).join('') + '</tr></thead><tbody>';
   html += list.map(function(c){
-    return '<tr onclick="openCtrEdit(\''+c.id+'\')" style="cursor:pointer">' + CTR_TABLE_COLS.map(function(col){
+    const clickAttr = CTR_PICK_MODE ? "toggleCtrPickOne('"+c.id+"')" : "openCtrEdit('"+c.id+"')";
+    const checkTd = CTR_PICK_MODE ? '<td onclick="event.stopPropagation();toggleCtrPickOne(\''+c.id+'\')" style="text-align:center"><input type="checkbox" class="pick" '
+      + (CTR_PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
+    return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(CTR_PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CTR_TABLE_COLS.map(function(col){
       const v = col.k==='premium' ? (c.premium?fmtWon(c.premium):'-') : (c[col.k]||'-');
       return '<td>'+esc(v)+'</td>';
     }).join('') + '</tr>';
   }).join('');
   html += '</tbody></table>';
   el.innerHTML = html;
+}
+/* ── 계약 선택 일괄 기능 ─────────── */
+function bulkPrintCtr(){
+  const picked = CONTRACTS.filter(function(c){ return CTR_PICKED_IDS[c.id]; });
+  if(!picked.length){ toast('먼저 계약을 선택하세요', true); return; }
+  let html = '<table class="cust-table"><thead><tr>' + CTR_TABLE_COLS.map(function(c){
+    return '<th>'+esc(c.l)+'</th>';
+  }).join('') + '</tr></thead><tbody>';
+  html += picked.map(function(c){
+    return '<tr>' + CTR_TABLE_COLS.map(function(col){
+      const v = col.k==='premium' ? (c.premium?fmtWon(c.premium):'-') : (c[col.k]||'-');
+      return '<td>'+esc(v)+'</td>';
+    }).join('') + '</tr>';
+  }).join('');
+  html += '</tbody></table>';
+  document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 선택 계약 목록 (' + today() + ' · ' + picked.length + '건)</h2>' + html;
+  setTimeout(function(){ window.print(); }, 100);
+}
+function bulkDeleteCtr(){
+  const ids = Object.keys(CTR_PICKED_IDS);
+  if(!ids.length){ toast('먼저 계약을 선택하세요', true); return; }
+  if(!confirm(ids.length + '건을 삭제할까요? 되돌릴 수 없습니다.')) return;
+  let done = 0, fail = 0, next = 0;
+  const FAILED = [];
+  const nameOf = {};
+  CONTRACTS.forEach(function(c){ nameOf[c.id] = (c.custName||'미상') + ' · ' + (c.product||''); });
+  function runOne(){
+    if(next >= ids.length) return Promise.resolve();
+    const id = ids[next++];
+    return api('contractDelete', {pageId:id}).then(function(r){
+      if(r.ok) done++;
+      else { fail++; FAILED.push({ name: nameOf[id]||'(미상)', detail:'계약 삭제', reason: r.error||'삭제 실패' }); }
+      return runOne();
+    }).catch(function(){
+      fail++; FAILED.push({ name: nameOf[id]||'(미상)', detail:'계약 삭제', reason:'연결 실패(네트워크)' });
+      return runOne();
+    });
+  }
+  Promise.all([runOne(), runOne(), runOne()]).then(function(){
+    CTR_PICKED_IDS = {};
+    updateCtrPickCount();
+    showImpResult(done, fail, 0, FAILED);
+    loadContracts();
+  });
+}
+const CTR_BULK_OPTS = {
+  status: ['정상','실효','해지','부활','만기','청약철회','연체','철회','해약'],
+  company: null,
+  payMethod: ['월납','연납','일시납','자동이체','카드이체','방문수금','기타'],
+  category: ['장기','자동차','화재','일반']
+};
+function openCtrBulkEdit(){
+  const n = Object.keys(CTR_PICKED_IDS).length;
+  if(!n){ toast('먼저 계약을 선택하세요', true); return; }
+  document.getElementById('ctrBulkN').textContent = n;
+  document.getElementById('ctrBulkField').value = 'status';
+  renderCtrBulkValue();
+  document.getElementById('ctrBulkModal').classList.remove('hide');
+}
+function closeCtrBulk(){ document.getElementById('ctrBulkModal').classList.add('hide'); }
+function renderCtrBulkValue(){
+  const field = document.getElementById('ctrBulkField').value;
+  const box = document.getElementById('ctrBulkValueBox');
+  const opts = CTR_BULK_OPTS[field];
+  if(opts){
+    box.innerHTML = '<label>새 값</label><select id="ctrBulkValue">' + opts.map(function(o){ return '<option>'+esc(o)+'</option>'; }).join('') + '</select>';
+  } else {
+    box.innerHTML = '<label>새 값</label><input id="ctrBulkValue" placeholder="예: DB손보">';
+  }
+}
+function runCtrBulkEdit(){
+  const field = document.getElementById('ctrBulkField').value;
+  const value = document.getElementById('ctrBulkValue').value.trim();
+  if(!value){ toast('값을 입력하세요', true); return; }
+  const ids = Object.keys(CTR_PICKED_IDS);
+  if(!confirm(ids.length + '건의 ' + document.getElementById('ctrBulkField').selectedOptions[0].textContent + '을(를) "' + value + '"(으)로 한꺼번에 바꿀까요?')) return;
+  let done = 0, fail = 0, next = 0;
+  const FAILED = [];
+  const byId = {};
+  CONTRACTS.forEach(function(c){ byId[c.id] = c; });
+  function runOne(){
+    if(next >= ids.length) return Promise.resolve();
+    const id = ids[next++];
+    const c = byId[id] || {};
+    const p = {
+      fc: ME.name, branch: ME.branch, pageId: id,
+      customerName: c.custName || '', customerId: c.customerId || '',
+      company: field==='company' ? value : (c.company||'기타'),
+      product: c.product || '', category: field==='category' ? value : (c.category||'장기'),
+      policyNo: c.policyNo || '', status: field==='status' ? value : (c.status||'정상'),
+      expireDate: c.expireDate || '', premium: c.premium || 0,
+      payMethod: field==='payMethod' ? value : (c.payMethod||'월납'), term: c.term || ''
+    };
+    return api('contractAdd', p).then(function(r){
+      if(r.ok) done++;
+      else { fail++; FAILED.push({ name:(c.custName||'미상')+' · '+(c.product||''), detail:'일괄수정', reason:r.error||'실패' }); }
+      return runOne();
+    }).catch(function(){
+      fail++; FAILED.push({ name:(c.custName||'미상')+' · '+(c.product||''), detail:'일괄수정', reason:'연결 실패(네트워크)' });
+      return runOne();
+    });
+  }
+  Promise.all([runOne(), runOne(), runOne()]).then(function(){
+    closeCtrBulk();
+    CTR_PICKED_IDS = {};
+    updateCtrPickCount();
+    showImpResult(done, fail, 0, FAILED);
+    loadContracts();
+  });
 }
 function ctrXlsxOutFiltered(){
   if(!CONTRACTS.length){
