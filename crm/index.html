@@ -651,11 +651,11 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       </div>
       <div class="warnbox">주민등록번호는 저장하지 않습니다. 뒷자리는 <b>첫 1자리</b>만 입력하세요. 나머지 6자리는 입력칸 자체가 없습니다.</div>
       <div class="fld"><label>이름 *</label><input id="fName" placeholder="김다온"></div>
-      <div class="fld"><label>연락처 *</label><input id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000"></div>
+      <div class="fld"><label>연락처 *</label><input id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000" maxlength="13" oninput="maskPhone(this)"></div>
       <div class="fld">
         <label>생년월일 · 성별</label>
         <div class="rrn">
-          <input id="fBirth" type="date">
+          <input id="fBirth" type="text" inputmode="numeric" placeholder="19781101" maxlength="10" oninput="maskBirth(this)">
           <span class="dash">-</span>
           <input id="fGcode" class="g" type="text" inputmode="numeric" maxlength="1" placeholder="1">
           <span class="mask6">● ● ● ● ● ●</span>
@@ -834,7 +834,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <div class="sheet-b">
       <div class="fld"><label>고객명 *</label><input id="ctrEName" oninput="ctrMatchPreview()" placeholder="예: 홍길동"></div>
       <div class="fld fld2">
-        <div><label>생년월일 (동명이인 구분용)</label><input id="ctrEBirth" type="date" oninput="ctrMatchPreview()"></div>
+        <div><label>생년월일 (동명이인 구분용)</label><input id="ctrEBirth" type="text" inputmode="numeric" placeholder="19781101" maxlength="10" oninput="maskBirth(this);ctrMatchPreview()"></div>
         <div><label>고객목록 연결 상태</label><div id="ctrMatchBadge" class="mini" style="padding:12px 0">이름을 입력하세요</div></div>
       </div>
       <div class="fld fld2">
@@ -961,7 +961,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div><label>소속</label><input id="fcDept" placeholder="예: 1팀"></div>
       </div>
       <div class="fld fld2">
-        <div><label>연락처</label><input id="fcPhone" inputmode="tel" placeholder="010-0000-0000"></div>
+        <div><label>연락처</label><input id="fcPhone" inputmode="tel" placeholder="010-0000-0000" maxlength="13" oninput="maskPhone(this)"></div>
         <div><label>입사일</label><input id="fcJoin" type="date"></div>
       </div>
       <div class="fld"><label>보유 자격 (여러 개 선택 가능)</label>
@@ -992,7 +992,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <div class="sheet-b">
       <div class="fld"><label>이름 *</label><input id="rcName" placeholder="예: 김후보"></div>
       <div class="fld fld2">
-        <div><label>연락처</label><input id="rcPhone" inputmode="tel" placeholder="010-0000-0000"></div>
+        <div><label>연락처</label><input id="rcPhone" inputmode="tel" placeholder="010-0000-0000" maxlength="13" oninput="maskPhone(this)"></div>
         <div><label>단계</label><input id="rcStage" placeholder="예: 신규후보"></div>
       </div>
       <div class="fld fld2">
@@ -1981,6 +1981,31 @@ function openCtrEdit(id){
   ctrMatchPreview();
 }
 function closeCtrEdit(){ document.getElementById('ctrEditModal').classList.add('hide'); }
+/* 생년월일 칸에 숫자만 이어서 쳐도 자동으로 "1978-11-01" 형태로 만들어줍니다.
+   브라우저 기본 날짜칸(type=date)은 연도를 4자리 넘게 이어 치면 다음 칸으로 안 넘어가고 값이 깨지는 문제가 있어,
+   이 방식으로 바꿔서 그 문제 자체를 없앴습니다. */
+/* 전화번호에 하이픈 없이 숫자만 입력해도 자릿수에 맞춰 자동으로 넣어줍니다.
+   서울(02)은 2자리, 그 외 지역번호·휴대폰은 3자리 국번으로 계산합니다. */
+function maskPhone(el){
+  let v = el.value.replace(/[^0-9]/g, '').slice(0, 11);
+  let out = v;
+  if(v.startsWith('02')){
+    if(v.length > 2 && v.length <= 5) out = v.slice(0,2) + '-' + v.slice(2);
+    else if(v.length > 5 && v.length <= 9) out = v.slice(0,2) + '-' + v.slice(2,5) + '-' + v.slice(5);
+    else if(v.length > 9) out = v.slice(0,2) + '-' + v.slice(2,6) + '-' + v.slice(6);
+  } else {
+    if(v.length > 3 && v.length <= 7) out = v.slice(0,3) + '-' + v.slice(3);
+    else if(v.length > 7) out = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7);
+  }
+  el.value = out;
+}
+function maskBirth(el){
+  let v = el.value.replace(/[^0-9]/g, '').slice(0, 8);
+  let out = v;
+  if(v.length > 4) out = v.slice(0,4) + '-' + v.slice(4);
+  if(v.length > 6) out = v.slice(0,4) + '-' + v.slice(4,6) + '-' + v.slice(6);
+  el.value = out;
+}
 function ctrMatchPreview(){
   const name = document.getElementById('ctrEName').value.trim();
   const birth = document.getElementById('ctrEBirth').value;
