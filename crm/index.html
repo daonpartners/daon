@@ -2537,7 +2537,10 @@ function matchFilter(c){
   if(FILTER.indexOf('cat-')===0){
     const cat = FILTER.slice(4);
     if(c.custType==='가망고객') return (c.interest||'').indexOf(cat) >= 0;
-    return CONTRACTS.some(function(ct){ return ct.custName===c.name && ct.category===cat; });
+    return CONTRACTS.some(function(ct){
+      const linked = ct.customerId ? ct.customerId === c.id : ct.custName === c.name;
+      return linked && ct.category===cat;
+    });
   }
   if(FILTER==='birth'){
     if(!c.birth) return false;
@@ -2576,38 +2579,33 @@ function catBadge(c){
   return Object.keys(cats).map(function(k){ return '<span class="tag" style="background:var(--bg)">'+(ic[k]||'')+k+'</span>'; }).join(' ');
 }
 function renderCust(){
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  const list = CUSTOMERS.filter(function(c){
-    if(!matchFilter(c)) return false;
-    if(!q) return true;
-    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
-  });
+  const list = getFilteredCustomers();
   const el = document.getElementById('custList');
   if(!list.length){
     el.innerHTML = '<div class="empty">' +
       (CUSTOMERS.length ? '조건에 맞는 고객이 없습니다.' : '아직 등록된 고객이 없습니다.<br>＋ 등록 버튼으로 첫 고객을 추가해 보세요.') +
       '</div>';
-    return;
+  } else {
+    el.innerHTML = list.map(function(c){
+      const d = daysAgo(c.lastTouch);
+      const meta = [];
+      if(c.phone) meta.push(c.phone);
+      if(c.custType==='가망고객') meta.push(c.bizType||'개인');
+      else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
+      else meta.push('접촉 기록 없음');
+      if(c.job) meta.push(c.job);
+      const clickAttr = PICK_MODE ? "togglePick('"+c.id+"')" : "openCust('"+c.id+"')";
+      const checkbox = PICK_MODE ? '<input type="checkbox" class="pick" style="margin-right:10px" ' + (PICKED_IDS[c.id]?'checked':'') + ' onclick="event.stopPropagation();togglePick(\''+c.id+'\')">' : '';
+      return '<div class="cust" onclick="' + clickAttr + '">' + checkbox
+        + '<div class="av">' + esc((c.name||'?').slice(0,1)) + '</div>'
+        + '<div class="info"><div class="nm">' + esc(c.name)
+        + (c.custType==='가망고객' ? ' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>' : '')
+        + (c.grade ? ' <span class="tag ' + c.grade + '">' + c.grade + '</span>' : '')
+        + (c.custType!=='가망고객' && !c.consent ? ' <span class="tag warn">동의 전</span>' : '')
+        + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + ' ' + catBadge(c) + '</div></div></div>';
+    }).join('');
   }
-  el.innerHTML = list.map(function(c){
-    const d = daysAgo(c.lastTouch);
-    const meta = [];
-    if(c.phone) meta.push(c.phone);
-    if(c.custType==='가망고객') meta.push(c.bizType||'개인');
-    else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
-    else meta.push('접촉 기록 없음');
-    if(c.job) meta.push(c.job);
-    const clickAttr = PICK_MODE ? "togglePick('"+c.id+"')" : "openCust('"+c.id+"')";
-    const checkbox = PICK_MODE ? '<input type="checkbox" class="pick" style="margin-right:10px" ' + (PICKED_IDS[c.id]?'checked':'') + ' onclick="event.stopPropagation();togglePick(\''+c.id+'\')">' : '';
-    return '<div class="cust" onclick="' + clickAttr + '">' + checkbox
-      + '<div class="av">' + esc((c.name||'?').slice(0,1)) + '</div>'
-      + '<div class="info"><div class="nm">' + esc(c.name)
-      + (c.custType==='가망고객' ? ' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">가망</span>' : '')
-      + (c.grade ? ' <span class="tag ' + c.grade + '">' + c.grade + '</span>' : '')
-      + (c.custType!=='가망고객' && !c.consent ? ' <span class="tag warn">동의 전</span>' : '')
-      + '</div><div class="mt">' + esc(meta.filter(Boolean).join(' · ')) + ' ' + catBadge(c) + '</div></div></div>';
-  }).join('');
-  if(CUST_VIEW === 'table') renderCustTable();
+  if(CUST_VIEW === 'table') renderCustTable(list);
 }
 
 /* ── 고객 표 보기 · 정렬 · 인쇄 ────── */
@@ -2632,20 +2630,16 @@ function sortCustBy(key){
 }
 function deleteCustDirect(id){
   const c = CUSTOMERS.find(function(x){ return x.id===id; });
-  if(!confirm((c?c.name+' ':'')+'고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
-  api('customerDelete', {pageId:id}).then(function(r){
-    if(r.ok){ toast('삭제했어요'); loadCustomers(); }
+  const myCtr = CONTRACTS.filter(function(ct){ return ct.customerId===id; }).length;
+  const warn = myCtr ? ('\n연결된 계약 '+myCtr+'건도 함께 삭제됩니다.') : '';
+  if(!confirm((c?c.name+' ':'')+'고객을 삭제할까요? 되돌릴 수 없습니다.'+warn)) return;
+  api('customerDeleteCascade', {pageId:id}).then(function(r){
+    if(r.ok){ toast('삭제했어요' + (r.deletedContracts?' (연결 계약 '+r.deletedContracts+'건 포함)':'')); loadCustomers(); loadContracts(); }
     else toast(r.error||'삭제에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
-function renderCustTable(){
-  const q = document.getElementById('q').value.trim().toLowerCase();
-  let list = CUSTOMERS.filter(function(c){
-    if(!matchFilter(c)) return false;
-    if(!q) return true;
-    return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
-  });
-  list = list.slice().sort(function(a,b){
+function renderCustTable(list){
+  list = (list || getFilteredCustomers()).slice().sort(function(a,b){
     const av = (a[CUST_SORT.key]||''), bv = (b[CUST_SORT.key]||'');
     return av < bv ? -1*CUST_SORT.dir : av > bv ? 1*CUST_SORT.dir : 0;
   });
@@ -2789,9 +2783,11 @@ function syncCustExtraRow(){
 }
 function deleteCust(){
   if(!EDIT_ID) return;
-  if(!confirm('이 고객을 삭제할까요? 되돌릴 수 없습니다.')) return;
-  api('customerDelete', {pageId:EDIT_ID}).then(function(r){
-    if(r.ok){ toast('삭제했어요'); closeCust(); loadCustomers(); }
+  const myCtr = CONTRACTS.filter(function(ct){ return ct.customerId===EDIT_ID; }).length;
+  const warn = myCtr ? ('\n연결된 계약 '+myCtr+'건도 함께 삭제됩니다.') : '';
+  if(!confirm('이 고객을 삭제할까요? 되돌릴 수 없습니다.'+warn)) return;
+  api('customerDeleteCascade', {pageId:EDIT_ID}).then(function(r){
+    if(r.ok){ toast('삭제했어요' + (r.deletedContracts?' (연결 계약 '+r.deletedContracts+'건 포함)':'')); closeCust(); loadCustomers(); loadContracts(); }
     else toast(r.error||'삭제에 실패했습니다', true);
   }).catch(function(){ toast('연결에 실패했습니다', true); });
 }
@@ -3264,16 +3260,18 @@ function bulkPrintLabel(){
 function bulkDeleteCust(){
   const ids = Object.keys(PICKED_IDS);
   if(!ids.length){ toast('먼저 고객을 선택하세요', true); return; }
-  if(!confirm(ids.length + '명을 삭제할까요? 되돌릴 수 없습니다.')) return;
-  let done = 0, fail = 0, next = 0;
+  const ctrCount = CONTRACTS.filter(function(ct){ return ids.indexOf(ct.customerId)>=0; }).length;
+  const warn = ctrCount ? ('\n연결된 계약 '+ctrCount+'건도 함께 삭제됩니다.') : '';
+  if(!confirm(ids.length + '명을 삭제할까요? 되돌릴 수 없습니다.'+warn)) return;
+  let done = 0, fail = 0, next = 0, ctrDeleted = 0;
   const FAILED = [];
   const nameOf = {};
   CUSTOMERS.forEach(function(c){ nameOf[c.id] = c.name; });
   function runOne(){
     if(next >= ids.length) return Promise.resolve();
     const id = ids[next++];
-    return api('customerDelete', {pageId:id}).then(function(r){
-      if(r.ok) done++;
+    return api('customerDeleteCascade', {pageId:id}).then(function(r){
+      if(r.ok){ done++; ctrDeleted += (r.deletedContracts||0); }
       else { fail++; FAILED.push({name: nameOf[id]||'(이름없음)', detail:'고객 삭제', reason: r.error||'삭제 실패'}); }
       return runOne();
     }).catch(function(){
@@ -3285,7 +3283,8 @@ function bulkDeleteCust(){
     PICKED_IDS = {};
     updatePickCount();
     showImpResult(done, fail, 0, FAILED);
-    loadCustomers();
+    if(ctrDeleted) toast('연결 계약 '+ctrDeleted+'건도 함께 삭제됐어요');
+    loadCustomers(); loadContracts();
   });
 }
 function openBulkSms(){
