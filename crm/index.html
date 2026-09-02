@@ -905,6 +905,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div><label>계약상태</label><select id="ctrEStatus"><option>정상</option><option>실효</option><option>해지</option><option>부활</option><option>만기</option><option>청약철회</option><option>연체</option><option>철회</option><option>해약</option></select></div>
       </div>
       <div class="fld fld2">
+        <div><label>계약일</label><input id="ctrEContractDate" type="date"></div>
         <div><label>만기일</label><input id="ctrEExpire" type="date"></div>
         <div><label>월납보험료</label><input id="ctrEPremium" type="number" inputmode="numeric"></div>
       </div>
@@ -2208,6 +2209,7 @@ function openCtrEdit(id){
   document.getElementById('ctrECategory').value = c.category || '장기';
   document.getElementById('ctrEPolicyNo').value = c.policyNo || '';
   document.getElementById('ctrEStatus').value = c.status || '정상';
+  document.getElementById('ctrEContractDate').value = c.contractDate || '';
   document.getElementById('ctrEExpire').value = c.expireDate || '';
   document.getElementById('ctrEPremium').value = c.premium || '';
   document.getElementById('ctrEPayMethod').value = c.payMethod || '월납';
@@ -2281,6 +2283,7 @@ function saveCtrEdit(){
     policyNo:document.getElementById('ctrEPolicyNo').value.trim(),
     status:document.getElementById('ctrEStatus').value,
     expireDate:document.getElementById('ctrEExpire').value,
+    contractDate:document.getElementById('ctrEContractDate').value,
     premium:Number(document.getElementById('ctrEPremium').value||0),
     payMethod:document.getElementById('ctrEPayMethod').value,
     debitDay:document.getElementById('ctrEDebitDay').value.trim(),
@@ -2683,35 +2686,46 @@ function printCustTable(){
   }
   setTimeout(function(){ window.print(); }, 100);
 }
+let DISMISSED_REMINDERS = {};
+try{ DISMISSED_REMINDERS = JSON.parse(sessionStorage.getItem('dismissedReminders')||'{}'); }catch(e){}
+function dismissReminder(key){
+  DISMISSED_REMINDERS[key] = today();
+  try{ sessionStorage.setItem('dismissedReminders', JSON.stringify(DISMISSED_REMINDERS)); }catch(e){}
+  renderReminders();
+}
 function renderReminders(){
   const t = today(), mm = t.slice(5,7), dd = t.slice(8,10);
   const items = [];
   CUSTOMERS.forEach(function(c){
     if(c.birth && c.birth.slice(5,7)===mm && c.birth.slice(8,10)===dd)
-      items.push({d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
+      items.push({key:'birth-'+c.id, d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
     if(c.nextTouch && c.nextTouch===t)
-      items.push({d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
+      items.push({key:'next-'+c.id, d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
   });
   const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
   CONTRACTS.forEach(function(ct){
     const dLeft = daysUntil(ct.expireDate);
     if(dLeft>=0 && dLeft<=30){
       const nm = ct.custName ? esc(ct.custName)+'님' : '(고객명 없음)';
-      items.push({d:'d-yel', t:(ic[ct.category]||'')+' '+nm+' '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product), click:"closeAllModals();openCtrEdit('"+ct.id+"')"});
+      items.push({key:'ctr-'+ct.id, d:'d-yel', t:(ic[ct.category]||'')+' '+nm+' '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product), click:"closeAllModals();openCtrEdit('"+ct.id+"')", ctrId:ct.id});
     }
   });
   CUSTOMERS.forEach(function(c){
     if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<8)
-      items.push({d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도', click:"closeAllModals();openCust('"+c.id+"')"});
+      items.push({key:'cold-'+c.id, d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도', click:"closeAllModals();openCust('"+c.id+"')"});
   });
+  const visible = items.filter(function(i){ return DISMISSED_REMINDERS[i.key] !== t; });
   const el = document.getElementById('reminderList');
-  if(!items.length){
+  if(!visible.length){
     el.innerHTML = '<div class="empty">오늘 급한 일은 없습니다.<br>새 고객을 만나기 좋은 날이에요.</div>';
     return;
   }
-  el.innerHTML = items.slice(0,8).map(function(i){
-    return '<div class="todo" onclick="' + i.click + '" style="cursor:pointer"><div class="dot ' + i.d + '"></div><div class="tx">'
-      + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div></div>';
+  el.innerHTML = visible.slice(0,8).map(function(i){
+    const renewBtn = i.ctrId ? '<button class="btn ghost sm" onclick="event.stopPropagation();closeAllModals();openCtrEdit(\''+i.ctrId+'\')">🔄 갱신</button>' : '';
+    return '<div class="todo" onclick="' + i.click + '" style="cursor:pointer;display:flex;align-items:center;gap:8px"><div class="dot ' + i.d + '"></div><div class="tx" style="flex:1">'
+      + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div>'
+      + renewBtn
+      + '<button class="btn ghost sm" onclick="event.stopPropagation();dismissReminder(\''+i.key+'\')" title="오늘 목록에서만 안 보이게 처리합니다">✔ 확인</button></div>';
   }).join('');
 }
 function closeAllModals(){
