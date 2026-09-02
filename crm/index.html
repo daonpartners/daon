@@ -317,7 +317,12 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       </div>
 
       <div class="card">
-        <div class="card-h"><h2>오늘 꼭 해야 할 일</h2><span class="sub" id="todayStr"></span></div>
+        <div class="card-h"><h2>이번 달 꼭 해야 할 일</h2></div>
+        <div class="row" style="margin-bottom:10px">
+          <button class="btn ghost sm" onclick="shiftReminderMonth(-1)">◀ 전월</button>
+          <span class="note" style="margin:0;flex:1;text-align:center;font-weight:700;color:var(--ink)" id="reminderMonthLabel"></span>
+          <button class="btn ghost sm" onclick="shiftReminderMonth(1)">익월 ▶</button>
+        </div>
         <div id="reminderList"><div class="empty">불러오는 중…</div></div>
       </div>
 
@@ -935,7 +940,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div class="fld"><label>영업단계</label>
         <select id="stgSel"><option>신규</option><option>접촉</option><option>상담예정</option><option>상담완료</option><option>제안</option><option>계약검토</option><option>계약완료</option><option>보류</option><option>실패</option></select>
       </div>
-      <div class="fld"><label>다음 관리일</label><input id="stgNext" type="date"></div>
       <p class="mini">단계를 옮기면 최근접촉일이 오늘로 자동 기록됩니다.</p>
       <button class="btn" style="margin-top:12px" onclick="saveStage()">저장</button>
     </div>
@@ -1122,7 +1126,6 @@ function startDemo(){
   const d = new Date(Date.now()+9*3600*1000);
   const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
   const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
-  document.getElementById('todayStr').textContent = ds;
   document.getElementById('actToday').textContent = ds;
   document.getElementById('adminDay').textContent = ds;
   drawChips();
@@ -1368,7 +1371,6 @@ function boot(){
   const d = new Date(Date.now()+9*3600*1000);
   const wd = ['일','월','화','수','목','금','토'][d.getUTCDay()];
   const ds = (d.getUTCMonth()+1) + '월 ' + d.getUTCDate() + '일 (' + wd + ')';
-  document.getElementById('todayStr').textContent = ds;
   document.getElementById('actToday').textContent = ds;
   document.getElementById('adminDay').textContent = ds;
   drawChips();
@@ -2689,43 +2691,59 @@ function printCustTable(){
 let DISMISSED_REMINDERS = {};
 try{ DISMISSED_REMINDERS = JSON.parse(sessionStorage.getItem('dismissedReminders')||'{}'); }catch(e){}
 function dismissReminder(key){
-  DISMISSED_REMINDERS[key] = today();
+  DISMISSED_REMINDERS[key] = true;
   try{ sessionStorage.setItem('dismissedReminders', JSON.stringify(DISMISSED_REMINDERS)); }catch(e){}
   renderReminders();
 }
+let REMINDER_MONTH_OFFSET = 0;
+function shiftReminderMonth(delta){
+  REMINDER_MONTH_OFFSET += delta;
+  renderReminders();
+}
 function renderReminders(){
-  const t = today(), mm = t.slice(5,7), dd = t.slice(8,10);
+  const now = new Date(today());
+  const target = new Date(now.getFullYear(), now.getMonth()+REMINDER_MONTH_OFFSET, 1);
+  const ty = target.getFullYear(), tm = target.getMonth(); // 0-based
+  const mmStr = String(tm+1).padStart(2,'0');
+  const monStart = ty+'-'+mmStr+'-01';
+  const monEnd = ty+'-'+mmStr+'-31';
+  document.getElementById('reminderMonthLabel').textContent =
+    ty+'년 '+(tm+1)+'월' + (REMINDER_MONTH_OFFSET===0 ? ' (이번 달)' : '');
+
   const items = [];
   CUSTOMERS.forEach(function(c){
-    if(c.birth && c.birth.slice(5,7)===mm && c.birth.slice(8,10)===dd)
-      items.push({key:'birth-'+c.id, d:'d-red', t:esc(c.name)+'님 생일', s:'오늘이에요. 축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
-    if(c.nextTouch && c.nextTouch===t)
-      items.push({key:'next-'+c.id, d:'d-blu', t:esc(c.name)+'님 연락 예정일', s:'오늘 연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
+    if(c.birth && Number(c.birth.slice(5,7))===(tm+1))
+      items.push({key:'birth-'+c.id, d:'d-red', t:'🎂 '+esc(c.name)+'님 생일 ('+c.birth.slice(8,10)+'일)', s:'축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
+    if(c.nextTouch && c.nextTouch>=monStart && c.nextTouch<=monEnd)
+      items.push({key:'next-'+c.id, d:'d-blu', t:'📅 '+esc(c.name)+'님 연락 예정 ('+c.nextTouch.slice(8,10)+'일)', s:'연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
   });
   const ic = {'장기':'📄','자동차':'🚗','화재':'🔥','일반':'📋'};
   CONTRACTS.forEach(function(ct){
-    const dLeft = daysUntil(ct.expireDate);
-    if(dLeft>=0 && dLeft<=30){
+    if(ct.expireDate && ct.expireDate>=monStart && ct.expireDate<=monEnd){
       const nm = ct.custName ? esc(ct.custName)+'님' : '(고객명 없음)';
-      items.push({key:'ctr-'+ct.id, d:'d-yel', t:(ic[ct.category]||'')+' '+nm+' '+esc(ct.category||'')+' 만기 D-'+dLeft, s:esc(ct.company)+' · '+esc(ct.product), click:"closeAllModals();openCtrEdit('"+ct.id+"')", ctrId:ct.id});
+      const dLeft = daysUntil(ct.expireDate);
+      items.push({key:'ctr-'+ct.id, d: dLeft<=7?'d-red':'d-yel', t:(ic[ct.category]||'')+' '+nm+' '+esc(ct.category||'')+' 만기 ('+ct.expireDate.slice(8,10)+'일'+(dLeft>=0?', D-'+dLeft:'')+')', s:esc(ct.company)+' · '+esc(ct.product), click:"closeAllModals();openCtrEdit('"+ct.id+"')", ctrId:ct.id});
     }
   });
-  CUSTOMERS.forEach(function(c){
-    if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<8)
-      items.push({key:'cold-'+c.id, d:'d-yel', t:esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도', click:"closeAllModals();openCust('"+c.id+"')"});
-  });
-  const visible = items.filter(function(i){ return DISMISSED_REMINDERS[i.key] !== t; });
+  if(REMINDER_MONTH_OFFSET===0){
+    CUSTOMERS.forEach(function(c){
+      if(daysAgo(c.lastTouch)>=30 && daysAgo(c.lastTouch)<9000 && items.length<30)
+        items.push({key:'cold-'+c.id, d:'d-yel', t:'⏰ '+esc(c.name)+'님 30일 이상 미접촉', s:'가볍게 안부 문자라도', click:"closeAllModals();openCust('"+c.id+"')"});
+    });
+  }
+  items.sort(function(a,b){ return (a.t>b.t)?1:-1; });
+  const visible = items.filter(function(i){ return !DISMISSED_REMINDERS[i.key]; });
   const el = document.getElementById('reminderList');
   if(!visible.length){
-    el.innerHTML = '<div class="empty">오늘 급한 일은 없습니다.<br>새 고객을 만나기 좋은 날이에요.</div>';
+    el.innerHTML = '<div class="empty">' + (items.length ? '이번 화면의 항목은 모두 확인 처리됐어요.' : (ty+'년 '+(tm+1)+'월에는 해당하는 일이 없습니다.')) + '</div>';
     return;
   }
-  el.innerHTML = visible.slice(0,8).map(function(i){
+  el.innerHTML = visible.slice(0,30).map(function(i){
     const renewBtn = i.ctrId ? '<button class="btn ghost sm" onclick="event.stopPropagation();closeAllModals();openCtrEdit(\''+i.ctrId+'\')">🔄 갱신</button>' : '';
     return '<div class="todo" onclick="' + i.click + '" style="cursor:pointer;display:flex;align-items:center;gap:8px"><div class="dot ' + i.d + '"></div><div class="tx" style="flex:1">'
       + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div>'
       + renewBtn
-      + '<button class="btn ghost sm" onclick="event.stopPropagation();dismissReminder(\''+i.key+'\')" title="오늘 목록에서만 안 보이게 처리합니다">✔ 확인</button></div>';
+      + '<button class="btn ghost sm" onclick="event.stopPropagation();dismissReminder(\''+i.key+'\')" title="목록에서만 안 보이게 처리합니다">✔ 확인</button></div>';
   }).join('');
 }
 function closeAllModals(){
@@ -3508,18 +3526,16 @@ function openStage(id){
   STAGE_ID = id;
   document.getElementById('stageTitle').textContent = (c.name||'고객') + ' 단계 옮기기';
   document.getElementById('stgSel').value = STAGES.indexOf(c.stage)>=0 ? c.stage : '신규';
-  document.getElementById('stgNext').value = c.nextDate || '';
   document.getElementById('stageModal').classList.remove('hide');
 }
 function closeStage(){ document.getElementById('stageModal').classList.add('hide'); }
 function saveStage(){
   if(!STAGE_ID) return;
   const stage = document.getElementById('stgSel').value;
-  const nextDate = document.getElementById('stgNext').value;
-  api('stageMove', {pageId:STAGE_ID, stage:stage, nextDate:nextDate}).then(function(r){
+  api('stageMove', {pageId:STAGE_ID, stage:stage}).then(function(r){
     if(!r.ok){ toast(r.error||'변경에 실패했습니다', true); return; }
     const c = CUSTOMERS.find(function(x){ return x.id===STAGE_ID; });
-    if(c){ c.stage = stage; c.nextDate = nextDate; c.status = r.status || c.status; c.lastTouch = today(); }
+    if(c){ c.stage = stage; c.status = r.status || c.status; c.lastTouch = today(); }
     toast('단계를 옮겼어요');
     closeStage(); renderPipe();
   }).catch(function(){ toast('연결에 실패했습니다', true); });
