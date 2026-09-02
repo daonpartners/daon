@@ -1491,7 +1491,8 @@ function renderTodoList(scope, items){
   if(scope === 'home'){
     el.innerHTML = items.map(function(it){
       return '<div class="stepbox"><div class="nm" style="' + (it.done?'text-decoration:line-through;color:var(--ink3)':'') + '">'
-        + (it.done ? '✅ ' : '⬜ ') + esc(it.content) + '</div></div>';
+        + '<input type="checkbox" class="pick" ' + (it.done?'checked':'') + ' onchange="toggleTodo(\'home\',\'' + it.id + '\',this.checked)" style="margin-right:8px">'
+        + esc(it.content) + '</div></div>';
     }).join('');
     return;
   }
