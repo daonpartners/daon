@@ -708,8 +708,9 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div id="ownerFields">
         <div class="fld fld2">
           <div><label>등급</label><select id="fGrade"><option value="">-</option><option value="A">A 핵심</option><option value="B">B 관리</option><option value="C">C 잠재</option><option value="D">D 휴면</option></select></div>
-          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>소개</option><option>DB</option><option>지인</option><option>제휴업체</option><option>온라인</option><option>기타</option></select></div>
+          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>온라인카페</option><option>온라인블로그</option><option>온라인기타</option><option>DB</option><option>대면소개</option></select></div>
         </div>
+        <div class="fld"><label>유입경로 비고</label><input id="fSourceNote" placeholder="예: 맘카페 이름, 소개해준 사람 등 자유롭게"></div>
         <div class="fld fld2">
           <div><label>우편번호</label><input id="fZip" inputmode="numeric" placeholder="61947"></div>
           <div><label>직업</label><input id="fJob" placeholder="자영업"></div>
@@ -728,10 +729,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
       <button class="btn ghost sm hide" id="custSmsBtn" style="margin-top:10px;width:100%;color:var(--blue)" onclick="openSms()">💬 문자 보내기</button>
-      <div class="row hide" id="custExtraRow" style="margin-top:8px">
-        <button class="btn ghost sm" onclick="closeCust();openStage(EDIT_ID)">📊 단계 옮기기</button>
-        <button class="btn ghost sm" onclick="closeCust();openExtra(EDIT_ID)">🛡️ 관리 정보</button>
-      </div>
       <div id="custCtrBox" class="hide" style="margin-top:14px">
         <label style="font-size:13px;font-weight:600;color:var(--ink2)" id="custCtrLabel">보유계약</label>
         <div id="custCtrList" style="margin-top:6px"></div>
@@ -2728,7 +2725,7 @@ function fillActSelect(){
 let EDIT_ID = '';
 let CUR_CUST_TYPE = '보유고객';
 const FLD = {fName:'name',fPhone:'phone',fBirth:'birth',fGcode:'gcode',fGrade:'grade',
-  fSource:'source',fZip:'zip',fJob:'job',fAddr:'addr',fAddr2:'addr2',
+  fSource:'source',fSourceNote:'sourceNote',fZip:'zip',fJob:'job',fAddr:'addr',fAddr2:'addr2',
   fConsent:'consent',fNext:'nextTouch',fFamily:'family',fMemo:'memo'};
 function setCustType(t){
   CUR_CUST_TYPE = t;
@@ -2775,14 +2772,9 @@ function openCust(id){
   } else {
     ctrBox.classList.add('hide');
   }
-  syncCustExtraRow();
   document.getElementById('custModal').classList.remove('hide');
 }
 function closeCust(){ document.getElementById('custModal').classList.add('hide'); }
-function syncCustExtraRow(){
-  const row = document.getElementById('custExtraRow');
-  if(row) row.classList.toggle('hide', !EDIT_ID);
-}
 function deleteCust(){
   if(!EDIT_ID) return;
   const myCtr = CONTRACTS.filter(function(ct){ return ct.customerId===EDIT_ID; }).length;
