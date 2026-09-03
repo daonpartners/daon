@@ -76,8 +76,9 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-cell{min-height:56px;border-radius:6px;background:var(--bg);padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;transition:background .12s;overflow:hidden}
 .cal-badge{font-size:9.5px;line-height:1.3;padding:1px 4px;border-radius:4px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;font-weight:600}
+.cal-badge-tag{background:rgba(255,255,255,.35);border-radius:3px;padding:0 3px;margin-right:3px;font-size:8.5px}
 .cal-more{font-size:9px;color:var(--ink3);margin-top:1px;padding-left:2px}
-@media (min-width:900px){ .cal-cell{min-height:78px;padding:4px} .cal-badge{font-size:11px;padding:2px 5px} }
+@media (min-width:900px){ .cal-cell{min-height:78px;padding:4px} .cal-badge{font-size:11px;padding:2px 5px} .cal-badge-tag{font-size:9.5px} }
 .cal-cell:hover{background:var(--org-lt)}
 .cal-cell.empty{background:transparent;cursor:default}
 .cal-cell.today{background:var(--org-lt);border:1.5px solid var(--org)}
@@ -2795,6 +2796,7 @@ function buildCalendar(ty, tm, items){
   const isCurMonth = (ty+'-'+String(tm+1).padStart(2,'0')) === todayStr.slice(0,7);
   const todayDay = isCurMonth ? Number(todayStr.slice(8,10)) : -1;
   const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','sch':'#8B5CF6'};
+  const tagOf = {'d-red':'생일','d-yel':'만기','d-blu':'연락'};
   const maxShow = window.innerWidth >= 900 ? 3 : 2;
 
   let html = '<div class="cal-wd">' + ['일','월','화','수','목','금','토'].map(function(w){ return '<div>'+w+'</div>'; }).join('') + '</div>';
@@ -2804,7 +2806,8 @@ function buildCalendar(ty, tm, items){
     const dayItems = byDay[String(d)] || [];
     const badges = dayItems.slice(0,maxShow).map(function(i){
       const label = i.t.replace(/<[^>]*>/g,'').replace(/^[^\s]+\s/,'');
-      return '<div class="cal-badge" style="background:' + (bg[i.d]||'#999') + '">' + label + '</div>';
+      const tag = i.d==='sch' ? ((i.sch && i.sch.source==='grow') ? 'GROW' : (i.sch && i.sch.category) || '일정') : tagOf[i.d];
+      return '<div class="cal-badge" style="background:' + (bg[i.d]||'#999') + '"><b class="cal-badge-tag">' + esc(tag) + '</b>' + label + '</div>';
     }).join('');
     const more = dayItems.length > maxShow ? '<div class="cal-more">+' + (dayItems.length-maxShow) + '건</div>' : '';
     html += '<div class="cal-cell' + (d===todayDay?' today':'') + (dayItems.length?' has':'') + '" onclick="openDayModal(' + ty + ',' + tm + ',' + d + ')">'
