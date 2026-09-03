@@ -488,13 +488,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <!-- 관리자 -->
 
     <!-- 영업큐 -->
-    <section id="tab-queue" class="hide">
-      <div class="card">
-        <div class="card-h"><h2>오늘의 영업큐</h2><span class="sub" id="queueAsOf"></span></div>
-        <p class="mini" style="margin-bottom:10px">우선순위가 높은 순서대로 정리했습니다. 항목을 누르면 바로 처리할 수 있어요.</p>
-        <div id="queueBody"><div class="empty">불러오는 중…</div></div>
-      </div>
-    </section>
 
     <!-- 알림센터 -->
     <section id="tab-notif" class="hide">
@@ -1385,7 +1378,6 @@ function boot(){
 const TABS = [
   {k:'home',    ic:'🏠', lb:'홈'},
   {k:'cust',    ic:'👥', lb:'고객'},
-  {k:'queue',   ic:'🧭', lb:'영업큐'},
   {k:'pipe',    ic:'📊', lb:'영업단계'},
   {k:'act',     ic:'✏️', lb:'활동'},
   {k:'ctr',     ic:'📄', lb:'계약'},
@@ -1431,7 +1423,6 @@ function go(t){
   if(t==='fc') loadFcList();
   if(t==='recruit') loadRec();
   if(t==='dash') loadDash();
-  if(t==='queue') loadQueue();
   if(t==='notif') loadNotif();
   window.scrollTo(0,0);
 }
@@ -3905,27 +3896,6 @@ function loadDash(){
     if(e.key === 'Enter') doLogin();
   });
 })();
-
-/* ── 영업큐 ─────────────────────── */
-function loadQueue(){
-  const box = document.getElementById('queueBody');
-  box.innerHTML = '<div class="empty">불러오는 중…</div>';
-  api('salesQueue', {branch:ME.branch, fc:ME.name}).then(function(r){
-    document.getElementById('queueAsOf').textContent = r.asOf || '';
-    if(!r.ok){ box.innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; return; }
-    const items = r.items || [];
-    if(!items.length){ box.innerHTML = '<div class="okbox">지금은 급하게 챙길 일이 없습니다 👍</div>'; return; }
-    const iconOf = {'관리일 경과':'🔴','오늘 관리 예정':'🟠','신규 미접촉':'🟠','장기 미접촉':'🟠',
-      '갱신 예정':'🟡','보장점검 예정':'🟡','유지확인 필요':'🟡','실효 계약':'🔴','생일 임박':'🎂'};
-    box.innerHTML = items.map(function(it){
-      const c = it.customerId ? CUSTOMERS.find(function(x){ return x.id===it.customerId; }) : null;
-      const clickable = c ? ('onclick="openCust(\'' + it.customerId + '\')" style="cursor:pointer"') : '';
-      return '<div class="kv" ' + clickable + '><span>' + (iconOf[it.type]||'•') + ' <b>' + esc(it.customer||'') + '</b>'
-        + ' <small class="mini">' + esc(it.type) + '</small><br><small class="mini">' + esc(it.note||'')
-        + (it.dueDate ? ' · ' + esc(it.dueDate) : '') + '</small></span></div>';
-    }).join('');
-  }).catch(function(){ box.innerHTML = '<div class="empty">연결에 실패했습니다.</div>'; });
-}
 
 /* ── 알림센터 ───────────────────── */
 function loadNotif(){
