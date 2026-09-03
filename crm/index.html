@@ -74,7 +74,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .todo{display:flex;gap:11px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
 .cal-wd{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:12px;color:var(--ink3);font-weight:700;margin-bottom:4px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-cell{aspect-ratio:1/1;border-radius:8px;background:var(--bg);padding:4px;cursor:pointer;display:flex;flex-direction:column;transition:background .12s}
+.cal-cell{min-height:56px;border-radius:6px;background:var(--bg);padding:3px 2px;cursor:pointer;display:flex;flex-direction:column;transition:background .12s;overflow:hidden}
+.cal-badge{font-size:9.5px;line-height:1.3;padding:1px 4px;border-radius:4px;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#fff;font-weight:600}
+.cal-more{font-size:9px;color:var(--ink3);margin-top:1px;padding-left:2px}
+@media (min-width:900px){ .cal-cell{min-height:78px;padding:4px} .cal-badge{font-size:11px;padding:2px 5px} }
 .cal-cell:hover{background:var(--org-lt)}
 .cal-cell.empty{background:transparent;cursor:default}
 .cal-cell.today{background:var(--org-lt);border:1.5px solid var(--org)}
@@ -2791,17 +2794,21 @@ function buildCalendar(ty, tm, items){
   const todayStr = today();
   const isCurMonth = (ty+'-'+String(tm+1).padStart(2,'0')) === todayStr.slice(0,7);
   const todayDay = isCurMonth ? Number(todayStr.slice(8,10)) : -1;
+  const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','sch':'#8B5CF6'};
+  const maxShow = window.innerWidth >= 900 ? 3 : 2;
 
   let html = '<div class="cal-wd">' + ['일','월','화','수','목','금','토'].map(function(w){ return '<div>'+w+'</div>'; }).join('') + '</div>';
   html += '<div class="cal-grid">';
   for(let i=0;i<firstWd;i++) html += '<div class="cal-cell empty"></div>';
   for(let d=1; d<=daysInMonth; d++){
     const dayItems = byDay[String(d)] || [];
-    const dots = dayItems.slice(0,4).map(function(i){
-      return '<span class="dot ' + (i.d==='sch' ? '' : i.d) + '"' + (i.d==='sch' ? ' style="background:#8B5CF6"' : '') + '></span>';
+    const badges = dayItems.slice(0,maxShow).map(function(i){
+      const label = i.t.replace(/<[^>]*>/g,'').replace(/^[^\s]+\s/,'');
+      return '<div class="cal-badge" style="background:' + (bg[i.d]||'#999') + '">' + label + '</div>';
     }).join('');
+    const more = dayItems.length > maxShow ? '<div class="cal-more">+' + (dayItems.length-maxShow) + '건</div>' : '';
     html += '<div class="cal-cell' + (d===todayDay?' today':'') + (dayItems.length?' has':'') + '" onclick="openDayModal(' + ty + ',' + tm + ',' + d + ')">'
-      + '<div class="cal-d">' + d + '</div><div class="cal-dots">' + dots + '</div></div>';
+      + '<div class="cal-d">' + d + '</div>' + badges + more + '</div>';
   }
   html += '</div>';
   document.getElementById('calGrid').innerHTML = html;
