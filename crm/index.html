@@ -633,6 +633,14 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div id="dashAlert"><div class="empty">불러오는 중…</div></div>
       </div>
       <p class="note" style="padding:0 4px">예상수수료는 계약에 입력된 값의 단순 합계이며 확정 지급액이 아닙니다.</p>
+
+      <div class="card">
+        <div class="card-h"><h2>🧹 데이터 정리</h2></div>
+        <p class="mini">둘 다 되돌릴 수 없으니, "미리보기"로 몇 건인지 먼저 확인한 뒤 실행하세요.</p>
+        <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="cleanupMaskedNames()">마스킹된 이름(강*소 등) 찾아서 삭제</button>
+        <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="previewMergeDup()">동명이인(빈 정보) 중복 정리 - 미리보기</button>
+        <button class="btn ghost sm hide" id="mergeDupRunBtn" style="width:100%;color:var(--red)" onclick="runMergeDup()">위 미리보기 내용대로 실제 정리 실행</button>
+      </div>
     </section>
 
     <section id="tab-admin" class="hide">
@@ -3838,6 +3846,48 @@ function delRec(){
 }
 
 /* ── 지사 현황 ───────────────────── */
+/* ── 데이터 정리(마스킹 이름 / 동명이인 병합) ─── */
+function cleanupMaskedNames(){
+  const targets = CUSTOMERS.filter(function(c){ return (c.name||'').indexOf('*') >= 0; });
+  if(!targets.length){ toast('마스킹된 이름(가운데 * 포함)이 없습니다'); return; }
+  if(!confirm(targets.length+'건 발견: '+targets.map(function(c){return c.name;}).join(', ')+'\n삭제할까요? 연결된 계약이 있으면 함께 삭제됩니다.')) return;
+  let done=0, fail=0, next=0;
+  const FAILED=[];
+  function runOne(){
+    if(next>=targets.length) return Promise.resolve();
+    const c = targets[next++];
+    return api('customerDeleteCascade', {pageId:c.id}).then(function(r){
+      if(r.ok) done++; else { fail++; FAILED.push({name:c.name, detail:'마스킹 이름 삭제', reason:r.error||'실패'}); }
+      return runOne();
+    }).catch(function(){ fail++; FAILED.push({name:c.name, detail:'마스킹 이름 삭제', reason:'연결 실패(네트워크)'}); return runOne(); });
+  }
+  Promise.all([runOne(),runOne(),runOne()]).then(function(){
+    showImpResult(done, fail, 0, FAILED);
+    loadCustomers(); loadContracts();
+  });
+}
+function previewMergeDup(){
+  toast('확인 중…');
+  api('mergeDuplicateCustomers', {dryRun:true}).then(function(r){
+    if(!r.ok){ toast(r.error||'확인에 실패했습니다', true); return; }
+    alert('중복 그룹 '+r.mergedGroups+'건 발견\n'
+      + '- 삭제될 빈 고객: '+r.willDeleteCustomers+'명\n'
+      + '- 다시 연결될 계약: '+r.willReassignContracts+'건\n'
+      + '- 애매해서 건너뛴 것(동명이인일 수 있어 안 건드림): '+r.skippedAmbiguousGroups+'건\n\n'
+      + (r.mergedGroups>0 ? '아래 "실제 정리 실행" 버튼을 누르면 진행됩니다.' : ''));
+    document.getElementById('mergeDupRunBtn').classList.toggle('hide', r.mergedGroups===0);
+  }).catch(function(){ toast('연결에 실패했습니다', true); });
+}
+function runMergeDup(){
+  if(!confirm('실제로 병합·삭제를 진행할까요? 되돌릴 수 없습니다.')) return;
+  toast('처리 중… 잠시만 기다려주세요');
+  api('mergeDuplicateCustomers', {dryRun:false}).then(function(r){
+    if(!r.ok){ toast(r.error||'처리에 실패했습니다', true); return; }
+    alert('완료됐습니다.\n병합된 그룹: '+r.mergedGroups+'건\n삭제된 고객: '+r.deletedCustomers+'명\n재연결된 계약: '+r.reassignedContracts+'건');
+    document.getElementById('mergeDupRunBtn').classList.add('hide');
+    loadCustomers(); loadContracts();
+  }).catch(function(){ toast('연결에 실패했습니다. 시간이 오래 걸리는 작업이라 실제로는 처리됐을 수 있으니 잠시 후 목록을 확인해주세요.', true); });
+}
 function loadDash(){
   const tot = document.getElementById('dashTotal');
   tot.innerHTML = '<div class="empty">불러오는 중…</div>';
