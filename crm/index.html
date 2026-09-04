@@ -2781,7 +2781,7 @@ function renderReminders(){
   }).catch(function(){ buildCalendar(ty, tm, items); });
 }
 function buildCalendar(ty, tm, items){
-  const visible = items.filter(function(i){ return i.d==='sch' || !DISMISSED_REMINDERS[i.key]; });
+  const visible = items.filter(function(i){ return !DISMISSED_REMINDERS[i.key]; });
   const byDay = {};
   visible.forEach(function(i){ const d=String(Number(i.day)); (byDay[d]=byDay[d]||[]).push(i); });
   CAL_ITEMS_BY_DAY = byDay;
@@ -2835,10 +2835,11 @@ function openDayModal(ty, tm, d){
   } else {
     list.innerHTML = items.map(function(i){
       if(i.d==='sch'){
-        const actions = i.editable
-          ? '<button class="btn ghost sm" onclick="editSchedule(\''+i.schId+'\')">수정</button>'
-            + '<button class="btn ghost sm" onclick="deleteSchedule(\''+i.schId+'\')" style="color:var(--red)">삭제</button>'
-          : '<span class="mini">GROW ON에서 관리</span>';
+        const isGrow = i.sch && i.sch.source==='grow';
+        const actions = isGrow
+          ? '<button class="btn ghost sm" onclick="dismissReminder(\''+i.key+'\');closeDayModal()" title="GROW ON 원본은 그대로 두고 내 화면에서만 안 보이게 합니다">이 화면에서 숨기기</button>'
+          : '<button class="btn ghost sm" onclick="editSchedule(\''+i.schId+'\')">수정</button>'
+            + '<button class="btn ghost sm" onclick="deleteSchedule(\''+i.schId+'\')" style="color:var(--red)">삭제</button>';
         return '<div class="todo" style="display:flex;align-items:center;gap:8px"><div class="dot" style="background:#8B5CF6"></div><div class="tx" style="flex:1">'
           + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div>'
           + actions + '</div>';
