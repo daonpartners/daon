@@ -423,10 +423,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         </div>
         <div class="fld fld2">
           <div><label>활동</label>
-            <select id="actKind"><option>전화</option><option>문자</option><option>방문</option><option>상담</option><option>청약</option><option>증권전달</option><option>AS</option><option>소개요청</option></select>
+            <select id="actKind" onchange="syncActResultOptions()"><option>전화</option><option>문자</option><option>방문</option><option>상담</option><option>청약</option><option>증권전달</option><option>보상청구</option><option>AS</option><option>소개요청</option></select>
           </div>
           <div><label>결과</label>
-            <select id="actRes"><option value="">-</option><option>연결</option><option>부재</option><option>거절</option><option>재통화약속</option><option>상담확정</option><option>청약</option></select>
+            <select id="actRes"></select>
           </div>
         </div>
         <div class="fld"><label>메모</label><input id="actNote" placeholder="예: 자녀 보험 문의, 다음 주 재통화"></div>
@@ -754,6 +754,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div id="custCtrBox" class="hide" style="margin-top:14px">
         <label style="font-size:13px;font-weight:600;color:var(--ink2)" id="custCtrLabel">보유계약</label>
         <div id="custCtrList" style="margin-top:6px"></div>
+      </div>
+      <div id="custActBox" class="hide" style="margin-top:14px">
+        <label style="font-size:13px;font-weight:600;color:var(--ink2)">최근 활동 이력</label>
+        <div id="custActList" style="margin-top:6px"></div>
       </div>
       <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:8px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
@@ -1166,7 +1170,7 @@ function startDemo(){
   document.getElementById('adminDay').textContent = ds;
   drawChips();
   document.getElementById('custTotalCount').textContent = CUSTOMERS.length;
-  renderReminders(); fillActSelect();
+  renderReminders(); fillActSelect(); syncActResultOptions();
   loadGoalSummary();
   loadTodos('home'); loadTodos('act');
   loadRoutine('home'); loadRoutine('act');
@@ -1932,7 +1936,7 @@ function loadCustomers(){
     if(!r.ok){ document.getElementById('custTotalCount').textContent = '오류'; return; }
     CUSTOMERS = r.customers || [];
     document.getElementById('custTotalCount').textContent = CUSTOMERS.length;
-    renderReminders(); fillActSelect();
+    renderReminders(); fillActSelect(); syncActResultOptions();
     if(!document.getElementById('custResult').classList.contains('hide')) renderCust();
   }).catch(function(){
     document.getElementById('custTotalCount').textContent = '연결 실패';
@@ -2911,6 +2915,22 @@ function deleteSchedule(id){
 function closeAllModals(){
   document.querySelectorAll('.mask').forEach(function(m){ m.classList.add('hide'); });
 }
+const ACT_RESULTS = {
+  '전화': ['연결','부재','거절','재통화약속','상담확정','청약'],
+  '문자': ['발송완료','회신옴','회신없음'],
+  '방문': ['상담완료','부재','재방문약속','청약'],
+  '상담': ['상담확정','재상담예정','거절','청약'],
+  '청약': ['청약완료','서류대기','보류'],
+  '증권전달': ['전달완료','전달예정'],
+  '보상청구': ['접수완료','서류보완요청','심사중','지급완료','거절/기각'],
+  'AS': ['처리완료','처리중','보류'],
+  '소개요청': ['소개받음','소개거절','대기']
+};
+function syncActResultOptions(){
+  const kind = document.getElementById('actKind').value;
+  const list = ACT_RESULTS[kind] || [];
+  document.getElementById('actRes').innerHTML = '<option value="">-</option>' + list.map(function(r){ return '<option>'+r+'</option>'; }).join('');
+}
 function fillActSelect(){
   document.getElementById('actCust').innerHTML = '<option value="">지정 안 함</option>'
     + CUSTOMERS.map(function(c){ return '<option value="'+c.id+'">'+esc(c.name)+'</option>'; }).join('');
@@ -2966,6 +2986,26 @@ function openCust(id){
     }
   } else {
     ctrBox.classList.add('hide');
+  }
+  const actBox = document.getElementById('custActBox');
+  if(c){
+    actBox.classList.remove('hide');
+    document.getElementById('custActList').innerHTML = '<div class="empty">불러오는 중…</div>';
+    api('customerActivities', {customerId:c.id}).then(function(r){
+      if(!r.ok || !r.items || !r.items.length){
+        document.getElementById('custActList').innerHTML = '<div class="empty">아직 기록된 활동이 없습니다.</div>';
+        return;
+      }
+      const ic = {'전화':'📞','문자':'💬','방문':'🚗','상담':'🗣️','청약':'✍️','증권전달':'📮','보상청구':'🏥','AS':'🔧','소개요청':'🙋'};
+      document.getElementById('custActList').innerHTML = r.items.map(function(a){
+        const isClaim = a.kind === '보상청구';
+        return '<div class="kv"' + (isClaim ? ' style="background:#FFF3E8"' : '') + '><span>' + (ic[a.kind]||'📝') + ' <b>' + esc(a.kind)
+          + (a.result ? ' · '+esc(a.result) : '') + '</b> <small class="mini">' + esc(a.date||'') + '</small>'
+          + (a.note ? '<br><small class="mini">'+esc(a.note)+'</small>' : '') + '</span></div>';
+      }).join('');
+    }).catch(function(){ document.getElementById('custActList').innerHTML = '<div class="empty">불러오지 못했습니다.</div>'; });
+  } else {
+    actBox.classList.add('hide');
   }
   document.getElementById('custModal').classList.remove('hide');
 }
