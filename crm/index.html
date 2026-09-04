@@ -2797,7 +2797,7 @@ function buildCalendar(ty, tm, items){
   const todayDay = isCurMonth ? Number(todayStr.slice(8,10)) : -1;
   const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','d-sky':'#E8B400','sch':'#8B5CF6'};
   const tagOf = {'d-red':'만기','d-yel':'미접촉','d-blu':'연락','d-sky':'생일'};
-  const GROW_COLORS = {'회의':'#6B7280','교육':'#22A559','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
+  const GROW_COLORS = {'회의':'#6B7280','교육':'#22A559','LIVE':'#D4A017','행사':'#3B82F6','시상':'#D97706'};
   const maxShow = window.innerWidth >= 900 ? 3 : 2;
   const HOLIDAYS_FIXED = {'01-01':'신정','03-01':'삼일절','05-05':'어린이날','06-06':'현충일','08-15':'광복절','10-03':'개천절','10-09':'한글날','12-25':'성탄절'};
 
@@ -2843,7 +2843,7 @@ function openDayModal(ty, tm, d){
     list.innerHTML = items.map(function(i){
       if(i.d==='sch'){
         const isGrow = i.sch && i.sch.source==='grow';
-        const growColors = {'회의':'#6B7280','교육':'#22A559','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
+        const growColors = {'회의':'#6B7280','교육':'#22A559','LIVE':'#D4A017','행사':'#3B82F6','시상':'#D97706'};
         const dotColor = isGrow ? (growColors[(i.sch&&i.sch.category)||''] || '#8B5CF6') : '#8B5CF6';
         const actions = isGrow
           ? '<button class="btn ghost sm" onclick="dismissReminder(\''+i.key+'\');closeDayModal()" title="GROW ON 원본은 그대로 두고 내 화면에서만 안 보이게 합니다">이 화면에서 숨기기</button>'
