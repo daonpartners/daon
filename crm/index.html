@@ -95,7 +95,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .todo .tx{flex:1;min-width:0}
 .todo .tt{font-weight:650;font-size:14.5px}
 .todo .ts{font-size:12.5px;color:var(--ink3);margin-top:2px}
-.d-red{background:var(--red)} .d-yel{background:var(--yellow)} .d-blu{background:var(--blue)} .d-sky{background:#5DC8E8}
+.d-red{background:var(--red)} .d-yel{background:var(--yellow)} .d-blu{background:var(--blue)} .d-sky{background:#E8B400}
 .empty{text-align:center;padding:26px 10px;color:var(--ink3);font-size:14px}
 
 /* ── 진행률 ───────────────────────── */
@@ -2727,10 +2727,10 @@ function printCustTable(){
   setTimeout(function(){ window.print(); }, 100);
 }
 let DISMISSED_REMINDERS = {};
-try{ DISMISSED_REMINDERS = JSON.parse(sessionStorage.getItem('dismissedReminders')||'{}'); }catch(e){}
+try{ DISMISSED_REMINDERS = JSON.parse(localStorage.getItem('dismissedReminders')||'{}'); }catch(e){}
 function dismissReminder(key){
   DISMISSED_REMINDERS[key] = true;
-  try{ sessionStorage.setItem('dismissedReminders', JSON.stringify(DISMISSED_REMINDERS)); }catch(e){}
+  try{ localStorage.setItem('dismissedReminders', JSON.stringify(DISMISSED_REMINDERS)); }catch(e){}
   renderReminders();
 }
 let REMINDER_MONTH_OFFSET = 0;
@@ -2753,8 +2753,8 @@ function renderReminders(){
 
   const items = [];
   CUSTOMERS.forEach(function(c){
-    if(c.birth && Number(c.birth.slice(5,7))===(tm+1))
-      items.push({key:'birth-'+c.id, day:c.birth.slice(8,10), d:'d-sky', t:'🎂 '+esc(c.name)+'님 생일', s:'축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
+    if(c.birth && c.grade==='A' && Number(c.birth.slice(5,7))===(tm+1))
+      items.push({key:'birth-'+c.id, day:c.birth.slice(8,10), d:'d-sky', t:'🎂 '+esc(c.name)+'님 생일', s:'A등급 핵심고객 · 축하 연락 어떠세요?', click:"closeAllModals();openCust('"+c.id+"')"});
     if(c.nextTouch && c.nextTouch>=monStart && c.nextTouch<=monEnd)
       items.push({key:'next-'+c.id, day:c.nextTouch.slice(8,10), d:'d-blu', t:'📅 '+esc(c.name)+'님 연락 예정', s:'연락하기로 한 날입니다', click:"closeAllModals();openCust('"+c.id+"')"});
   });
@@ -2795,9 +2795,9 @@ function buildCalendar(ty, tm, items){
   const todayStr = today();
   const isCurMonth = (ty+'-'+String(tm+1).padStart(2,'0')) === todayStr.slice(0,7);
   const todayDay = isCurMonth ? Number(todayStr.slice(8,10)) : -1;
-  const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','d-sky':'#5DC8E8','sch':'#8B5CF6'};
+  const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','d-sky':'#E8B400','sch':'#8B5CF6'};
   const tagOf = {'d-red':'만기','d-yel':'미접촉','d-blu':'연락','d-sky':'생일'};
-  const GROW_COLORS = {'회의':'#6B7280','교육':'#1F2937','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
+  const GROW_COLORS = {'회의':'#6B7280','교육':'#22A559','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
   const maxShow = window.innerWidth >= 900 ? 3 : 2;
   const HOLIDAYS_FIXED = {'01-01':'신정','03-01':'삼일절','05-05':'어린이날','06-06':'현충일','08-15':'광복절','10-03':'개천절','10-09':'한글날','12-25':'성탄절'};
 
@@ -2843,7 +2843,7 @@ function openDayModal(ty, tm, d){
     list.innerHTML = items.map(function(i){
       if(i.d==='sch'){
         const isGrow = i.sch && i.sch.source==='grow';
-        const growColors = {'회의':'#6B7280','교육':'#1F2937','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
+        const growColors = {'회의':'#6B7280','교육':'#22A559','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
         const dotColor = isGrow ? (growColors[(i.sch&&i.sch.category)||''] || '#8B5CF6') : '#8B5CF6';
         const actions = isGrow
           ? '<button class="btn ghost sm" onclick="dismissReminder(\''+i.key+'\');closeDayModal()" title="GROW ON 원본은 그대로 두고 내 화면에서만 안 보이게 합니다">이 화면에서 숨기기</button>'
