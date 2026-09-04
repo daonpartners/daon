@@ -2793,6 +2793,7 @@ function buildCalendar(ty, tm, items){
   const todayDay = isCurMonth ? Number(todayStr.slice(8,10)) : -1;
   const bg = {'d-red':'#E15C5C','d-yel':'#E0A63A','d-blu':'#4A90D9','d-sky':'#5DC8E8','sch':'#8B5CF6'};
   const tagOf = {'d-red':'만기','d-yel':'미접촉','d-blu':'연락','d-sky':'생일'};
+  const GROW_COLORS = {'회의':'#6B7280','교육':'#1F2937','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
   const maxShow = window.innerWidth >= 900 ? 3 : 2;
   const HOLIDAYS_FIXED = {'01-01':'신정','03-01':'삼일절','05-05':'어린이날','06-06':'현충일','08-15':'광복절','10-03':'개천절','10-09':'한글날','12-25':'성탄절'};
 
@@ -2809,8 +2810,10 @@ function buildCalendar(ty, tm, items){
     }
     const badges = dayItems.slice(0,maxShow).map(function(i){
       const label = i.t.replace(/<[^>]*>/g,'').replace(/^[^\s]+\s/,'');
-      const tag = i.d==='sch' ? ((i.sch && i.sch.source==='grow') ? 'GROW' : (i.sch && i.sch.category) || '일정') : tagOf[i.d];
-      return '<div class="cal-badge" style="background:' + (bg[i.d]||'#999') + '"><b class="cal-badge-tag">' + esc(tag) + '</b>' + label + '</div>';
+      const isGrow = i.d==='sch' && i.sch && i.sch.source==='grow';
+      const tag = i.d==='sch' ? (isGrow ? 'GROW' : (i.sch && i.sch.category) || '일정') : tagOf[i.d];
+      const color = isGrow ? (GROW_COLORS[(i.sch&&i.sch.category)||''] || '#8B5CF6') : (bg[i.d]||'#999');
+      return '<div class="cal-badge" style="background:' + color + '"><b class="cal-badge-tag">' + esc(tag) + '</b>' + label + '</div>';
     }).join('');
     const more = dayItems.length > maxShow ? '<div class="cal-more">+' + (dayItems.length-maxShow) + '건</div>' : '';
     html += '<div class="cal-cell' + (d===todayDay?' today':'') + (dayItems.length?' has':'') + (holidayName?' holiday':'') + '" onclick="openDayModal(' + ty + ',' + tm + ',' + d + ')">'
@@ -2836,11 +2839,13 @@ function openDayModal(ty, tm, d){
     list.innerHTML = items.map(function(i){
       if(i.d==='sch'){
         const isGrow = i.sch && i.sch.source==='grow';
+        const growColors = {'회의':'#6B7280','교육':'#1F2937','LIVE':'#E14848','행사':'#3B82F6','시상':'#D97706'};
+        const dotColor = isGrow ? (growColors[(i.sch&&i.sch.category)||''] || '#8B5CF6') : '#8B5CF6';
         const actions = isGrow
           ? '<button class="btn ghost sm" onclick="dismissReminder(\''+i.key+'\');closeDayModal()" title="GROW ON 원본은 그대로 두고 내 화면에서만 안 보이게 합니다">이 화면에서 숨기기</button>'
           : '<button class="btn ghost sm" onclick="editSchedule(\''+i.schId+'\')">수정</button>'
             + '<button class="btn ghost sm" onclick="deleteSchedule(\''+i.schId+'\')" style="color:var(--red)">삭제</button>';
-        return '<div class="todo" style="display:flex;align-items:center;gap:8px"><div class="dot" style="background:#8B5CF6"></div><div class="tx" style="flex:1">'
+        return '<div class="todo" style="display:flex;align-items:center;gap:8px"><div class="dot" style="background:'+dotColor+'"></div><div class="tx" style="flex:1">'
           + '<div class="tt">' + i.t + '</div><div class="ts">' + i.s + '</div></div>'
           + actions + '</div>';
       }
