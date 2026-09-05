@@ -17,7 +17,7 @@
 
 <header class="bar">
   <a class="bar__name" href="index.html">사업자보험 상담신청<span>미래에셋금융서비스 그로우사업부</span></a>
-  <a class="bar__tel" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카톡 문의</a>
+  <a class="bar__kakao" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카톡 문의</a>
 </header>
 
 <main class="wrap" id="app">
@@ -34,14 +34,22 @@
   <div class="done">
     <div class="done__mark">✓</div>
     <h1>입력하신 내용이 정리되었습니다</h1>
-    <p>아래 버튼을 누르면 카카오톡 채널 대화창이 열리고,<br>입력하신 내용이 자동으로 복사됩니다. 채팅창에 붙여넣기만 하시면 됩니다.</p>
 
-    <div style="margin-top:26px">
-      <a class="btn btn--navy" id="kakaoBtn" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카카오톡으로 상담 이어가기</a>
-      <div class="btn-note" id="copyNote">붙여넣을 내용이 자동으로 복사됩니다</div>
+    <div class="steps2">
+      <div class="step2">
+        <span class="num">1</span>
+        <div><b>아래 버튼 누르기</b><span>카카오톡 채널 대화창이 열리고, 입력하신 내용이 자동으로 복사됩니다.</span></div>
+      </div>
+      <div class="step2 hot">
+        <span class="num">2</span>
+        <div><b>채팅창에 꼭 붙여넣어 주세요</b><span>대화창을 길게 눌러 붙여넣기를 하셔야 담당자에게 내용이 전달됩니다.</span></div>
+      </div>
     </div>
 
-    <div style="margin-top:20px">
+    <a class="btn btn--kakao" id="kakaoBtn" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카카오톡으로 상담 신청하기</a>
+    <div class="btn-note" id="copyNote">누르면 내용이 자동으로 복사됩니다</div>
+
+    <div style="margin-top:16px">
       <button class="btn btn--line" id="copyAgainBtn">내용 다시 복사하기</button>
     </div>
 
@@ -289,7 +297,7 @@
       '<div class="prow-note" style="margin-top:14px">입력하신 내용은 서버에 저장되지 않으며, 카카오톡 상담을 위한 요약문으로만 사용됩니다.</div>' +
       '<button class="back" id="btnBack">이전으로</button>' +
       '<div style="margin-top:18px">' +
-        '<button class="btn btn--navy" id="submitBtn">카카오톡으로 상담 이어가기</button>' +
+        '<button class="btn btn--kakao" id="submitBtn">카카오톡으로 상담 신청하기</button>' +
         '<div class="btn-note">누르면 채팅창이 열리고 내용이 자동 복사됩니다</div>' +
       '</div>' +
     '</div>';
