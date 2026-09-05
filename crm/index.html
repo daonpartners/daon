@@ -3223,6 +3223,24 @@ function findCol(row, key){
   for (const s of syns) { if (row[s] !== undefined && row[s] !== '') return String(row[s]).trim(); }
   return '';
 }
+function excelSerialToBirth(v){
+  const s = String(v||'').trim();
+  if(!s) return s;
+  if(/^\d{8}$/.test(s)) return s; // YYYYMMDD는 다른 곳에서 처리
+  if(/^\d{4}-\d{1,2}-\d{1,2}/.test(s)) return s; // 이미 정상 날짜
+  // 엑셀에서 "날짜" 서식이 아니라 "숫자"로 저장된 셀은 1900-01-01부터의 일수(시리얼 번호)로 넘어옵니다.
+  if(/^\d{5}$/.test(s)){
+    const n = Number(s);
+    if(n>=1 && n<60000){
+      const dt = new Date(Date.UTC(1899,11,30) + n*86400000);
+      const y = dt.getUTCFullYear();
+      if(y>=1900 && y<=new Date().getFullYear()){
+        return dt.toISOString().slice(0,10);
+      }
+    }
+  }
+  return s;
+}
 function genderTextToGcode(v){
   const s = String(v||'').trim();
   if(/^[0-9]$/.test(s)) return s;
@@ -3358,6 +3376,7 @@ function prepImport(rows){
     // XCOL_SYN에 없는 나머지 항목은 정확한 칼럼명으로만 매칭
     XCOL.forEach(function(p){ if(o[p[1]]===undefined && r[p[0]]!==undefined) o[p[1]] = String(r[p[0]]).trim(); });
     if(!o.name){ skip++; return; }
+    if(o.birth) o.birth = excelSerialToBirth(o.birth);
     if(!o.birth){
       const rrn = parseRRN(r);
       if(rrn){ o.birth = rrn.birth; if(!o.gcode) o.gcode = rrn.gcode; rrnUsed++; }
