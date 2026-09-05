@@ -21,40 +21,39 @@ const CONFIG = {
 };
 
 /* ══════════════════════════════════════════════
-   상품 목록 (그대로 사용)
+   상품 목록
    각 상품의 플래그:
-     biz    = 업종 선택 필요
-     prop   = 평수·임차자가·층수·가스 필요
-     staff  = 직원 수 필요
-     assets = 시설비용·재고자산 필요
+     biz      = 업종 선택 필요
+     prop     = 평수·임차자가·층수·가스 필요
+     staff    = 직원 수 필요
+     assets   = 시설비용·재고자산 필요
+     personal = 개인상품 (사업장 정보 없이 개인정보만 입력)
    ══════════════════════════════════════════════ */
 const PRODUCTS = [
-  // ── 의무보험 ──
-  { id:'m1', cat:'mandatory', name:'화재보험(신체손해배상특약부)', biz:true, prop:true, staff:true, assets:true },
-  { id:'m2', cat:'mandatory', name:'다중이용업소 화재배상책임보험', biz:true, prop:true, staff:true, assets:false },
-  { id:'m3', cat:'mandatory', name:'재난배상책임보험', biz:true, prop:true, staff:false, assets:false },
-  { id:'m4', cat:'mandatory', name:'가스사고배상책임보험', biz:true, prop:true, staff:false, assets:false },
-  { id:'m5', cat:'mandatory', name:'승강기 배상책임보험', biz:true, prop:true, staff:false, assets:false },
-  { id:'m6', cat:'mandatory', name:'어린이놀이시설 배상책임보험', biz:true, prop:true, staff:false, assets:false },
-  { id:'m7', cat:'mandatory', name:'영업용 자동차보험', biz:false, prop:false, staff:false, assets:false },
+  // ── 일반/화재보험 ──
+  { id:'f1', cat:'fire', name:'화재보험(다중이용업소·재난배상 포함)', biz:true, prop:true, staff:true, assets:true },
+  { id:'f2', cat:'fire', name:'승강기 배상책임보험', biz:true, prop:true, staff:false, assets:false },
+  { id:'f3', cat:'fire', name:'어린이놀이시설 배상책임보험', biz:true, prop:true, staff:false, assets:false },
+  { id:'f4', cat:'fire', name:'생산물배상책임보험', biz:true, prop:false, staff:true, assets:false },
+  { id:'f5', cat:'fire', name:'영업배상책임보험', biz:true, prop:true, staff:true, assets:false },
+  { id:'f6', cat:'fire', name:'직업배상책임보험', biz:true, prop:false, staff:false, assets:false },
+  { id:'f7', cat:'fire', name:'기타배상책임보험', biz:true, prop:false, staff:false, assets:false },
+  { id:'f8', cat:'fire', name:'직원상해(단체)보험', biz:true, prop:false, staff:true, assets:false },
 
-  // ── 일반보험 ──
-  { id:'g1', cat:'general', name:'화재보험(일반)', biz:true, prop:true, staff:true, assets:true },
-  { id:'g2', cat:'general', name:'시설물 배상책임보험', biz:true, prop:true, staff:true, assets:false },
-  { id:'g3', cat:'general', name:'생산물배상책임보험', biz:true, prop:false, staff:true, assets:false },
-  { id:'g4', cat:'general', name:'고용주(근로자재해) 배상책임보험', biz:true, prop:false, staff:true, assets:false },
-  { id:'g5', cat:'general', name:'사업장 종합보험', biz:true, prop:true, staff:true, assets:true },
-  { id:'g6', cat:'general', name:'화물자동차보험', biz:false, prop:false, staff:false, assets:false },
-  { id:'g7', cat:'general', name:'사이버배상책임보험', biz:true, prop:false, staff:false, assets:false },
+  // ── 중대재해 ──
+  { id:'s1', cat:'safety', name:'중대재해 위험성평가 상담 신청', biz:true, prop:false, staff:true, assets:false },
 
-  // ── 중대재해대응점검 ──
-  { id:'s1', cat:'safety', name:'중대재해대응 점검 신청', biz:true, prop:false, staff:true, assets:false }
+  // ── 건강/자동차 (개인상품) ──
+  { id:'l1', cat:'life', name:'건강보험', personal:true },
+  { id:'l2', cat:'life', name:'자동차보험', personal:true },
+  { id:'l3', cat:'life', name:'연금보험', personal:true },
+  { id:'l4', cat:'life', name:'종신보험', personal:true }
 ];
 
 const CAT_TABS = [
-  { k:'mandatory', t:'의무보험' },
-  { k:'general',   t:'일반보험' },
-  { k:'safety',    t:'중대재해대응' }
+  { k:'fire',   t:'일반/화재보험' },
+  { k:'safety', t:'중대재해 위험성평가' },
+  { k:'life',   t:'건강/자동차' }
 ];
 
 /* 업종 대분류 → 소분류 */

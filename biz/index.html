@@ -80,6 +80,7 @@
     var p = state.product;
     var list = [STEP.PRODUCT];
     if (!p) return list;
+    if (p.personal) { list.push(STEP.CONTRACTOR, STEP.REVIEW); return list; }
     if (p.biz) list.push(STEP.BIZTYPE);
     if (p.prop || p.staff) list.push(STEP.SITE);
     if (p.assets) list.push(STEP.MONEY);
@@ -253,8 +254,32 @@
     '</div>';
   }
 
-  /* ── 5. 계약자 정보 (사업자등록증 첨부 없음) ── */
+  /* ── 5. 계약자 정보 ── */
   function viewContractor(){
+    var p = state.product;
+    if (p.personal) {
+      return '<div class="screen"><h1>신청자 정보를 입력해 주세요</h1>' +
+        '<div class="sub">카카오톡 상담 시 이 내용이 바로 전달됩니다.</div>' +
+        '<div class="qgroup" style="border-top:none;padding-top:0">' +
+          '<div class="row2">' +
+            '<div>' +
+              '<div class="qlabel">성명<span class="req">필수</span></div>' +
+              '<input type="text" id="pName" placeholder="홍길동" value="' + (A.pName||'') + '">' +
+            '</div>' +
+            '<div>' +
+              '<div class="qlabel">생년월일<span class="req">필수</span></div>' +
+              '<input type="text" id="pBirth" inputmode="numeric" placeholder="1980-01-01" value="' + (A.pBirth||'') + '">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="qgroup">' +
+          '<div class="qlabel">휴대전화<span class="req">필수</span></div>' +
+          '<input type="tel" id="pPhone" inputmode="numeric" placeholder="010-0000-0000" value="' + (A.pPhone||'') + '">' +
+        '</div>' +
+        '<button class="back" id="btnBack">이전으로</button>' +
+        '<div style="margin-top:18px"><button class="btn btn--navy" id="contractorNext">다음</button></div>' +
+      '</div>';
+    }
     return '<div class="screen"><h1>계약자 정보를 입력해 주세요</h1>' +
       '<div class="sub">개인사업자 기준으로 대표자 정보를 입력합니다. 카카오톡 상담 시 이 내용이 바로 전달됩니다.</div>' +
       '<div class="qgroup" style="border-top:none;padding-top:0">' +
@@ -291,21 +316,28 @@
     var p = state.product;
     var rows = [];
     rows.push(['상품', p.name]);
-    if (p.biz) rows.push(['업종', (state.bizMajor + (state.bizMinor ? ' · ' + state.bizMinor : ''))]);
-    if (p.prop) {
-      rows.push(['평수', A.area]); rows.push(['형태', A.own]);
-      rows.push(['층수', A.floor]); rows.push(['가스', A.gas]);
+
+    if (p.personal) {
+      rows.push(['성명', A.pName]);
+      rows.push(['생년월일', A.pBirth]);
+      rows.push(['연락처', A.pPhone]);
+    } else {
+      if (p.biz) rows.push(['업종', (state.bizMajor + (state.bizMinor ? ' · ' + state.bizMinor : ''))]);
+      if (p.prop) {
+        rows.push(['평수', A.area]); rows.push(['형태', A.own]);
+        rows.push(['층수', A.floor]); rows.push(['가스', A.gas]);
+      }
+      if (p.staff) rows.push(['직원 수', A.staff]);
+      if (p.assets) {
+        rows.push(['시설비용', fmtMoney(A.facility) + '원']);
+        rows.push(['재고자산', fmtMoney(A.stock||'0') + '원']);
+      }
+      rows.push(['상호명', A.cName]);
+      rows.push(['사업자번호', A.cBizNo]);
+      rows.push(['대표자 성명', A.cRepName]);
+      rows.push(['대표자 생년월일', A.cBirth]);
+      rows.push(['연락처', A.cPhone]);
     }
-    if (p.staff) rows.push(['직원 수', A.staff]);
-    if (p.assets) {
-      rows.push(['시설비용', fmtMoney(A.facility) + '원']);
-      rows.push(['재고자산', fmtMoney(A.stock||'0') + '원']);
-    }
-    rows.push(['상호명', A.cName]);
-    rows.push(['사업자번호', A.cBizNo]);
-    rows.push(['대표자 성명', A.cRepName]);
-    rows.push(['대표자 생년월일', A.cBirth]);
-    rows.push(['연락처', A.cPhone]);
 
     return '<div class="screen"><h1>입력하신 내용을 확인해 주세요</h1>' +
       '<div class="sub">확인 후 카카오톡으로 상담이 바로 이어집니다.</div>' +
@@ -341,6 +373,14 @@
     var lines = [];
     lines.push('[사업자보험 상담 신청]');
     lines.push('상품: ' + p.name);
+
+    if (p.personal) {
+      lines.push('성명: ' + (A.pName||'-'));
+      lines.push('생년월일: ' + (A.pBirth||'-'));
+      lines.push('연락처: ' + (A.pPhone||'-'));
+      return lines.join('\n');
+    }
+
     if (p.biz) lines.push('업종: ' + state.bizMajor + (state.bizMinor ? ' · ' + state.bizMinor : ''));
     if (p.prop) {
       lines.push('평수: ' + (A.area||'-'));
@@ -420,6 +460,25 @@
     }
 
     if (state.step === STEP.CONTRACTOR) {
+      var p = state.product;
+
+      if (p.personal) {
+        var pBirthEl = $('#pBirth'), pPhoneEl = $('#pPhone');
+        pBirthEl.addEventListener('input', function(){ pBirthEl.value = fmtBirth(pBirthEl.value); });
+        pPhoneEl.addEventListener('input', function(){ pPhoneEl.value = fmtPhone(pPhoneEl.value); });
+
+        $('#contractorNext').addEventListener('click', function(){
+          A.pName  = $('#pName').value.trim();
+          A.pBirth = $('#pBirth').value.trim();
+          A.pPhone = $('#pPhone').value.trim();
+          if (A.pName.length < 2) return fail('성명을 입력해 주세요.', 'pName');
+          if (!validBirth(A.pBirth)) return fail('생년월일을 다시 확인해 주세요. (예: 1980-01-01)', 'pBirth');
+          if (!validPhone(A.pPhone)) return fail('휴대전화번호를 다시 확인해 주세요.', 'pPhone');
+          next();
+        });
+        return;
+      }
+
       var bizNo = $('#cBizNo'), birth = $('#cBirth'), phone = $('#cPhone');
       bizNo.addEventListener('input', function(){ bizNo.value = fmtBizNo(bizNo.value); });
       birth.addEventListener('input', function(){ birth.value = fmtBirth(birth.value); });
