@@ -64,7 +64,13 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:
 .qgroup{margin-top:26px;padding-top:20px;border-top:1px solid var(--rule)}
 .qgroup:first-of-type{border-top:none;padding-top:0;margin-top:22px}
 .qlabel{font-size:14.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:4px}
+.qlabel .req{color:var(--amber);font-size:11.5px;font-weight:700;margin-left:5px}
 .qhint{font-size:12.5px;color:var(--mute);margin-bottom:10px}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2 .qlabel{margin-bottom:8px}
+
+input.invalid{border-color:var(--amber)!important;background:var(--amber-bg)}
 
 input[type=text],input[type=tel],input[type=number],input[type=date]{
   width:100%;font-family:var(--sans);font-size:16px;color:var(--ink);

@@ -111,8 +111,19 @@
     if (i <= 0) return;
     goto(steps[i-1]);
   }
-  function fail(msg){
+  function fail(msg, elId){
     var e = $('#err'); e.textContent = msg; e.hidden = false;
+    $$('input.invalid').forEach(function(x){ x.classList.remove('invalid'); });
+    if (elId) {
+      var el = $('#' + elId);
+      if (el) {
+        el.classList.add('invalid');
+        el.scrollIntoView({ behavior:'smooth', block:'center' });
+        setTimeout(function(){ el.focus(); }, 300);
+        el.addEventListener('input', function h(){ el.classList.remove('invalid'); el.removeEventListener('input', h); });
+        return;
+      }
+    }
     window.scrollTo({ top:0, behavior:'smooth' });
   }
   function clearErr(){ $('#err').hidden = true; }
@@ -247,19 +258,27 @@
     return '<div class="screen"><h1>계약자 정보를 입력해 주세요</h1>' +
       '<div class="sub">개인사업자 기준으로 대표자 정보를 입력합니다. 카카오톡 상담 시 이 내용이 바로 전달됩니다.</div>' +
       '<div class="qgroup" style="border-top:none;padding-top:0">' +
-        '<div class="qlabel">상호명</div>' +
+        '<div class="qlabel">상호명<span class="req">필수</span></div>' +
         '<input type="text" id="cName" placeholder="예: 다온식당" value="' + (A.cName||'') + '">' +
       '</div>' +
       '<div class="qgroup">' +
-        '<div class="qlabel">사업자등록번호</div>' +
+        '<div class="qlabel">사업자등록번호<span class="req">필수</span></div>' +
         '<input type="text" id="cBizNo" inputmode="numeric" placeholder="000-00-00000" value="' + (A.cBizNo||'') + '">' +
       '</div>' +
       '<div class="qgroup">' +
-        '<div class="qlabel">대표자 생년월일</div>' +
-        '<input type="text" id="cBirth" inputmode="numeric" placeholder="1980-01-01" value="' + (A.cBirth||'') + '">' +
+        '<div class="row2">' +
+          '<div>' +
+            '<div class="qlabel">대표자 성명<span class="req">필수</span></div>' +
+            '<input type="text" id="cRepName" placeholder="홍길동" value="' + (A.cRepName||'') + '">' +
+          '</div>' +
+          '<div>' +
+            '<div class="qlabel">생년월일<span class="req">필수</span></div>' +
+            '<input type="text" id="cBirth" inputmode="numeric" placeholder="1980-01-01" value="' + (A.cBirth||'') + '">' +
+          '</div>' +
+        '</div>' +
       '</div>' +
       '<div class="qgroup">' +
-        '<div class="qlabel">대표자 휴대전화</div>' +
+        '<div class="qlabel">대표자 휴대전화<span class="req">필수</span></div>' +
         '<input type="tel" id="cPhone" inputmode="numeric" placeholder="010-0000-0000" value="' + (A.cPhone||'') + '">' +
       '</div>' +
       '<button class="back" id="btnBack">이전으로</button>' +
@@ -284,6 +303,7 @@
     }
     rows.push(['상호명', A.cName]);
     rows.push(['사업자번호', A.cBizNo]);
+    rows.push(['대표자 성명', A.cRepName]);
     rows.push(['대표자 생년월일', A.cBirth]);
     rows.push(['연락처', A.cPhone]);
 
@@ -335,6 +355,7 @@
     }
     lines.push('상호명: ' + (A.cName||'-'));
     lines.push('사업자번호: ' + (A.cBizNo||'-'));
+    lines.push('대표자 성명: ' + (A.cRepName||'-'));
     lines.push('대표자 생년월일: ' + (A.cBirth||'-'));
     lines.push('연락처: ' + (A.cPhone||'-'));
     return lines.join('\n');
@@ -393,7 +414,7 @@
       $('#moneyNext').addEventListener('click', function(){
         A.facility = moneyValue(f.value);
         A.stock = moneyValue(s.value) || '0';
-        if (!A.facility) return fail('시설비용을 입력해 주세요. 잘 모르시면 대략적인 금액도 괜찮습니다.');
+        if (!A.facility) return fail('시설비용을 입력해 주세요. 잘 모르시면 대략적인 금액도 괜찮습니다.', 'facility');
         next();
       });
     }
@@ -405,14 +426,16 @@
       phone.addEventListener('input', function(){ phone.value = fmtPhone(phone.value); });
 
       $('#contractorNext').addEventListener('click', function(){
-        A.cName   = $('#cName').value.trim();
-        A.cBizNo  = $('#cBizNo').value.trim();
-        A.cBirth  = $('#cBirth').value.trim();
-        A.cPhone  = $('#cPhone').value.trim();
-        if (A.cName.length < 2) return fail('상호명을 입력해 주세요.');
-        if (!validBizNo(A.cBizNo)) return fail('사업자등록번호를 다시 확인해 주세요.');
-        if (!validBirth(A.cBirth)) return fail('생년월일을 다시 확인해 주세요. (예: 1980-01-01)');
-        if (!validPhone(A.cPhone)) return fail('휴대전화번호를 다시 확인해 주세요.');
+        A.cName    = $('#cName').value.trim();
+        A.cBizNo   = $('#cBizNo').value.trim();
+        A.cRepName = $('#cRepName').value.trim();
+        A.cBirth   = $('#cBirth').value.trim();
+        A.cPhone   = $('#cPhone').value.trim();
+        if (A.cName.length < 2) return fail('상호명을 입력해 주세요.', 'cName');
+        if (!validBizNo(A.cBizNo)) return fail('사업자등록번호를 다시 확인해 주세요. (예: 000-00-00000)', 'cBizNo');
+        if (A.cRepName.length < 2) return fail('대표자 성명을 입력해 주세요.', 'cRepName');
+        if (!validBirth(A.cBirth)) return fail('생년월일을 다시 확인해 주세요. (예: 1980-01-01)', 'cBirth');
+        if (!validPhone(A.cPhone)) return fail('휴대전화번호를 다시 확인해 주세요.', 'cPhone');
         next();
       });
     }
