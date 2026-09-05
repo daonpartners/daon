@@ -709,8 +709,13 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 
       <!-- 가망고객 전용 -->
       <div id="prospectFields" class="hide">
-        <div class="fld"><label>분류</label>
-          <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
+        <div class="fld fld2">
+          <div><label>분류</label>
+            <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
+          </div>
+          <div><label>DB구분</label>
+            <select id="fDbType"><option value="">-</option><option>소개DB</option><option>휴면DB</option><option>이관DB</option><option>기타DB</option></select>
+          </div>
         </div>
         <div class="fld"><label>관심보종</label>
           <div class="row">
@@ -719,6 +724,16 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
             <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="화재"> 화재</label>
             <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
           </div>
+        </div>
+        <div class="dr-h" style="padding:12px 0 4px">진행상황</div>
+        <div class="fld fld2">
+          <div><label>1차 문자발송</label><select id="fSms1"><option value="미발송">미발송</option><option>1번</option><option>2번</option><option>3번</option></select></div>
+          <div><label>1차 상태</label><select id="fStatus1"><option value="-">-</option><option>수신거부</option><option>상담예약</option><option>무응답</option></select></div>
+        </div>
+        <div class="fld"><label><input type="checkbox" id="fVisit" style="margin-right:6px">방문예약 완료</label></div>
+        <div class="fld fld2">
+          <div><label>2차 문자발송</label><select id="fSms2"><option value="미발송">미발송</option><option>1번</option><option>2번</option><option>3번</option></select></div>
+          <div><label>2차 상태</label><select id="fStatus2"><option value="-">-</option><option>수신거부</option><option>상담예약</option><option>무응답</option></select></div>
         </div>
         <div class="fld"><label>비고</label><textarea id="fProspectMemo" rows="2" placeholder="메모"></textarea></div>
       </div>
@@ -2635,11 +2650,18 @@ function renderCust(){
 /* ── 고객 표 보기 · 정렬 · 인쇄 ────── */
 let CUST_VIEW = 'table';
 let CUST_SORT = {key:'name', dir:1};
-const CUST_TABLE_COLS = [
+const CUST_TABLE_COLS_OWNER = [
   {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'birth', l:'생년월일'},
   {k:'grade', l:'등급'}, {k:'status', l:'상태'}, {k:'job', l:'직업'},
   {k:'lastTouch', l:'최근접촉'}, {k:'memo', l:'메모'}
 ];
+const CUST_TABLE_COLS_PROSPECT = [
+  {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'dbType', l:'DB구분'},
+  {k:'sms1', l:'1차문자'}, {k:'status1', l:'1차상태'}, {k:'visit', l:'방문예약'},
+  {k:'sms2', l:'2차문자'}, {k:'status2', l:'2차상태'}
+];
+function CUST_TABLE_COLS_FN(){ return FILTER==='prospect' ? CUST_TABLE_COLS_PROSPECT : CUST_TABLE_COLS_OWNER; }
+Object.defineProperty(window, 'CUST_TABLE_COLS', { get: CUST_TABLE_COLS_FN });
 function setCustView(mode){
   CUST_VIEW = mode;
   document.getElementById('custList').classList.toggle('hide', mode!=='card');
@@ -2681,7 +2703,8 @@ function renderCustTable(list){
       + (PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
     const delTd = PICK_MODE ? '' : '<td style="text-align:center"><button class="btn ghost sm" onclick="event.stopPropagation();deleteCustDirect(\''+c.id+'\')" style="color:var(--red);padding:4px 10px">삭제</button></td>';
     return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CUST_TABLE_COLS.map(function(col){
-      return '<td>'+esc(c[col.k]||'-')+'</td>';
+      const v = col.k==='visit' ? (c.visit?'✅ 완료':'-') : (c[col.k]||'-');
+      return '<td>'+esc(v)+'</td>';
     }).join('') + delTd + '</tr>';
   }).join('');
   html += '</tbody></table>';
@@ -2925,7 +2948,7 @@ let EDIT_ID = '';
 let CUR_CUST_TYPE = '보유고객';
 const FLD = {fName:'name',fPhone:'phone',fBirth:'birth',fGcode:'gcode',fGrade:'grade',
   fSource:'source',fSourceNote:'sourceNote',fZip:'zip',fJob:'job',fAddr:'addr',fAddr2:'addr2',
-  fFamily:'family',fMemo:'memo'};
+  fFamily:'family',fMemo:'memo',fDbType:'dbType',fSms1:'sms1',fStatus1:'status1',fSms2:'sms2',fStatus2:'status2'};
 function setCustType(t){
   CUR_CUST_TYPE = t;
   document.getElementById('typeBtnOwner').classList.toggle('on', t==='보유고객');
@@ -2942,6 +2965,7 @@ function openCust(id){
   });
   document.getElementById('fBizType').value = c ? (c.bizType || '개인') : '개인';
   document.getElementById('fProspectMemo').value = c ? (c.memo || '') : '';
+  document.getElementById('fVisit').checked = !!(c && c.visit);
   const interests = c && c.interest ? c.interest.split(',') : [];
   document.querySelectorAll('.fInterest').forEach(function(cb){ cb.checked = interests.indexOf(cb.value) >= 0; });
   setCustType(c ? (c.custType || '보유고객') : '보유고객');
@@ -3148,6 +3172,7 @@ function saveCust(){
   if(CUR_CUST_TYPE === '가망고객'){
     p.bizType = document.getElementById('fBizType').value;
     p.memo = document.getElementById('fProspectMemo').value.trim();
+    p.visit = document.getElementById('fVisit').checked;
     const checked = [];
     document.querySelectorAll('.fInterest:checked').forEach(function(cb){ checked.push(cb.value); });
     p.interest = checked.join(',');
