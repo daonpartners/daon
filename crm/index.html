@@ -3196,6 +3196,9 @@ const XCOL = [['이름','name'],['연락처','phone'],['생년월일','birth'],[
   ['등급','grade'],['상태','status'],['유입경로','source'],['우편번호','zip'],['주소','addr'],
   ['상세주소','addr2'],['직업','job'],['가족관계','family'],['소개자','intro'],
   ['회사동의완료','consent'],['다음접촉예정','nextTouch'],['최근접촉일','lastTouch'],['메모','memo']];
+const XCOL_PROSPECT = [['성명','name'],['전화번호','phone'],['생년월일','birth'],['성별','gcode'],
+  ['등급','grade'],['상태','status'],['유입경로','source'],['지역2','addr2'],['주소','addr'],
+  ['다음접촉예정','nextTouch'],['최근접촉일','lastTouch'],['메모','memo']];
 /* 자주 쓰이는 다른 이름의 칼럼도 자동으로 알아봅니다 */
 const XCOL_SYN = {
   name: ['이름','계약자','성명','고객명','피보험자'],
@@ -3203,12 +3206,25 @@ const XCOL_SYN = {
   birth: ['생년월일','생일'],
   gcode: ['성별코드','성별'],
   addr: ['주소','거주지'],
+  addr2: ['상세주소','지역2'],
+  grade: ['등급'],
+  status: ['상태'],
+  source: ['유입경로'],
+  nextTouch: ['다음접촉예정'],
+  lastTouch: ['최근접촉일'],
   job: ['직업'],
   memo: ['메모','비고','특이사항']
 };
 function findCol(row, key){
   const syns = XCOL_SYN[key] || [key];
   for (const s of syns) { if (row[s] !== undefined && row[s] !== '') return String(row[s]).trim(); }
+  return '';
+}
+function genderTextToGcode(v){
+  const s = String(v||'').trim();
+  if(/^[0-9]$/.test(s)) return s;
+  if(s==='남' || s==='남자' || /^m$/i.test(s)) return '1';
+  if(s==='여' || s==='여자' || /^f$/i.test(s)) return '2';
   return '';
 }
 /* 주민등록번호에서 생년월일·성별코드만 뽑고, 나머지 6자리는 절대 저장·전송하지 않습니다.
@@ -3309,10 +3325,11 @@ function addrXlsxOut(){
   toast(rows.length + '명 주소 다운로드했어요');
 }
 function templateXlsxOut(){
-  const ws = XLSX.utils.json_to_sheet([{}], {header:XCOL.map(function(p){return p[0];})});
+  const cols = FILTER==='prospect' ? XCOL_PROSPECT : XCOL;
+  const ws = XLSX.utils.json_to_sheet([{}], {header:cols.map(function(p){return p[0];})});
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, '고객등록양식');
-  XLSX.writeFile(wb, '다온_고객등록양식.xlsx');
+  XLSX.utils.book_append_sheet(wb, ws, FILTER==='prospect' ? '가망고객등록양식' : '고객등록양식');
+  XLSX.writeFile(wb, FILTER==='prospect' ? '다온_가망고객등록양식.xlsx' : '다온_고객등록양식.xlsx');
   toast('양식을 내려받았어요');
 }
 function xlsxIn(input){
@@ -3340,7 +3357,7 @@ function prepImport(rows){
       const rrn = parseRRN(r);
       if(rrn){ o.birth = rrn.birth; if(!o.gcode) o.gcode = rrn.gcode; rrnUsed++; }
     }
-    if(o.gcode) o.gcode = o.gcode.slice(0,1);
+    if(o.gcode) o.gcode = genderTextToGcode(o.gcode) || o.gcode.slice(0,1);
     const hit = CUSTOMERS.find(function(c){
       return c.name===o.name && (!o.birth || !c.birth || c.birth===o.birth);
     });
