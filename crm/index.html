@@ -774,6 +774,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
     <div class="sheet-h"><h2>올리기 전 확인</h2><button class="x" onclick="closeImp()">×</button></div>
     <div class="sheet-b">
       <div id="impSum"></div>
+      <div id="impListBar" class="row" style="margin:10px 0;flex-wrap:wrap;gap:8px"></div>
       <div id="impList" style="max-height:44vh;overflow-y:auto;margin:12px 0"></div>
       <div class="row">
         <button class="btn ghost" onclick="closeImp()">취소</button>
@@ -1118,6 +1119,8 @@ let ME = null;          // {name, branch, role}
 let CUSTOMERS = [];     // 고객 배열
 let FILTER = 'all';
 let IMPORT_QUEUE = [];
+let IMPORT_UNCHECKED = {};
+let IMPORT_DUP = [];
 let IMPORT_MODE = 'customer';
 let DEMO = false;
 let DEMO_SEQ = 1000;
@@ -3346,7 +3349,9 @@ function xlsxIn(input){
 function prepImport(rows){
   IMPORT_MODE = 'customer';
   IMPORT_QUEUE = [];
-  let add=0, upd=0, skip=0, rrnUsed=0;
+  IMPORT_UNCHECKED = {};
+  IMPORT_DUP = [];
+  let add=0, dup=0, skip=0, rrnUsed=0;
   rows.forEach(function(r){
     const o = {};
     Object.keys(XCOL_SYN).forEach(function(key){ o[key] = findCol(r, key); });
@@ -3361,21 +3366,57 @@ function prepImport(rows){
     const hit = CUSTOMERS.find(function(c){
       return c.name===o.name && (!o.birth || !c.birth || c.birth===o.birth);
     });
-    if(hit){ o.pageId = hit.id; upd++; } else add++;
+    if(hit){ dup++; IMPORT_DUP.push(o); return; }
+    add++;
     IMPORT_QUEUE.push(o);
   });
   document.getElementById('impSum').innerHTML =
     '<div class="stat"><div><div class="n" style="color:var(--green)">'+add+'</div><div class="l">새로 추가</div></div>'
-    + '<div><div class="n" style="color:var(--blue)">'+upd+'</div><div class="l">기존 수정</div></div>'
-    + '<div><div class="n" style="color:var(--ink3)">'+skip+'</div><div class="l">건너뜀</div></div></div>'
-    + (skip ? '<p class="note" style="margin-top:10px">이름(또는 계약자·성명)이 비어 있는 줄은 건너뜁니다.</p>' : '')
-    + (rrnUsed ? '<p class="note" style="margin-top:6px">주민등록번호에서 생년월일·성별만 뽑아 '+rrnUsed+'건에 채웠습니다. 뒷 6자리는 저장하지 않습니다.</p>' : '');
-  document.getElementById('impList').innerHTML = IMPORT_QUEUE.slice(0,60).map(function(o){
-    return '<div class="cust"><div class="av">'+esc((o.name||'?').slice(0,1))+'</div><div class="info">'
-      + '<div class="nm">'+esc(o.name)+' <span class="tag">'+(o.pageId?'수정':'신규')+'</span></div>'
-      + '<div class="mt">'+esc([o.phone,o.birth,o.addr].filter(Boolean).join(' · '))+'</div></div></div>';
-  }).join('') + (IMPORT_QUEUE.length>60 ? '<p class="note">외 '+(IMPORT_QUEUE.length-60)+'건</p>' : '');
+    + '<div><div class="n" style="color:var(--ink3)">'+dup+'</div><div class="l">이미 있음(제외)</div></div>'
+    + '<div><div class="n" style="color:var(--ink3)">'+skip+'</div><div class="l">이름없음(제외)</div></div></div>'
+    + (skip ? '<p class="note" style="margin-top:10px">이름(또는 계약자·성명)이 비어 있는 줄은 제외했습니다.</p>' : '')
+    + (rrnUsed ? '<p class="note" style="margin-top:6px">주민등록번호에서 생년월일·성별만 뽑아 '+rrnUsed+'건에 채웠습니다. 뒷 6자리는 저장하지 않습니다.</p>' : '')
+    + (dup ? '<p class="note" style="margin-top:6px">이름·생년월일이 이미 등록된 사람과 같은 '+dup+'명은 <b>덮어쓰지 않고 아예 업로드하지 않습니다.</b> 아래서 명단을 확인할 수 있어요.</p>' : '');
+  renderImpList();
   document.getElementById('impModal').classList.remove('hide');
+}
+let IMPORT_SHOW_UPD_ONLY = false;
+function toggleImpShowUpdOnly(){
+  IMPORT_SHOW_UPD_ONLY = !IMPORT_SHOW_UPD_ONLY;
+  renderImpList();
+}
+function toggleImpItem(idx){
+  if(IMPORT_UNCHECKED[idx]) delete IMPORT_UNCHECKED[idx]; else IMPORT_UNCHECKED[idx] = true;
+  renderImpList();
+}
+function impCheckAll(check){
+  IMPORT_QUEUE.forEach(function(o,idx){ if(check) delete IMPORT_UNCHECKED[idx]; else IMPORT_UNCHECKED[idx] = true; });
+  renderImpList();
+}
+function renderImpList(){
+  const dupCount = IMPORT_DUP.length;
+  const toggleBtn = dupCount ? '<button class="btn ghost sm" onclick="toggleImpShowUpdOnly()">'+(IMPORT_SHOW_UPD_ONLY?'새로 추가할 목록 보기':'이미 있어서 제외한 '+dupCount+'명 보기')+'</button>' : '';
+  document.getElementById('impListBar').innerHTML = toggleBtn
+    + (IMPORT_SHOW_UPD_ONLY ? '' : '<button class="btn ghost sm" onclick="impCheckAll(true)">전체 선택</button>'
+    + '<button class="btn ghost sm" onclick="impCheckAll(false)">전체 해제</button>');
+  if(IMPORT_SHOW_UPD_ONLY){
+    document.getElementById('impList').innerHTML = IMPORT_DUP.slice(0,60).map(function(o){
+      return '<div class="cust" style="opacity:.6">'
+        + '<div class="av">'+esc((o.name||'?').slice(0,1))+'</div><div class="info">'
+        + '<div class="nm">'+esc(o.name)+' <span class="tag" style="background:var(--org-lt);color:var(--org-dk)">이미 있음 · 업로드 안 함</span></div>'
+        + '<div class="mt">'+esc([o.phone,o.birth,o.addr].filter(Boolean).join(' · '))+'</div></div></div>';
+    }).join('') + (IMPORT_DUP.length>60 ? '<p class="note">외 '+(IMPORT_DUP.length-60)+'명</p>' : '');
+    return;
+  }
+  const rows = IMPORT_QUEUE.map(function(o,idx){ return {o:o, idx:idx}; });
+  document.getElementById('impList').innerHTML = rows.slice(0,60).map(function(x){
+    const o = x.o, idx = x.idx, checked = !IMPORT_UNCHECKED[idx];
+    return '<div class="cust" onclick="toggleImpItem('+idx+')" style="cursor:pointer'+(checked?'':';opacity:.4')+'">'
+      + '<input type="checkbox" class="pick" style="margin-right:8px" '+(checked?'checked':'')+' onclick="event.stopPropagation();toggleImpItem('+idx+')">'
+      + '<div class="av">'+esc((o.name||'?').slice(0,1))+'</div><div class="info">'
+      + '<div class="nm">'+esc(o.name)+' <span class="tag" style="background:var(--green-lt,#E8F7EE);color:var(--green)">신규</span></div>'
+      + '<div class="mt">'+esc([o.phone,o.birth,o.addr].filter(Boolean).join(' · '))+'</div></div></div>';
+  }).join('') + (rows.length>60 ? '<p class="note">외 '+(rows.length-60)+'건(체크박스는 위 60건만 조작 가능, 전체 선택/해제는 전부 적용됩니다)</p>' : '');
 }
 function closeImp(){ document.getElementById('impModal').classList.add('hide'); }
 
@@ -3596,6 +3637,9 @@ function openBulkSms(){
 let IS_BULK_SMS = false;
 
 function runImport(){
+  if(IMPORT_MODE !== 'contract'){
+    IMPORT_QUEUE = IMPORT_QUEUE.filter(function(o,idx){ return !IMPORT_UNCHECKED[idx]; });
+  }
   const btn = document.getElementById('impGo');
   btn.disabled = true;
   const action = IMPORT_MODE === 'contract' ? 'contractAdd' : 'customerSave';
