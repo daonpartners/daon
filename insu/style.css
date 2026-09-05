@@ -298,6 +298,10 @@ details p{padding:0 2px 16px;font-size:14px;color:var(--ink-2);line-height:1.75}
 .foot ul{border-top:1px solid var(--rule);padding-top:14px}
 .foot li{list-style:none;font-size:11px;color:var(--mute);line-height:1.75;padding-left:10px;text-indent:-10px;margin-bottom:5px}
 .foot li::before{content:'※ ';}
+.foot__notice{
+  border-top:1px solid var(--rule);padding-top:14px;
+  font-size:11px;color:var(--mute);line-height:1.9;
+}
 .foot__c{margin-top:14px;font-size:11px;color:var(--mute)}
 
 /* ── 하단 고정 CTA ── */
