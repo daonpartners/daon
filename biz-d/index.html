@@ -1,969 +1,535 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>사장님 보험 가이드 | 다온파트너스</title>
-<meta name="description" content="의무보험 셀프체크로 내 사업장이 어떤 보험에 가입해야 하는지 1분 만에 확인하세요." />
-<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
-<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
-<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>사업자보험 상담신청 | 미래에셋금융서비스 그로우사업부</title>
+<meta name="description" content="화재, 배상책임, 의무보험까지. 업종만 고르면 카카오톡으로 바로 상담이 이어집니다.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#0B1E42">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&display=swap" rel="stylesheet">
-<style>
-:root{
-  --ink:#17211E; --ink-soft:#5A6862;
-  --awning:#1F4D3D; --awning-deep:#132E25; --awning-tint:#EBF1EE;
-  --signal:#E8A33D; --alert:#C4472F;
-  --field:#F3F5F3; --line:#DCE2DD;
-  --radius:14px; --wrap:660px;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0}
-body{font-family:'Pretendard',-apple-system,system-ui,sans-serif;color:var(--ink);background:#fff;
-  line-height:1.62;font-size:16px;letter-spacing:-.012em;-webkit-font-smoothing:antialiased}
-body.locked{overflow:hidden}
-.wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
-.serif{font-family:'Nanum Myeongjo',serif;font-weight:800}
-
-.topbar{position:sticky;top:0;z-index:60;background:rgba(255,255,255,.95);
-  backdrop-filter:saturate(160%) blur(8px);border-bottom:1px solid var(--line)}
-.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
-.brand{display:flex;align-items:baseline;gap:8px}
-.brand-mark{height:22px;width:auto;display:block}
-.brand b{font-size:17px;font-weight:800;letter-spacing:-.03em}
-.brand span{font-size:11px;color:var(--ink-soft)}
-.tel{font-size:13px;font-weight:700;color:var(--awning);border:1px solid var(--line);
-  padding:7px 12px;border-radius:999px;text-decoration:none}
-
-.hero{background:var(--awning-deep);color:#fff}
-.awning{height:12px;background:repeating-linear-gradient(90deg,var(--awning) 0 22px,#E9EDE9 22px 44px)}
-.hero .wrap{padding:42px 20px 38px}
-.eyebrow{display:inline-block;font-size:12px;font-weight:700;color:var(--signal);
-  border:1px solid rgba(232,163,61,.45);padding:5px 11px;border-radius:999px;margin-bottom:18px}
-.hero h1{margin:0 0 14px;font-size:32px;line-height:1.35}
-.hero h1 em{font-style:normal;color:var(--signal)}
-.hero p{margin:0;color:#C4D2CB;font-size:15px}
-.hero .cta{display:inline-flex;align-items:center;gap:8px;margin-top:24px;background:var(--signal);
-  color:#241A08;font-weight:800;font-size:16px;padding:15px 26px;border-radius:var(--radius);
-  text-decoration:none;border:0;font-family:inherit;cursor:pointer}
-.hero .cta2{display:block;margin-top:12px;color:#C4D2CB;font-size:14px;text-decoration:underline}
-
-.tabs{position:sticky;top:56px;z-index:50;background:#fff;border-bottom:1px solid var(--line)}
-.tabs .wrap{display:flex;padding:0 20px;gap:4px}
-.tab{flex:1;font-family:inherit;font-size:15px;font-weight:700;color:var(--ink-soft);
-  background:none;border:0;border-bottom:3px solid transparent;padding:15px 4px;cursor:pointer}
-.tab[aria-selected="true"]{color:var(--awning);border-bottom-color:var(--awning)}
-.panel[hidden]{display:none}
-
-.sec{padding:42px 0}
-.label{font-size:12px;font-weight:800;color:var(--awning);letter-spacing:.05em;margin:0 0 9px}
-.sec h2{margin:0 0 8px;font-size:23px;line-height:1.42}
-.sec .lead{margin:0 0 22px;color:var(--ink-soft);font-size:15px}
-
-.summary{display:grid;gap:8px;background:var(--awning-tint);border-radius:var(--radius);padding:16px;margin-bottom:20px}
-.summary div{display:flex;gap:9px;font-size:14px;align-items:flex-start}
-.summary b{color:var(--awning);flex:0 0 auto}
-
-.bigcta{display:block;width:100%;font-family:inherit;font-size:17px;font-weight:800;color:#fff;
-  background:var(--awning);border:0;border-radius:var(--radius);padding:18px;cursor:pointer;margin-bottom:26px}
-.bigcta small{display:block;font-weight:500;font-size:13px;opacity:.8;margin-top:3px}
-
-.cards{display:grid;gap:10px}
-.card{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:#fff}
-.card > button{width:100%;font-family:inherit;text-align:left;background:none;border:0;
-  padding:16px;cursor:pointer;display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.card strong{display:block;font-size:16px;margin-bottom:3px}
-.card .who{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
-.card .arrow{flex:0 0 auto;color:var(--ink-soft);font-size:13px;transition:.2s}
-.card[data-open="true"] .arrow{transform:rotate(180deg)}
-.card .body{padding:14px 16px 16px;font-size:14px;color:var(--ink-soft);border-top:1px solid var(--line)}
-.card .body[hidden]{display:none}
-.card .body dt{font-size:12px;font-weight:800;color:var(--awning);margin-top:11px}
-.card .body dt:first-child{margin-top:0}
-.card .body dd{margin:3px 0 0}
-.card .body dl{margin:0}
-
-.timeline{border-left:2px solid var(--line);padding-left:18px;margin:0 0 24px}
-.tl{position:relative;padding-bottom:18px}
-.tl:last-child{padding-bottom:0}
-.tl::before{content:'';position:absolute;left:-25px;top:6px;width:12px;height:12px;
-  border-radius:50%;background:var(--awning);border:3px solid #fff}
-.tl b{display:block;font-size:13px;color:var(--awning)}
-.tl span{font-size:14.5px}
-.factbox{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
-.factbox h4{margin:0;padding:12px 16px;font-size:14px;background:var(--field);border-bottom:1px solid var(--line)}
-.factbox ul{margin:0;padding:14px 16px 14px 34px;font-size:14px;color:var(--ink-soft)}
-.factbox li{margin-bottom:6px}
-.factbox li:last-child{margin-bottom:0}
-.emp-ex{padding:14px 16px}
-.emp-ex > div{display:flex;gap:12px;align-items:baseline;padding:9px 0;border-bottom:1px solid #EEF1EE}
-.emp-ex > div:last-child{border-bottom:0}
-.emp-ex b{flex:0 0 108px;font-size:14px}
-.emp-ex span{font-size:13.5px;color:var(--ink-soft)}
-.emp-ex em{font-style:normal;font-weight:800;color:var(--alert)}
-.emp-note{margin:0;padding:13px 16px;font-size:12.5px;line-height:1.65;color:var(--ink-soft);
-  background:var(--field);border-top:1px solid var(--line)}
-@media (max-width:420px){ .emp-ex > div{flex-direction:column;gap:2px} .emp-ex b{flex:none} }
-
-.two{display:grid;gap:10px;margin-bottom:14px}
-.can,.cannot{border-radius:var(--radius);padding:16px;font-size:14px}
-.can{background:var(--awning-tint);border:1px solid #C9DBD2}
-.cannot{background:#FBEEEB;border:1px solid #EFCFC8}
-.can b,.cannot b{display:block;margin-bottom:8px;font-size:14.5px}
-.can b{color:var(--awning)} .cannot b{color:var(--alert)}
-.can ul,.cannot ul{margin:0;padding-left:18px}
-
-.note{font-size:12.5px;color:var(--ink-soft);background:var(--field);
-  border-left:3px solid var(--signal);padding:11px 13px;margin-top:16px;line-height:1.6}
-
-/* ══ 위저드 ══ */
-#wiz{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.5);display:flex;justify-content:center}
-#wiz[hidden]{display:none}
-.wizbox{width:100%;max-width:520px;background:#1C2621;color:#fff;display:flex;flex-direction:column;
-  height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.wizhead{position:sticky;top:0;background:#1C2621;padding:18px 22px 0;z-index:2}
-.wizhead .row{display:flex;justify-content:space-between;align-items:center}
-.wizhead h3{margin:0;font-size:15px;font-weight:700}
-.wizhead h3 span{font-weight:400;color:#9DAFA6}
-.wizclose{background:none;border:0;color:#9DAFA6;font-size:24px;line-height:1;cursor:pointer;padding:4px}
-.bar{height:3px;background:#33423B;margin-top:14px;border-radius:2px;overflow:hidden}
-.bar i{display:block;height:100%;background:var(--signal);width:0;transition:width .3s}
-.wizbody{padding:26px 22px 40px;flex:1}
-.q{font-size:21px;font-weight:800;line-height:1.4;margin:0 0 6px}
-.q .qm{color:var(--signal);margin-right:7px}
-.qsub{font-size:13px;color:#9DAFA6;margin:0 0 20px}
-.opts{display:grid;gap:9px}
-.opt{width:100%;font-family:inherit;text-align:left;font-size:16px;font-weight:600;
-  background:#F1F3F1;color:#17211E;border:0;border-radius:10px;padding:16px 18px;cursor:pointer}
-.opt[aria-pressed="true"]{background:var(--awning);color:#fff}
-.opt small{display:block;font-weight:400;font-size:12.5px;opacity:.65;margin-top:2px}
-.acc{margin-bottom:8px;border-radius:10px;overflow:hidden}
-.acchead{width:100%;font-family:inherit;text-align:left;font-size:15px;font-weight:700;
-  background:#F1F3F1;color:#17211E;border:0;padding:15px 18px;cursor:pointer;
-  display:flex;justify-content:space-between;align-items:center}
-.acc[data-open="true"] .acchead{background:var(--awning);color:#fff}
-.accbody{background:#F7F8F7}
-.accbody[hidden]{display:none}
-.accitem{width:100%;font-family:inherit;text-align:left;font-size:14.5px;background:none;
-  color:#17211E;border:0;border-top:1px solid #E4E8E5;padding:13px 18px;cursor:pointer}
-.accitem[aria-pressed="true"]{background:var(--awning-tint);font-weight:700}
-.accitem small{display:block;font-size:12px;color:#7A8781;font-weight:400}
-.selbox{width:100%;font-family:inherit;font-size:16px;font-weight:600;background:#F1F3F1;
-  color:#17211E;border:0;border-radius:10px;padding:16px 18px;margin-bottom:9px;
-  -webkit-appearance:none;appearance:none;
-  background-image:linear-gradient(45deg,transparent 50%,#5A6862 50%),linear-gradient(135deg,#5A6862 50%,transparent 50%);
-  background-position:calc(100% - 20px) 22px,calc(100% - 14px) 22px;background-size:6px 6px;background-repeat:no-repeat}
-.selbox.filled{background-color:var(--awning);color:#fff;
-  background-image:linear-gradient(45deg,transparent 50%,#fff 50%),linear-gradient(135deg,#fff 50%,transparent 50%)}
-.nav{display:flex;justify-content:space-between;margin-top:26px}
-.nav button{font-family:inherit;font-size:15px;font-weight:700;border:0;border-radius:999px;
-  padding:11px 22px;cursor:pointer;background:#3B4A43;color:#C4D2CB}
-.nav .next{background:#3B4A43;color:#8A9A92}
-.nav .next.on{background:var(--awning);color:#fff}
-.nav .prev[hidden]{visibility:hidden;display:block}
-
-/* 결과 */
-.res-lead{font-size:14px;color:#9DAFA6;margin:0 0 4px}
-.res-title{font-size:21px;font-weight:800;line-height:1.4;margin:0 0 20px}
-.res-item{background:#fff;color:#17211E;border-radius:10px;padding:16px 18px;margin-bottom:9px}
-.res-item b{display:block;font-size:16px;margin-bottom:4px}
-.res-item .why{font-size:13.5px;color:#5A6862}
-.res-item .lw{font-size:12px;color:#7A8781;margin-top:6px;display:block}
-.res-none{background:#26332D;border:1px solid #3B4A43;border-radius:10px;padding:18px;font-size:14.5px;color:#C4D2CB}
-.res-sub{font-size:13px;font-weight:800;color:var(--signal);margin:26px 0 10px;letter-spacing:.04em}
-.res-gen{background:#26332D;border-radius:10px;padding:14px 16px;margin-bottom:8px;font-size:14.5px}
-.res-gen b{display:block;font-size:15px;margin-bottom:3px}
-.res-gen span{font-size:13px;color:#9DAFA6}
-.res-warn{background:#3A2723;border:1px solid #5C3A33;border-radius:10px;padding:16px;font-size:14px;color:#F0D6D0}
-.res-warn b{display:block;margin-bottom:6px;color:#F5A895}
-.res-note{font-size:12px;color:#8A9A92;line-height:1.7;margin-top:20px;padding-top:16px;border-top:1px solid #33423B}
-.res-cta{width:100%;font-family:inherit;font-size:16px;font-weight:800;background:var(--signal);
-  color:#241A08;border:0;border-radius:12px;padding:17px;cursor:pointer;margin-top:12px}
-.carrybox{background:#F0F7F2;border:1.5px solid #B8DEC4;border-radius:12px;padding:14px 16px;
-  font-size:13px;color:#1D3A28;line-height:1.7;margin-bottom:18px;text-align:left}
-.res-copy{width:100%;font-family:inherit;font-size:15px;font-weight:700;background:#FEE500;
-  color:#191600;border:0;border-radius:12px;padding:15px;cursor:pointer;margin-top:9px}
-.res-copytip{font-size:12px;color:#8A9A92;text-align:center;margin:10px 0 0}
-.res-again{width:100%;background:none;border:0;color:#9DAFA6;font-family:inherit;font-size:13.5px;
-  text-decoration:underline;padding:14px;cursor:pointer}
-
-/* 카카오톡 상담 */
-.kakao-sec{background:var(--field);border-top:1px solid var(--line)}
-.kakao-btn{display:block;background:#FEE500;color:#191600;font-size:17px;font-weight:800;
-  text-decoration:none;padding:18px;border-radius:var(--radius)}
-
-/* 폼 */
-.form-sec{background:var(--field);border-top:1px solid var(--line)}
-.field{margin-bottom:16px}
-.field label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
-.field label .req{color:var(--alert);margin-left:3px}
-.field input,.field select,.field textarea{width:100%;font-family:inherit;font-size:16px;color:var(--ink);
-  background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:13px 14px}
-.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--awning)}
-.field .hint{font-size:12.5px;color:var(--ink-soft);margin-top:6px}
-.covers{display:flex;flex-wrap:wrap;gap:8px}
-.cbox{display:inline-flex;align-items:center;gap:7px;font-size:14px;background:#fff;
-  border:1.5px solid var(--line);border-radius:999px;padding:9px 14px;cursor:pointer}
-.cbox input{width:16px;height:16px;accent-color:var(--awning);margin:0}
-.cbox:has(input:checked){border-color:var(--awning);background:var(--awning-tint)}
-.agree{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:22px 0}
-.agree .row{display:flex;gap:9px;align-items:flex-start;margin-bottom:12px}
-.agree .row:last-child{margin-bottom:0}
-.agree input{width:18px;height:18px;accent-color:var(--awning);margin:2px 0 0}
-.agree label{font-size:13.5px;line-height:1.55}
-.agree .detail{font-size:12px;color:var(--ink-soft);margin-top:5px;display:block}
-.submit{width:100%;font-family:inherit;font-size:17px;font-weight:800;color:#fff;background:var(--awning);
-  border:0;border-radius:var(--radius);padding:17px;cursor:pointer}
-.submit:disabled{background:#9BA8A2}
-.err{color:var(--alert);font-size:13.5px;font-weight:600;margin-top:12px;min-height:20px}
-#carry{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 15px;
-  font-size:13.5px;margin-bottom:18px;color:var(--ink-soft)}
-#carry[hidden]{display:none}
-#carry b{color:var(--awning)}
-#done[hidden]{display:none}
-#done{text-align:center;padding:52px 0}
-#done .mark{font-size:38px;margin-bottom:12px}
-#done h2{font-size:23px;margin:0 0 10px}
-#done p{color:var(--ink-soft);font-size:15px;margin:0}
-
-footer{background:var(--ink);color:#9EAAA4;font-size:12.5px;padding:32px 0 44px;line-height:1.75}
-footer .foot-logo{display:block;height:24px;width:auto;margin-bottom:14px;opacity:.95}
-footer strong{color:#fff;display:block;font-size:14px;margin-bottom:8px}
-footer .legal{margin-top:16px;padding-top:16px;border-top:1px solid #2C3833;font-size:11.5px;color:#7C8781}
-footer .legal-toggle{display:block;margin-top:12px;background:none;border:1px solid #3A4741;color:#9EAAA4;
-  font-family:inherit;font-size:11.5px;padding:8px 14px;border-radius:999px;cursor:pointer}
-footer .legal-full{margin-top:12px}
-footer .legal-full[hidden]{display:none}
-footer .legal-full p{margin:0 0 9px}
-footer .legal-full p:last-child{margin-bottom:0}
-
-@media (min-width:560px){ .hero h1{font-size:38px} .cards{grid-template-columns:1fr 1fr} .two{grid-template-columns:1fr 1fr} }
-</style>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="topbar">
-  <div class="wrap">
-    <div class="brand"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22" decoding="async"></div>
-    <a class="tel" href="tel:041-534-1124">전화 상담</a>
+<header class="bar">
+  <a class="bar__name" href="index.html">사업자보험 상담신청<span>미래에셋금융서비스 그로우사업부</span></a>
+  <a class="bar__kakao" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카톡 문의</a>
+</header>
+
+<main class="wrap" id="app">
+  <div class="prog-wrap">
+    <div class="prog"><i id="progBar" style="width:0%"></i></div>
+    <div class="prog-cnt"><span id="progLabel"></span><span id="progNum"></span></div>
   </div>
-</div>
+  <div class="err" id="err" hidden></div>
+  <div id="screen"></div>
+</main>
 
-<section class="hero">
-  <div class="awning"></div>
-  <div class="wrap">
-    <span class="eyebrow">사장님 보험 가이드</span>
-    <h1 class="serif">법으로 꼭 들어야 하는 보험부터<br><em>내 사업을 지키는</em> 보험까지</h1>
-    <p>안 든 게 있는지, 겹치는 게 있는지부터 같이 확인합니다.</p>
-    <button class="cta" onclick="openWiz()">1분 의무보험 셀프체크 →</button>
-    <a class="cta2" id="heroKakao" href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">카카오톡으로 바로 물어보기</a>
-    <p style="margin-top:14px;"><a href="#applyForm" style="font-size:13px;color:#fff;text-decoration:underline;opacity:.9;">셀프체크 없이 바로 무료진단 신청하기 →</a></p>
-  </div>
-</section>
+<!-- 완료 -->
+<main class="wrap" id="doneView" hidden>
+  <div class="done">
+    <div class="done__mark">✓</div>
+    <h1>입력하신 내용이 정리되었습니다</h1>
 
-<div class="tabs">
-  <div class="wrap">
-    <button class="tab" aria-selected="true" onclick="showTab(0)">의무보험</button>
-    <button class="tab" aria-selected="false" onclick="showTab(1)">일반보험</button>
-    <button class="tab" aria-selected="false" onclick="showTab(2)">중대재해</button>
-  </div>
-</div>
-
-<div class="panel" id="p0">
-  <section class="sec"><div class="wrap">
-    <p class="label">STEP 1 · 의무보험</p>
-    <h2 class="serif">법령에 따라 반드시 가입해야 하는 보험</h2>
-    <p class="lead">내 업종이 대상인지부터 확인하는 것이 먼저입니다.</p>
-    <div class="summary">
-      <div><b>①</b><span>법령에 따라 <b>가입이 강제</b>되는 보험입니다.</span></div>
-      <div><b>②</b><span>사고 시 <b>피해를 입은 손님·이용자</b>에게 배상하기 위한 보험입니다.</span></div>
-      <div><b>③</b><span>가입하지 않으면 관계 법령에 따라 <b>과태료가 부과</b>됩니다.</span></div>
-    </div>
-    <button class="bigcta" onclick="openWiz()">의무보험 셀프체크 시작하기<small>업종·층·면적·가스 사용을 기준으로 확인해 드립니다</small></button>
-    <h2 class="serif" style="font-size:19px;margin-bottom:14px">주요 의무보험 7종</h2>
-    <div class="cards" id="mandatoryCards"></div>
-    <p class="note">셀프체크와 안내는 법령상 일반적인 가입 기준을 정리한 참고 자료입니다. 업종·층수·면적·근로자 수에 따라 해당 여부가 달라지므로, 최종 확인은 관할 지자체·소방서 또는 담당 설계사를 통해 해주세요.</p>
-  </div></section>
-</div>
-
-<div class="panel" id="p1" hidden>
-  <section class="sec"><div class="wrap">
-    <p class="label">STEP 2 · 일반보험</p>
-    <h2 class="serif">사업에만 몰두할 수 있도록</h2>
-    <p class="lead">의무는 아니지만, 사고가 났을 때 실제로 가게를 지켜주는 보험입니다.</p>
-    <div class="summary">
-      <div><b>①</b><span>필요에 따라 <b>선택해서 가입</b>합니다.</span></div>
-      <div><b>②</b><span>사업 중 생긴 <b>사장님 본인의 손해</b>까지 대비합니다.</span></div>
-      <div><b>③</b><span>업종마다 필요한 담보 구성이 다릅니다.</span></div>
-    </div>
-    <h2 class="serif" style="font-size:19px;margin-bottom:14px">주요 일반보험 7종</h2>
-    <div class="cards" id="generalCards"></div>
-    <p class="note">보장 여부·범위·한도는 가입하시는 상품의 약관에 따라 달라집니다. 청약 전 상품설명서와 약관을 반드시 확인해 주세요.</p>
-  </div></section>
-</div>
-
-<div class="panel" id="p2" hidden>
-  <section class="sec"><div class="wrap">
-    <p class="label">STEP 3 · 중대재해</p>
-    <h2 class="serif">직원이 5명이면, 이미 대상입니다</h2>
-    <p class="lead">중대재해처벌법은 경영책임자 개인을 처벌하는 법입니다. 보험만으로는 해결되지 않는 부분이 있어 따로 봅니다.</p>
-    <div class="timeline">
-      <div class="tl"><b>2022. 1. 27.</b><span>중대재해처벌법 시행 — 상시근로자 50인 이상 사업장 우선 적용</span></div>
-      <div class="tl"><b>2024. 1. 27.</b><span>상시근로자 <b>5인 이상 50인 미만</b> 사업장까지 확대 적용</span></div>
-      <div class="tl"><b>현재</b><span>상시근로자 5인 미만 사업장은 적용 대상에서 제외됩니다</span></div>
-    </div>
-    <div class="factbox"><h4>'상시근로자 5명'은 어떻게 세나요</h4><ul>
-      <li><b>포함</b> — 정규직, 계약직·기간제, 시급제·단기 아르바이트, 직접 고용한 배달기사·차량기사, 파견근로자</li>
-      <li><b>제외</b> — 사장님 본인(대표), 도급·용역업체가 자기 직원으로 데려온 인력</li>
-      <li><b>별도 확인</b> — 위탁계약 형태의 배달기사·차량기사는 계약 형태와 실제 근무 방식에 따라 판단이 달라집니다</li>
-      <li>정규직만 세면 안 됩니다. <b>주말에만 나오는 알바도 상시근로자에 포함</b>됩니다</li>
-      <li>산정은 직전 1개월간 사용한 연인원을 가동일수로 나누어 계산합니다 (근로기준법 시행령 제7조의2)</li>
-    </ul></div>
-
-    <div class="factbox"><h4>이런 가게는 생각보다 쉽게 5명이 넘습니다</h4>
-      <div class="emp-ex">
-        <div><b>음식점</b><span>주방 2명 + 홀 2명 + 주말 알바 1명 = <em>5명</em></span></div>
-        <div><b>학원</b><span>강사 3명 + 데스크 1명 + 차량기사 1명 = <em>5명</em></span></div>
-        <div><b>마트 · 편의점</b><span>오전 2명 + 오후 2명 + 야간 1명 = <em>5명</em></span></div>
-        <div><b>카페 · 베이커리</b><span>정직원 2명 + 시간대별 알바 3명 = <em>5명</em></span></div>
-        <div><b>미용실</b><span>디자이너 3명 + 인턴 2명 = <em>5명</em></span></div>
-        <div><b>제조 · 공장 · 정비</b><span>기능직 4명 + 사무 1명 = <em>5명</em></span></div>
+    <div class="steps2">
+      <div class="step2">
+        <span class="num">1</span>
+        <div><b>아래 버튼 누르기</b><span>카카오톡 채널 대화창이 열리고, 입력하신 내용이 자동으로 복사됩니다.</span></div>
       </div>
-      <p class="emp-note">"우리는 직원 3명인데요"라고 하셨다가, 알바까지 세어보니 대상이었던 경우가 많습니다. 정확한 인원 산정과 적용 여부는 노무 전문가의 확인을 받으시는 것이 안전합니다.</p>
-    </div>
-
-    <div class="factbox"><h4>무엇이 '중대산업재해'인가 (법 제2조)</h4><ul>
-      <li>사망자가 <b>1명 이상</b> 발생</li>
-      <li>동일한 사고로 6개월 이상 치료가 필요한 부상자가 <b>2명 이상</b></li>
-      <li>동일한 유해요인으로 직업성 질병자가 1년 이내 <b>3명 이상</b></li>
-    </ul></div>
-    <div class="factbox"><h4>경영책임자가 지는 책임 (법 제6조·제15조)</h4><ul>
-      <li>사망 사고: <b>1년 이상 징역 또는 10억원 이하 벌금</b></li>
-      <li>부상·질병 사고: 7년 이하 징역 또는 1억원 이하 벌금</li>
-      <li>법인에도 별도의 벌금이 부과됩니다</li>
-      <li>고의·중과실이 인정되면 손해액의 <b>최대 5배</b>까지 징벌적 손해배상</li>
-    </ul></div>
-    <div class="two">
-      <div class="can"><b>보험으로 대비할 수 있는 것</b><ul>
-        <li>근로자 재해에 대한 <b>사용자 배상책임</b> (산재 초과 손해)</li>
-        <li>형사 절차에서의 <b>변호사 선임비용</b></li>
-        <li>임원 개인에 대한 <b>손해배상책임</b></li>
-        <li>사고로 인한 <b>영업 중단 손해</b></li>
-      </ul></div>
-      <div class="cannot"><b>보험으로 대체할 수 없는 것</b><ul>
-        <li><b>형사처벌 자체</b> (징역형)</li>
-        <li>고의로 인한 <b>벌금·과태료</b></li>
-        <li>안전보건 확보 의무 <b>이행 그 자체</b></li>
-      </ul></div>
-    </div>
-    <div class="factbox"><h4>보험보다 먼저 갖춰야 할 것</h4><ul>
-      <li>안전보건 목표와 경영방침 수립</li>
-      <li>유해·위험요인 확인 및 개선 절차(위험성평가) 마련</li>
-      <li>안전보건에 필요한 예산 편성과 집행</li>
-      <li>종사자 의견을 듣는 절차 운영</li>
-      <li>중대재해 발생 시 대응 매뉴얼 마련</li>
-      <li>도급·용역·위탁 시 수급인의 안전보건 능력 평가기준 마련</li>
-    </ul></div>
-    <p class="note">중대재해처벌법은 안전보건 확보 의무를 다했는지를 따집니다. 보험은 사고 이후의 금전적 손해를 줄이는 수단이지, 의무 이행을 대신하지 않습니다.</p>
-  </div></section>
-</div>
-
-<!-- ══ 셀프체크 위저드 ══ -->
-<div id="wiz" hidden>
-  <div class="wizbox">
-    <div class="wizhead">
-      <div class="row">
-        <h3><b>의무보험</b> <span>셀프체크</span></h3>
-        <button class="wizclose" onclick="closeWiz()" aria-label="닫기">×</button>
-      </div>
-      <div class="bar"><i id="bar"></i></div>
-    </div>
-    <div class="wizbody" id="wizbody"></div>
-  </div>
-</div>
-
-<!-- ══ 카카오톡 상담 ══ -->
-<section class="sec kakao-sec" id="apply">
-  <div class="wrap" style="text-align:center">
-    <p class="label" style="text-align:center">상담 문의</p>
-    <h2 class="serif" style="font-size:23px;margin:0 0 10px">더 궁금하신 점은<br>카카오톡으로 물어보세요</h2>
-    <p class="lead" style="margin-bottom:24px">셀프체크 결과 해석, 기존 계약 점검, 보험료 문의 모두 채팅으로 답변드립니다.</p>
-    <a class="kakao-btn" id="mainKakao" href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">카카오톡 채널로 상담하기</a>
-  </div>
-</section>
-
-<!-- ══ 상담 신청 폼 ══ -->
-<section class="sec form-sec" id="applyForm">
-  <div class="wrap">
-    <div id="formBox">
-      <p class="label">무료진단 신청</p>
-      <h2 class="serif">연락 받으실 정보만 남겨주세요</h2>
-      <p class="lead">주민등록번호는 받지 않습니다. 남겨주신 번호로 담당자가 연락드립니다.</p>
-      <div id="carry" hidden></div>
-      <div class="field"><label for="f_name">성함 <span class="req">*</span></label>
-        <input id="f_name" type="text" autocomplete="name" placeholder="홍길동" /></div>
-      <div class="field"><label for="f_phone">연락처 <span class="req">*</span></label>
-        <input id="f_phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)" /></div>
-      <div class="field"><label for="f_store">상호 / 사업장 지역</label>
-        <input id="f_store" type="text" placeholder="예) 다온식당 / 아산 탕정면" /></div>
-      <div class="field"><label for="f_biz">업종 <span class="req">*</span></label>
-        <select id="f_biz"><option value="">선택해 주세요</option></select></div>
-      <div class="field"><label>상담받고 싶은 분야 <span class="hint" style="display:inline;font-weight:400">(여러 개 선택하실 수 있습니다)</span></label><div class="covers" id="covers"></div></div>
-      <div class="field"><label for="f_time">통화 가능한 시간대</label>
-        <select id="f_time"><option value="아무때나">아무 때나 괜찮아요</option><option value="오전">오전 (9시~12시)</option>
-        <option value="오후">오후 (13시~18시)</option><option value="저녁">저녁 (18시 이후)</option>
-        <option value="브레이크타임">브레이크타임 (15시~17시)</option></select></div>
-      <div class="field"><label for="f_memo">남기실 말씀</label>
-        <textarea id="f_memo" rows="3"></textarea></div>
-      <div class="agree">
-        <div class="row"><input type="checkbox" id="ag1" />
-          <label for="ag1"><b>[필수]</b> 개인정보 수집·이용에 동의합니다.
-          <span class="detail">수집항목: 성함, 연락처, 상호·지역, 업종, 셀프체크 응답, 상담 요청 내용 · 이용목적: 보험 상담 및 안내 · 보유기간: 상담 종료 후 1년. 동의를 거부하실 수 있으나, 이 경우 상담 연락이 어렵습니다.</span></label></div>
-        <div class="row"><input type="checkbox" id="ag2" />
-          <label for="ag2"><b>[선택]</b> 보험 관련 정보 및 소식 수신에 동의합니다.
-          <span class="detail">동의하지 않으셔도 상담 신청은 가능합니다.</span></label></div>
-      </div>
-      <button class="submit" id="btn" onclick="submitForm()">무료진단 신청하기</button>
-      <p class="err" id="err"></p>
-    </div>
-    <div id="done" hidden>
-      <div class="mark">✓</div><h2 class="serif">신청이 접수되었습니다</h2>
-      <p>영업일 기준 1일 이내에<br>담당자가 연락드리겠습니다.</p>
-    </div>
-  </div>
-</section>
-<!-- ══ 폼 끝 ══ -->
-
-<footer>
-  <div class="wrap">
-    <img class="foot-logo" src="/assets/logo-daon-wordmark-white.png" alt="DAON PARTNERS"
-         width="177" height="60" decoding="async">
-    <strong>다온파트너스</strong>
-    주소: 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호<br>대표번호: 041-534-1124<br>
-    개인정보 보호책임자: 다온파트너스 (010-8183-0010)
-    <div class="legal">
-      본 페이지는 특정 보험회사나 상품을 광고·비교하지 않으며, 정보 제공 및 상담 안내를 목적으로 합니다.<br>
-      <button class="legal-toggle" id="legalBtn" onclick="toggleLegal()">유의사항 전문 보기 ▾</button>
-      <div class="legal-full" id="legalFull" hidden>
-        <p>본 페이지는 보험상품의 청약이나 가입을 진행하는 페이지가 아닙니다.</p>
-        <p>게재된 법령·제도 정보는 일반적인 안내이며 법률 자문이 아닙니다. 상시근로자 산정 기준, 법령 적용 범위, 의무보험 대상 여부는 사업장별 사정에 따라 달라질 수 있어 정확한 판단은 관계기관 확인 및 전문가 상담이 필요합니다.</p>
-        <p>셀프체크 결과는 법령상 일반 기준에 따른 참고 정보이며, 법적 판단이나 가입 확약이 아닙니다.</p>
-        <p>본 페이지에서 신청폼을 통해 수집하는 정보는 보험 상담 및 안내 목적으로만 이용되며, 상담 종료 후 1년간 보관 후 파기합니다. 카카오톡 채널 상담 과정에서 제공하신 정보도 동일한 목적과 기간으로 이용·보관됩니다.</p>
-        <p>보험계약 체결 전 상품설명서 및 약관을 반드시 확인하시기 바랍니다. 기존 보험계약을 해지하고 새로운 계약을 체결하는 과정에서 인수 거절, 보험료 인상, 보장 내용 변경이 발생할 수 있습니다.</p>
+      <div class="step2 hot">
+        <span class="num">2</span>
+        <div><b>채팅창에 꼭 붙여넣어 주세요</b><span>대화창을 길게 눌러 붙여넣기를 하셔야 담당자에게 내용이 전달됩니다.</span></div>
       </div>
     </div>
-  </div>
-</footer>
 
+    <a class="btn btn--kakao" id="kakaoBtn" href="http://pf.kakao.com/_uAKiX/chat" target="_blank" rel="noopener">카카오톡으로 상담 신청하기</a>
+    <div class="btn-note" id="copyNote">누르면 내용이 자동으로 복사됩니다</div>
+
+    <div style="margin-top:16px">
+      <button class="btn btn--line" id="copyAgainBtn">내용 다시 복사하기</button>
+    </div>
+
+    <details style="margin-top:22px;text-align:left">
+      <summary>붙여넣을 내용 미리보기</summary>
+      <p id="summaryText" style="white-space:pre-line"></p>
+    </details>
+
+    <div style="margin-top:28px">
+      <a class="btn btn--line" href="index.html">처음으로</a>
+    </div>
+  </div>
+</main>
+
+<footer class="foot" id="foot"></footer>
+
+<script src="app.js"></script>
 <script>
-const WEBHOOK_URL = "https://daonpartners.app.n8n.cloud/webhook/daon-safety-lead";
+(function(){
 
-/* ───────── 업종 데이터 ─────────
-   food     : 음식점류 → 층·면적으로 판정
-   multi    : 다중이용업소 화재배상책임 대상
-   multiSize: 규모에 따라 다중이용업 대상 가능
-   disaster : 재난배상책임 대상
-   academy  : 학원 배상책임 대상
-   camp     : 야영장 배상책임 대상
-   kids     : 어린이놀이시설 배상책임 대상
-   gas      : 가스 사용 질문 필요                       */
-const BIZ_CATS = [
- {c:"음식점 / 주점", items:[
-   {k:"일반음식점", d:"주류판매 가능", food:1, gas:1},
-   {k:"휴게음식점", d:"주류판매 불가", food:1, gas:1},
-   {k:"제과점", d:"빵집, 떡집", food:1, gas:1},
-   {k:"단란주점", d:"노래+주류판매", multi:1, gas:1},
-   {k:"유흥주점", d:"유흥종사자+주류판매", multi:1, gas:1},
-   {k:"위탁급식영업", d:"구내식당", food:1, gas:1},
-   {k:"집단급식소", d:"기숙사·학교·병원 급식시설", food:1, gas:1}
- ]},
- {c:"도소매 판매", items:[{k:"도소매판매", d:"편의점, 소매점, 상점", gas:1}]},
- {c:"오락", items:[
-   {k:"노래연습장", multi:1},
-   {k:"인터넷컴퓨터게임시설제공업", d:"PC방", multi:1},
-   {k:"복합유통게임제공업", d:"PC방+음식판매, 노래방, 게임기", multi:1},
-   {k:"게임제공업", d:"오락실", multi:1},
-   {k:"영화상영관", multi:1},
-   {k:"비디오물감상실", d:"DVD방", multi:1},
-   {k:"비디오물소극장", d:"100석 미만 소극장", multi:1},
-   {k:"복합영상물제공업", multi:1},
-   {k:"전화방 · 화상대화방", multi:1},
-   {k:"콜라텍", multi:1},
-   {k:"어린이 놀이시설", d:"키즈카페", multi:1, kids:1}
- ]},
- {c:"스포츠", items:[
-   {k:"실내골프연습장", multi:1},
-   {k:"실내권총사격장", multi:1},
-   {k:"경정장 · 경륜장", disaster:1},
-   {k:"경마장", disaster:1},
-   {k:"장외 발매소 · 승자투표권 발매소", disaster:1}
- ]},
- {c:"여행 · 숙박", items:[
-   {k:"숙박업", d:"여관, 모텔, 펜션", disaster:1, gas:1},
-   {k:"관광숙박업", d:"관광호텔", disaster:1, gas:1},
-   {k:"일반야영장업", d:"캠핑장", camp:1},
-   {k:"자동차야영장업", d:"오토캠핑장", camp:1},
-   {k:"자연휴양림", d:"산림욕장", camp:1}
- ]},
- {c:"교육 · 문화", items:[
-   {k:"학원", academy:1, multiSize:1},
-   {k:"독서실", academy:1, multiSize:1},
-   {k:"유치원", kidsAsk:1},
-   {k:"어린이집", kidsAsk:1},
-   {k:"고시원", multi:1},
-   {k:"도서관", disaster:1},
-   {k:"과학관", disaster:1},
-   {k:"박물관 · 미술관", disaster:1},
-   {k:"전시시설", disaster:1},
-   {k:"공연장", disaster:1},
-   {k:"아동복지시설", kidsAsk:1},
-   {k:"사회복지시설", kidsAsk:1},
-   {k:"청소년수련시설", d:"유스호스텔, 청소년수련관", kidsAsk:1},
-   {k:"지정문화재 건축물"}
- ]},
- {c:"기타 업종", items:[
-   {k:"미용실 · 네일 · 피부"},
-   {k:"목욕장", multiSize:1, gas:1},
-   {k:"산후조리원", multi:1},
-   {k:"안마시술소", multi:1},
-   {k:"공방", d:"도자기, 촛불 등", gas:1},
-   {k:"예식장", disaster:1, gas:1},
-   {k:"장례식장", disaster:1, gas:1},
-   {k:"주유소", disaster:1, gas:1},
-   {k:"휴게소", disaster:1, gas:1},
-   {k:"전통시장", disaster:1},
-   {k:"물류창고", disaster:1},
-   {k:"지하도상가 · 지하상가", disaster:1},
-   {k:"여객자동차터미널", disaster:1},
-   {k:"국제회의시설", disaster:1},
-   {k:"15층 이하 아파트 · 연립 · 다세대주택", disaster:1},
-   {k:"의료기관", gas:1},
-   {k:"종교시설"},
-   {k:"제조 · 공장 · 정비", gas:1},
-   {k:"사무실", gas:1},
-   {k:"해당 없음", d:"위 목록에 없는 업종"}
- ]}
-];
+  var STEP = { PRODUCT:0, BIZTYPE:1, SITE:2, MONEY:3, CONTRACTOR:4, REVIEW:5 };
+  var state = { step:0, product:null, cat:'mandatory', bizMajor:'', bizMinor:'' };
+  var A = {}; // 답변 저장
 
-/* 의무보험 정의 */
-const M = {
- multi:{n:"다중이용업소 화재배상책임보험", law:"다중이용업소의 안전관리에 관한 특별법 제13조의2"},
- disaster:{n:"재난배상책임보험", law:"재난 및 안전관리 기본법 제76조의5"},
- gas:{n:"가스사고배상책임보험", law:"도시가스사업법 / 액화석유가스의 안전관리 및 사업법"},
- academy:{n:"학원 배상책임보험", law:"학원의 설립·운영 및 과외교습에 관한 법률"},
- camp:{n:"야영장 배상책임보험", law:"관광진흥법 및 같은 법 시행규칙"},
- kids:{n:"어린이놀이시설 배상책임보험", law:"어린이놀이시설 안전관리법 제21조"},
- privacy:{n:"개인정보보호 배상책임보험", law:"개인정보 보호법 제39조의7"}
-};
+  var STEP_LABELS = ['상품 선택','업종 선택','사업장 정보','금액 정보','계약자 정보','확인'];
 
-/* 카드용 데이터 */
-const MANDATORY=[
- {n:"개인정보보호 배상책임보험",who:"일정 규모 이상 개인정보를 보유·처리하는 사업자",law:"개인정보 보호법 제39조의7 및 같은 법 시행령",cover:"개인정보 유출·분실 등으로 정보주체에게 발생한 손해에 대한 배상책임",tip:"매출액과 보유 개인정보 규모 기준은 시행령에서 정하므로 해당 여부는 개별 확인이 필요합니다."},
- {n:"다중이용업소 화재배상책임보험",who:"지하층 또는 2층 이상 음식점, 노래연습장, PC방, 목욕장 등 다중이용업주",law:"다중이용업소의 안전관리에 관한 특별법 제13조의2",cover:"화재·폭발로 타인의 생명·신체·재산에 입힌 손해에 대한 배상책임",tip:"음식점은 지하층 66㎡ 이상, 2층 이상 100㎡ 이상일 때 대상입니다. 1층이면서 출입구가 건물 외부와 직접 연결되면 제외됩니다."},
- {n:"재난배상책임보험",who:"1층 음식점, 숙박시설, 주유소, 장례식장, 물류창고 등 재난취약시설",law:"재난 및 안전관리 기본법 제76조의5",cover:"화재·폭발·붕괴로 타인이 입은 신체·재산 피해에 대한 배상책임",tip:"다중이용업소 화재배상책임보험과 근거 법률·대상 시설이 다릅니다. 둘 다 해당될 수 있습니다."},
- {n:"가스사고배상책임보험",who:"도시가스·LPG 특정사용시설 사용자 및 공급·판매 사업자",law:"도시가스사업법 / 액화석유가스의 안전관리 및 사업법",cover:"가스 사고로 타인의 생명·신체·재산에 입힌 손해에 대한 배상책임",tip:"도시가스는 월 사용예정량이 일정 기준 이상인 특정사용시설이 대상입니다. LPG는 저장능력 등 별도 기준으로 판단합니다."},
- {n:"야영장 배상책임보험",who:"일반야영장·자동차야영장 등록 사업자",law:"관광진흥법 및 같은 법 시행규칙",cover:"야영장 시설·운영 중 발생한 이용자의 신체·재산 피해에 대한 배상책임",tip:"등록 요건에 보험 가입이 포함되어 있어 등록 단계에서 확인됩니다."},
- {n:"학원 배상책임보험",who:"학원, 교습소, 독서실 설립·운영자",law:"학원의 설립·운영 및 과외교습에 관한 법률",cover:"학원 시설이나 교습 과정에서 발생한 학습자의 피해에 대한 배상책임",tip:"수용인원 규모에 따라 다중이용업소 화재배상책임보험 대상이 되기도 합니다."},
- {n:"어린이놀이시설 배상책임보험",who:"어린이놀이기구를 설치·관리하는 주체",law:"어린이놀이시설 안전관리법 제21조",cover:"놀이시설에서 발생한 어린이의 신체 피해에 대한 배상책임",tip:"키즈카페뿐 아니라 학원, 아파트 단지, 음식점 부속 놀이공간도 대상이 될 수 있습니다."}
-];
-const GENERAL=[
- {n:"화재보험",who:"매장·사무실·창고 등 재물을 보유한 사업자",law:"선택 가입 (임대차 계약에서 요구하는 경우가 많습니다)",cover:"화재·폭발로 인한 건물·집기·재고 등 재물 손해",tip:"건물주의 화재보험은 건물에 대한 것으로, 임차인의 시설·재고는 별도 가입이 필요할 수 있습니다."},
- {n:"풍수해보험",who:"태풍·호우·대설·지진 등 자연재해에 대비하려는 사업자",law:"풍수해·지진재해보험법에 따른 정책보험",cover:"자연재해로 인한 상가·공장 등의 재산 피해",tip:"정부와 지자체가 보험료 일부를 지원합니다. 지원 비율은 가입 유형·지자체에 따라 다릅니다."},
- {n:"영업배상책임보험",who:"오프라인 매장을 운영하는 사업자",law:"선택 가입",cover:"시설의 결함이나 업무 수행 중 타인에게 입힌 신체·재산 피해에 대한 배상책임",tip:"손님이 매장에서 미끄러져 다치는 사고가 대표적입니다."},
- {n:"생산물배상책임보험",who:"제품이나 음식물을 만들거나 판매하는 사업자",law:"선택 가입",cover:"판매·제공한 제품이나 음식으로 소비자에게 발생한 피해에 대한 배상책임",tip:"식중독처럼 제공한 뒤에 발생하는 사고가 대상입니다."},
- {n:"이·미용 배상책임보험",who:"이·미용 자격을 보유하고 시술 업장을 운영하는 사업자",law:"선택 가입",cover:"시술 과정에서 고객에게 발생한 신체 피해에 대한 배상책임",tip:"시술 종류에 따라 인수 여부와 보장 범위가 달라집니다."},
- {n:"단체상해보험",who:"직원의 건강과 복지를 챙기려는 사업자",law:"선택 가입",cover:"직원의 업무상·업무외 상해로 인한 치료비 및 후유장해",tip:"산재보험이 보장하지 않는 부분을 보완하는 용도로 활용됩니다."},
- {n:"사장님 건강보험",who:"본인이 빠지면 가게가 멈추는 사장님",law:"선택 가입 (사업자보험이 아닌 개인 보험입니다)",cover:"실손의료비, 암·뇌혈관·심장질환 진단비, 수술비, 입원일당 등",tip:"직장인과 달리 자영업자에게는 유급 병가가 없습니다. 치료비보다 가게를 못 여는 기간의 소득 공백이 더 큰 부담이 되는 경우가 많습니다. 가입 가능 여부와 보험료는 나이·건강 상태에 따라 달라지며, 심사 결과에 따라 인수가 거절될 수 있습니다."}
-];
-const COVER_OPTIONS=["의무보험 대상 확인","화재보험","풍수해보험","영업배상책임","생산물배상책임","이·미용 배상책임","단체상해","사장님 건강보험","중대재해 대응","기존 계약 점검","기타 문의"];
-
-/* ───────── 위저드 상태 ───────── */
-let S = {};
-let stepIdx = 0;
-
-function openWiz(){
-  S = {mode:null, biz:null, floors:[{f:null,a:null}], gas:null, gasBig:null, kids:null, privacy:null, emp:null, newBiz:null};
-  stepIdx = 0;
-  document.getElementById('wiz').hidden = false;
-  document.body.classList.add('locked');
-  renderStep();
-}
-function closeWiz(){
-  document.getElementById('wiz').hidden = true;
-  document.body.classList.remove('locked');
-}
-function bizObj(){
-  if(!S.biz) return null;
-  for(const c of BIZ_CATS) for(const it of c.items) if(it.k===S.biz) return it;
-  return null;
-}
-/* 현재 답변에 따라 필요한 단계 목록을 다시 계산 */
-function steps(){
-  const s = ['mode'];
-  const off = S.mode && S.mode!=='온라인 판매만';
-  if(off) s.push('biz');
-  const b = bizObj();
-  if(off && b && (b.food || b.multiSize)) s.push('floor');
-  if(off && b && b.gas) s.push('gas');
-  if(S.gas==='LNG 도시가스 사용') s.push('gasLng');
-  if(off && b && b.kidsAsk) s.push('kids');
-  if(S.mode && S.mode!=='오프라인 매장만') s.push('privacy');
-  s.push('emp');
-  s.push('result');
-  return s;
-}
-function cur(){ return steps()[stepIdx]; }
-function go(d){
-  const max = steps().length-1;
-  stepIdx = Math.max(0, Math.min(max, stepIdx+d));
-  renderStep();
-  document.querySelector('.wizbox').scrollTop = 0;
-}
-function pick(key, val){ S[key]=val; renderStep(); }
-
-const FLOORS = ["지하층","1층","2층","3층","4층 이상"];
-const AREAS  = ["66㎡ 미만 (약 20평 미만)","66㎡ 이상 ~ 100㎡ 미만 (약 20~30평)","100㎡ 이상 (약 30평 이상)"];
-
-function renderStep(){
-  const st = steps();
-  const body = document.getElementById('wizbody');
-  document.getElementById('bar').style.width = ((stepIdx)/(st.length-1)*100)+'%';
-  const k = st[stepIdx];
-  let h = '';
-
-  if(k==='mode'){
-    h = q("어떤 사업을 하고 계시나요?") + opts('mode', ["온라인 판매만","온라인 + 오프라인 함께 운영","오프라인 매장만"]);
+  function activeSteps(){
+    var p = state.product;
+    var list = [STEP.PRODUCT];
+    if (!p) return list;
+    if (p.personal) { list.push(STEP.CONTRACTOR, STEP.REVIEW); return list; }
+    if (p.biz) list.push(STEP.BIZTYPE);
+    if (p.prop || p.staff) list.push(STEP.SITE);
+    if (p.assets) list.push(STEP.MONEY);
+    list.push(STEP.CONTRACTOR, STEP.REVIEW);
+    return list;
   }
-  else if(k==='biz'){
-    h = q("오프라인 매장은 어떤 사업인가요?", "&lt;영업신고증·허가증·등록증&gt;에 적힌 업종명으로 골라주세요.");
-    h += BIZ_CATS.map((c,ci)=>{
-      const open = c.items.some(i=>i.k===S.biz);
-      return '<div class="acc" data-open="'+open+'" id="acc'+ci+'">'
-        +'<button class="acchead" onclick="toggleAcc('+ci+')">'+c.c+'<span>'+(open?'▴':'▾')+'</span></button>'
-        +'<div class="accbody"'+(open?'':' hidden')+'>'
-        + c.items.map(i=>'<button class="accitem" aria-pressed="'+(S.biz===i.k)+'" onclick="pick(\'biz\',\''+i.k+'\')">'+i.k+(i.d?'<small>'+i.d+'</small>':'')+'</button>').join('')
-        +'</div></div>';
-    }).join('');
-  }
-  else if(k==='floor'){
-    h = q("가게가 있는 층과 면적을 알려주세요.", "여러 층을 쓰신다면 가장 넓은 층을 기준으로 골라주세요.");
-    h += '<select class="selbox'+(S.floors[0].f?' filled':'')+'" onchange="S.floors[0].f=this.value;renderStep()">'
-       + '<option value="">가게가 있는 층을 선택해 주세요</option>'
-       + FLOORS.map(f=>'<option'+(S.floors[0].f===f?' selected':'')+'>'+f+'</option>').join('') + '</select>';
-    h += '<select class="selbox'+(S.floors[0].a?' filled':'')+'" onchange="S.floors[0].a=this.value;renderStep()">'
-       + '<option value="">영업장 면적을 선택해 주세요</option>'
-       + AREAS.map(a=>'<option'+(S.floors[0].a===a?' selected':'')+'>'+a+'</option>').join('') + '</select>';
-  }
-  else if(k==='gas'){
-    h = q("어떤 종류의 가스를 사용하나요?") + opts('gas', ["LNG 도시가스 사용","LPG 액화석유가스 사용","고압가스 사용","사용하지 않음"]);
-  }
-  else if(k==='gasLng'){
-    h = q("월 사용예정량 3,000㎥ 이상의 도시가스 설비를 사용하나요?", "도시가스 특정사용시설 판단 기준입니다. 고지서의 월 사용량으로 확인하실 수 있습니다.")
-      + opts('gasBig', ["네","아니요","잘 모르겠어요"]);
-  }
-  else if(k==='kids'){
-    h = q("어린이 놀이기구가 설치되어 있나요?", "미끄럼틀, 그네, 조합놀이대 등이 해당됩니다.")
-      + opts('kids', ["네","아니요"]);
-  }
-  else if(k==='privacy'){
-    h = q("온라인으로 고객의 개인정보를 수집·보관하나요?", "주문자 정보, 회원가입 정보 등이 해당됩니다.")
-      + opts('privacy', ["네","아니요"]);
-  }
-  else if(k==='emp'){
-    h = q("상시근로자는 몇 명인가요?", "사장님 본인은 빼고, <b>주말·시간제 아르바이트까지 포함</b>해서 세어주세요.")
-      + opts('emp', ["없음 (혼자 운영)","1~4명","5~49명","50명 이상"]);
-  }
-  else if(k==='result'){ body.innerHTML = renderResult(); return; }
 
-  /* 네비게이션 */
-  const done = stepDone(k);
-  h += '<div class="nav">'
-     + '<button class="prev"'+(stepIdx===0?' hidden':'')+' onclick="go(-1)">← 이전</button>'
-     + '<button class="next'+(done?' on':'')+'" onclick="'+(done?'go(1)':'')+'">'
-     + (st[stepIdx+1]==='result'?'결과 보기':'다음')+' →</button></div>';
-  body.innerHTML = h;
-}
-function stepDone(k){
-  if(k==='mode') return !!S.mode;
-  if(k==='biz') return !!S.biz;
-  if(k==='floor') return !!(S.floors[0].f && S.floors[0].a);
-  if(k==='gas') return !!S.gas;
-  if(k==='gasLng') return !!S.gasBig;
-  if(k==='kids') return !!S.kids;
-  if(k==='privacy') return !!S.privacy;
-  if(k==='emp') return !!S.emp;
-  return true;
-}
-function q(t,sub){ return '<p class="q"><span class="qm">Q</span>'+t+'</p>'+(sub?'<p class="qsub">'+sub+'</p>':''); }
-function opts(key, arr){
-  return '<div class="opts">'+arr.map(o=>'<button class="opt" aria-pressed="'+(S[key]===o)+'" onclick="pick(\''+key+'\',\''+o+'\')">'+o+'</button>').join('')+'</div>';
-}
-function toggleAcc(i){
-  const el=document.getElementById('acc'+i);
-  const open = el.getAttribute('data-open')==='true';
-  el.setAttribute('data-open', !open);
-  el.querySelector('.accbody').hidden = open;
-  el.querySelector('.acchead span').textContent = open?'▾':'▴';
-}
+  function progress(){
+    var steps = activeSteps();
+    var idx = steps.indexOf(state.step);
+    $('#progBar').style.width = Math.round(((idx+1) / steps.length) * 100) + '%';
+    $('#progLabel').textContent = STEP_LABELS[state.step];
+    $('#progNum').textContent = (idx+1) + ' / ' + steps.length;
+  }
 
-/* ───────── 결과 판정 ───────── */
-function calcResult(){
-  const b = bizObj();
-  const out = [];
-  const add = (o, why, note) => out.push({n:o.n, law:o.law, why:why, note:note});
-
-  if(b){
-    /* 다중이용업소 화재배상책임 */
-    if(b.multi) add(M.multi, b.k+"은(는) 면적·층수와 관계없이 다중이용업에 해당합니다.");
-    else if(b.food){
-      const f = S.floors[0].f, a = S.floors[0].a;
-      const a66 = a && a.indexOf("66㎡ 이상")===0;
-      const a100 = a && a.indexOf("100㎡ 이상")===0;
-      if(f==="지하층" && (a66||a100)) add(M.multi, "지하층에서 66㎡ 이상으로 영업하고 계셔서 다중이용업에 해당합니다.");
-      else if(f!=="1층" && f!=="지하층" && a100) add(M.multi, "2층 이상에서 100㎡ 이상으로 영업하고 계셔서 다중이용업에 해당합니다.");
-      /* 재난배상책임 */
-      if(f==="1층" && a100) add(M.disaster, "1층 100㎡ 이상 음식점은 재난취약시설에 해당합니다.");
+  function goto(step){
+    state.step = step;
+    render();
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+  function next(){
+    var steps = activeSteps();
+    var i = steps.indexOf(state.step);
+    goto(steps[i+1]);
+  }
+  function back(){
+    var steps = activeSteps();
+    var i = steps.indexOf(state.step);
+    if (i <= 0) return;
+    goto(steps[i-1]);
+  }
+  function fail(msg, elId){
+    var e = $('#err'); e.textContent = msg; e.hidden = false;
+    $$('input.invalid').forEach(function(x){ x.classList.remove('invalid'); });
+    if (elId) {
+      var el = $('#' + elId);
+      if (el) {
+        el.classList.add('invalid');
+        el.scrollIntoView({ behavior:'smooth', block:'center' });
+        setTimeout(function(){ el.focus(); }, 300);
+        el.addEventListener('input', function h(){ el.classList.remove('invalid'); el.removeEventListener('input', h); });
+        return;
+      }
     }
-    else if(b.multiSize) add(M.multi, b.k+"은(는) 수용인원 등 규모에 따라 다중이용업에 해당할 수 있습니다.", "확인 필요");
-    if(b.disaster) add(M.disaster, b.k+"은(는) 재난배상책임보험 의무가입 시설에 해당합니다.");
-    if(b.academy) add(M.academy, b.k+" 설립·운영자는 학원 안전사고 보상을 위한 보험에 가입해야 합니다.");
-    if(b.camp) add(M.camp, b.k+"은(는) 등록 요건으로 배상책임보험 가입이 필요합니다.");
-    if(b.kids) add(M.kids, "어린이 놀이시설을 운영하고 계셔서 대상입니다.");
+    window.scrollTo({ top:0, behavior:'smooth' });
   }
-  if(S.kids==="네" && !(b&&b.kids)) add(M.kids, "어린이 놀이기구를 설치·관리하고 계셔서 대상입니다.");
-  /* 가스 */
-  if(S.gas==="LNG 도시가스 사용"){
-    if(S.gasBig==="네") add(M.gas, "월 사용예정량 3,000㎥ 이상의 도시가스 특정사용시설에 해당합니다.");
-    else if(S.gasBig==="잘 모르겠어요") add(M.gas, "도시가스 사용량 기준 확인이 필요합니다.", "확인 필요");
-  }
-  if(S.gas==="LPG 액화석유가스 사용") add(M.gas, "LPG 사용시설은 저장능력 등 기준에 따라 의무가입 대상이 될 수 있습니다.", "확인 필요");
-  if(S.gas==="고압가스 사용") add(M.gas, "고압가스 사용시설은 관련 법령상 배상책임보험 대상 여부 확인이 필요합니다.", "확인 필요");
-  /* 개인정보 */
-  if(S.privacy==="네") add(M.privacy, "온라인으로 개인정보를 수집·보관하고 계셔서, 매출액·보유 규모 기준에 따라 대상이 될 수 있습니다.", "확인 필요");
+  function clearErr(){ $('#err').hidden = true; }
 
-  /* 중복 제거 */
-  const seen=new Set(), uniq=[];
-  out.forEach(o=>{ if(!seen.has(o.n)){seen.add(o.n); uniq.push(o);} });
-
-  /* 일반보험 추천 */
-  const gen=[];
-  gen.push({n:"화재보험", why:"매장 집기와 재고, 인테리어 손해에 대비합니다."});
-  if(b && (b.food||b.multi||b.multiSize||b.disaster||S.mode!=="온라인 판매만"))
-    gen.push({n:"영업배상책임보험", why:"손님이 매장 안에서 다쳤을 때의 배상책임에 대비합니다."});
-  if(b && (b.food || b.k==="도소매판매" || b.k==="공방" || b.k==="제조 · 공장 · 정비"))
-    gen.push({n:"생산물배상책임보험", why:"제공한 음식이나 제품으로 생긴 피해에 대비합니다."});
-  if(b && b.k==="미용실 · 네일 · 피부")
-    gen.push({n:"이·미용 배상책임보험", why:"시술 과정에서 생긴 고객 피해에 대비합니다."});
-  gen.push({n:"풍수해보험", why:"태풍·호우·지진 피해에 대비합니다. 정부·지자체 보험료 지원이 있습니다."});
-  if(S.emp && S.emp!=="없음 (혼자 운영)")
-    gen.push({n:"단체상해보험", why:"직원의 상해 치료비를 산재보험과 별도로 보완합니다."});
-  gen.push({n:"사장님 건강보험", why: S.emp==="없음 (혼자 운영)"
-    ? "혼자 운영하시면 사장님이 아플 때 가게를 대신 열 사람이 없습니다."
-    : "자영업자에게는 유급 병가가 없어, 치료 기간의 소득 공백에 대비가 필요합니다."});
-
-  const severe = (S.emp==="5~49명" || S.emp==="50명 이상");
-  return {mandatory:uniq, general:gen, severe};
-}
-
-function renderResult(){
-  const r = calcResult();
-  let h = '<p class="res-lead">주요 의무보험 7종을 대상으로 점검한 결과입니다.</p>';
-  h += '<p class="res-title">'+(r.mandatory.length
-        ? '아래 의무보험을 확인하셔야 합니다.'
-        : '지금 조건에서는 해당되는 의무보험이 없습니다.')+'</p>';
-
-  if(r.mandatory.length){
-    h += r.mandatory.map(m=>'<div class="res-item"><b>'+m.n+(m.note?' <span style="font-size:12px;color:#C4472F">· '+m.note+'</span>':'')+'</b>'
-      +'<div class="why">'+m.why+'</div><span class="lw">근거 · '+m.law+'</span></div>').join('');
-  } else {
-    h += '<div class="res-none">다만 사업 규모나 환경이 바뀌면 가입 대상이 될 수 있습니다. 매장을 넓히거나 층을 옮기셨다면 다시 확인해 보세요.</div>';
+  /* ══════ 화면별 렌더 ══════ */
+  function render(){
+    clearErr();
+    progress();
+    var html = '';
+    if (state.step === STEP.PRODUCT)     html = viewProduct();
+    if (state.step === STEP.BIZTYPE)     html = viewBizType();
+    if (state.step === STEP.SITE)        html = viewSite();
+    if (state.step === STEP.MONEY)       html = viewMoney();
+    if (state.step === STEP.CONTRACTOR)  html = viewContractor();
+    if (state.step === STEP.REVIEW)      html = viewReview();
+    $('#screen').innerHTML = html;
+    bind();
   }
 
-  if(r.severe){
-    h += '<div class="res-warn" style="margin-top:14px"><b>중대재해처벌법 적용 대상입니다</b>'
-      +'상시근로자 5인 이상 사업장은 2024년 1월 27일부터 중대재해처벌법 적용을 받습니다. 보험 이전에 안전보건 확보 의무 이행 여부를 먼저 점검하셔야 합니다.</div>';
+  /* ── 1. 상품 선택 ── */
+  var CAT_META = {
+    fire:   { cls:'cat-fire',   d:'화재·배상·사고까지 한 번에' },
+    safety: { cls:'cat-safety', d:'우리 사업장, 안전관리 점검' },
+    life:   { cls:'cat-life',   d:'매일 타는 차, 매일 쓰는 몸' }
+  };
+  function viewProduct(){
+    return '<div class="screen">' +
+      '<h1>상담 전, 이것만 체크해 주세요</h1>' +
+      '<div class="sub">업종과 사업장 정보를 미리 알려주시면 상담이 훨씬 빨라집니다. 항목만 고르면 신청은 30초면 끝납니다.</div>' +
+      '<div class="catcards" id="tabs">' +
+        CAT_TABS.map(function(t){
+          var m = CAT_META[t.k];
+          return '<button class="catcard ' + m.cls + (state.cat===t.k?' on':'') + '" data-cat="' + t.k + '">' +
+                   '<span class="catcard__t">' + t.t + '</span>' +
+                   '<span class="catcard__d">' + m.d + '</span>' +
+                 '</button>';
+        }).join('') +
+      '</div>' +
+      '<div class="plist" id="plist"></div>' +
+      '<div class="prow-note">정확한 상품명과 필요 여부는 카카오톡 상담 시 다시 확인해 드립니다.</div>' +
+    '</div>';
   }
-
-  h += '<p class="res-sub">함께 보시면 좋은 일반보험</p>';
-  h += r.general.map(g=>'<div class="res-gen"><b>'+g.n+'</b><span>'+g.why+'</span></div>').join('');
-
-  h += '<button class="res-cta" onclick="toForm()">이 결과로 바로 신청하기</button>';
-  h += '<button class="res-cta" style="background:#FEE500;color:#3C1E1E;" onclick="toKakao()">카카오톡으로 결과 문의하기</button>';
-  h += '<button class="res-copy" onclick="copyResult(this)">결과 요약 복사하기</button>';
-  h += '<p class="res-copytip">복사한 내용을 카카오톡 채팅창에 붙여넣으시면 더 정확하게 안내받으실 수 있습니다.</p>';
-  h += '<button class="res-again" onclick="openWiz()">셀프체크 다시 해보기</button>';
-  h += '<p class="res-note">이 결과는 법령상 일반적인 가입 기준에 따라 산출한 참고 정보이며, 법적 판단이나 가입 확약이 아닙니다. '
-     + '실제 가입 의무 여부는 영업신고 내용, 건축물 용도, 수용인원, 가스 설비 사양 등에 따라 달라질 수 있으므로 '
-     + '관할 지자체·소방서 또는 담당 설계사를 통해 반드시 확인해 주세요.</p>';
-  return h;
-}
-
-/* ───────── 설계사별 설정 ─────────
-   주소 뒤에 ?m=코드 를 붙이면 해당 설계사 정보로 바뀝니다.
-   예) daon.io.kr/biz/?m=hong
-   설계사를 추가하실 때는 아래에 한 줄만 복사해서 늘리시면 됩니다.
-   코드가 없거나 목록에 없으면 default 값이 적용됩니다.        */
-const FC = {
-  /* 다온파트너스 공용 (기본값) */
-  default: { kakao:"https://open.kakao.com/me/daonp" },
-
-  /* 개인 설계사 카카오 채널 라우팅 - 필요 시 한 줄씩 추가 (이름/등록번호는 화면에 표시되지 않습니다) */
-  hong:    { kakao:"https://pf.kakao.com/_채널ID/chat" }
-};
-const MCODE = (new URLSearchParams(location.search).get('m') || 'default').toLowerCase();
-const ME = FC[MCODE] || FC.default;
-
-/* 결과 → 카카오톡 채널 */
-const KAKAO_URL = ME.kakao;
-let CARRY = null; /* 폼 복구 시 셀프체크 결과 전달용 */
-function toForm(){
-  const r = calcResult();
-  CARRY = {mode:S.mode, biz:S.biz, floor:S.floors[0].f, area:S.floors[0].a,
-    gas:S.gas, gasBig:S.gasBig, kids:S.kids, privacy:S.privacy, employees:S.emp,
-    mandatoryResult:r.mandatory.map(m=>m.n), severeTarget:r.severe};
-  closeWiz();
-  const bizSel = document.getElementById('f_biz');
-  if(bizSel && S.biz){
-    for(const o of bizSel.options){ if(o.value===S.biz){ bizSel.value=S.biz; break; } }
-  }
-  const carryEl = document.getElementById('carry');
-  if(carryEl){
-    carryEl.hidden = false;
-    carryEl.innerHTML = '<div class="carrybox">✅ 셀프체크 결과가 반영되었습니다<br>'
-      + resultText().split('\n').filter(Boolean).join('<br>') + '</div>';
-  }
-  const target = document.getElementById('applyForm');
-  if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
-}
-function toKakao(){
-  const r = calcResult();
-  CARRY = {mode:S.mode, biz:S.biz, floor:S.floors[0].f, area:S.floors[0].a,
-    gas:S.gas, gasBig:S.gasBig, kids:S.kids, privacy:S.privacy, employees:S.emp,
-    mandatoryResult:r.mandatory.map(m=>m.n), severeTarget:r.severe};
-  window.open(KAKAO_URL, '_blank', 'noopener');
-}
-
-function resultText(){
-  const r = calcResult();
-  const L = [];
-  L.push("[다온파트너스 의무보험 셀프체크 결과]");
-  L.push("사업 형태: " + (S.mode||"-"));
-  if(S.biz) L.push("업종: " + S.biz);
-  if(S.floors[0].f) L.push("층·면적: " + S.floors[0].f + " / " + S.floors[0].a);
-  if(S.gas) L.push("가스: " + S.gas + (S.gasBig ? " (월 3,000㎥ 이상: "+S.gasBig+")" : ""));
-  if(S.kids) L.push("어린이 놀이기구: " + S.kids);
-  if(S.privacy) L.push("온라인 개인정보 수집: " + S.privacy);
-  if(S.emp) L.push("상시근로자: " + S.emp);
-  L.push("");
-  L.push("확인이 필요한 의무보험: " + (r.mandatory.length ? r.mandatory.map(m=>m.n).join(", ") : "해당 없음"));
-  if(r.severe) L.push("중대재해처벌법 적용 대상");
-  L.push("");
-  L.push("이 내용으로 상담 부탁드립니다.");
-  return L.join("\n");
-}
-function copyResult(btn){
-  const t = resultText();
-  const done = ()=>{ btn.textContent = "복사했습니다 ✓"; setTimeout(()=>btn.textContent="결과 요약 복사하기", 2000); };
-  if(navigator.clipboard && window.isSecureContext){
-    navigator.clipboard.writeText(t).then(done).catch(()=>fallback(t,done));
-  } else fallback(t,done);
-}
-function fallback(t,done){
-  const ta=document.createElement('textarea');
-  ta.value=t; ta.style.position='fixed'; ta.style.opacity='0';
-  document.body.appendChild(ta); ta.select();
-  try{ document.execCommand('copy'); done(); }catch(e){ alert(t); }
-  document.body.removeChild(ta);
-}
-
-/* ───────── 페이지 초기화 ───────── */
-(function init(){
-  const mk=(arr,box)=>{const el=document.getElementById(box);arr.forEach(it=>{
-    const d=document.createElement('div');d.className='card';d.setAttribute('data-open','false');
-    d.innerHTML='<button type="button" onclick="toggleCard(this)"><span><strong>'+it.n+'</strong>'
-      +'<span class="who">'+it.who+'</span></span><span class="arrow">▾</span></button>'
-      +'<div class="body" hidden><dl><dt>근거</dt><dd>'+it.law+'</dd>'
-      +'<dt>주요 보장</dt><dd>'+it.cover+'</dd><dt>알아두실 점</dt><dd>'+it.tip+'</dd></dl></div>';
-    el.appendChild(d);});};
-  mk(MANDATORY,'mandatoryCards'); mk(GENERAL,'generalCards');
-
-  /* 설계사 정보 반영 */
-  const heroLink=document.getElementById('heroKakao'); if(heroLink) heroLink.href=ME.kakao;
-  const mainLink=document.getElementById('mainKakao'); if(mainLink) mainLink.href=ME.kakao;
-
-  const sel=document.getElementById('f_biz');
-  if(sel){
-    BIZ_CATS.forEach(c=>{
-      const g=document.createElement('optgroup'); g.label=c.c;
-      c.items.forEach(i=>{const o=document.createElement('option');o.value=i.k;o.textContent=i.k;g.appendChild(o);});
-      sel.appendChild(g);
+  function fillPlist(){
+    var items = PRODUCTS.filter(function(p){ return p.cat === state.cat; });
+    $('#plist').innerHTML = items.map(function(p){
+      return '<button class="prow" data-id="' + p.id + '">' +
+               '<span class="prow__box"></span>' +
+               '<span class="prow__t">' + p.name + '</span>' +
+               '<span class="prow__go">선택</span>' +
+             '</button>';
+    }).join('');
+    $$('#plist .prow').forEach(function(b){
+      b.addEventListener('click', function(){
+        state.product = PRODUCTS.find(function(p){ return p.id === b.dataset.id; });
+        next();
+      });
     });
   }
-  const cv=document.getElementById('covers');
-  if(cv){
-    COVER_OPTIONS.forEach(n=>{const l=document.createElement('label');l.className='cbox';
-      l.innerHTML='<input type="checkbox" value="'+n+'" /><span>'+n+'</span>';cv.appendChild(l);});
+
+  /* ── 2. 업종 ── */
+  function viewBizType(){
+    return '<div class="screen">' +
+      '<h1>어떤 업종인가요?</h1>' +
+      '<div class="sub">가까운 업종을 골라주세요.</div>' +
+      '<div class="bgrid" id="bmajor">' +
+        Object.keys(BIZ_TREE).map(function(k){
+          return '<button class="bcard' + (state.bizMajor===k?' on':'') + '" data-k="' + k + '">' + k + '</button>';
+        }).join('') +
+      '</div>' +
+      '<div id="bminorWrap"></div>' +
+      '<button class="back" id="btnBack">이전으로</button>' +
+      '<div style="margin-top:18px" id="bizNextWrap" hidden>' +
+        '<button class="btn btn--navy" id="bizNext">다음</button>' +
+      '</div>' +
+    '</div>';
   }
+  function fillMinor(){
+    var wrap = $('#bminorWrap');
+    if (!state.bizMajor) { wrap.innerHTML = ''; $('#bizNextWrap').hidden = true; return; }
+    wrap.innerHTML =
+      '<div class="qgroup" style="border-top:none;padding-top:14px">' +
+        '<div class="qlabel">세부 업종</div>' +
+        '<div class="chips">' +
+          BIZ_TREE[state.bizMajor].map(function(m){
+            return '<button class="chip-btn' + (state.bizMinor===m?' on':'') + '" data-m="' + m + '">' + m + '</button>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+    $$('.chip-btn', wrap).forEach(function(b){
+      b.addEventListener('click', function(){
+        state.bizMinor = b.dataset.m;
+        $$('.chip-btn', wrap).forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        $('#bizNextWrap').hidden = false;
+      });
+    });
+    $('#bizNextWrap').hidden = !state.bizMinor;
+  }
+
+  /* ── 3. 사업장 정보 ── */
+  function viewSite(){
+    var p = state.product;
+    var blocks = '';
+    if (p.prop) {
+      blocks += group('평수', '', chips('area', ['10평 미만','10~20평','20~30평','30~50평','50~100평','100평 이상'], A.area));
+      blocks += group('사업장 형태', '', chips('own', ['임차','자가'], A.own));
+      blocks += group('층수', '', chips('floor', ['지상 1층','지상 2층 이상','지하 포함','지상+지하 복합'], A.floor));
+      blocks += group('가스 사용 여부', '', chips('gas', ['도시가스 사용','LPG(가스통) 사용','사용 안 함'], A.gas));
+    }
+    if (p.staff) {
+      blocks += group('직원 수', '아르바이트·배달기사를 포함해서요', chips('staff', ['없음(혼자 운영)','1~2명','3~5명','6~9명','10명 이상'], A.staff));
+    }
+    return '<div class="screen"><h1>사업장 정보를 알려주세요</h1><div class="sub">' + (state.bizMinor || state.bizMajor || '') + '</div>' +
+      blocks +
+      '<button class="back" id="btnBack">이전으로</button>' +
+      '<div style="margin-top:18px"><button class="btn btn--navy" id="siteNext">다음</button></div>' +
+    '</div>';
+  }
+
+  /* ── 4. 금액 정보 ── */
+  function viewMoney(){
+    return '<div class="screen"><h1>시설과 재고 규모를 알려주세요</h1>' +
+      '<div class="sub">대략적인 금액이면 됩니다.</div>' +
+      '<div class="qgroup" style="border-top:none;padding-top:0">' +
+        '<div class="qlabel">시설비용(인테리어 비용)</div>' +
+        '<div class="qhint">처음 공사할 때 들어간 비용 기준</div>' +
+        '<div class="moneyfield"><input type="text" inputmode="numeric" id="facility" placeholder="예: 30,000,000" value="' + (A.facility ? fmtMoney(A.facility) : '') + '"><span>원</span></div>' +
+      '</div>' +
+      '<div class="qgroup">' +
+        '<div class="qlabel">재고자산 금액</div>' +
+        '<div class="qhint">현재 매장에 있는 상품·재료 가치 기준. 해당 없으면 0으로 두세요</div>' +
+        '<div class="moneyfield"><input type="text" inputmode="numeric" id="stock" placeholder="예: 5,000,000" value="' + (A.stock ? fmtMoney(A.stock) : '') + '"><span>원</span></div>' +
+      '</div>' +
+      '<button class="back" id="btnBack">이전으로</button>' +
+      '<div style="margin-top:18px"><button class="btn btn--navy" id="moneyNext">다음</button></div>' +
+    '</div>';
+  }
+
+  /* ── 5. 계약자 정보 ── */
+  function viewContractor(){
+    var p = state.product;
+    if (p.personal) {
+      return '<div class="screen"><h1>신청자 정보를 입력해 주세요</h1>' +
+        '<div class="sub">카카오톡 상담 시 이 내용이 바로 전달됩니다.</div>' +
+        '<div class="qgroup" style="border-top:none;padding-top:0">' +
+          '<div class="row2">' +
+            '<div>' +
+              '<div class="qlabel">성명<span class="req">필수</span></div>' +
+              '<input type="text" id="pName" placeholder="홍길동" value="' + (A.pName||'') + '">' +
+            '</div>' +
+            '<div>' +
+              '<div class="qlabel">생년월일<span class="req">필수</span></div>' +
+              '<input type="text" id="pBirth" inputmode="numeric" placeholder="1980-01-01" value="' + (A.pBirth||'') + '">' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="qgroup">' +
+          '<div class="qlabel">휴대전화<span class="req">필수</span></div>' +
+          '<input type="tel" id="pPhone" inputmode="numeric" placeholder="010-0000-0000" value="' + (A.pPhone||'') + '">' +
+        '</div>' +
+        '<button class="back" id="btnBack">이전으로</button>' +
+        '<div style="margin-top:18px"><button class="btn btn--navy" id="contractorNext">다음</button></div>' +
+      '</div>';
+    }
+    return '<div class="screen"><h1>계약자 정보를 입력해 주세요</h1>' +
+      '<div class="sub">개인사업자 기준으로 대표자 정보를 입력합니다. 카카오톡 상담 시 이 내용이 바로 전달됩니다.</div>' +
+      '<div class="qgroup" style="border-top:none;padding-top:0">' +
+        '<div class="qlabel">상호명<span class="req">필수</span></div>' +
+        '<input type="text" id="cName" placeholder="예: 다온식당" value="' + (A.cName||'') + '">' +
+      '</div>' +
+      '<div class="qgroup">' +
+        '<div class="qlabel">사업자등록번호<span class="req">필수</span></div>' +
+        '<input type="text" id="cBizNo" inputmode="numeric" placeholder="000-00-00000" value="' + (A.cBizNo||'') + '">' +
+      '</div>' +
+      '<div class="qgroup">' +
+        '<div class="row2">' +
+          '<div>' +
+            '<div class="qlabel">대표자 성명<span class="req">필수</span></div>' +
+            '<input type="text" id="cRepName" placeholder="홍길동" value="' + (A.cRepName||'') + '">' +
+          '</div>' +
+          '<div>' +
+            '<div class="qlabel">생년월일<span class="req">필수</span></div>' +
+            '<input type="text" id="cBirth" inputmode="numeric" placeholder="1980-01-01" value="' + (A.cBirth||'') + '">' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="qgroup">' +
+        '<div class="qlabel">대표자 휴대전화<span class="req">필수</span></div>' +
+        '<input type="tel" id="cPhone" inputmode="numeric" placeholder="010-0000-0000" value="' + (A.cPhone||'') + '">' +
+      '</div>' +
+      '<button class="back" id="btnBack">이전으로</button>' +
+      '<div style="margin-top:18px"><button class="btn btn--navy" id="contractorNext">다음</button></div>' +
+    '</div>';
+  }
+
+  /* ── 6. 확인 ── */
+  function viewReview(){
+    var p = state.product;
+    var rows = [];
+    rows.push(['상품', p.name]);
+
+    if (p.personal) {
+      rows.push(['성명', A.pName]);
+      rows.push(['생년월일', A.pBirth]);
+      rows.push(['연락처', A.pPhone]);
+    } else {
+      if (p.biz) rows.push(['업종', (state.bizMajor + (state.bizMinor ? ' · ' + state.bizMinor : ''))]);
+      if (p.prop) {
+        rows.push(['평수', A.area]); rows.push(['형태', A.own]);
+        rows.push(['층수', A.floor]); rows.push(['가스', A.gas]);
+      }
+      if (p.staff) rows.push(['직원 수', A.staff]);
+      if (p.assets) {
+        rows.push(['시설비용', fmtMoney(A.facility) + '원']);
+        rows.push(['재고자산', fmtMoney(A.stock||'0') + '원']);
+      }
+      rows.push(['상호명', A.cName]);
+      rows.push(['사업자번호', A.cBizNo]);
+      rows.push(['대표자 성명', A.cRepName]);
+      rows.push(['대표자 생년월일', A.cBirth]);
+      rows.push(['연락처', A.cPhone]);
+    }
+
+    return '<div class="screen"><h1>입력하신 내용을 확인해 주세요</h1>' +
+      '<div class="sub">확인 후 카카오톡으로 상담이 바로 이어집니다.</div>' +
+      '<div class="review">' +
+        rows.map(function(r){
+          return '<div class="rrow"><dt>' + r[0] + '</dt><dd>' + (r[1] || '-') + '</dd></div>';
+        }).join('') +
+      '</div>' +
+      '<div class="prow-note" style="margin-top:14px">입력하신 내용은 서버에 저장되지 않으며, 카카오톡 상담을 위한 요약문으로만 사용됩니다.</div>' +
+      '<button class="back" id="btnBack">이전으로</button>' +
+      '<div style="margin-top:18px">' +
+        '<button class="btn btn--kakao" id="submitBtn">카카오톡으로 상담 신청하기</button>' +
+        '<div class="btn-note">누르면 채팅창이 열리고 내용이 자동 복사됩니다</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── 공통 헬퍼 ── */
+  function group(label, hint, body){
+    return '<div class="qgroup"><div class="qlabel">' + label + '</div>' +
+      (hint ? '<div class="qhint">' + hint + '</div>' : '') + body + '</div>';
+  }
+  function chips(name, opts, current){
+    return '<div class="chips" data-name="' + name + '">' +
+      opts.map(function(o){
+        return '<button class="chip-btn' + (current===o?' on':'') + '" data-v="' + o + '">' + o + '</button>';
+      }).join('') +
+    '</div>';
+  }
+
+  function buildSummary(){
+    var p = state.product;
+    var lines = [];
+    lines.push('[사업자보험 상담 신청]');
+    lines.push('상품: ' + p.name);
+
+    if (p.personal) {
+      lines.push('성명: ' + (A.pName||'-'));
+      lines.push('생년월일: ' + (A.pBirth||'-'));
+      lines.push('연락처: ' + (A.pPhone||'-'));
+      return lines.join('\n');
+    }
+
+    if (p.biz) lines.push('업종: ' + state.bizMajor + (state.bizMinor ? ' · ' + state.bizMinor : ''));
+    if (p.prop) {
+      lines.push('평수: ' + (A.area||'-'));
+      lines.push('형태: ' + (A.own||'-'));
+      lines.push('층수: ' + (A.floor||'-'));
+      lines.push('가스: ' + (A.gas||'-'));
+    }
+    if (p.staff) lines.push('직원 수: ' + (A.staff||'-'));
+    if (p.assets) {
+      lines.push('시설비용: ' + fmtMoney(A.facility) + '원');
+      lines.push('재고자산: ' + fmtMoney(A.stock||'0') + '원');
+    }
+    lines.push('상호명: ' + (A.cName||'-'));
+    lines.push('사업자번호: ' + (A.cBizNo||'-'));
+    lines.push('대표자 성명: ' + (A.cRepName||'-'));
+    lines.push('대표자 생년월일: ' + (A.cBirth||'-'));
+    lines.push('연락처: ' + (A.cPhone||'-'));
+    return lines.join('\n');
+  }
+
+  /* ══════ 이벤트 바인딩 ══════ */
+  function bind(){
+    var backBtn = $('#btnBack');
+    if (backBtn) backBtn.addEventListener('click', back);
+
+    if (state.step === STEP.PRODUCT) {
+      fillPlist();
+      $$('#tabs .catcard').forEach(function(b){
+        b.addEventListener('click', function(){ state.cat = b.dataset.cat; render(); });
+      });
+    }
+
+    if (state.step === STEP.BIZTYPE) {
+      $$('#bmajor .bcard').forEach(function(b){
+        b.addEventListener('click', function(){
+          state.bizMajor = b.dataset.k; state.bizMinor = '';
+          $$('#bmajor .bcard').forEach(function(x){ x.classList.remove('on'); });
+          b.classList.add('on');
+          fillMinor();
+        });
+      });
+      fillMinor();
+      $('#bizNext').addEventListener('click', function(){
+        if (!state.bizMinor) return fail('세부 업종을 선택해 주세요.');
+        next();
+      });
+    }
+
+    if (state.step === STEP.SITE) {
+      $$('.chips').forEach(function(g){
+        $$('.chip-btn', g).forEach(function(b){
+          b.addEventListener('click', function(){
+            $$('.chip-btn', g).forEach(function(x){ x.classList.remove('on'); });
+            b.classList.add('on');
+            A[g.dataset.name] = b.dataset.v;
+          });
+        });
+      });
+      $('#siteNext').addEventListener('click', function(){
+        var p = state.product;
+        if (p.prop && (!A.area || !A.own || !A.floor || !A.gas)) return fail('모든 항목을 선택해 주세요.');
+        if (p.staff && !A.staff) return fail('직원 수를 선택해 주세요.');
+        next();
+      });
+    }
+
+    if (state.step === STEP.MONEY) {
+      var f = $('#facility'), s = $('#stock');
+      f.addEventListener('input', function(){ f.value = fmtMoney(f.value); });
+      s.addEventListener('input', function(){ s.value = fmtMoney(s.value); });
+      $('#moneyNext').addEventListener('click', function(){
+        A.facility = moneyValue(f.value);
+        A.stock = moneyValue(s.value) || '0';
+        if (!A.facility) return fail('시설비용을 입력해 주세요. 잘 모르시면 대략적인 금액도 괜찮습니다.', 'facility');
+        next();
+      });
+    }
+
+    if (state.step === STEP.CONTRACTOR) {
+      var p = state.product;
+
+      if (p.personal) {
+        var pBirthEl = $('#pBirth'), pPhoneEl = $('#pPhone');
+        pBirthEl.addEventListener('input', function(){ pBirthEl.value = fmtBirth(pBirthEl.value); });
+        pPhoneEl.addEventListener('input', function(){ pPhoneEl.value = fmtPhone(pPhoneEl.value); });
+
+        $('#contractorNext').addEventListener('click', function(){
+          A.pName  = $('#pName').value.trim();
+          A.pBirth = $('#pBirth').value.trim();
+          A.pPhone = $('#pPhone').value.trim();
+          if (A.pName.length < 2) return fail('성명을 입력해 주세요.', 'pName');
+          if (!validBirth(A.pBirth)) return fail('생년월일을 다시 확인해 주세요. (예: 1980-01-01)', 'pBirth');
+          if (!validPhone(A.pPhone)) return fail('휴대전화번호를 다시 확인해 주세요.', 'pPhone');
+          next();
+        });
+        return;
+      }
+
+      var bizNo = $('#cBizNo'), birth = $('#cBirth'), phone = $('#cPhone');
+      bizNo.addEventListener('input', function(){ bizNo.value = fmtBizNo(bizNo.value); });
+      birth.addEventListener('input', function(){ birth.value = fmtBirth(birth.value); });
+      phone.addEventListener('input', function(){ phone.value = fmtPhone(phone.value); });
+
+      $('#contractorNext').addEventListener('click', function(){
+        A.cName    = $('#cName').value.trim();
+        A.cBizNo   = $('#cBizNo').value.trim();
+        A.cRepName = $('#cRepName').value.trim();
+        A.cBirth   = $('#cBirth').value.trim();
+        A.cPhone   = $('#cPhone').value.trim();
+        if (A.cName.length < 2) return fail('상호명을 입력해 주세요.', 'cName');
+        if (!validBizNo(A.cBizNo)) return fail('사업자등록번호를 다시 확인해 주세요. (예: 000-00-00000)', 'cBizNo');
+        if (A.cRepName.length < 2) return fail('대표자 성명을 입력해 주세요.', 'cRepName');
+        if (!validBirth(A.cBirth)) return fail('생년월일을 다시 확인해 주세요. (예: 1980-01-01)', 'cBirth');
+        if (!validPhone(A.cPhone)) return fail('휴대전화번호를 다시 확인해 주세요.', 'cPhone');
+        next();
+      });
+    }
+
+    if (state.step === STEP.REVIEW) {
+      $('#submitBtn').addEventListener('click', async function(){
+        var summary = buildSummary();
+        await copyText(summary);
+        $('#app').hidden = true;
+        $('#summaryText').textContent = summary;
+        $('#doneView').hidden = false;
+        window.scrollTo(0, 0);
+      });
+    }
+  }
+
+  render();
+
+  /* 완료 화면: 다시 복사 버튼 */
+  $('#copyAgainBtn').addEventListener('click', async function(){
+    var ok = await copyText($('#summaryText').textContent);
+    $('#copyNote').textContent = ok ? '다시 복사되었습니다' : '복사에 실패했습니다. 아래 내용을 길게 눌러 직접 복사해 주세요';
+  });
+
+  renderFooter($('#foot'));
 })();
-
-function toggleLegal(){
-  const box=document.getElementById('legalFull'), btn=document.getElementById('legalBtn');
-  const open = !box.hidden;
-  box.hidden = open;
-  btn.textContent = open ? '유의사항 전문 보기 ▾' : '유의사항 접기 ▴';
-}
-function showTab(i){
-  document.querySelectorAll('.tab').forEach((t,n)=>t.setAttribute('aria-selected', n===i?'true':'false'));
-  [0,1,2].forEach(n=>{document.getElementById('p'+n).hidden=(n!==i);});
-}
-function toggleCard(btn){
-  const c=btn.parentElement,b=c.querySelector('.body'),o=c.getAttribute('data-open')==='true';
-  c.setAttribute('data-open',o?'false':'true'); b.hidden=o;
-}
-function fmtPhone(el){
-  let v=el.value.replace(/[^0-9]/g,'').slice(0,11);
-  if(v.length>7) v=v.slice(0,3)+'-'+v.slice(3,7)+'-'+v.slice(7);
-  else if(v.length>3) v=v.slice(0,3)+'-'+v.slice(3);
-  el.value=v;
-}
-async function submitForm(){
-  const err=document.getElementById('err'),btn=document.getElementById('btn');
-  const name=document.getElementById('f_name').value.trim();
-  const phone=document.getElementById('f_phone').value.trim();
-  const biz=document.getElementById('f_biz').value;
-  err.textContent='';
-  if(name.length<2){err.textContent='성함을 입력해 주세요.';return;}
-  if(!/^01[0-9]-\d{3,4}-\d{4}$/.test(phone)){err.textContent='연락처를 010-0000-0000 형식으로 입력해 주세요.';return;}
-  if(!biz){err.textContent='업종을 선택해 주세요.';return;}
-  if(!document.getElementById('ag1').checked){err.textContent='개인정보 수집·이용 동의가 필요합니다.';return;}
-
-  const payload={
-    name, phone, biz,
-    interests:[...document.querySelectorAll('#covers input:checked')].map(x=>x.value),
-    selfCheck: CARRY,
-    store:document.getElementById('f_store').value.trim(),
-    callTime:document.getElementById('f_time').value,
-    memo:document.getElementById('f_memo').value.trim(),
-    marketingAgree:document.getElementById('ag2').checked,
-    source:new URLSearchParams(location.search).get('m')||'direct',
-    submittedAt:new Date().toISOString()
-  };
-  btn.disabled=true;btn.textContent='접수 중…';
-  try{
-    if(WEBHOOK_URL){
-      const res=await fetch(WEBHOOK_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      if(!res.ok) throw new Error('server');
-    }else{ console.log('[테스트 모드] 전송될 데이터:',payload); await new Promise(r=>setTimeout(r,600)); }
-    document.getElementById('formBox').hidden=true;
-    document.getElementById('done').hidden=false;
-    document.getElementById('apply').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){
-    btn.disabled=false;btn.textContent='상담 신청하기';
-    err.textContent='접수에 실패했습니다. 잠시 후 다시 시도하시거나 전화로 문의해 주세요.';
-  }
-}
 </script>
 </body>
 </html>
