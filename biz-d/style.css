@@ -23,7 +23,10 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad)}
 
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;max-width:var(--maxw);margin:0 auto;padding:14px var(--pad)}
-.bar__name{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--navy);text-decoration:none}
+.bar__brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.bar__logo{height:22px;width:auto;display:block;flex:0 0 auto}
+.bar__brand-t{display:flex;flex-direction:column}
+.bar__name{font-family:var(--serif);font-weight:700;font-size:15px;letter-spacing:-.01em;color:var(--navy)}
 .bar__name span{display:block;font-family:var(--sans);font-weight:500;font-size:10.5px;color:var(--mute);letter-spacing:.02em;margin-top:1px}
 .bar__kakao{font-size:12.5px;font-weight:700;text-decoration:none;color:var(--kakao-ink);background:var(--kakao);border-radius:999px;padding:8px 14px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 0 #D9C400}
 

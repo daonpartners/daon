@@ -9,10 +9,10 @@
 
 const CONFIG = {
   brand:      '사업자보험 상담신청',
-  owner:      '미래에셋금융서비스 그로우사업부',
+  owner:      '미래에셋금융서비스 다온지사',
   agencyNo:   '2014048012',
 
-  kakao:      'http://pf.kakao.com/_uAKiX/chat',
+  kakao:      'http://pf.kakao.com/_ZVtsX/chat',
 
   keepTerm:   '카카오톡 채널로 전달된 뒤 별도 저장하지 않음'
 };
