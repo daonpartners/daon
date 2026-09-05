@@ -39,12 +39,21 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-size:
 
 .back{margin-top:20px;background:none;border:none;font-family:var(--sans);font-size:13.5px;color:var(--mute);font-weight:600;cursor:pointer;padding:6px 2px}
 
-/* 상품 탭 */
-.tabs{display:flex;gap:6px;margin-top:18px;border-bottom:1.5px solid var(--rule)}
-.tab{flex:1;text-align:center;font-family:var(--sans);font-size:13.5px;font-weight:700;color:var(--mute);background:none;border:none;padding:11px 4px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px}
-.tab.on{color:var(--navy);border-color:var(--navy)}
+/* 상품 카테고리 카드 (색상 구분) */
+.catcards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:22px}
+.catcard{
+  background:var(--accent-bg);border:2px solid transparent;border-radius:14px;
+  padding:14px 10px;text-align:left;cursor:pointer;font-family:var(--sans);
+  transition:transform .12s,box-shadow .12s;
+}
+.catcard.on{border-color:var(--accent);box-shadow:0 3px 0 var(--accent);transform:translateY(-2px)}
+.catcard__t{display:block;font-size:14px;font-weight:800;color:var(--accent);letter-spacing:-.01em;line-height:1.3}
+.catcard__d{display:block;margin-top:5px;font-size:11px;color:var(--ink-2);line-height:1.5}
+.cat-fire{--accent:#C1592A;--accent-bg:#FBEDE4}
+.cat-safety{--accent:#B23A3A;--accent-bg:#FBEAEA}
+.cat-life{--accent:#1F7A6C;--accent-bg:#E7F3F0}
 
-.plist{margin-top:6px}
+.plist{margin-top:18px}
 .prow{display:flex;align-items:center;gap:12px;padding:15px 4px;border-bottom:1px solid var(--rule);width:100%;background:none;border-left:none;border-right:none;border-top:none;text-align:left;font-family:var(--sans);cursor:pointer}
 .prow__box{flex:0 0 20px;height:20px;border:1.5px solid var(--rule);border-radius:4px}
 .prow__t{flex:1;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.01em}
