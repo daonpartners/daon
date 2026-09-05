@@ -395,3 +395,93 @@ textarea{resize:vertical;min-height:82px;line-height:1.65}
 .sheet__t span{font-size:12.5px;color:var(--mute);line-height:1.65}
 
 .disc{margin-top:18px;background:var(--sheet);border-radius:10px;padding:14px;font-size:12px;color:var(--ink-2);line-height:1.75}
+
+/* ══════════════════════════════════════════════
+   PC 전용 레이아웃 (900px 이상)
+   모바일 구조는 그대로 두고, 넓은 화면에서만
+   좌우 2단 히어로 + 격자 카드 + 중앙 팝업으로 전환
+   ══════════════════════════════════════════════ */
+@media (min-width:900px){
+  :root{ --maxw:1100px; --pad:32px; }
+
+  body{ padding-bottom:0; font-size:16.5px; }
+  .dock{ display:none; } /* PC에서는 하단 고정바 대신 상단바 CTA로 충분 */
+
+  .bar{ padding:20px var(--pad); }
+  .bar__name{ font-size:17px }
+
+  /* 히어로: 텍스트(좌) + 이미지 카드 격자(우) */
+  .hero{ padding:56px 0 64px; }
+  .hero__in{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    grid-template-areas:
+      "eyebrow visual"
+      "head    visual"
+      "sub     visual"
+      "pledge  visual"
+      "cta     visual";
+    column-gap:56px;
+    align-items:start;
+  }
+  .eyebrow{ grid-area:eyebrow }
+  .hero h1{ grid-area:head; font-size:44px; line-height:1.32; margin-top:20px }
+  .hero p{ grid-area:sub; font-size:17px; max-width:30em }
+  .pledge{ grid-area:pledge }
+  .mainCta{ grid-area:cta; max-width:420px }
+  .mainCta .btn{ font-size:18px }
+
+  .adstack{
+    grid-area:visual; grid-row:1 / 6;
+    display:grid; grid-template-columns:1fr 1fr; gap:16px;
+    margin-top:0; align-self:start;
+  }
+  .adcard{ border-radius:20px }
+  .adcard:hover{ transform:translateY(-3px); box-shadow:0 10px 28px rgba(11,30,66,.16) }
+
+  /* 섹션 공통 */
+  .sec{ padding:64px 0 8px }
+  .sec > h2{ font-size:26px }
+  .sec > .lead{ font-size:15px }
+
+  /* 종목 카드: 2열 → 4열 */
+  .rows{ grid-template-columns:repeat(4,1fr); gap:14px }
+  .row{ padding:20px 18px }
+  .row__t{ font-size:15.5px }
+
+  /* 절차: 세로 타임라인 → 가로 4단 */
+  .steps{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:28px;
+    border-left:none; margin-left:0; padding-left:0;
+  }
+  .steps li{ padding:0 }
+  .steps li::before{ position:static; margin-bottom:14px }
+  .steps b{ font-size:16px }
+
+  /* 사무실 + FAQ 2단 배치 */
+  .office{ padding:32px 36px }
+  .office dl{ grid-template-columns:100px 1fr; font-size:14.5px }
+
+  /* 팝업: 하단 시트 → 중앙 다이얼로그 */
+  .modal-backdrop{ align-items:center }
+  .modal-sheet{
+    max-width:480px; border-radius:20px;
+    max-height:82vh;
+    transform:translateY(8px) scale(.98);
+    padding:28px 30px 30px;
+  }
+  .modal-backdrop.open .modal-sheet{ transform:translateY(0) scale(1) }
+  .modal-handle{ display:none }
+  .catbtn:hover{ background:#fff; box-shadow:0 3px 10px rgba(11,30,66,.08) }
+
+  /* 신청 폼(apply.html) 폭 제한 + 여백 */
+  .form-head{ padding-top:8px }
+
+  /* 사업장 점검(check.html) 결과 화면 여백 */
+  .q-body{ padding:24px 0 8px }
+}
+
+@media (min-width:1180px){
+  :root{ --maxw:1180px; }
+  .hero h1{ font-size:48px }
+}
