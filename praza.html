@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>축산물프라자 · 오늘의 마진판</title>
+<link rel="stylesheet" as="style" crossorigin
+  href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+<style>
+  :root{
+    --green:#1F5C3F;
+    --green-dark:#153F2B;
+    --beige:#F1E9DA;
+    --red:#8C2A2A;
+    --ink:#24302A;
+    --muted:#7C8880;
+    --line:#E4DECF;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Pretendard Variable','Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    background:var(--beige);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  .shell{
+    max-width:520px; margin:0 auto; min-height:100vh;
+    background:var(--white); display:flex; flex-direction:column;
+    box-shadow:0 0 40px rgba(0,0,0,0.06);
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    background:var(--green); color:#fff; padding:18px 20px 16px;
+    border-radius:0 0 20px 20px; position:sticky; top:0; z-index:10;
+  }
+  .eyebrow{font-size:11px; letter-spacing:0.04em; color:#BFE0CE; font-weight:600; text-transform:uppercase;}
+  .brand{font-size:19px; font-weight:800; margin-top:2px; display:flex; align-items:center; gap:6px;}
+  .badge-test{font-size:10px; font-weight:700; background:#F1B95B; color:#4A2E00; padding:2px 7px; border-radius:20px;}
+  .datebar{
+    margin-top:14px; display:flex; align-items:center; justify-content:space-between;
+    background:rgba(255,255,255,0.12); border-radius:12px; padding:6px 6px;
+  }
+  .datebar button{background:none; border:none; color:#fff; font-size:18px; width:36px; height:36px; border-radius:9px; cursor:pointer;}
+  .datebar button:active{background:rgba(255,255,255,0.2);}
+  .datebar .datelabel{font-weight:700; font-size:14.5px; text-align:center; flex:1;}
+  .datebar .datelabel .dow{color:#BFE0CE; font-weight:600; margin-left:4px;}
+
+  /* ---------- Content ---------- */
+  .content{flex:1; padding:18px 18px 90px; overflow-y:auto;}
+  .section-title{font-size:13px; font-weight:700; color:var(--muted); margin:22px 2px 10px;}
+  .section-title:first-child{margin-top:2px;}
+
+  .kpi-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .kpi-card{background:var(--beige); border-radius:14px; padding:14px 14px 12px; border-left:4px solid var(--green);}
+  .kpi-card.loss{border-left-color:var(--red);}
+  .kpi-label{font-size:12.5px; font-weight:600; color:var(--muted);}
+  .kpi-value{font-size:22px; font-weight:800; margin-top:6px; color:var(--green-dark); font-variant-numeric:tabular-nums;}
+  .kpi-card.loss .kpi-value{color:var(--red);}
+  .kpi-value small{font-size:13px; font-weight:700; margin-left:1px;}
+
+  .month-row{display:grid; grid-template-columns:repeat(4,1fr); gap:8px;}
+  .month-card{background:#FAF8F3; border:1px solid var(--line); border-radius:12px; padding:10px 8px; text-align:center;}
+  .month-card .m-label{font-size:11px; color:var(--muted); font-weight:600;}
+  .month-card .m-value{font-size:14.5px; font-weight:800; margin-top:4px; color:var(--ink); font-variant-numeric:tabular-nums;}
+  .month-card.loss .m-value{color:var(--red);}
+
+  .empty-note{margin-top:16px; background:#FAF8F3; border:1px dashed var(--line); border-radius:12px; padding:14px 16px; font-size:13px; color:var(--muted); line-height:1.6;}
+  .empty-note b{color:var(--ink);}
+
+  .stock-row{display:flex; justify-content:space-between; align-items:center; padding:10px 4px; border-bottom:1px solid var(--line);}
+  .stock-row:last-child{border-bottom:none;}
+  .stock-name{font-size:14px; font-weight:700;}
+  .stock-qty{font-size:15px; font-weight:800; font-variant-numeric:tabular-nums;}
+  .stock-qty.low{color:var(--red);}
+  .stock-unit{font-size:12px; color:var(--muted); font-weight:600; margin-left:2px;}
+
+  /* ---------- Forms ---------- */
+  .card{background:#FAF8F3; border:1px solid var(--line); border-radius:14px; padding:16px; margin-bottom:14px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:6px;}
+  .field input, .field select{
+    width:100%; padding:11px 12px; border-radius:10px; border:1px solid var(--line);
+    background:#fff; font-size:15px; font-family:inherit; color:var(--ink);
+  }
+  .field input:focus, .field select:focus{outline:none; border-color:var(--green);}
+  .field .hint{font-size:11.5px; color:var(--muted); margin-top:5px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+
+  .btn-primary{
+    width:100%; padding:13px 0; border-radius:12px; border:none;
+    background:var(--green); color:#fff; font-family:inherit; font-size:15px; font-weight:700; cursor:pointer;
+  }
+  .btn-primary:active{background:var(--green-dark);}
+  .btn-secondary{
+    width:100%; padding:11px 0; border-radius:12px; border:1.5px solid var(--green);
+    background:#fff; color:var(--green); font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; margin-top:8px;
+  }
+
+  .list-item{display:flex; justify-content:space-between; align-items:center; padding:12px 4px; border-bottom:1px solid var(--line);}
+  .list-item:last-child{border-bottom:none;}
+  .li-main{font-size:14px; font-weight:700; color:var(--ink);}
+  .li-sub{font-size:12px; color:var(--muted); margin-top:2px;}
+  .li-amount{font-size:14.5px; font-weight:800; color:var(--green-dark); font-variant-numeric:tabular-nums;}
+  .li-amount.loss{color:var(--red);}
+  .li-del{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px 0 4px 10px;}
+  .list-empty{text-align:center; padding:26px 10px; color:var(--muted); font-size:13px;}
+
+  /* ---------- LOT 카드 ---------- */
+  .lot-card{border:1px solid var(--line); border-radius:12px; padding:13px 14px; margin-bottom:10px; background:#fff;}
+  .lot-card.closed{background:#FAFAF8; opacity:0.75;}
+  .lot-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;}
+  .lot-id{font-size:13.5px; font-weight:800; color:var(--green-dark);}
+  .lot-product{font-size:12px; color:var(--muted); margin-top:2px;}
+  .lot-status{font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px;}
+  .lot-status.open{background:#E7F3EC; color:var(--green-dark);}
+  .lot-status.closed{background:#EFEBE3; color:var(--muted);}
+  .lot-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:10px;}
+  .lot-mini{text-align:center; background:var(--beige); border-radius:8px; padding:6px 2px;}
+  .lot-mini .lm-label{font-size:10.5px; color:var(--muted); font-weight:600;}
+  .lot-mini .lm-value{font-size:13px; font-weight:800; margin-top:2px;}
+  .lot-mini.remain .lm-value{color:var(--green-dark);}
+  .lot-mini.remain.negative .lm-value{color:var(--red);}
+  .lot-loss-tag{font-size:12px; color:var(--red); font-weight:700;}
+
+  /* ---------- 서류함 서브탭 ---------- */
+  .subtabs{display:flex; gap:6px; margin-bottom:16px; overflow-x:auto;}
+  .subtab-btn{
+    flex:0 0 auto; padding:8px 14px; border-radius:20px; border:1.5px solid var(--line);
+    background:#fff; font-family:inherit; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; white-space:nowrap;
+  }
+  .subtab-btn.active{background:var(--green); border-color:var(--green); color:#fff;}
+  .subview{display:none;}
+  .subview.active{display:block;}
+
+  .doc-preview{background:#fff; border:1px solid var(--line); border-radius:10px; padding:18px; font-size:12.5px; line-height:1.6;}
+  .doc-title{font-size:16px; font-weight:800; text-align:center; margin-bottom:12px; letter-spacing:0.2em;}
+  .doc-meta{display:flex; justify-content:space-between; font-size:12px; color:var(--muted); margin-bottom:10px;}
+  .doc-table{width:100%; border-collapse:collapse; margin-top:8px;}
+  .doc-table th, .doc-table td{border:1px solid var(--line); padding:6px 6px; font-size:11.5px; text-align:center;}
+  .doc-table th{background:var(--beige); font-weight:700;}
+  .doc-total{text-align:right; margin-top:10px; font-size:14px; font-weight:800; color:var(--green-dark);}
+  .doc-empty{text-align:center; color:var(--muted); padding:24px 0; font-size:13px;}
+
+  .status-pill{display:inline-block; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:700;}
+  .status-pill.ok{background:#E7F3EC; color:var(--green-dark);}
+  .status-pill.warn{background:#FBEEEE; color:var(--red);}
+
+  /* ---------- Bottom nav ---------- */
+  .tabbar{
+    max-width:520px; margin:0 auto; width:100%; position:fixed; bottom:0; left:0; right:0;
+    background:#fff; border-top:1px solid var(--line); display:flex;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom)); box-shadow:0 -2px 12px rgba(0,0,0,0.05);
+  }
+  .tab-btn{
+    flex:1; background:none; border:none; cursor:pointer; display:flex; flex-direction:column;
+    align-items:center; gap:3px; padding:8px 0 6px; font-family:inherit; color:var(--muted); border-radius:10px;
+  }
+  .tab-btn .ic{font-size:19px; line-height:1;}
+  .tab-btn .lb{font-size:11px; font-weight:700;}
+  .tab-btn.active{color:var(--green);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+
+  ::-webkit-scrollbar{width:0;height:0;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute; top:0; left:0; width:100%; padding:20px;}
+    .tabbar, .topbar{display:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="topbar">
+    <div class="eyebrow">다온파트너스 · 스마트 경영관리</div>
+    <div class="brand">축산물프라자 오늘의 마진판 <span class="badge-test">TEST</span></div>
+    <div class="datebar">
+      <button onclick="shiftDate(-1)">‹</button>
+      <div class="datelabel" id="dateLabel">-</div>
+      <button onclick="shiftDate(1)">›</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== 오늘의마진판 ===== -->
+    <div class="view active" id="view-dash">
+      <div class="section-title">오늘</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-label">매출</div><div class="kpi-value" id="d-sales">0<small>원</small></div></div>
+        <div class="kpi-card"><div class="kpi-label">추정이익</div><div class="kpi-value" id="d-profit">0<small>원</small></div></div>
+        <div class="kpi-card"><div class="kpi-label">마진율</div><div class="kpi-value" id="d-margin">0.0<small>%</small></div></div>
+        <div class="kpi-card loss"><div class="kpi-label">로스금액</div><div class="kpi-value" id="d-loss">0<small>원</small></div></div>
+      </div>
+
+      <div class="section-title">이번달 누적</div>
+      <div class="month-row">
+        <div class="month-card"><div class="m-label">매출</div><div class="m-value" id="m-sales">0</div></div>
+        <div class="month-card"><div class="m-label">이익</div><div class="m-value" id="m-profit">0</div></div>
+        <div class="month-card"><div class="m-label">마진율</div><div class="m-value" id="m-margin">0.0%</div></div>
+        <div class="month-card loss"><div class="m-label">로스</div><div class="m-value" id="m-loss">0</div></div>
+      </div>
+
+      <div class="section-title">재고 현황 (진행중인 LOT 잔여량)</div>
+      <div class="card" id="stock-list"></div>
+
+      <div class="empty-note" id="emptyNote">
+        아직 입력된 데이터가 없습니다. 아래 <b>매입 · 판매 · 재고</b> 탭에서 오늘 일어난 일을 입력해보시면, 이 화면에 자동으로 반영됩니다.
+      </div>
+    </div>
+
+    <!-- ===== 매입입력 ===== -->
+    <div class="view" id="view-purchase">
+      <div class="section-title">매입 등록 (LOT 생성)</div>
+      <div class="card">
+        <div class="field">
+          <label>이력번호(LOT)</label>
+          <input type="text" id="p-lot" placeholder="예: 12345">
+          <div class="hint">같은 이력번호로 입고된 고기는 이 번호로 끝까지 추적됩니다.</div>
+        </div>
+        <div class="field"><label>날짜</label><input type="date" id="p-date"></div>
+        <div class="field"><label>거래처</label><input type="text" id="p-vendor" placeholder="예: OO축산"></div>
+        <div class="field"><label>품목</label><select id="p-product"></select></div>
+        <div class="row2">
+          <div class="field"><label>매입중량(kg)</label><input type="number" id="p-qty" placeholder="0" step="0.1"></div>
+          <div class="field"><label>매입단가(원)</label><input type="number" id="p-price" placeholder="0"></div>
+        </div>
+        <button class="btn-primary" onclick="addPurchase()">매입 등록</button>
+      </div>
+      <div class="section-title">최근 매입 내역</div>
+      <div class="card" id="p-list"></div>
+    </div>
+
+    <!-- ===== 판매기록 ===== -->
+    <div class="view" id="view-sales">
+      <div class="section-title">판매 등록 (LOT에서 차감)</div>
+      <div class="card">
+        <div class="field"><label>날짜</label><input type="date" id="s-date"></div>
+        <div class="field">
+          <label>품목</label>
+          <select id="s-product" onchange="refreshLotSelect('s-lot','s-product')"></select>
+        </div>
+        <div class="field">
+          <label>이력번호(LOT) 선택</label>
+          <select id="s-lot"></select>
+          <div class="hint" id="s-lot-hint">해당 품목의 진행중인 LOT만 표시됩니다.</div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>판매중량(kg)</label><input type="number" id="s-qty" placeholder="0" step="0.1"></div>
+          <div class="field"><label>판매단가(원)</label><input type="number" id="s-price" placeholder="0"></div>
+        </div>
+        <button class="btn-primary" onclick="addSale()">판매 등록</button>
+      </div>
+      <div class="section-title">최근 판매 내역</div>
+      <div class="card" id="s-list"></div>
+    </div>
+
+    <!-- ===== 재고(LOT)관리 ===== -->
+    <div class="view" id="view-lot">
+      <div class="section-title">작업(가공) 등록</div>
+      <div class="card">
+        <div class="field"><label>날짜</label><input type="date" id="w-date"></div>
+        <div class="field">
+          <label>품목</label>
+          <select id="w-product" onchange="refreshLotSelect('w-lot','w-product')"></select>
+        </div>
+        <div class="field">
+          <label>이력번호(LOT) 선택</label>
+          <select id="w-lot"></select>
+        </div>
+        <div class="field"><label>작업(사용)중량(kg)</label><input type="number" id="w-qty" placeholder="0" step="0.1"></div>
+        <div class="field"><label>메모 (선택)</label><input type="text" id="w-note" placeholder="예: 손질, 소분작업 등"></div>
+        <button class="btn-primary" onclick="addWork()">작업 등록</button>
+        <div class="hint">작업은 매출로 잡히지 않고, 해당 LOT의 잔여량에서만 차감됩니다.</div>
+      </div>
+
+      <div class="section-title">LOT별 재고 현황</div>
+      <div id="lot-list"></div>
+
+      <div class="section-title">자동 산출된 로스 내역</div>
+      <div class="card" id="autoloss-list"></div>
+    </div>
+
+    <!-- ===== 서류함 ===== -->
+    <div class="view" id="view-docs">
+      <div class="subtabs">
+        <button class="subtab-btn active" data-sub="sub-bizinfo" onclick="switchSubtab(this)">사업자정보</button>
+        <button class="subtab-btn" data-sub="sub-invoice" onclick="switchSubtab(this)">거래명세서</button>
+        <button class="subtab-btn" data-sub="sub-settle" onclick="switchSubtab(this)">정산표</button>
+        <button class="subtab-btn" data-sub="sub-trace" onclick="switchSubtab(this)">이력제</button>
+      </div>
+
+      <div class="subview active" id="sub-bizinfo">
+        <div class="card">
+          <div class="field"><label>상호</label><input type="text" id="biz-name" placeholder="예: 축산물프라자"></div>
+          <div class="field"><label>대표자</label><input type="text" id="biz-owner" placeholder="대표자명"></div>
+          <div class="field"><label>사업자등록번호</label><input type="text" id="biz-no" placeholder="000-00-00000"></div>
+          <div class="field"><label>주소</label><input type="text" id="biz-addr" placeholder="사업장 주소"></div>
+          <div class="field"><label>전화번호</label><input type="text" id="biz-tel" placeholder="000-0000-0000"></div>
+          <button class="btn-primary" onclick="saveBizInfo()">저장</button>
+          <button class="btn-secondary" onclick="clearBizInfo()">전체 지우기</button>
+        </div>
+      </div>
+
+      <div class="subview" id="sub-invoice">
+        <div class="card">
+          <div class="field"><label>날짜</label><input type="date" id="inv-date"></div>
+          <div class="field">
+            <label>구분</label>
+            <select id="inv-type">
+              <option value="sale">판매(매출) 명세서</option>
+              <option value="purchase">매입 명세서</option>
+            </select>
+          </div>
+          <button class="btn-primary" onclick="renderInvoice()">명세서 생성</button>
+        </div>
+        <div id="invoice-preview"></div>
+      </div>
+
+      <div class="subview" id="sub-settle">
+        <div class="card">
+          <div class="field"><label>정산 월</label><input type="month" id="settle-month"></div>
+          <button class="btn-primary" onclick="renderSettlement()">정산표 생성</button>
+        </div>
+        <div id="settle-preview"></div>
+      </div>
+
+      <div class="subview" id="sub-trace">
+        <div class="card" id="trace-card"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tabbar">
+    <button class="tab-btn active" data-view="view-dash" onclick="switchTab(this)"><span class="ic">📊</span><span class="lb">마진판</span></button>
+    <button class="tab-btn" data-view="view-purchase" onclick="switchTab(this)"><span class="ic">📥</span><span class="lb">매입</span></button>
+    <button class="tab-btn" data-view="view-sales" onclick="switchTab(this)"><span class="ic">🧾</span><span class="lb">판매</span></button>
+    <button class="tab-btn" data-view="view-lot" onclick="switchTab(this)"><span class="ic">📦</span><span class="lb">재고</span></button>
+    <button class="tab-btn" data-view="view-docs" onclick="switchTab(this)"><span class="ic">🗂️</span><span class="lb">서류함</span></button>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   데이터 저장 (localStorage / 폰 안에서만 저장되는 테스트용 저장소)
+   ========================================================= */
+const DEFAULT_PRODUCTS = [
+  { name:"삼겹살(냉장)", unit:"kg" },
+  { name:"목살(냉장)",   unit:"kg" },
+  { name:"소불고기(냉장)", unit:"kg" },
+];
+
+function load(key, fallback){
+  try{
+    const raw = localStorage.getItem(key);
+    if(raw === null || raw === undefined) return fallback;
+    const v = JSON.parse(raw);
+    return (v === null || v === undefined) ? fallback : v;
+  }catch(e){ return fallback; }
+}
+function save(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+
+let products  = load("embong_products", DEFAULT_PRODUCTS);
+let purchases = load("embong_purchases", []); // {date, vendor, product, lot, qty, price, total}
+let sales     = load("embong_sales", []);     // {date, product, lot, qty, price, revenue, cost, profit}
+let works     = load("embong_works", []);     // {date, product, lot, qty, note}
+let losses    = load("embong_losses", []);    // {date, product, lot, reason, qty, cost, amount}  ← 전부 자동 산출
+let lotsClosed = load("embong_lots_closed", {}); // { "12345": true }
+let bizinfo   = load("embong_bizinfo", {name:"", owner:"", bizno:"", addr:"", tel:""});
+let trace     = load("embong_trace", {});
+
+let currentDate = new Date();
+
+function fmt(n){ return Math.round(n).toLocaleString("ko-KR"); }
+function fmtQty(n){ return (Math.round(n*100)/100).toLocaleString("ko-KR",{maximumFractionDigits:2}); }
+function toISO(d){ return d.toISOString().slice(0,10); }
+function todayISO(){ return toISO(new Date()); }
+
+/* =========================================================
+   LOT(이력번호) 계산 로직
+   ========================================================= */
+function allLotNumbers(){
+  const set = new Set();
+  purchases.forEach(p=>set.add(p.lot));
+  return Array.from(set);
+}
+function lotProduct(lot){
+  const row = purchases.find(p=>p.lot===lot);
+  return row ? row.product : "";
+}
+function lotPurchaseQty(lot){
+  return purchases.filter(p=>p.lot===lot).reduce((a,p)=>a+p.qty,0);
+}
+function lotUnitCost(lot){
+  const rows = purchases.filter(p=>p.lot===lot);
+  const totalQty = rows.reduce((a,p)=>a+p.qty,0);
+  const totalCost = rows.reduce((a,p)=>a+p.total,0);
+  return totalQty>0 ? totalCost/totalQty : 0;
+}
+function lotSoldQty(lot){ return sales.filter(s=>s.lot===lot).reduce((a,s)=>a+s.qty,0); }
+function lotWorkQty(lot){ return works.filter(w=>w.lot===lot).reduce((a,w)=>a+w.qty,0); }
+function lotLossQty(lot){ return losses.filter(l=>l.lot===lot).reduce((a,l)=>a+l.qty,0); }
+function lotRemaining(lot){
+  return lotPurchaseQty(lot) - lotSoldQty(lot) - lotWorkQty(lot) - lotLossQty(lot);
+}
+function openLotsForProduct(productName){
+  return allLotNumbers().filter(lot =>
+    lotProduct(lot)===productName && !lotsClosed[lot] && lotRemaining(lot) > 0.0001
+  );
+}
+
+/* =========================================================
+   품목 / LOT 셀렉트 채우기
+   ========================================================= */
+function fillProductSelects(){
+  ["p-product","s-product","w-product"].forEach(id=>{
+    const sel = document.getElementById(id);
+    sel.innerHTML = products.map(p=>`<option value="${p.name}">${p.name}</option>`).join("");
+  });
+}
+function refreshLotSelect(lotSelectId, productSelectId){
+  const product = document.getElementById(productSelectId).value;
+  const sel = document.getElementById(lotSelectId);
+  const open = openLotsForProduct(product);
+  if(open.length===0){
+    sel.innerHTML = `<option value="">진행중인 LOT 없음 (먼저 매입 등록 필요)</option>`;
+    return;
+  }
+  sel.innerHTML = open.map(lot=>{
+    const remain = lotRemaining(lot);
+    return `<option value="${lot}">${lot} (잔여 ${fmtQty(remain)}kg)</option>`;
+  }).join("");
+}
+function refreshAllLotSelects(){
+  refreshLotSelect("s-lot","s-product");
+  refreshLotSelect("w-lot","w-product");
+}
+
+/* =========================================================
+   날짜 이동 & 대시보드
+   ========================================================= */
+function shiftDate(delta){
+  currentDate.setDate(currentDate.getDate()+delta);
+  renderDate();
+  renderDashboard();
+}
+function renderDate(){
+  const days = ["일","월","화","수","목","금","토"];
+  const y=currentDate.getFullYear(), m=currentDate.getMonth()+1, d=currentDate.getDate();
+  document.getElementById("dateLabel").innerHTML =
+    `${y}.${String(m).padStart(2,"0")}.${String(d).padStart(2,"0")}<span class="dow">(${days[currentDate.getDay()]})</span>`;
+}
+function renderDashboard(){
+  const dISO = toISO(currentDate);
+  const todaySales  = sales.filter(s=>s.date===dISO);
+  const todayLosses = losses.filter(l=>l.date===dISO);
+
+  const tSales  = todaySales.reduce((a,s)=>a+s.revenue,0);
+  const tCost   = todaySales.reduce((a,s)=>a+s.cost,0);
+  const tLoss   = todayLosses.reduce((a,l)=>a+l.amount,0);
+  const tProfit = tSales - tCost - tLoss;
+  const tMargin = tSales>0 ? (tProfit/tSales*100) : 0;
+
+  document.getElementById("d-sales").innerHTML  = `${fmt(tSales)}<small>원</small>`;
+  document.getElementById("d-profit").innerHTML = `${fmt(tProfit)}<small>원</small>`;
+  document.getElementById("d-margin").innerHTML = `${tMargin.toFixed(1)}<small>%</small>`;
+  document.getElementById("d-loss").innerHTML   = `${fmt(tLoss)}<small>원</small>`;
+
+  const monthStart = dISO.slice(0,8)+"01";
+  const mSalesRows = sales.filter(s=>s.date>=monthStart && s.date<=dISO);
+  const mLossRows  = losses.filter(l=>l.date>=monthStart && l.date<=dISO);
+  const mSales  = mSalesRows.reduce((a,s)=>a+s.revenue,0);
+  const mCost   = mSalesRows.reduce((a,s)=>a+s.cost,0);
+  const mLoss   = mLossRows.reduce((a,l)=>a+l.amount,0);
+  const mProfit = mSales - mCost - mLoss;
+  const mMargin = mSales>0 ? (mProfit/mSales*100) : 0;
+
+  document.getElementById("m-sales").textContent  = fmt(mSales);
+  document.getElementById("m-profit").textContent = fmt(mProfit);
+  document.getElementById("m-margin").textContent = mMargin.toFixed(1)+"%";
+  document.getElementById("m-loss").textContent   = fmt(mLoss);
+
+  document.getElementById("emptyNote").style.display =
+    (purchases.length===0 && sales.length===0) ? "block" : "none";
+
+  renderStock();
+}
+function renderStock(){
+  const el = document.getElementById("stock-list");
+  if(!el) return;
+  el.innerHTML = products.map(p=>{
+    const openLots = openLotsForProduct(p.name);
+    const total = openLots.reduce((a,lot)=>a+lotRemaining(lot),0);
+    const low = total <= 0;
+    return `<div class="stock-row">
+      <div class="stock-name">${p.name}</div>
+      <div class="stock-qty ${low?'low':''}">${fmtQty(total)}<span class="stock-unit">${p.unit}</span></div>
+    </div>`;
+  }).join("");
+}
+
+/* =========================================================
+   매입
+   ========================================================= */
+function addPurchase(){
+  const lot = document.getElementById("p-lot").value.trim();
+  const date = document.getElementById("p-date").value || todayISO();
+  const vendor = document.getElementById("p-vendor").value.trim();
+  const product = document.getElementById("p-product").value;
+  const qty = parseFloat(document.getElementById("p-qty").value);
+  const price = parseFloat(document.getElementById("p-price").value);
+  if(!lot){ alert("이력번호(LOT)를 입력해주세요."); return; }
+  if(!qty || !price){ alert("매입중량과 매입단가를 입력해주세요."); return; }
+  const existing = purchases.find(p=>p.lot===lot);
+  if(existing && existing.product !== product){
+    alert(`이력번호 ${lot}은(는) 이미 [${existing.product}]로 등록되어 있습니다. 같은 이력번호로 다른 품목을 등록할 수 없습니다.`);
+    return;
+  }
+  purchases.unshift({date, vendor, product, lot, qty, price, total: qty*price});
+  save("embong_purchases", purchases);
+  document.getElementById("p-lot").value="";
+  document.getElementById("p-vendor").value="";
+  document.getElementById("p-qty").value="";
+  document.getElementById("p-price").value="";
+  renderPurchaseList();
+  renderDashboard();
+  renderLotList();
+  refreshAllLotSelects();
+}
+function renderPurchaseList(){
+  const el = document.getElementById("p-list");
+  if(purchases.length===0){ el.innerHTML = `<div class="list-empty">등록된 매입 내역이 없습니다.</div>`; return; }
+  el.innerHTML = purchases.slice(0,20).map((p,i)=>`
+    <div class="list-item">
+      <div>
+        <div class="li-main">${p.product} <span style="color:var(--muted); font-weight:600;">· LOT ${p.lot}</span></div>
+        <div class="li-sub">${p.date} · ${p.vendor||"거래처 미입력"} · ${fmtQty(p.qty)}kg</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div class="li-amount">${fmt(p.total)}원</div>
+        <button class="li-del" onclick="delPurchase(${i})">✕</button>
+      </div>
+    </div>`).join("");
+}
+function delPurchase(idx){
+  purchases.splice(idx,1);
+  save("embong_purchases", purchases);
+  renderPurchaseList(); renderDashboard(); renderLotList(); refreshAllLotSelects();
+}
+
+/* =========================================================
+   판매 (LOT 차감)
+   ========================================================= */
+function addSale(){
+  const date = document.getElementById("s-date").value || todayISO();
+  const product = document.getElementById("s-product").value;
+  const lot = document.getElementById("s-lot").value;
+  const qty = parseFloat(document.getElementById("s-qty").value);
+  const price = parseFloat(document.getElementById("s-price").value);
+  if(!lot){ alert("이력번호(LOT)를 선택해주세요. 진행중인 LOT이 없으면 먼저 매입을 등록해주세요."); return; }
+  if(!qty || !price){ alert("판매중량과 판매단가를 입력해주세요."); return; }
+  const remain = lotRemaining(lot);
+  if(qty > remain + 0.0001){
+    if(!confirm(`이 LOT의 잔여량(${fmtQty(remain)}kg)보다 많습니다. 그래도 등록할까요?`)) return;
+  }
+  const unitCost = lotUnitCost(lot);
+  const revenue = qty*price;
+  const cost = qty*unitCost;
+  sales.unshift({date, product, lot, qty, price, revenue, cost, profit: revenue-cost});
+  save("embong_sales", sales);
+  document.getElementById("s-qty").value="";
+  document.getElementById("s-price").value="";
+  renderSaleList(); renderDashboard(); renderLotList(); refreshAllLotSelects();
+}
+function renderSaleList(){
+  const el = document.getElementById("s-list");
+  if(sales.length===0){ el.innerHTML = `<div class="list-empty">등록된 판매 내역이 없습니다.</div>`; return; }
+  el.innerHTML = sales.slice(0,20).map((s,i)=>`
+    <div class="list-item">
+      <div>
+        <div class="li-main">${s.product} <span style="color:var(--muted); font-weight:600;">· LOT ${s.lot}</span></div>
+        <div class="li-sub">${s.date} · ${fmtQty(s.qty)}kg · 이익 ${fmt(s.profit)}원</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div class="li-amount">${fmt(s.revenue)}원</div>
+        <button class="li-del" onclick="delSale(${i})">✕</button>
+      </div>
+    </div>`).join("");
+}
+function delSale(idx){
+  sales.splice(idx,1);
+  save("embong_sales", sales);
+  renderSaleList(); renderDashboard(); renderLotList(); refreshAllLotSelects();
+}
+
+/* =========================================================
+   작업(가공) — 매출 없이 LOT에서만 차감
+   ========================================================= */
+function addWork(){
+  const date = document.getElementById("w-date").value || todayISO();
+  const product = document.getElementById("w-product").value;
+  const lot = document.getElementById("w-lot").value;
+  const qty = parseFloat(document.getElementById("w-qty").value);
+  const note = document.getElementById("w-note").value.trim();
+  if(!lot){ alert("이력번호(LOT)를 선택해주세요."); return; }
+  if(!qty){ alert("작업중량을 입력해주세요."); return; }
+  const remain = lotRemaining(lot);
+  if(qty > remain + 0.0001){
+    if(!confirm(`이 LOT의 잔여량(${fmtQty(remain)}kg)보다 많습니다. 그래도 등록할까요?`)) return;
+  }
+  works.unshift({date, product, lot, qty, note});
+  save("embong_works", works);
+  document.getElementById("w-qty").value="";
+  document.getElementById("w-note").value="";
+  renderLotList(); renderDashboard(); refreshAllLotSelects();
+}
+
+/* =========================================================
+   LOT 목록 & 소진 처리 (여기서 로스가 "자동 산출"됨)
+   ========================================================= */
+function renderLotList(){
+  const el = document.getElementById("lot-list");
+  const lots = allLotNumbers();
+  if(lots.length===0){
+    el.innerHTML = `<div class="card"><div class="list-empty">등록된 LOT이 없습니다. 매입 탭에서 이력번호와 함께 매입을 등록해주세요.</div></div>`;
+    return;
+  }
+  const sorted = lots.slice().sort((a,b)=>{
+    const aClosed = !!lotsClosed[a], bClosed = !!lotsClosed[b];
+    if(aClosed !== bClosed) return aClosed ? 1 : -1;
+    return 0;
+  });
+
+  el.innerHTML = sorted.map(lot=>{
+    const closed = !!lotsClosed[lot];
+    const product = lotProduct(lot);
+    const pQty = lotPurchaseQty(lot);
+    const sQty = lotSoldQty(lot);
+    const wQty = lotWorkQty(lot);
+    const remain = lotRemaining(lot);
+    const lossRow = losses.find(l=>l.lot===lot);
+
+    return `<div class="lot-card ${closed?'closed':''}">
+      <div class="lot-top">
+        <div>
+          <div class="lot-id">LOT ${lot}</div>
+          <div class="lot-product">${product}</div>
+        </div>
+        <div class="lot-status ${closed?'closed':'open'}">${closed?'소진완료':'진행중'}</div>
+      </div>
+      <div class="lot-grid">
+        <div class="lot-mini"><div class="lm-label">매입</div><div class="lm-value">${fmtQty(pQty)}</div></div>
+        <div class="lot-mini"><div class="lm-label">판매</div><div class="lm-value">${fmtQty(sQty)}</div></div>
+        <div class="lot-mini"><div class="lm-label">작업</div><div class="lm-value">${fmtQty(wQty)}</div></div>
+        <div class="lot-mini remain ${remain<0?'negative':''}"><div class="lm-label">잔여</div><div class="lm-value">${fmtQty(remain)}</div></div>
+      </div>
+      ${closed
+        ? (lossRow ? `<div class="lot-loss-tag">차액 ${fmtQty(lossRow.qty)}kg → 로스 ${fmt(lossRow.amount)}원 처리됨</div>` : `<div class="lot-loss-tag" style="color:var(--muted);">정확히 소진 (로스 없음)</div>`)
+        : `<button class="btn-secondary" onclick="closeLot('${lot}')">이 LOT 모두소진 처리</button>`
+      }
+    </div>`;
+  }).join("");
+
+  renderAutoLossList();
+}
+function closeLot(lot){
+  const remain = lotRemaining(lot);
+  if(remain > 0.0001){
+    const unitCost = lotUnitCost(lot);
+    const amount = remain*unitCost;
+    if(!confirm(`LOT ${lot} 남은 ${fmtQty(remain)}kg을 로스(약 ${fmt(amount)}원)로 처리하고 종료할까요?`)) return;
+    losses.unshift({
+      date: todayISO(), product: lotProduct(lot), lot,
+      reason: "차액소진(자동)", qty: remain, cost: unitCost, amount
+    });
+    save("embong_losses", losses);
+  } else if(remain < -0.0001){
+    alert(`LOT ${lot}은(는) 매입량보다 판매·작업량이 많습니다(${fmtQty(-remain)}kg 초과). 입력 내역을 먼저 확인해주세요.`);
+    return;
+  } else {
+    if(!confirm(`LOT ${lot}은(는) 정확히 소진되었습니다. 로스 없이 종료할까요?`)) return;
+  }
+  lotsClosed[lot] = true;
+  save("embong_lots_closed", lotsClosed);
+  renderLotList(); renderDashboard(); refreshAllLotSelects();
+}
+function renderAutoLossList(){
+  const el = document.getElementById("autoloss-list");
+  if(losses.length===0){ el.innerHTML = `<div class="list-empty">아직 자동 산출된 로스가 없습니다.</div>`; return; }
+  el.innerHTML = losses.slice(0,20).map((l,i)=>`
+    <div class="list-item">
+      <div>
+        <div class="li-main">${l.product} <span style="color:var(--muted); font-weight:600;">· LOT ${l.lot}</span></div>
+        <div class="li-sub">${l.date} · ${l.reason} · ${fmtQty(l.qty)}kg</div>
+      </div>
+      <div style="display:flex;align-items:center;">
+        <div class="li-amount loss">${fmt(l.amount)}원</div>
+        <button class="li-del" onclick="delLoss(${i})">✕</button>
+      </div>
+    </div>`).join("");
+}
+function delLoss(idx){
+  const lot = losses[idx].lot;
+  if(!confirm("이 로스 처리를 취소할까요? 해당 LOT은 다시 '진행중' 상태로 돌아갑니다.")) return;
+  losses.splice(idx,1);
+  save("embong_losses", losses);
+  delete lotsClosed[lot];
+  save("embong_lots_closed", lotsClosed);
+  renderLotList(); renderDashboard(); refreshAllLotSelects();
+}
+
+/* =========================================================
+   서류함: 사업자정보
+   ========================================================= */
+function saveBizInfo(){
+  bizinfo = {
+    name: document.getElementById("biz-name").value.trim(),
+    owner: document.getElementById("biz-owner").value.trim(),
+    bizno: document.getElementById("biz-no").value.trim(),
+    addr: document.getElementById("biz-addr").value.trim(),
+    tel: document.getElementById("biz-tel").value.trim(),
+  };
+  save("embong_bizinfo", bizinfo);
+  alert("사업자 정보가 저장되었습니다.");
+}
+function clearBizInfo(){
+  if(!confirm("저장된 사업자 정보를 모두 지울까요?")) return;
+  bizinfo = {name:"", owner:"", bizno:"", addr:"", tel:""};
+  save("embong_bizinfo", bizinfo);
+  fillBizInfoForm();
+}
+function fillBizInfoForm(){
+  document.getElementById("biz-name").value = bizinfo.name || "";
+  document.getElementById("biz-owner").value = bizinfo.owner || "";
+  document.getElementById("biz-no").value = bizinfo.bizno || "";
+  document.getElementById("biz-addr").value = bizinfo.addr || "";
+  document.getElementById("biz-tel").value = bizinfo.tel || "";
+}
+
+/* =========================================================
+   서류함: 거래명세서
+   ========================================================= */
+function renderInvoice(){
+  const date = document.getElementById("inv-date").value || todayISO();
+  const type = document.getElementById("inv-type").value;
+  const rows = type==="sale" ? sales.filter(s=>s.date===date) : purchases.filter(p=>p.date===date);
+
+  const el = document.getElementById("invoice-preview");
+  if(rows.length===0){
+    el.innerHTML = `<div class="doc-preview"><div class="doc-empty">${date}에 등록된 ${type==="sale"?"판매":"매입"} 내역이 없습니다.</div></div>`;
+    return;
+  }
+  const total = rows.reduce((a,r)=> a + (type==="sale" ? r.revenue : r.total), 0);
+  const bizLine = bizinfo.name
+    ? `${bizinfo.name} · 대표 ${bizinfo.owner||"-"} · ${bizinfo.bizno||"사업자번호 미입력"}<br>${bizinfo.addr||"주소 미입력"} · ${bizinfo.tel||""}`
+    : `<span style="color:var(--red)">사업자정보 탭에서 사업자 정보를 먼저 입력해주세요.</span>`;
+
+  el.innerHTML = `
+    <div class="doc-preview" id="printArea">
+      <div class="doc-title">거 래 명 세 서</div>
+      <div class="doc-meta"><span>${date}</span><span>${type==="sale"?"판매(매출)":"매입"}</span></div>
+      <div style="margin-bottom:10px; line-height:1.6;">${bizLine}</div>
+      <table class="doc-table">
+        <tr><th>이력번호</th><th>품목</th><th>중량(kg)</th><th>단가</th><th>금액</th></tr>
+        ${rows.map(r=>`<tr>
+          <td>${r.lot}</td>
+          <td>${r.product}</td>
+          <td>${fmtQty(r.qty)}</td>
+          <td>${fmt(r.price)}원</td>
+          <td>${fmt(type==="sale"?r.revenue:r.total)}원</td>
+        </tr>`).join("")}
+      </table>
+      <div class="doc-total">합계: ${fmt(total)}원</div>
+    </div>
+    <button class="btn-secondary" onclick="window.print()">인쇄하기 / PDF로 저장</button>
+  `;
+}
+
+/* =========================================================
+   서류함: 정산표
+   ========================================================= */
+function renderSettlement(){
+  const ym = document.getElementById("settle-month").value;
+  if(!ym){ alert("정산할 월을 선택해주세요."); return; }
+  const from = ym+"-01", to = ym+"-31";
+  const pRows = purchases.filter(p=>p.date>=from && p.date<=to);
+  const sRows = sales.filter(s=>s.date>=from && s.date<=to);
+  const lRows = losses.filter(l=>l.date>=from && l.date<=to);
+
+  const totalPurchase = pRows.reduce((a,p)=>a+p.total,0);
+  const totalSales = sRows.reduce((a,s)=>a+s.revenue,0);
+  const totalCost = sRows.reduce((a,s)=>a+s.cost,0);
+  const totalLoss = lRows.reduce((a,l)=>a+l.amount,0);
+  const profit = totalSales - totalCost - totalLoss;
+
+  const byProduct = {};
+  products.forEach(p=>byProduct[p.name] = {sales:0, purchase:0, loss:0});
+  sRows.forEach(s=>{ if(!byProduct[s.product]) byProduct[s.product]={sales:0,purchase:0,loss:0}; byProduct[s.product].sales += s.revenue; });
+  pRows.forEach(p=>{ if(!byProduct[p.product]) byProduct[p.product]={sales:0,purchase:0,loss:0}; byProduct[p.product].purchase += p.total; });
+  lRows.forEach(l=>{ if(!byProduct[l.product]) byProduct[l.product]={sales:0,purchase:0,loss:0}; byProduct[l.product].loss += l.amount; });
+
+  const el = document.getElementById("settle-preview");
+  const bizLine = bizinfo.name ? `${bizinfo.name} (${bizinfo.bizno||"사업자번호 미입력"})` : "사업자정보 미입력";
+
+  el.innerHTML = `
+    <div class="doc-preview" id="printArea">
+      <div class="doc-title">월 간 정 산 표</div>
+      <div class="doc-meta"><span>${ym}</span><span>${bizLine}</span></div>
+      <table class="doc-table">
+        <tr><th>구분</th><th>금액</th></tr>
+        <tr><td>총 매입액</td><td>${fmt(totalPurchase)}원</td></tr>
+        <tr><td>총 매출액</td><td>${fmt(totalSales)}원</td></tr>
+        <tr><td>로스 금액(자동산출)</td><td>${fmt(totalLoss)}원</td></tr>
+        <tr><td><b>추정 이익</b></td><td><b>${fmt(profit)}원</b></td></tr>
+      </table>
+      <div class="doc-title" style="font-size:13px; margin-top:16px;">품목별 내역</div>
+      <table class="doc-table">
+        <tr><th>품목</th><th>매입</th><th>매출</th><th>로스</th></tr>
+        ${Object.keys(byProduct).map(name=>`<tr>
+          <td>${name}</td><td>${fmt(byProduct[name].purchase)}</td><td>${fmt(byProduct[name].sales)}</td><td>${fmt(byProduct[name].loss)}</td>
+        </tr>`).join("")}
+      </table>
+    </div>
+    <button class="btn-secondary" onclick="window.print()">인쇄하기 / PDF로 저장</button>
+  `;
+}
+
+/* =========================================================
+   서류함: 이력제
+   ========================================================= */
+function traceKey(d){ return d.slice(0,7); }
+function renderTrace(){
+  const key = traceKey(todayISO());
+  const now = new Date();
+  const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  const dday = lastDay - now.getDate();
+  const done = !!trace[key];
+
+  const el = document.getElementById("trace-card");
+  el.innerHTML = `
+    <div style="margin-bottom:12px;"><span class="status-pill ${done?'ok':'warn'}">${done?'이번달 신고 완료':'이번달 신고 필요'}</span></div>
+    <div style="font-size:13px; color:var(--muted); line-height:1.6; margin-bottom:14px;">
+      ${key} 축산물이력제 판매단계 신고 상태입니다.<br>
+      이번달 마감까지 <b style="color:${dday<=3?'var(--red)':'var(--ink)'}">D-${dday}</b> 남았습니다.<br><br>
+      실제 신고는 이 앱이 아니라 <b>mtrace.go.kr</b> 또는 담당 단말기에서 하셔야 하며,
+      이 화면은 신고 여부를 잊지 않도록 체크만 해두는 용도입니다.
+    </div>
+    <button class="btn-primary" onclick="toggleTrace('${key}')">${done?'완료 표시 취소':'이번달 신고 완료로 표시'}</button>
+  `;
+}
+function toggleTrace(key){
+  trace[key] = !trace[key];
+  save("embong_trace", trace);
+  renderTrace();
+}
+
+/* =========================================================
+   탭 전환
+   ========================================================= */
+function switchTab(btn){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(btn.dataset.view).classList.add("active");
+}
+function switchSubtab(btn){
+  document.querySelectorAll(".subtab-btn").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".subview").forEach(v=>v.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById(btn.dataset.sub).classList.add("active");
+}
+
+/* =========================================================
+   초기화
+   ========================================================= */
+function init(){
+  fillProductSelects();
+  document.getElementById("p-date").value = todayISO();
+  document.getElementById("s-date").value = todayISO();
+  document.getElementById("w-date").value = todayISO();
+  document.getElementById("inv-date").value = todayISO();
+  document.getElementById("settle-month").value = todayISO().slice(0,7);
+  fillBizInfoForm();
+  refreshAllLotSelects();
+  renderTrace();
+  renderDate();
+  renderDashboard();
+  renderPurchaseList();
+  renderSaleList();
+  renderLotList();
+}
+init();
+</script>
+</body>
+</html>
