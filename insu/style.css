@@ -432,7 +432,7 @@ textarea{resize:vertical;min-height:82px;line-height:1.65}
     column-gap:56px;
     align-items:start;
   }
-  .eyebrow{ grid-area:eyebrow }
+  .eyebrow{ grid-area:eyebrow; justify-self:start }
   .hero h1{ grid-area:head; font-size:44px; line-height:1.32; margin-top:20px }
   .hero__sub{ grid-area:sub }
   .hero__sub p{ font-size:16.5px }
