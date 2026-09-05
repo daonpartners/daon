@@ -94,10 +94,13 @@ a{color:inherit}
 .hero h1 .ln:nth-child(1){animation-delay:.12s}
 .hero h1 .ln:nth-child(2){animation-delay:.24s}
 
-.hero p{
-  margin-top:16px;font-size:15.5px;color:var(--ink-2);line-height:1.8;max-width:26em;
+.hero__sub{
+  margin-top:18px;
   opacity:0;animation:riseIn .5s ease-out .38s forwards;
 }
+.hero__sub p{font-size:15px;color:var(--ink-2);line-height:1.85;max-width:30em}
+.hero__sub p + p{margin-top:14px}
+.hero__sub b{color:var(--navy);font-weight:700}
 
 @keyframes riseIn{
   from{opacity:0;transform:translateY(10px)}
@@ -114,8 +117,9 @@ a{color:inherit}
   background:var(--moss);color:#fff;border-radius:50%;
 }
 .pledge li:nth-child(1){animation-delay:.5s}
-.pledge li:nth-child(2){animation-delay:.62s}
-.pledge li:nth-child(3){animation-delay:.74s}
+.pledge li:nth-child(2){animation-delay:.6s}
+.pledge li:nth-child(3){animation-delay:.7s}
+.pledge li:nth-child(4){animation-delay:.8s}
 @keyframes slideIn{ from{opacity:0;transform:translateX(-6px)} to{opacity:1;transform:translateX(0)} }
 
 .hero__cta{margin-top:24px;opacity:0;animation:riseIn .5s ease-out .82s forwards}
@@ -430,7 +434,8 @@ textarea{resize:vertical;min-height:82px;line-height:1.65}
   }
   .eyebrow{ grid-area:eyebrow }
   .hero h1{ grid-area:head; font-size:44px; line-height:1.32; margin-top:20px }
-  .hero p{ grid-area:sub; font-size:17px; max-width:30em }
+  .hero__sub{ grid-area:sub }
+  .hero__sub p{ font-size:16.5px }
   .pledge{ grid-area:pledge }
   .mainCta{ grid-area:cta; max-width:420px }
   .mainCta .btn{ font-size:18px }
