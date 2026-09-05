@@ -46,25 +46,20 @@
         <li>원하지 않으시면 연락드리지 않습니다</li>
       </ul>
 
-      <!-- 문제제기 비대칭 박스 -->
-      <div class="bento">
-        <div class="bento__box bento__box--1">
-          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 8v5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg>
-          <div class="bento__q">보험료가 갑자기<br>부담스러워졌다면?</div>
-          <div class="bento__d">중복 가입, 불필요한 특약부터 함께 확인해요</div>
-        </div>
-        <div class="bento__box bento__box--2">
-          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
-          <div class="bento__q">보장이 작은 것<br>같다면?</div>
-        </div>
-        <div class="bento__box bento__box--3">
-          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><path d="M4 19V9l8-5 8 5v10" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="#fff" stroke-width="1.6"/></svg>
-          <div class="bento__q">가입한 지<br>오래됐다면?</div>
-        </div>
-        <div class="bento__box bento__box--4">
-          <div class="bento__q">청구했는데 거절당하거나, 어디부터 봐야 할지 막막하다면?</div>
-          <div class="bento__d">지금 상태부터 함께 점검해요</div>
-        </div>
+      <!-- 문제제기 이미지 카드 (전체 클릭 시 컨설팅 팝업) -->
+      <div class="adstack">
+        <button class="adcard" type="button" data-open-consult>
+          <img src="assets/card-01-review.jpg" alt="보험, 잘 들어있는지 점검받고 싶어요 — 빠진 보장 없는지 한눈에 체크">
+        </button>
+        <button class="adcard" type="button" data-open-consult>
+          <img src="assets/card-02-old.jpg" alt="가입한 지 오래됐다면? 최신 치료 보장 확인 — 요즘 치료도 보장되는지 체크">
+        </button>
+        <button class="adcard" type="button" data-open-consult>
+          <img src="assets/card-03-balance.jpg" alt="보험료에 비해 보장이 작아요 — 부족한 보장, 지금 체크하세요">
+        </button>
+        <button class="adcard" type="button" data-open-consult>
+          <img src="assets/card-04-cost.jpg" alt="보험료가 부담스러워요 — 중복 가입, 불필요 특약 점검">
+        </button>
       </div>
 
       <div class="hero__cta mainCta">
@@ -99,6 +94,7 @@
   function closeModal(){ backdrop.classList.remove('open'); document.body.style.overflow=''; STATE.cat=null; }
 
   $('#openConsult').addEventListener('click', openModal);
+  $$('[data-open-consult]').forEach(function(b){ b.addEventListener('click', openModal); });
   backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeModal(); });
 
   /* 1단계: 카테고리 선택 */
