@@ -3377,7 +3377,7 @@ function prepImport(rows){
     + (skip ? '<p class="note" style="margin-top:10px">이름(또는 계약자·성명)이 비어 있는 줄은 제외했습니다.</p>' : '')
     + (rrnUsed ? '<p class="note" style="margin-top:6px">주민등록번호에서 생년월일·성별만 뽑아 '+rrnUsed+'건에 채웠습니다. 뒷 6자리는 저장하지 않습니다.</p>' : '')
     + (dup ? '<p class="note" style="margin-top:6px">이름·생년월일이 이미 등록된 사람과 같은 '+dup+'명은 <b>덮어쓰지 않고 아예 업로드하지 않습니다.</b> 아래서 명단을 확인할 수 있어요.</p>' : '')
-    + (add>100 ? '<p class="note" style="margin-top:6px">'+add+'명은 한꺼번에 올리면 저장소가 "요청이 너무 많다"며 일부를 튕겨낼 수 있어, 천천히(느리지만 안전하게) 올립니다. 몇 분 걸릴 수 있어요.</p>' : '');
+    + (add>100 ? '<p class="note" style="margin-top:6px">'+add+'명을 한꺼번에 올립니다. 중간에 저장소가 "요청이 많다"고 하면 자동으로 잠깐 쉬었다가 다시 시도해요.</p>' : '');
   renderImpList();
   document.getElementById('impModal').classList.remove('hide');
 }
@@ -3649,7 +3649,7 @@ function runImport(){
   function runContracts(){
     let done = 0, fail = 0, next = 0;
     const total = IMPORT_QUEUE.length;
-    const CONCURRENCY = 2;
+    const CONCURRENCY = 4;
     function updateBtn(label){
       const pct = Math.round((done+fail) / total * 100);
       btn.textContent = (label||'반영 중…') + ' ' + (done+fail) + '/' + total + ' (' + pct + '%)';
@@ -3658,11 +3658,11 @@ function runImport(){
     function callWithRetry(p, triesLeft){
       return api(action, p).then(function(r){
         if(!r.ok && /많|rate|429|바쁨|잠시/.test(String(r.error||'')) && triesLeft>0){
-          return sleep(1200).then(function(){ return callWithRetry(p, triesLeft-1); });
+          return sleep(1000).then(function(){ return callWithRetry(p, triesLeft-1); });
         }
         return r;
       }).catch(function(){
-        if(triesLeft>0) return sleep(1200).then(function(){ return callWithRetry(p, triesLeft-1); });
+        if(triesLeft>0) return sleep(1000).then(function(){ return callWithRetry(p, triesLeft-1); });
         return {ok:false, error:'연결 실패(네트워크)'};
       });
     }
@@ -3672,7 +3672,7 @@ function runImport(){
       const item = IMPORT_QUEUE[i];
       const p = Object.assign({fc:ME.name, branch:ME.branch}, item);
       if(IMPORT_MODE === 'contract') p.customerName = item.custName || '';
-      return sleep(150).then(function(){ return callWithRetry(p, 2); }).then(function(r){
+      return callWithRetry(p, 2).then(function(r){
         if(r.ok) done++;
         else { fail++; FAILED.push({ name: item.custName || item.name || '(이름없음)', detail: item.product || item.dept || '', reason: r.error || '저장 실패(이유 없음)' }); }
         updateBtn();
