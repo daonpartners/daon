@@ -120,13 +120,83 @@ a{color:inherit}
 
 .hero__cta{margin-top:24px;opacity:0;animation:riseIn .5s ease-out .82s forwards}
 
-/* ── 자가진단 칩 (구 "해당사항" 목록을 압축) ── */
-.checkrow{display:flex;gap:8px;overflow-x:auto;padding:16px 0 2px;margin:0 calc(var(--pad) * -1);padding-left:var(--pad);padding-right:var(--pad);scrollbar-width:none}
-.checkrow::-webkit-scrollbar{display:none}
-.checkrow .chip{
-  flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--ink-2);
-  background:var(--sheet);border-radius:999px;padding:9px 14px;white-space:nowrap;
+/* ── 문제제기 비대칭 박스 (Bento) ── */
+.bento{
+  display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(108px,auto);
+  gap:10px;margin-top:8px;
 }
+.bento__box{
+  border-radius:16px;padding:18px 16px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;color:#fff;
+}
+.bento__box--1{grid-column:1/3;grid-row:span 2;min-height:190px;background:linear-gradient(150deg,#16305C,#0B1E42)}
+.bento__box--2{background:linear-gradient(150deg,#C97B3E,#A8582A)}
+.bento__box--3{background:linear-gradient(150deg,#3E7A6C,#255245)}
+.bento__box--4{grid-column:1/3;background:linear-gradient(115deg,#4A5568,#2D3646);min-height:96px}
+.bento__ic{position:absolute;top:14px;right:14px;width:34px;height:34px;opacity:.9}
+.bento__q{font-family:var(--serif);font-weight:700;font-size:17px;line-height:1.42;letter-spacing:-.01em;position:relative;z-index:1}
+.bento__box--1 .bento__q{font-size:20px}
+.bento__d{margin-top:6px;font-size:11.5px;color:rgba(255,255,255,.72);line-height:1.6;position:relative;z-index:1}
+
+/* ── 메인 컨설팅 CTA ── */
+.mainCta{margin-top:22px}
+.mainCta .btn{font-size:17px;padding:19px 18px}
+
+/* ── 팝업(모달) ── */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(11,20,38,.55);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s ease-out;
+}
+.modal-backdrop.open{opacity:1;pointer-events:auto}
+.modal-sheet{
+  width:100%;max-width:var(--maxw);background:#fff;border-radius:20px 20px 0 0;
+  max-height:88vh;overflow-y:auto;
+  transform:translateY(16px);transition:transform .22s ease-out;
+  padding:22px var(--pad) calc(24px + env(safe-area-inset-bottom));
+}
+.modal-backdrop.open .modal-sheet{transform:translateY(0)}
+.modal-handle{width:36px;height:4px;background:var(--rule);border-radius:99px;margin:0 auto 16px}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.modal-title{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--navy);letter-spacing:-.02em}
+.modal-close{background:none;border:none;font-size:22px;color:var(--mute);line-height:1;cursor:pointer;padding:4px 6px}
+.modal-sub{font-size:13px;color:var(--mute);margin-bottom:18px}
+
+.catgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.catbtn{
+  text-align:left;background:var(--sheet);border:1.5px solid transparent;border-radius:14px;
+  padding:16px 14px;cursor:pointer;font-family:var(--sans);
+  transition:transform .1s,border-color .1s;
+}
+.catbtn:active{transform:translateY(1px)}
+.catbtn:hover{border-color:var(--navy)}
+.catbtn__t{font-size:15px;font-weight:700;color:var(--navy);letter-spacing:-.01em}
+.catbtn__d{display:block;margin-top:3px;font-size:11.5px;color:var(--mute);line-height:1.5}
+
+.modal-back{background:none;border:none;font-size:13.5px;color:var(--mute);font-weight:600;cursor:pointer;padding:6px 0 14px;display:flex;align-items:center;gap:4px}
+
+.mform .fld{padding:14px 0;border-bottom:1px solid var(--rule)}
+.mform .fld:first-child{padding-top:0}
+.mform label{display:block;font-size:13.5px;font-weight:700;margin-bottom:8px}
+.mform input[type=text],.mform input[type=tel],.mform textarea{
+  width:100%;font-family:var(--sans);font-size:16px;color:var(--ink);
+  background:#fff;border:1.5px solid var(--rule);border-radius:9px;padding:12px 13px;
+}
+.mform input:focus,.mform textarea:focus{border-color:var(--navy);outline:none}
+.mform textarea{resize:vertical;min-height:64px}
+.mform .mchips{display:flex;flex-wrap:wrap;gap:7px}
+.mform .mchip{position:relative}
+.mform .mchip input{position:absolute;opacity:0;width:0;height:0}
+.mform .mchip span{display:block;font-size:13.5px;font-weight:600;padding:9px 13px;border:1.5px solid var(--rule);border-radius:999px;cursor:pointer;color:var(--ink-2)}
+.mform .mchip input:checked + span{border-color:var(--navy);background:var(--navy);color:#fff}
+
+.merr{background:var(--amber-bg);color:#7A4E0C;font-size:13px;font-weight:600;border-radius:9px;padding:11px 13px;margin-bottom:12px}
+.merr[hidden]{display:none}
+
+.mdone{text-align:center;padding:20px 0 6px}
+.mdone__mark{width:52px;height:52px;border-radius:50%;background:var(--moss-bg);color:var(--moss);display:grid;place-items:center;margin:0 auto 16px;font-size:24px;font-weight:700}
+.mdone h3{font-family:var(--serif);font-size:19px;color:var(--navy);letter-spacing:-.02em;margin-bottom:10px}
+.mdone p{font-size:13.5px;color:var(--ink-2);line-height:1.75}
 
 /* ── 버튼 ── */
 .btn{

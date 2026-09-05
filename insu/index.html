@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>다온 보장점검센터 | 내 보험, 지금 어떤 상태인가요</title>
-<meta name="description" content="보장 공백, 중복 가입, 놓친 보험금까지 확인해 드립니다. 사업장 리스크 점검도 함께 제공합니다. 상담은 무료입니다.">
+<meta name="description" content="보험료 걱정, 부족한 보장, 놓친 보험금까지. 건강·자동차·화재·연금 상황에 맞는 1:1 맞춤 컨설팅을 받아보세요.">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="다온 보장점검센터">
 <meta property="og:title" content="보험, 가입할 땐 쉬웠는데 받을 땐 왜 어려울까요?">
-<meta property="og:description" content="내 보험이 지금 어떤 상태인지 확인해 드립니다. 상담은 무료입니다.">
+<meta property="og:description" content="고객님 상황에 맞는 1:1 맞춤 컨설팅을 받아보세요. 상담은 무료입니다.">
 <meta name="theme-color" content="#0B1E42">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
 
 <header class="bar">
   <a class="bar__name" href="index.html">다온 보장점검센터<span>미래에셋금융서비스 다온지사</span></a>
-  <a class="bar__tel" href="tel:041-534-1124">041-534-1124</a>
+  <a class="bar__tel" href="http://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">카톡 문의</a>
 </header>
 
 <main>
@@ -38,7 +38,7 @@
         <span class="ln">보험, 가입할 땐 쉬웠는데</span>
         <span class="ln">받을 땐 왜 어려울까요?</span>
       </h1>
-      <p>지금 내고 있는 보험이 어떤 상태인지, 빠진 보장은 없는지 확인해 드립니다. 상담은 무료입니다.</p>
+      <p>지금 내고 있는 보험이 어떤 상태인지, 빠진 보장은 없는지 확인해 드립니다.</p>
 
       <ul class="pledge">
         <li>담당자 한 명만 배정됩니다</li>
@@ -46,147 +46,234 @@
         <li>원하지 않으시면 연락드리지 않습니다</li>
       </ul>
 
-      <div class="hero__cta">
-        <a class="btn btn--navy" href="apply.html?cat=review">30초 상담신청</a>
-        <div class="btn-note">신청 후 영업일 기준 하루 안에 연락드립니다</div>
+      <!-- 문제제기 비대칭 박스 -->
+      <div class="bento">
+        <div class="bento__box bento__box--1">
+          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="1.6"/><path d="M12 8v5" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="16" r="1" fill="#fff"/></svg>
+          <div class="bento__q">보험료가 갑자기<br>부담스러워졌다면?</div>
+          <div class="bento__d">중복 가입, 불필요한 특약부터 함께 확인해요</div>
+        </div>
+        <div class="bento__box bento__box--2">
+          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+          <div class="bento__q">보장이 작은 것<br>같다면?</div>
+        </div>
+        <div class="bento__box bento__box--3">
+          <svg class="bento__ic" viewBox="0 0 24 24" fill="none"><path d="M4 19V9l8-5 8 5v10" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M9 19v-6h6v6" stroke="#fff" stroke-width="1.6"/></svg>
+          <div class="bento__q">가입한 지<br>오래됐다면?</div>
+        </div>
+        <div class="bento__box bento__box--4">
+          <div class="bento__q">청구했는데 거절당하거나, 어디부터 봐야 할지 막막하다면?</div>
+          <div class="bento__d">지금 상태부터 함께 점검해요</div>
+        </div>
       </div>
 
-      <div class="checkrow">
-        <span class="chip">증권을 열어본 적 없다</span>
-        <span class="chip">보험료가 부담스럽다</span>
-        <span class="chip">중복 가입 같다</span>
-        <span class="chip">청구가 거절됐다</span>
-        <span class="chip">부모님 보험 관리 중</span>
-        <span class="chip">가게 열었는데 그대로다</span>
+      <div class="hero__cta mainCta">
+        <button class="btn btn--navy" id="openConsult" type="button">고객님 상황에 맞게<br>1:1 맞춤 컨설팅 제공받기</button>
+        <div class="btn-note">건강 · 자동차 · 화재 · 연금/종신 중 선택하실 수 있어요</div>
       </div>
     </div>
-  </section>
-
-  <!-- 사업장 -->
-  <section class="biz">
-    <div class="biz__in">
-      <div class="biz__tag">사업장을 운영하고 계신가요</div>
-      <h2>불이 나면, 손님이 다치면,<br>직원이 다치면 어떻게 되나요?</h2>
-      <p>가게 문을 닫는 동안의 매출까지 준비되어 있는지, 여덟 가지만 확인하면 지금 상태를 알 수 있습니다.</p>
-      <a class="btn btn--amber" href="check.html">사업장 2분 점검</a>
-    </div>
-  </section>
-
-  <!-- 종목 -->
-  <section class="wrap sec">
-    <h2 class="reveal">무엇이 궁금하신가요?</h2>
-    <div class="lead reveal">항목을 고르면 바로 신청으로 넘어갑니다</div>
-    <nav class="rows" id="rows"></nav>
-  </section>
-
-  <!-- 절차 -->
-  <section class="wrap sec">
-    <h2 class="reveal">어떻게 진행되나요</h2>
-    <ol class="steps">
-      <li><b>신청 접수</b><span>이름과 연락처, 편한 통화 시간만 남기시면 됩니다.</span></li>
-      <li><b>담당자 배정</b><span>다온지사 소속 설계사 한 명이 배정되고, 끝까지 그 담당자가 응대합니다.</span></li>
-      <li><b>상담</b><span>전화 또는 사무실 방문으로 진행합니다. 병력이나 치료 이력은 이 단계에서 정식 절차로 확인합니다.</span></li>
-      <li><b>비교 설계 안내</b><span>보험회사 전산에서 직접 설계한 내용을 정리해 안내드립니다. 결정은 그다음입니다.</span></li>
-    </ol>
-  </section>
-
-  <!-- 사무실 -->
-  <section class="wrap sec">
-    <div class="office">
-      <h2>찾아오실 수 있는 사무실이 있습니다</h2>
-      <dl>
-        <dt>소속</dt><dd>미래에셋금융서비스(주) 다온지사</dd>
-        <dt>주소</dt><dd>충남 아산시 탕정면 용머리길 22, 상가동 3층 301호</dd>
-        <dt>대표번호</dt><dd><a href="tel:041-534-1124">041-534-1124</a></dd>
-        <dt>등록번호</dt><dd>보험대리점 2014048012</dd>
-      </dl>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section class="wrap sec">
-    <h2 class="reveal">자주 묻는 질문</h2>
-
-    <details>
-      <summary>상담료가 있나요?</summary>
-      <p>없습니다. 점검과 상담에 비용을 받지 않습니다.</p>
-    </details>
-
-    <details>
-      <summary>신청하면 여기저기서 전화가 오나요?</summary>
-      <p>담당자 한 명이 배정되고 그 담당자만 연락드립니다. 신청하신 정보를 다른 회사나 다른 설계사에게 제공하지 않습니다.</p>
-    </details>
-
-    <details>
-      <summary>지금 보험을 꼭 바꿔야 하나요?</summary>
-      <p>아닙니다. 점검만 받고 그대로 두셔도 됩니다. 기존 계약을 해지하고 새로 가입하면 인수가 거절되거나 보험료가 오르거나 보장이 달라질 수 있어, 유지하는 편이 나은 경우도 많습니다.</p>
-    </details>
-
-    <details>
-      <summary>어디 소속인가요?</summary>
-      <p>미래에셋금융서비스 주식회사 다온지사입니다. 여러 보험회사와 계약을 맺고 대리·중개하는 보험대리점이며, 등록번호는 2014048012입니다.</p>
-    </details>
-
-    <details>
-      <summary>이 사이트에서 바로 가입할 수 있나요?</summary>
-      <p>아닙니다. 이 사이트는 신청을 접수하는 곳입니다. 보험료 계산과 가입 절차는 보험회사 전산에서 담당자와 함께 진행합니다.</p>
-    </details>
-
-    <details>
-      <summary>어떤 정보를 입력해야 하나요?</summary>
-      <p>이름, 휴대전화, 통화 가능한 시간 정도입니다. 병력이나 수술 이력 같은 건강 정보는 이 사이트에서 받지 않습니다.</p>
-    </details>
   </section>
 
 </main>
 
 <footer class="foot" id="foot"></footer>
 
-<div class="dock">
-  <div class="dock__in">
-    <a class="btn btn--line dock__tel" href="tel:041-534-1124">전화</a>
-    <a class="btn btn--navy" href="apply.html?cat=review">30초 상담신청</a>
+<!-- 컨설팅 팝업 -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal-sheet" id="modalSheet">
+    <div class="modal-handle"></div>
+    <div id="modalBody"></div>
   </div>
 </div>
 
 <script src="app.js"></script>
 <script>
 (function(){
-  var order = ['cancer','cvd','care','medical','driver','child','fire','pension','review','claim','hidden'];
-  var keep  = new URLSearchParams(location.search);
-  var pass  = '';
-  ['m','utm_source','utm_medium','utm_campaign'].forEach(function(k){
-    if (keep.get(k)) pass += '&' + k + '=' + encodeURIComponent(keep.get(k));
-  });
 
-  $('#rows').innerHTML = order.map(function(k){
-    var c = CATS[k];
-    return '<a class="row" href="apply.html?cat=' + k + pass + '">' +
-             '<span class="row__t">' + c.t + '</span>' +
-             '<span class="row__d">' + c.d + '</span>' +
-           '</a>';
-  }).join('');
+  var STATE = { cat:null };
 
-  // 사업장 및 하단 CTA에도 추적 파라미터 유지
-  $$('a[href^="check.html"], a[href^="apply.html"]').forEach(function(a){
-    var h = a.getAttribute('href');
-    if (!pass || h.indexOf('utm_') > -1 || h.indexOf('m=') > -1) return;
-    a.setAttribute('href', h.indexOf('?') > -1 ? h + pass : h + '?' + pass.slice(1));
-  });
+  var backdrop = $('#modalBackdrop');
+  var body = $('#modalBody');
+
+  function openModal(){ backdrop.classList.add('open'); document.body.style.overflow='hidden'; renderCatList(); }
+  function closeModal(){ backdrop.classList.remove('open'); document.body.style.overflow=''; STATE.cat=null; }
+
+  $('#openConsult').addEventListener('click', openModal);
+  backdrop.addEventListener('click', function(e){ if (e.target === backdrop) closeModal(); });
+
+  /* 1단계: 카테고리 선택 */
+  function renderCatList(){
+    body.innerHTML =
+      '<div class="modal-head">' +
+        '<div class="modal-title">어떤 상담이 필요하신가요</div>' +
+        '<button class="modal-close" id="mClose">&times;</button>' +
+      '</div>' +
+      '<div class="modal-sub">선택하시면 바로 신청 화면으로 이어집니다</div>' +
+      '<div class="catgrid">' +
+        CONSULT_CATS.map(function(c){
+          return '<button class="catbtn" data-k="' + c.k + '">' +
+                   '<span class="catbtn__t">' + c.t + '</span>' +
+                   '<span class="catbtn__d">' + c.d + '</span>' +
+                 '</button>';
+        }).join('') +
+      '</div>';
+    $('#mClose').addEventListener('click', closeModal);
+    $$('.catbtn', body).forEach(function(b){
+      b.addEventListener('click', function(){ STATE.cat = b.dataset.k; renderForm(); });
+    });
+  }
+
+  /* 2단계: 신청 폼 */
+  function renderForm(){
+    var c = CONSULT_CATS.filter(function(x){ return x.k === STATE.cat; })[0];
+    var hasInterest = c.interests.length > 0;
+
+    var extra = '';
+    if (STATE.cat === 'auto') {
+      extra =
+        '<div class="fld">' +
+          '<label>차량번호 <span style="color:var(--mute);font-weight:400">(선택)</span></label>' +
+          '<input type="text" id="mCarNo" placeholder="12가 3456">' +
+        '</div>' +
+        '<div class="fld">' +
+          '<label>보험 갱신일 <span style="color:var(--mute);font-weight:400">(선택)</span></label>' +
+          '<input type="text" id="mExpiry" placeholder="2026-11-01">' +
+        '</div>';
+    }
+    if (STATE.cat === 'fire') {
+      extra =
+        '<div class="fld">' +
+          '<label>주소 <span style="color:var(--mute);font-weight:400">(선택, 대략적인 지역만)</span></label>' +
+          '<input type="text" id="mAddr" placeholder="아산시 탕정면">' +
+        '</div>' +
+        '<div class="fld">' +
+          '<label>거주 형태</label>' +
+          '<div class="mchips">' +
+            ['임차','자가','잘 모름'].map(function(t,i){
+              return '<label class="mchip"><input type="radio" name="mOwn" value="'+t+'"'+(i===0?' checked':'')+'><span>'+t+'</span></label>';
+            }).join('') +
+          '</div>' +
+        '</div>';
+    }
+
+    body.innerHTML =
+      '<div class="modal-head">' +
+        '<div class="modal-title">' + c.t + ' 상담신청</div>' +
+        '<button class="modal-close" id="mClose">&times;</button>' +
+      '</div>' +
+      '<button class="modal-back" id="mBack">‹ 다른 상담 선택하기</button>' +
+
+      '<div class="merr" id="mErr" hidden></div>' +
+
+      '<div class="mform" id="mFormWrap">' +
+        (hasInterest ?
+          '<div class="fld">' +
+            '<label>관심 있는 분야</label>' +
+            '<div class="mchips">' +
+              c.interests.map(function(t){
+                return '<label class="mchip"><input type="checkbox" name="mInterest" value="'+t+'"><span>'+t+'</span></label>';
+              }).join('') +
+            '</div>' +
+          '</div>'
+        : '') +
+        extra +
+        '<div class="fld">' +
+          '<label>이름</label>' +
+          '<input type="text" id="mName" placeholder="홍길동">' +
+        '</div>' +
+        '<div class="fld">' +
+          '<label>휴대전화</label>' +
+          '<input type="tel" id="mPhone" inputmode="numeric" placeholder="010-0000-0000">' +
+        '</div>' +
+        '<div class="fld">' +
+          '<label>통화 가능한 시간</label>' +
+          '<div class="mchips">' +
+            ['언제든','오전','오후','저녁'].map(function(t,i){
+              return '<label class="mchip"><input type="radio" name="mTime" value="'+t+'"'+(i===0?' checked':'')+'><span>'+t+'</span></label>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
+        '<div class="fld">' +
+          '<label>궁금한 점 <span style="color:var(--mute);font-weight:400">(선택)</span></label>' +
+          '<textarea id="mMemo" placeholder="병력·치료 이력은 적지 마세요. 상담 시 정식 절차로 확인합니다."></textarea>' +
+        '</div>' +
+      '</div>' +
+
+      '<div style="margin-top:6px">' +
+        '<button class="btn btn--navy" id="mSubmit" type="button">신청하기</button>' +
+        '<div class="btn-note">신청 후 영업일 기준 하루 안에 연락드립니다</div>' +
+      '</div>';
+
+    $('#mClose').addEventListener('click', closeModal);
+    $('#mBack').addEventListener('click', renderCatList);
+
+    var ph = $('#mPhone');
+    ph.addEventListener('input', function(){ ph.value = fmtPhone(ph.value); });
+
+    $('#mSubmit').addEventListener('click', onSubmit);
+  }
+
+  async function onSubmit(){
+    var err = $('#mErr');
+    err.hidden = true;
+
+    var name  = $('#mName').value.trim();
+    var phone = $('#mPhone').value.trim();
+    if (name.length < 2) { err.textContent = '이름을 입력해 주세요.'; err.hidden = false; $('#mName').focus(); return; }
+    if (!validPhone(phone)) { err.textContent = '휴대전화번호를 다시 확인해 주세요.'; err.hidden = false; $('#mPhone').focus(); return; }
+
+    function radio(n){ var el = body.querySelector('input[name="'+n+'"]:checked'); return el ? el.value : ''; }
+    function checks(n){ return $$('input[name="'+n+'"]:checked', body).map(function(x){ return x.value; }); }
+
+    var payload = {
+      name: name,
+      phone: phone,
+      origin: 'insu',
+      callTime: radio('mTime'),
+      memo: $('#mMemo') ? $('#mMemo').value.trim().slice(0,500) : '',
+      interests: checks('mInterest'),
+      utm_source: qs('utm_source'), utm_medium: qs('utm_medium'), utm_campaign: qs('utm_campaign'),
+      manager: qs('m'),
+      referrer: (document.referrer || '').slice(0,200),
+      submittedAt: new Date().toISOString()
+    };
+    if (STATE.cat === 'auto') {
+      payload.carNumber = $('#mCarNo') ? $('#mCarNo').value.trim() : '';
+      payload.expiryDate = $('#mExpiry') ? $('#mExpiry').value.trim() : '';
+    }
+    if (STATE.cat === 'fire') {
+      payload.address = $('#mAddr') ? $('#mAddr').value.trim() : '';
+      payload.ownership = radio('mOwn');
+    }
+
+    var btn = $('#mSubmit');
+    btn.disabled = true; btn.textContent = '보내는 중...';
+
+    try {
+      await sendCategoryLead(STATE.cat, payload);
+      renderDone();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = '신청하기';
+      err.textContent = '접수 중 문제가 생겼습니다. 카카오톡 채널로 문의해 주세요.';
+      err.hidden = false;
+    }
+  }
+
+  function renderDone(){
+    body.innerHTML =
+      '<div class="modal-head"><div></div><button class="modal-close" id="mClose">&times;</button></div>' +
+      '<div class="mdone">' +
+        '<div class="mdone__mark">✓</div>' +
+        '<h3>신청이 접수되었습니다</h3>' +
+        '<p>담당자가 확인 후 남겨주신 시간대에 연락드립니다.<br>급하시면 카카오톡으로 바로 문의하실 수 있습니다.</p>' +
+        '<div style="margin-top:20px">' +
+          '<a class="btn btn--navy" href="' + CONFIG.kakao + '" target="_blank" rel="noopener">카카오톡 채널 열기</a>' +
+        '</div>' +
+      '</div>';
+    $('#mClose').addEventListener('click', closeModal);
+  }
 
   renderFooter($('#foot'));
-
-  // 스크롤 등장 (섹션 헤더 한정, 절제된 1회성 모션)
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.2 });
-    $$('.reveal').forEach(function(el){ io.observe(el); });
-  } else {
-    $$('.reveal').forEach(function(el){ el.classList.add('in'); });
-  }
 })();
 </script>
 </body>

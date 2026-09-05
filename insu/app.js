@@ -7,21 +7,38 @@ const CONFIG = {
   // 브랜드
   brand:      '다온 보장점검센터',
   owner:      '미래에셋금융서비스(주) 다온지사',
-  tel:        '041-534-1124',
   addr:       '충남 아산시 탕정면 용머리길 22, 상가동 3층 301호',
   agencyNo:   '2014048012',      // 보험대리점 등록번호
+  kakao:      'http://pf.kakao.com/_ZVtsX/chat',
 
   // 광고 심의 (준법 회신 후 기재)
   adReviewNo: '심의 진행 중',     // 예: 'ㅇㅇ-2026-0000호'
   adExpire:   '',                // 예: '2027-03-01'
 
-  // n8n 연동
-  api:        'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2',
-  action:     'leadCreate',
-
   // 개인정보 보유기간
   keepTerm:   '상담 종료 후 1년'
 };
+
+/* n8n 웹훅 — 다온지사 전용 워크플로 "다온파트너스 웹리드 접수"
+   (grow-crm-v2와 무관, daon.io.kr 계열 페이지 전용) */
+const LEAD_ENDPOINTS = {
+  health:  'https://daonpartners.app.n8n.cloud/webhook/daon-health-lead',
+  auto:    'https://daonpartners.app.n8n.cloud/webhook/daon-auto-lead',
+  fire:    'https://daonpartners.app.n8n.cloud/webhook/daon-fire-lead',
+  pension: 'https://daonpartners.app.n8n.cloud/webhook/daon-pension-lead'
+};
+
+/* 컨설팅 팝업 - 4개 상품군 */
+const CONSULT_CATS = [
+  { k:'health',  t:'건강보험',   d:'암·뇌·심장·실손 등 보장 점검',
+    interests:['암','뇌·심장','실손의료비','간병·치매','기타'] },
+  { k:'auto',    t:'자동차보험', d:'갱신 시점 견적·특약 확인',
+    interests:[] },
+  { k:'fire',    t:'화재보험',   d:'주택·상가 화재 및 배상책임',
+    interests:[] },
+  { k:'pension', t:'연금·종신',  d:'노후 준비·사망 보장 점검',
+    interests:['노후생활비','사망보장','상속·증여','기타'] }
+];
 
 /* 종목 정의 — 상품명·보험사명·보험료는 넣지 않습니다 */
 const CATS = {
@@ -78,15 +95,28 @@ function ticketNo(){
        + '-' + String(Math.floor(Math.random()*9000)+1000);
 }
 
-/* ── n8n 전송 ── */
+/* ── 레거시 신청폼(apply.html) 호환용 — 보장분석(범용) 엔드포인트로 전송 ── */
 async function sendLead(payload){
-  var res = await fetch(CONFIG.api, {
+  var res = await fetch('https://daonpartners.app.n8n.cloud/webhook/daon-insurance-lead', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(Object.assign({ action: CONFIG.action }, payload))
+    body: JSON.stringify(payload)
   });
   if (!res.ok) throw new Error('HTTP ' + res.status);
-  return res.json().catch(function(){ return {}; });
+  return res.text().catch(function(){ return ''; });
+}
+
+/* ── 신규 컨설팅 팝업용 — 카테고리별 실제 엔드포인트로 전송 ── */
+async function sendCategoryLead(catKey, payload){
+  var url = LEAD_ENDPOINTS[catKey];
+  if (!url) throw new Error('unknown category: ' + catKey);
+  var res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text().catch(function(){ return ''; });
 }
 
 /* ── 푸터 필수 표기 자동 삽입 ── */
@@ -99,7 +129,7 @@ function renderFooter(el){
         '<dt>모집주체</dt><dd>' + CONFIG.owner + '</dd>' +
         '<dt>대리점 등록번호</dt><dd>' + CONFIG.agencyNo + '</dd>' +
         '<dt>주소</dt><dd>' + CONFIG.addr + '</dd>' +
-        '<dt>대표번호</dt><dd>' + CONFIG.tel + '</dd>' +
+        '<dt>카카오 문의</dt><dd><a href="' + CONFIG.kakao + '" target="_blank" rel="noopener">채널 바로가기</a></dd>' +
         '<dt>광고 심의</dt><dd>' + CONFIG.adReviewNo +
           (CONFIG.adExpire ? ' (유효기간 ' + CONFIG.adExpire + ')' : '') + '</dd>' +
       '</dl>' +
