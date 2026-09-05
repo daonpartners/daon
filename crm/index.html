@@ -3668,20 +3668,21 @@ function runImport(){
   function runContracts(){
     let done = 0, fail = 0, next = 0;
     const total = IMPORT_QUEUE.length;
-    const CONCURRENCY = 4;
+    const CONCURRENCY = 3;
     function updateBtn(label){
       const pct = Math.round((done+fail) / total * 100);
       btn.textContent = (label||'반영 중…') + ' ' + (done+fail) + '/' + total + ' (' + pct + '%)';
     }
     function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
-    function callWithRetry(p, triesLeft){
+    function callWithRetry(p, triesLeft, attempt){
+      attempt = attempt || 1;
       return api(action, p).then(function(r){
-        if(!r.ok && /많|rate|429|바쁨|잠시/.test(String(r.error||'')) && triesLeft>0){
-          return sleep(1000).then(function(){ return callWithRetry(p, triesLeft-1); });
+        if(!r.ok && /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||'')) && triesLeft>0){
+          return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
         }
         return r;
       }).catch(function(){
-        if(triesLeft>0) return sleep(1000).then(function(){ return callWithRetry(p, triesLeft-1); });
+        if(triesLeft>0) return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
         return {ok:false, error:'연결 실패(네트워크)'};
       });
     }
@@ -3691,7 +3692,7 @@ function runImport(){
       const item = IMPORT_QUEUE[i];
       const p = Object.assign({fc:ME.name, branch:ME.branch}, item);
       if(IMPORT_MODE === 'contract') p.customerName = item.custName || '';
-      return callWithRetry(p, 2).then(function(r){
+      return callWithRetry(p, 3).then(function(r){
         if(r.ok) done++;
         else { fail++; FAILED.push({ name: item.custName || item.name || '(이름없음)', detail: item.product || item.dept || '', reason: r.error || '저장 실패(이유 없음)' }); }
         updateBtn();
