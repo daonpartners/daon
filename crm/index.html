@@ -146,6 +146,12 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;z-index:2}
 .sheet-h h2{font-size:16.5px}
 .sheet-h .x{margin-left:auto;font-size:24px;color:var(--ink3);line-height:1;padding:0 4px}
+.fullpage{position:fixed;inset:0;background:#fff;z-index:90;overflow-y:auto}
+.fp-sheet{max-width:none;width:100%;max-height:none;border-radius:0;animation:none;margin:0 auto}
+.fp-h{position:sticky;top:0;background:#fff;padding:14px 16px;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;z-index:5}
+.fp-h h2{font-size:16px;font-weight:800}
+@media (min-width:900px){ .fp-sheet{max-width:760px} }
 .sheet-b{padding:16px 18px 26px}
 .fld{margin:0 0 13px}
 .fld2{display:flex;gap:9px}
@@ -681,9 +687,9 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 </div>
 
 <!-- 고객 등록/수정 -->
-<div id="custModal" class="mask hide" onclick="if(event.target===this)closeCust()">
-  <div class="sheet">
-    <div class="sheet-h"><h2 id="custTitle">고객 등록</h2><button class="x" onclick="closeCust()">×</button></div>
+<div id="custModal" class="fullpage hide">
+  <div class="sheet fp-sheet">
+    <div class="sheet-h fp-h"><button class="btn ghost sm" onclick="closeCust()">← 뒤로</button><h2 id="custTitle">고객 등록</h2><span style="width:60px"></span></div>
     <div class="sheet-b">
       <div class="fld2" style="display:flex;gap:8px;margin:0 0 14px">
         <button type="button" class="chip" id="typeBtnOwner" onclick="setCustType('보유고객')" style="flex:1;text-align:center">보유고객</button>
@@ -758,15 +764,16 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <button class="btn" id="custSaveBtn" onclick="saveCust()">저장</button>
       </div>
       <button class="btn ghost sm hide" id="custSmsBtn" style="margin-top:10px;width:100%;color:var(--blue)" onclick="openSms()">💬 문자 보내기</button>
-      <div id="custCtrBox" class="hide" style="margin-top:14px">
-        <label style="font-size:13px;font-weight:600;color:var(--ink2)" id="custCtrLabel">보유계약</label>
-        <div id="custCtrList" style="margin-top:6px"></div>
+
+      <div id="custCtrBox" class="hide card" style="margin-top:16px;padding:14px;background:var(--bg)">
+        <label style="font-size:13.5px;font-weight:700;color:var(--ink)" id="custCtrLabel">📄 보유계약</label>
+        <div id="custCtrList" style="margin-top:8px"></div>
       </div>
-      <div id="custActBox" class="hide" style="margin-top:14px">
-        <label style="font-size:13px;font-weight:600;color:var(--ink2)">최근 활동 이력</label>
-        <div id="custActList" style="margin-top:6px"></div>
+      <div id="custActBox" class="hide card" style="margin-top:12px;padding:14px;background:var(--bg)">
+        <label style="font-size:13.5px;font-weight:700;color:var(--ink)">📝 최근 활동 이력</label>
+        <div id="custActList" style="margin-top:8px"></div>
       </div>
-      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:8px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
+      <button class="btn ghost sm hide" id="custDelBtn" style="margin-top:14px;width:100%;color:var(--red)" onclick="deleteCust()">이 고객 삭제</button>
     </div>
   </div>
 
@@ -946,9 +953,9 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 </div>
 
 <!-- 계약 수정 -->
-<div id="ctrEditModal" class="mask hide" onclick="if(event.target===this)closeCtrEdit()">
-  <div class="sheet">
-    <div class="sheet-h"><h2>계약 수정</h2><button class="x" onclick="closeCtrEdit()">×</button></div>
+<div id="ctrEditModal" class="fullpage hide">
+  <div class="sheet fp-sheet">
+    <div class="sheet-h fp-h"><button class="btn ghost sm" onclick="closeCtrEdit()">← 뒤로</button><h2>계약 수정</h2><span style="width:60px"></span></div>
     <div class="sheet-b">
       <div class="fld"><label>고객명 *</label><input id="ctrEName" oninput="ctrMatchPreview()" placeholder="예: 홍길동"></div>
       <div class="fld fld2">
