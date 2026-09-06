@@ -156,6 +156,17 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 .fld{margin:0 0 13px}
 .fld2{display:flex;gap:9px}
 .fld2>*{flex:1}
+.fp-sheet .fld{margin:0 0 9px}
+.fp-sheet input,.fp-sheet select{padding:10px 12px}
+.fp-sheet label{font-size:12px;margin-bottom:3px}
+@media (min-width:900px){
+  .fp-sheet .sheet-b{column-count:2;column-gap:28px}
+  .fp-sheet .sheet-b>.fld,.fp-sheet .sheet-b>.fld2,.fp-sheet .sheet-b>.warnbox,
+  .fp-sheet .sheet-b>.rrn,.fp-sheet .sheet-b>.row{break-inside:avoid}
+  .fp-sheet .sheet-b>.dr-h,.fp-sheet .sheet-b>.btn,.fp-sheet .sheet-b>.card,
+  .fp-sheet .sheet-b>#custCtrBox,.fp-sheet .sheet-b>#custActBox,
+  .fp-sheet .sheet-b>#prospectFields,.fp-sheet .sheet-b>#ownerFields{column-span:all}
+}
 .note{font-size:12px;color:var(--ink3);margin-top:5px;line-height:1.45}
 .warnbox{background:#FFF8E6;border:1px solid #F5DFA0;border-radius:10px;
   padding:11px 13px;font-size:12.5px;color:#8A6415;line-height:1.5;margin:0 0 14px}
@@ -725,7 +736,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
             <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
           </div>
           <div><label>DB구분</label>
-            <select id="fDbType"><option value="">-</option><option>소개DB</option><option>휴면DB</option><option>이관DB</option><option>기타DB</option></select>
+            <select id="fDbType"><option value="">-</option><option>온라인DB</option><option>오프라인DB</option><option>기타DB</option></select>
           </div>
         </div>
         <div class="fld"><label>관심보종</label>
@@ -753,7 +764,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
       <div id="ownerFields">
         <div class="fld fld2">
           <div><label>등급</label><select id="fGrade"><option value="">-</option><option value="A">A 핵심</option><option value="B">B 관리</option><option value="C">C 잠재</option><option value="D">D 휴면</option></select></div>
-          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>온라인카페</option><option>온라인블로그</option><option>온라인기타</option><option>DB</option><option>대면소개</option></select></div>
+          <div><label>유입경로</label><select id="fSource"><option value="">-</option><option>네이버</option><option>카페</option><option>사이트</option><option>기타</option><option>대면소개</option></select></div>
         </div>
         <div class="fld"><label>유입경로 비고</label><input id="fSourceNote" placeholder="예: 맘카페 이름, 소개해준 사람 등 자유롭게"></div>
         <div class="fld"><label>가족관계</label><input id="fFamily" placeholder="배우자, 자녀 2 (초등)"></div>
@@ -1197,7 +1208,7 @@ const FILTERS = [
   {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'}
 ];
 const PROSPECT_DB_FILTERS = [
-  {k:'all', n:'전체'}, {k:'이관DB', n:'DB고객'}, {k:'휴면DB', n:'휴면고객'}, {k:'소개DB', n:'소개'}, {k:'기타DB', n:'기타'}
+  {k:'all', n:'전체'}, {k:'온라인DB', n:'온라인DB'}, {k:'오프라인DB', n:'오프라인DB'}, {k:'기타DB', n:'기타DB'}
 ];
 let PROSPECT_DB_FILTER = 'all';
 
@@ -2045,6 +2056,12 @@ function toggleCtrPickOne(id){
   updateCtrPickCount();
   renderContracts();
 }
+function toggleAllCtrPick(check){
+  const list = ctrFilteredList();
+  list.forEach(function(c){ if(check) CTR_PICKED_IDS[c.id] = true; else delete CTR_PICKED_IDS[c.id]; });
+  updateCtrPickCount();
+  renderContracts();
+}
 function updateCtrPickCount(){
   document.getElementById('ctrPickCount').textContent = Object.keys(CTR_PICKED_IDS).length + '건 선택됨';
 }
@@ -2084,7 +2101,7 @@ function renderCtrTable(list){
   const el = document.getElementById('ctrTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 계약이 없습니다.</div>'; return; }
   let html = '<table class="cust-table"><thead><tr>'
-    + (CTR_PICK_MODE ? '<th style="width:44px;text-align:center">✓</th>' : '')
+    + (CTR_PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" onchange="toggleAllCtrPick(this.checked)"></th>' : '')
     + CTR_TABLE_COLS.map(function(c){
     const arrow = CTR_SORT.key===c.k ? (CTR_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCtrBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
@@ -2633,6 +2650,12 @@ function togglePick(id){
   updatePickCount();
   renderCust();
 }
+function toggleAllCustPick(check){
+  const list = getFilteredCustomers();
+  list.forEach(function(c){ if(check) PICKED_IDS[c.id] = true; else delete PICKED_IDS[c.id]; });
+  updatePickCount();
+  renderCust();
+}
 function updatePickCount(){
   document.getElementById('pickCount').textContent = Object.keys(PICKED_IDS).length + '명 선택됨';
 }
@@ -2728,7 +2751,7 @@ function renderCustTable(list){
   const el = document.getElementById('custTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 고객이 없습니다.</div>'; return; }
   let html = '<table class="cust-table"><thead><tr>'
-    + (PICK_MODE ? '<th style="width:44px;text-align:center">✓</th>' : '')
+    + (PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" onchange="toggleAllCustPick(this.checked)"></th>' : '')
     + CUST_TABLE_COLS.map(function(c){
     const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
