@@ -375,6 +375,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <h2 id="custResultTitle">조회 결과</h2>
           <button class="btn ghost sm" onclick="backToCustLanding()">◀ 다른 항목 보기</button>
         </div>
+        <div class="chips hide" id="prospectSubChips" style="margin-bottom:10px"></div>
         <div class="srch">
           <input id="q" type="search" placeholder="이름·연락처·메모 검색" oninput="renderCust()">
         </div>
@@ -419,8 +420,8 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
       </div>
 
-      <div class="card">
-        <div class="card-h"><h2>🧹 데이터 정리</h2></div>
+      <div class="card" id="dataCleanupCard">
+        <div class="card-h"><h2>🧹 데이터 정리 (보유고객 전용)</h2></div>
         <p class="mini">전부 되돌릴 수 없으니, "미리보기"로 몇 건인지 먼저 확인한 뒤 실행하세요. 계약이 많아서 시간이 좀(최대 1~2분) 걸릴 수 있습니다.</p>
         <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="cleanupMaskedNames()">마스킹된 이름(강*소 등) 찾아서 삭제</button>
 
@@ -1135,7 +1136,7 @@ const SONBO_FEE_URL = './sonbo-fee.json';
 
 let ME = null;          // {name, branch, role}
 let CUSTOMERS = [];     // 고객 배열
-let FILTER = 'all';
+let FILTER = 'owner';
 let IMPORT_QUEUE = [];
 let IMPORT_UNCHECKED = {};
 let IMPORT_DUP = [];
@@ -1193,14 +1194,12 @@ const TAPS = [
   {k:'상담', i:'🗣️'}, {k:'청약', i:'✍️'}, {k:'소개요청', i:'🤝'}
 ];
 const FILTERS = [
-  {k:'all',   n:'전체'},
-  {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'}, {k:'db', n:'📋 DB 관리'},
-  {k:'cat-장기', n:'장기'}, {k:'cat-자동차', n:'자동차'}, {k:'cat-화재', n:'화재'}, {k:'cat-일반', n:'일반'},
-  {k:'birth', n:'이번 달 생일'},
-  {k:'cold',  n:'30일 이상 미접촉'},
-  {k:'noconsent', n:'동의 미확보'},
-  {k:'A', n:'A 핵심'}, {k:'B', n:'B 관리'}, {k:'C', n:'C 잠재'}
+  {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'}
 ];
+const PROSPECT_DB_FILTERS = [
+  {k:'all', n:'전체'}, {k:'이관DB', n:'DB고객'}, {k:'휴면DB', n:'휴면고객'}, {k:'소개DB', n:'소개'}, {k:'기타DB', n:'기타'}
+];
+let PROSPECT_DB_FILTER = 'all';
 
 /* ── 공통 ───────────────────────── */
 function api(action, payload){
@@ -2571,9 +2570,27 @@ function drawChips(){
   document.getElementById('filterChips').innerHTML = FILTERS.map(function(f){
     return '<button class="chip' + (f.k===FILTER?' on':'') + '" onclick="setFilter(\'' + f.k + '\')">' + f.n + '</button>';
   }).join('');
+  const subBox = document.getElementById('prospectSubChips');
+  if(FILTER==='prospect'){
+    subBox.classList.remove('hide');
+    subBox.innerHTML = PROSPECT_DB_FILTERS.map(function(f){
+      return '<button class="chip' + (f.k===PROSPECT_DB_FILTER?' on':'') + '" onclick="setProspectDbFilter(\'' + f.k + '\')">' + f.n + '</button>';
+    }).join('');
+  } else {
+    subBox.classList.add('hide');
+    subBox.innerHTML = '';
+  }
+}
+function setProspectDbFilter(k){
+  PROSPECT_DB_FILTER = k;
+  const f = PROSPECT_DB_FILTERS.find(function(x){ return x.k===k; });
+  document.getElementById('custResultTitle').textContent = '가망고객 · '+(f?f.n:'전체') + ' (' + CUSTOMERS.filter(matchFilter).length + '명)';
+  drawChips();
+  renderCust();
 }
 function setFilter(k){
   FILTER = k;
+  if(k==='prospect') PROSPECT_DB_FILTER = 'all';
   const f = FILTERS.find(function(x){ return x.k===k; });
   document.getElementById('custResultTitle').textContent = (f?f.n:'전체') + ' (' + CUSTOMERS.filter(matchFilter).length + '명)';
   document.getElementById('custLanding').classList.add('hide');
@@ -2581,6 +2598,11 @@ function setFilter(k){
   document.getElementById('q').value = '';
   drawChips();
   renderCust();
+  syncDataCleanupVisibility();
+}
+function syncDataCleanupVisibility(){
+  const box = document.getElementById('dataCleanupCard');
+  if(box) box.classList.toggle('hide', FILTER!=='owner');
 }
 function backToCustLanding(){
   document.getElementById('custResult').classList.add('hide');
@@ -2588,24 +2610,12 @@ function backToCustLanding(){
   document.getElementById('custTotalCount').textContent = CUSTOMERS.length;
 }
 function matchFilter(c){
-  if(FILTER==='all') return true;
   if(FILTER==='owner') return (c.custType||'보유고객') === '보유고객';
-  if(FILTER==='prospect') return c.custType === '가망고객';
-  if(FILTER==='db') return c.source === 'DB';
-  if(FILTER.indexOf('cat-')===0){
-    const cat = FILTER.slice(4);
-    if(c.custType==='가망고객') return (c.interest||'').indexOf(cat) >= 0;
-    return CONTRACTS.some(function(ct){
-      const linked = ct.customerId ? ct.customerId === c.id : ct.custName === c.name;
-      return linked && ct.category===cat;
-    });
+  if(FILTER==='prospect'){
+    if(c.custType !== '가망고객') return false;
+    if(PROSPECT_DB_FILTER==='all') return true;
+    return c.dbType === PROSPECT_DB_FILTER;
   }
-  if(FILTER==='birth'){
-    if(!c.birth) return false;
-    return Number(c.birth.slice(5,7)) === (new Date(today()).getMonth()+1);
-  }
-  if(FILTER==='cold') return daysAgo(c.lastTouch) >= 30;
-  if(FILTER==='noconsent') return !c.consent;
   return c.grade === FILTER;
 }
 let PICK_MODE = false;
