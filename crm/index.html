@@ -643,10 +643,12 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 
       <div class="card">
         <div class="card-h"><h2>🧹 데이터 정리</h2></div>
-        <p class="mini">둘 다 되돌릴 수 없으니, "미리보기"로 몇 건인지 먼저 확인한 뒤 실행하세요.</p>
+        <p class="mini">전부 되돌릴 수 없으니, "미리보기"로 몇 건인지 먼저 확인한 뒤 실행하세요.</p>
         <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="cleanupMaskedNames()">마스킹된 이름(강*소 등) 찾아서 삭제</button>
         <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="previewMergeDup()">동명이인(빈 정보) 중복 정리 - 미리보기</button>
-        <button class="btn ghost sm hide" id="mergeDupRunBtn" style="width:100%;color:var(--red)" onclick="runMergeDup()">위 미리보기 내용대로 실제 정리 실행</button>
+        <button class="btn ghost sm hide" id="mergeDupRunBtn" style="width:100%;color:var(--red);margin-bottom:8px" onclick="runMergeDup()">위 미리보기 내용대로 실제 정리 실행</button>
+        <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="previewNoContract()">계약 없는 보유고객 정리 - 미리보기</button>
+        <button class="btn ghost sm hide" id="noContractRunBtn" style="width:100%;color:var(--red)" onclick="runNoContract()">위 미리보기 내용대로 실제 삭제 실행</button>
       </div>
     </section>
 
@@ -773,6 +775,13 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   <div class="sheet">
     <div class="sheet-h"><h2>올리기 전 확인</h2><button class="x" onclick="closeImp()">×</button></div>
     <div class="sheet-b">
+      <div id="impTypeBox" class="fld hide" style="margin-bottom:10px">
+        <label>어떤 유형으로 등록할까요?</label>
+        <div class="row">
+          <label class="btn ghost sm" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px"><input type="radio" name="impType" value="보유고객" onchange="renderImpList()"> 보유고객</label>
+          <label class="btn ghost sm" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px"><input type="radio" name="impType" value="가망고객" onchange="renderImpList()"> 가망고객</label>
+        </div>
+      </div>
       <div id="impSum"></div>
       <div id="impListBar" class="row" style="margin:10px 0;flex-wrap:wrap;gap:8px"></div>
       <div id="impList" style="max-height:44vh;overflow-y:auto;margin:12px 0"></div>
@@ -2449,6 +2458,7 @@ function ctrXlsxIn(input){
 function prepImportContract(rows){
   IMPORT_MODE = 'contract';
   IMPORT_QUEUE = [];
+  document.getElementById('impTypeBox').classList.add('hide');
   let add=0, skip=0, exact=0, nameOnly=0, ambiguous=0, mismatch=0, rangeSplit=0, noCompany=0, autoKeep=0, updated=0;
   // 증권번호가 같은 계약이 이미 있으면 새로 만들지 않고 그 계약을 업데이트합니다(중복 방지 + 이전에 고객명이 안 들어간 계약 복구).
   const byPolicyNo = {};
@@ -3376,6 +3386,9 @@ function prepImport(rows){
   IMPORT_QUEUE = [];
   IMPORT_UNCHECKED = {};
   IMPORT_DUP = [];
+  document.getElementById('impTypeBox').classList.remove('hide');
+  const defaultType = (FILTER==='prospect') ? '가망고객' : '보유고객';
+  document.querySelectorAll('input[name="impType"]').forEach(function(r){ r.checked = (r.value===defaultType); });
   let add=0, dup=0, skip=0, rrnUsed=0;
   rows.forEach(function(r){
     const o = {};
@@ -3699,6 +3712,10 @@ function runImport(){
       const item = IMPORT_QUEUE[i];
       const p = Object.assign({fc:ME.name, branch:ME.branch}, item);
       if(IMPORT_MODE === 'contract') p.customerName = item.custName || '';
+      else {
+        const sel = document.querySelector('input[name="impType"]:checked');
+        p.custType = sel ? sel.value : '보유고객';
+      }
       return callWithRetry(p, 3).then(function(r){
         if(r.ok) done++;
         else { fail++; FAILED.push({ name: item.custName || item.name || '(이름없음)', detail: item.product || item.dept || '', reason: r.error || '저장 실패(이유 없음)' }); }
@@ -4175,6 +4192,26 @@ function runMergeDup(){
     alert('완료됐습니다.\n병합된 그룹: '+r.mergedGroups+'건\n삭제된 고객: '+r.deletedCustomers+'명\n재연결된 계약: '+r.reassignedContracts+'건');
     document.getElementById('mergeDupRunBtn').classList.add('hide');
     loadCustomers(); loadContracts();
+  }).catch(function(){ toast('연결에 실패했습니다. 시간이 오래 걸리는 작업이라 실제로는 처리됐을 수 있으니 잠시 후 목록을 확인해주세요.', true); });
+}
+function previewNoContract(){
+  toast('전체 계약·고객을 대조하는 중… 시간이 좀 걸릴 수 있어요');
+  api('purgeNoContractOwners', {dryRun:true}).then(function(r){
+    if(!r.ok){ toast(r.error||'확인에 실패했습니다', true); return; }
+    alert('보유고객 '+r.totalOwners+'명 중, 계약이 하나도 연결 안 된 사람: '+r.willDelete+'명\n\n'
+      + (r.sample&&r.sample.length ? '예시: '+r.sample.join(', ')+(r.willDelete>r.sample.length?' 외':'') : '')
+      + '\n\n※ 계약 관계형 연결과, 계약에 적힌 고객명 텍스트 둘 다 확인해서 진짜 계약이 없는 사람만 골랐습니다.\n아래 "실제 삭제 실행" 버튼을 누르면 진행됩니다.');
+    document.getElementById('noContractRunBtn').classList.toggle('hide', r.willDelete===0);
+  }).catch(function(){ toast('연결에 실패했습니다. 처리 시간이 오래 걸리는 작업이니 잠시 후 다시 시도해주세요.', true); });
+}
+function runNoContract(){
+  if(!confirm('계약이 없는 보유고객을 실제로 삭제할까요? 되돌릴 수 없습니다.')) return;
+  toast('삭제 중… 잠시만 기다려주세요');
+  api('purgeNoContractOwners', {dryRun:false}).then(function(r){
+    if(!r.ok){ toast(r.error||'처리에 실패했습니다', true); return; }
+    alert('완료됐습니다.\n삭제된 고객: '+r.deleted+'명');
+    document.getElementById('noContractRunBtn').classList.add('hide');
+    loadCustomers();
   }).catch(function(){ toast('연결에 실패했습니다. 시간이 오래 걸리는 작업이라 실제로는 처리됐을 수 있으니 잠시 후 목록을 확인해주세요.', true); });
 }
 function loadDash(){
