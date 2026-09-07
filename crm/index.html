@@ -3033,7 +3033,11 @@ function openCust(id){
   document.getElementById('custSmsBtn').classList.toggle('hide', !(c && c.phone));
   const ctrBox = document.getElementById('custCtrBox');
   if(c){
-    const myCtr = CONTRACTS.filter(function(ct){ return ct.customerId ? ct.customerId === c.id : ct.custName === c.name; });
+    const myCtr = CONTRACTS.filter(function(ct){
+      if(ct.customerId) return ct.customerId === c.id;
+      if(c.custType === '가망고객') return false;
+      return ct.custName === c.name;
+    });
     if(myCtr.length){
       ctrBox.classList.remove('hide');
       document.getElementById('custCtrLabel').textContent =
