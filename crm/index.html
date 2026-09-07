@@ -736,7 +736,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
             <select id="fBizType"><option value="개인">개인</option><option value="사업자">사업자</option></select>
           </div>
           <div><label>DB구분</label>
-            <select id="fDbType"><option value="">-</option><option>소개DB</option><option>휴면DB</option><option>이관DB</option><option>기타DB</option></select>
+            <select id="fDbType"><option value="">-</option><option>소개DB</option><option>휴면DB</option><option>이관DB</option><option>온라인DB</option><option>오프라인DB</option><option>기타DB</option></select>
           </div>
         </div>
         <div class="fld"><label>관심보종</label>
@@ -1208,7 +1208,8 @@ const FILTERS = [
   {k:'owner', n:'보유고객'}, {k:'prospect', n:'가망고객'}
 ];
 const PROSPECT_DB_FILTERS = [
-  {k:'all', n:'전체'}, {k:'소개DB', n:'소개DB'}, {k:'휴면DB', n:'휴면DB'}, {k:'이관DB', n:'이관DB'}, {k:'기타DB', n:'기타DB'}
+  {k:'all', n:'전체'}, {k:'소개DB', n:'소개DB'}, {k:'휴면DB', n:'휴면DB'}, {k:'이관DB', n:'이관DB'},
+  {k:'온라인DB', n:'온라인DB'}, {k:'오프라인DB', n:'오프라인DB'}, {k:'기타DB', n:'기타DB'}
 ];
 let PROSPECT_DB_FILTER = 'all';
 
