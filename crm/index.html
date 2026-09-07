@@ -390,6 +390,10 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <div class="srch">
           <input id="q" type="search" placeholder="이름·연락처·메모 검색" oninput="renderCust()">
         </div>
+        <div class="row" style="margin:0 0 10px;gap:8px">
+          <select id="ageFilter" onchange="renderCust()" style="flex:1"><option value="">나이대 전체</option></select>
+          <select id="regionFilter" onchange="renderCust()" style="flex:1"><option value="">지역 전체</option></select>
+        </div>
         <div class="row" style="margin:0 0 10px">
           <button class="btn ghost sm" onclick="setCustView('card')" id="viewBtnCard">카드로 보기</button>
           <button class="btn ghost sm viewBtnOn" onclick="setCustView('table')" id="viewBtnTable">표로 보기(정렬 가능)</button>
@@ -740,11 +744,11 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           </div>
         </div>
         <div class="fld"><label>관심보종</label>
-          <div class="row">
-            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="자동차"> 자동차</label>
-            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="장기"> 장기</label>
-            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="화재"> 화재</label>
-            <label style="flex:1;display:flex;align-items:center;gap:6px"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
+          <div class="row" style="flex-wrap:nowrap;overflow-x:auto">
+            <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto"><input type="checkbox" class="fInterest" value="자동차"> 자동차</label>
+            <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto"><input type="checkbox" class="fInterest" value="장기"> 장기</label>
+            <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto"><input type="checkbox" class="fInterest" value="화재"> 화재</label>
+            <label style="display:flex;align-items:center;gap:5px;white-space:nowrap;flex:0 0 auto"><input type="checkbox" class="fInterest" value="일반"> 일반</label>
           </div>
         </div>
         <div class="dr-h" style="padding:12px 0 4px">진행상황</div>
@@ -2604,6 +2608,7 @@ function setProspectDbFilter(k){
   const f = PROSPECT_DB_FILTERS.find(function(x){ return x.k===k; });
   document.getElementById('custResultTitle').textContent = '가망고객 · '+(f?f.n:'전체') + ' (' + CUSTOMERS.filter(matchFilter).length + '명)';
   drawChips();
+  refreshCustSubFilters();
   renderCust();
 }
 function setFilter(k){
@@ -2614,7 +2619,10 @@ function setFilter(k){
   document.getElementById('custLanding').classList.add('hide');
   document.getElementById('custResult').classList.remove('hide');
   document.getElementById('q').value = '';
+  document.getElementById('ageFilter').value = '';
+  document.getElementById('regionFilter').value = '';
   drawChips();
+  refreshCustSubFilters();
   renderCust();
   syncDataCleanupVisibility();
 }
@@ -3363,10 +3371,47 @@ function toggleDbBatch(k){
   DB_OPEN_BATCH = (DB_OPEN_BATCH===k) ? '' : k;
   renderCust();
 }
+function ageGroupOf(birth){
+  if(!birth) return '';
+  const y = Number(String(birth).slice(0,4));
+  if(!y) return '';
+  const age = new Date(today()).getFullYear() - y + 1;
+  if(age < 20) return '10대 이하';
+  if(age >= 70) return '70대 이상';
+  return String(Math.floor(age/10)*10) + '대';
+}
+function regionOf(addr){
+  if(!addr) return '';
+  const first = String(addr).trim().split(/\s+/)[0];
+  return first || '';
+}
+function refreshCustSubFilters(){
+  const list = CUSTOMERS.filter(matchFilter);
+  const ages = {}, regions = {};
+  list.forEach(function(c){
+    const a = ageGroupOf(c.birth); if(a) ages[a] = true;
+    const r = regionOf(c.addr); if(r) regions[r] = true;
+  });
+  const ageOrder = ['10대 이하','20대','30대','40대','50대','60대','70대 이상'];
+  const ageSel = document.getElementById('ageFilter');
+  const curAge = ageSel.value;
+  ageSel.innerHTML = '<option value="">나이대 전체</option>' + ageOrder.filter(function(a){return ages[a];}).map(function(a){
+    return '<option'+(a===curAge?' selected':'')+'>'+a+'</option>';
+  }).join('');
+  const regionSel = document.getElementById('regionFilter');
+  const curRegion = regionSel.value;
+  regionSel.innerHTML = '<option value="">지역 전체</option>' + Object.keys(regions).sort().map(function(r){
+    return '<option'+(r===curRegion?' selected':'')+'>'+esc(r)+'</option>';
+  }).join('');
+}
 function getFilteredCustomers(){
   const q = document.getElementById('q').value.trim().toLowerCase();
+  const ageSel = document.getElementById('ageFilter').value;
+  const regionSel = document.getElementById('regionFilter').value;
   let list = CUSTOMERS.filter(function(c){
     if(!matchFilter(c)) return false;
+    if(ageSel && ageGroupOf(c.birth) !== ageSel) return false;
+    if(regionSel && regionOf(c.addr) !== regionSel) return false;
     if(!q) return true;
     return ((c.name||'')+(c.phone||'')+(c.memo||'')+(c.job||'')).toLowerCase().indexOf(q) >= 0;
   });
