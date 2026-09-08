@@ -435,18 +435,6 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <input id="xlsxIn" type="file" accept=".xlsx,.xls,.csv" class="hide" onchange="xlsxIn(this)">
       </div>
 
-      <div class="card" id="dataCleanupCard">
-        <div class="card-h"><h2>🧹 데이터 정리 (보유고객 전용)</h2></div>
-        <p class="mini">전부 되돌릴 수 없으니, "미리보기"로 몇 건인지 먼저 확인한 뒤 실행하세요. 계약이 많아서 시간이 좀(최대 1~2분) 걸릴 수 있습니다.</p>
-        <button class="btn ghost sm" style="width:100%;margin-bottom:8px" onclick="cleanupMaskedNames()">마스킹된 이름(강*소 등) 찾아서 삭제</button>
-
-        <button class="btn ghost sm" style="width:100%" onclick="previewMergeDup()">동명이인(빈 정보) 중복 정리 - 미리보기</button>
-        <div id="mergeDupBox" class="hide" style="margin-top:8px"></div>
-
-        <button class="btn ghost sm" style="width:100%;margin-top:10px" onclick="previewNoContract()">계약 없는 보유고객 정리 - 미리보기</button>
-        <div id="noContractBox" class="hide" style="margin-top:8px"></div>
-      </div>
-
     </section>
 
     <!-- 활동 -->
