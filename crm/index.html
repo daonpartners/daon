@@ -2149,19 +2149,29 @@ function bulkDeleteCtr(){
   const FAILED = [];
   const nameOf = {};
   CONTRACTS.forEach(function(c){ nameOf[c.id] = (c.custName||'미상') + ' · ' + (c.product||''); });
+  function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  function callWithRetry(p, triesLeft, attempt){
+    attempt = attempt || 1;
+    return api('contractDelete', p).then(function(r){
+      if(!r.ok && /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||'')) && triesLeft>0){
+        return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      }
+      return r;
+    }).catch(function(){
+      if(triesLeft>0) return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      return {ok:false, error:'연결 실패(네트워크)'};
+    });
+  }
   function runOne(){
     if(next >= ids.length) return Promise.resolve();
     const id = ids[next++];
-    return api('contractDelete', {pageId:id}).then(function(r){
+    return callWithRetry({pageId:id}, 3).then(function(r){
       if(r.ok) done++;
       else { fail++; FAILED.push({ name: nameOf[id]||'(미상)', detail:'계약 삭제', reason: r.error||'삭제 실패' }); }
       return runOne();
-    }).catch(function(){
-      fail++; FAILED.push({ name: nameOf[id]||'(미상)', detail:'계약 삭제', reason:'연결 실패(네트워크)' });
-      return runOne();
     });
   }
-  Promise.all([runOne(), runOne(), runOne()]).then(function(){
+  Promise.all([runOne(), runOne()]).then(function(){
     CTR_PICKED_IDS = {};
     updateCtrPickCount();
     showImpResult(done, fail, 0, FAILED);
@@ -3731,19 +3741,29 @@ function bulkDeleteCust(){
   const FAILED = [];
   const nameOf = {};
   CUSTOMERS.forEach(function(c){ nameOf[c.id] = c.name; });
+  function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  function callWithRetry(p, triesLeft, attempt){
+    attempt = attempt || 1;
+    return api('customerDeleteCascade', p).then(function(r){
+      if(!r.ok && /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||'')) && triesLeft>0){
+        return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      }
+      return r;
+    }).catch(function(){
+      if(triesLeft>0) return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      return {ok:false, error:'연결 실패(네트워크)'};
+    });
+  }
   function runOne(){
     if(next >= ids.length) return Promise.resolve();
     const id = ids[next++];
-    return api('customerDeleteCascade', {pageId:id}).then(function(r){
+    return callWithRetry({pageId:id}, 3).then(function(r){
       if(r.ok){ done++; ctrDeleted += (r.deletedContracts||0); }
       else { fail++; FAILED.push({name: nameOf[id]||'(이름없음)', detail:'고객 삭제', reason: r.error||'삭제 실패'}); }
       return runOne();
-    }).catch(function(){
-      fail++; FAILED.push({name: nameOf[id]||'(이름없음)', detail:'고객 삭제', reason:'연결 실패(네트워크)'});
-      return runOne();
     });
   }
-  Promise.all([runOne(), runOne(), runOne()]).then(function(){
+  Promise.all([runOne(), runOne()]).then(function(){
     PICKED_IDS = {};
     updatePickCount();
     showImpResult(done, fail, 0, FAILED);
@@ -4251,15 +4271,28 @@ function cleanupMaskedNames(){
   if(!confirm(targets.length+'건 발견: '+targets.map(function(c){return c.name;}).join(', ')+'\n삭제할까요? 연결된 계약이 있으면 함께 삭제됩니다.')) return;
   let done=0, fail=0, next=0;
   const FAILED=[];
+  function sleep(ms){ return new Promise(function(res){ setTimeout(res, ms); }); }
+  function callWithRetry(p, triesLeft, attempt){
+    attempt = attempt || 1;
+    return api('customerDeleteCascade', p).then(function(r){
+      if(!r.ok && /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||'')) && triesLeft>0){
+        return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      }
+      return r;
+    }).catch(function(){
+      if(triesLeft>0) return sleep(900*attempt).then(function(){ return callWithRetry(p, triesLeft-1, attempt+1); });
+      return {ok:false, error:'연결 실패(네트워크)'};
+    });
+  }
   function runOne(){
     if(next>=targets.length) return Promise.resolve();
     const c = targets[next++];
-    return api('customerDeleteCascade', {pageId:c.id}).then(function(r){
+    return callWithRetry({pageId:c.id}, 3).then(function(r){
       if(r.ok) done++; else { fail++; FAILED.push({name:c.name, detail:'마스킹 이름 삭제', reason:r.error||'실패'}); }
       return runOne();
-    }).catch(function(){ fail++; FAILED.push({name:c.name, detail:'마스킹 이름 삭제', reason:'연결 실패(네트워크)'}); return runOne(); });
+    });
   }
-  Promise.all([runOne(),runOne(),runOne()]).then(function(){
+  Promise.all([runOne(),runOne()]).then(function(){
     showImpResult(done, fail, 0, FAILED);
     loadCustomers(); loadContracts();
   });
