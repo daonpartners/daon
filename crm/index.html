@@ -3100,7 +3100,7 @@ function deleteCust(){
 }
 
 /* ── 문자 보내기 ────────────────── */
-const SMS_READY = false; // 알리고 API키가 연결되면 true로 바뀝니다
+const SMS_READY = true; // 알리고 연동 완료(2026-09-09), 실제 SMS/MMS 발송됩니다
 const SMS_TEMPLATES = {
   birthday: function(c){ return c.name+'님, 생일 진심으로 축하드립니다! 오늘 하루 행복 가득하시길 바라요 🎂 - 다온지사 '+ME.name+' 드림'; },
   expire: function(c){ return c.name+'님, 안녕하세요. 가입하신 보험 만기가 얼마 남지 않아 안내드립니다. 편하신 시간에 연락 부탁드려요 :) - 다온지사 '+ME.name+' 드림'; },
@@ -3133,7 +3133,7 @@ function prepSmsModal(){
   else fillSmsTplSelect();
   checkSmsAd();
 }
-function closeSms(){ document.getElementById('smsModal').classList.add('hide'); IS_BULK_SMS = false; }
+function closeSms(){ document.getElementById('smsModal').classList.add('hide'); IS_BULK_SMS = false; SMS_IMG_DATA = ''; }
 function fillSmsTemplate(key){
   if(!SMS_TARGET) return;
   const fn = SMS_TEMPLATES[key];
@@ -3209,7 +3209,7 @@ function sendSms(){
   const btn = document.getElementById('smsSendBtn');
   btn.disabled = true; btn.textContent = SMS_READY ? '발송 중…' : '점검 중…';
   api('smsLog', {
-    branch: ME.branch, fc: ME.name, cat: cat, content: msg,
+    branch: ME.branch, fc: ME.name, cat: cat, content: msg, imageBase64: SMS_IMG_DATA,
     targets: targets.map(function(c){
       return {name:c.name, phone:c.phone, agree:c.adAgree === true, optout:c.optout === true};
     })
