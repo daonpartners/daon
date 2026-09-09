@@ -423,6 +423,12 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
           <button class="btn ghost sm" onclick="printCustTable()">고객표 인쇄(가로 한 장)</button>
         </div>
         <p class="note" style="margin-top:10px">위 다운로드는 지금 화면에 걸린 검색·필터 결과만 담깁니다.</p>
+        <div class="dr-h" style="padding:14px 0 4px">양식·업로드 대상 고객 유형</div>
+        <div class="fld2" style="display:flex;gap:8px;margin-bottom:8px">
+          <button type="button" class="chip" id="uploadTypeBtnOwner" onclick="setUploadCustType('보유고객')" style="flex:1;text-align:center">보유고객으로</button>
+          <button type="button" class="chip" id="uploadTypeBtnProspect" onclick="setUploadCustType('가망고객')" style="flex:1;text-align:center">가망고객으로</button>
+        </div>
+        <p class="note" id="uploadTypeHint" style="margin:0 0 10px">위에서 고른 유형으로 등록양식이 만들어지고, 업로드한 사람들도 이 유형으로 등록됩니다.</p>
         <div class="row" style="margin-top:14px">
           <button class="btn ghost sm" onclick="templateXlsxOut()">📋 등록양식 다운로드</button>
           <button class="btn sm" onclick="document.getElementById('aiXlsxIn').click()">🧩 계약자·피보험자 자동 인식 올리기</button>
@@ -1140,6 +1146,7 @@ const SONBO_FEE_URL = './sonbo-fee.json';
 let ME = null;          // {name, branch, role}
 let CUSTOMERS = [];     // 고객 배열
 let FILTER = 'owner';
+let UPLOAD_CUST_TYPE = '보유고객';
 let IMPORT_QUEUE = [];
 let IMPORT_UNCHECKED = {};
 let IMPORT_DUP = [];
@@ -1184,6 +1191,7 @@ function startDemo(){
   document.getElementById('actToday').textContent = ds;
   document.getElementById('adminDay').textContent = ds;
   drawChips();
+  setUploadCustType('보유고객');
   document.getElementById('custTotalCount').textContent = CUSTOMERS.length;
   renderReminders(); fillActSelect(); syncActResultOptions();
   loadGoalSummary();
@@ -3449,12 +3457,19 @@ function addrXlsxOut(){
   XLSX.writeFile(wb, '다온_주소_' + today() + '.xlsx');
   toast(rows.length + '명 주소 다운로드했어요');
 }
+function setUploadCustType(t){
+  UPLOAD_CUST_TYPE = t;
+  document.getElementById('uploadTypeBtnOwner').classList.toggle('on', t==='보유고객');
+  document.getElementById('uploadTypeBtnProspect').classList.toggle('on', t==='가망고객');
+  document.getElementById('uploadTypeHint').innerHTML = '지금 <b>' + t + '</b>(으)로 선택돼 있습니다. 양식 다운로드·엑셀 업로드 전부 이 유형으로 처리됩니다.';
+}
 function templateXlsxOut(){
-  const cols = FILTER==='prospect' ? XCOL_PROSPECT : XCOL;
+  const isProspect = UPLOAD_CUST_TYPE==='가망고객';
+  const cols = isProspect ? XCOL_PROSPECT : XCOL;
   const ws = XLSX.utils.json_to_sheet([{}], {header:cols.map(function(p){return p[0];})});
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, FILTER==='prospect' ? '가망고객등록양식' : '고객등록양식');
-  XLSX.writeFile(wb, FILTER==='prospect' ? '다온_가망고객등록양식.xlsx' : '다온_고객등록양식.xlsx');
+  XLSX.utils.book_append_sheet(wb, ws, isProspect ? '가망고객등록양식' : '고객등록양식');
+  XLSX.writeFile(wb, isProspect ? '다온_가망고객등록양식.xlsx' : '다온_고객등록양식.xlsx');
   toast('양식을 내려받았어요');
 }
 function xlsxIn(input){
@@ -3477,7 +3492,7 @@ function prepImport(rows){
   IMPORT_UNCHECKED = {};
   IMPORT_DUP = [];
   document.getElementById('impTypeBox').classList.remove('hide');
-  const defaultType = (FILTER==='prospect') ? '가망고객' : '보유고객';
+  const defaultType = UPLOAD_CUST_TYPE;
   document.querySelectorAll('input[name="impType"]').forEach(function(r){ r.checked = (r.value===defaultType); });
   let add=0, dup=0, skip=0, rrnUsed=0;
   rows.forEach(function(r){
