@@ -282,6 +282,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
 @media (max-width:380px){ .taps{gap:7px} .tap{padding:13px 4px} }
 
 .bell{position:relative;font-size:18px;padding:4px 6px;margin-right:2px}
+.home-lnk{font-size:17px;text-decoration:none;padding:4px 6px;margin-right:2px;display:inline-block}
 .bell span{position:absolute;top:0;right:0;background:var(--red);color:#fff;font-size:9px;
   font-weight:800;border-radius:8px;min-width:15px;height:15px;line-height:15px;text-align:center;padding:0 2px}
 /* ── 3단계 확장 ───────────────────── */
@@ -335,6 +336,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
   <div class="top"><div class="top-in">
     <div class="brand" onclick="closeAllModals();closeMenu();go('home')" style="cursor:pointer">다온 <em>영업관리</em></div>
     <div class="who">
+      <a href="https://daon.io.kr/" class="home-lnk" title="다온 홈으로">🏠</a>
       <button class="bell" onclick="go('notif')" title="알림">🔔<span id="bellBadge" class="hide"></span></button>
       <b id="myName">-</b><button class="out" onclick="logout()">나가기</button>
     </div>
