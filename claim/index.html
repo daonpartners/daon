@@ -35,6 +35,9 @@
   /* 헤더 */
   header{background:var(--ink);color:#fff;padding:22px 18px 26px}
   .brand{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;letter-spacing:.2px}
+  .home-btn{display:inline-block;color:#D8D0C4;font-size:12.5px;font-weight:700;text-decoration:none;
+    border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:5px 12px;margin-bottom:14px}
+  .home-btn:active{background:rgba(255,255,255,.1)}
   .brand b{color:var(--org)}
   h1{font-size:26px;font-weight:800;margin:14px 0 6px;line-height:1.35}
   header p{margin:0;color:#D8D0C4;font-size:14.5px}
@@ -123,6 +126,7 @@
 <div id="formScreen">
   <header>
     <div class="wrap">
+      <a href="https://daon.io.kr/" class="home-btn">← 다온 홈으로</a>
       <div class="brand">다온<b>파트너스</b></div>
       <h1>서류만 보내주세요.<br>보험금 청구는 저희가 할게요.</h1>
       <p>진단서·영수증 사진만 올려주시면 담당자가 확인 후 해당 보험사에 직접 청구해드립니다.</p>
@@ -243,6 +247,7 @@
   <h2>접수됐습니다</h2>
   <p>담당자가 내용을 확인한 뒤 순서대로 연락드리겠습니다. 서류가 더 필요하면 문자나 전화로 다시 안내해드릴게요.</p>
   <button class="rn" onclick="location.reload()">처음으로</button>
+  <a href="https://daon.io.kr/" style="margin-top:12px;color:var(--ink3);font-size:13px;text-decoration:underline">다온 홈으로 가기</a>
 </div>
 
 <div class="footer-bar" id="footerBar">
