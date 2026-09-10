@@ -217,7 +217,7 @@
       <div class="upload-box" id="uploadBox">
         <div class="upload-ic">📷</div>
         <b>눌러서 사진 선택하기</b>
-        <span>여러 장을 한 번에 고르실 수 있어요</span>
+        <span>여러 장을 한 번에 고르실 수 있어요 (최대 20장)</span>
       </div>
       <input type="file" id="fPhotos" accept="image/*" multiple capture="environment" class="hide">
       <div class="thumbs" id="thumbs"></div>
@@ -268,7 +268,7 @@ function renderInsurers(){
   const grid = document.getElementById('insurerGrid');
   if(curCat === '확인후'){
     selInsurer = '설계사확인후청구';
-    grid.innerHTML = '<div style="grid-column:1/-1;background:var(--org-lt);border-radius:12px;padding:16px;color:var(--org-dk);font-size:14px;font-weight:700;text-align:center">괜찮아요, 서류 사진을 보고 담당 설계사가 확인해서 알맞은 보험사에 청구해드릴게요.</div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;background:var(--org-lt);border-radius:12px;padding:16px;color:var(--org-dk);font-size:14px;font-weight:700;text-align:left;line-height:1.55">괜찮아요.<br>서류 사진을 보고 담당 설계사가 확인해서<br>알맞은 보험사에 청구해드릴게요.</div>';
     return;
   }
   if(selInsurer === '설계사확인후청구') selInsurer = '';
@@ -327,16 +327,40 @@ document.getElementById('fRrnBack').addEventListener('input', function(){ numOnl
 document.getElementById('uploadBox').addEventListener('click', function(){
   document.getElementById('fPhotos').click();
 });
-document.getElementById('fPhotos').addEventListener('change', function(e){
-  const files = Array.from(e.target.files || []);
-  files.forEach(function(f){
-    if(photoList.length >= 20){ return; }
-    const reader = new FileReader();
-    reader.onload = function(ev){
-      photoList.push(ev.target.result);
-      renderThumbs();
+function compressImage(file){
+  return new Promise(function(resolve){
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = function(){
+      const MAX = 1800;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        if(w >= h){ h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', 0.85));
     };
-    reader.readAsDataURL(f);
+    img.onerror = function(){
+      URL.revokeObjectURL(url);
+      const reader = new FileReader();
+      reader.onload = function(ev){ resolve(ev.target.result); };
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
+document.getElementById('fPhotos').addEventListener('change', function(e){
+  const files = Array.from(e.target.files || []).slice(0, 20 - photoList.length);
+  if(!files.length){ e.target.value=''; return; }
+  document.getElementById('uploadBox').querySelector('b').textContent = '사진 정리하는 중…';
+  Promise.all(files.map(compressImage)).then(function(results){
+    results.forEach(function(dataUrl){ photoList.push(dataUrl); });
+    renderThumbs();
+    document.getElementById('uploadBox').querySelector('b').textContent = '눌러서 사진 선택하기';
   });
   e.target.value = '';
 });
