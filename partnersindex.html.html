@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>다온파트너스 총무회계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#15212e;        /* 본문 잉크 */
+  --ink-soft:#5b6b7c;
+  --paper:#f7f5ef;      /* 장부 종이 */
+  --paper-2:#ffffff;
+  --rule:#d9d3c4;       /* 장부 괘선 */
+  --rule-strong:#b4ab95;
+  --sale:#1d5fa8;       /* 매출 */
+  --buy:#a8631d;        /* 매입 */
+  --danger:#b3261e;
+  --ok:#1e7a48;
+  --shadow:0 1px 0 rgba(21,33,46,.06);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'IBM Plex Sans KR',-apple-system,BlinkMacSystemFont,'Malgun Gothic',sans-serif;
+  font-size:15px; line-height:1.6;
+  -webkit-text-size-adjust:100%;
+}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+a{color:var(--sale)}
+
+/* ───── 로그인 ───── */
+#gate{position:fixed;inset:0;background:var(--paper);z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px}
+#gate .box{width:100%;max-width:340px}
+#gate h1{font-family:'Gowun Batang',serif;font-size:26px;margin:0 0 4px;letter-spacing:-.5px}
+#gate p{margin:0 0 28px;color:var(--ink-soft);font-size:14px}
+#gate input{width:100%;padding:12px 14px;border:1px solid var(--rule-strong);background:var(--paper-2);border-radius:2px;margin-bottom:10px}
+#gate button{width:100%;padding:12px;background:var(--ink);color:var(--paper);border:0;border-radius:2px;font-weight:600;cursor:pointer}
+#gateMsg{color:var(--danger);font-size:13px;min-height:20px;margin-top:8px}
+
+/* ───── 헤더 ───── */
+header{background:var(--ink);color:var(--paper);padding:14px 20px;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+header .brand{font-family:'Gowun Batang',serif;font-size:20px;letter-spacing:-.3px}
+header .biz{font-size:12px;color:#a9b7c4}
+header .out{margin-left:auto;font-size:12px;color:#a9b7c4;background:none;border:1px solid #3c4b5b;padding:5px 10px;border-radius:2px;cursor:pointer}
+
+nav{background:var(--paper-2);border-bottom:1px solid var(--rule-strong);display:flex;overflow-x:auto;position:sticky;top:0;z-index:50}
+nav button{flex:0 0 auto;padding:13px 18px;background:none;border:0;border-bottom:3px solid transparent;cursor:pointer;color:var(--ink-soft);font-weight:500;white-space:nowrap}
+nav button.on{color:var(--ink);border-bottom-color:var(--ink);font-weight:700}
+
+main{max-width:1180px;margin:0 auto;padding:22px 16px 80px}
+section{display:none}
+section.on{display:block}
+h2{font-family:'Gowun Batang',serif;font-size:22px;margin:0 0 4px;font-weight:700}
+.sub{color:var(--ink-soft);font-size:13px;margin:0 0 18px}
+
+/* ───── 공통 UI ───── */
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.bar input,.bar select{padding:8px 10px;border:1px solid var(--rule-strong);background:var(--paper-2);border-radius:2px}
+.btn{padding:8px 14px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);border-radius:2px;cursor:pointer;font-weight:600}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.sm{padding:5px 9px;font-size:13px;font-weight:500}
+.btn.del{border-color:var(--danger);color:var(--danger);background:transparent}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+table{width:100%;border-collapse:collapse;background:var(--paper-2);font-size:14px}
+thead th{background:#eeeade;text-align:left;padding:9px 10px;border-bottom:2px solid var(--rule-strong);font-weight:600;white-space:nowrap}
+tbody td{padding:9px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+tbody tr:hover{background:#fbfaf5}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.wrap{overflow-x:auto;border:1px solid var(--rule-strong)}
+.tag{display:inline-block;padding:1px 7px;border-radius:2px;font-size:12px;border:1px solid currentColor}
+.t-sale{color:var(--sale)} .t-buy{color:var(--buy)}
+.t-red{color:var(--danger)} .t-green{color:var(--ok)} .t-gray{color:var(--ink-soft)}
+.empty{padding:34px 12px;text-align:center;color:var(--ink-soft);font-size:14px;background:var(--paper-2)}
+
+/* 지표 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--rule-strong);border:1px solid var(--rule-strong);margin-bottom:22px}
+.stat{background:var(--paper-2);padding:14px 16px}
+.stat .k{font-size:12px;color:var(--ink-soft);margin-bottom:5px}
+.stat .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.stat .v small{font-size:13px;font-weight:500;color:var(--ink-soft)}
+
+/* 모달 */
+.modal{position:fixed;inset:0;background:rgba(21,33,46,.5);z-index:500;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal.on{display:flex}
+.modal .card{background:var(--paper-2);width:100%;max-width:680px;border-radius:2px;padding:22px;margin:auto}
+.modal h3{font-family:'Gowun Batang',serif;font-size:19px;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f label{font-size:12px;color:var(--ink-soft)}
+.f input,.f select,.f textarea{padding:8px 10px;border:1px solid var(--rule-strong);border-radius:2px;background:var(--paper-2);width:100%}
+.f.full{grid-column:1/-1}
+.acts{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap}
+.hint{font-size:12px;color:var(--ink-soft);margin-top:6px}
+.notice{border-left:3px solid var(--rule-strong);padding:10px 14px;background:var(--paper-2);font-size:13px;color:var(--ink-soft);margin-bottom:16px}
+
+#toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:11px 20px;border-radius:2px;opacity:0;pointer-events:none;transition:.18s;z-index:900;font-size:14px}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* 거래명세표 */
+#sheetOut{background:#fff;border:1px solid var(--rule-strong);padding:26px;margin-top:16px}
+.sh-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:12px;margin-bottom:14px}
+.sh-title{font-family:'Gowun Batang',serif;font-size:26px;letter-spacing:8px;margin:0}
+.sh-meta{font-size:13px;line-height:1.9}
+.sh-meta b{display:inline-block;min-width:62px;color:var(--ink-soft);font-weight:500}
+.sh-total{margin-top:12px;display:flex;justify-content:flex-end;gap:28px;font-size:15px;font-variant-numeric:tabular-nums}
+.sh-total b{font-size:18px}
+
+@media print{
+  body{background:#fff}
+  header,nav,.bar,.notice,#toast,.noprint{display:none !important}
+  main{max-width:none;padding:0}
+  #sheetOut{border:0;padding:0}
+  table{font-size:12px}
+}
+@media (max-width:640px){
+  main{padding:16px 10px 70px}
+  .stat .v{font-size:19px}
+  h2{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ 로그인 ════════ -->
+<div id="gate">
+  <div class="box">
+    <h1>다온파트너스 총무회계</h1>
+    <p>거래처 · 매입매출 · 세금계산서 관리</p>
+    <input type="password" id="gatePw" placeholder="접속 코드" autocomplete="current-password">
+    <button onclick="tryLogin()">들어가기</button>
+    <div id="gateMsg"></div>
+  </div>
+</div>
+
+<header>
+  <span class="brand">다온파트너스 총무회계</span>
+  <span class="biz">사업자 884-14-02999 · 아산시 탕정면 용머리길 22, 301호</span>
+  <button class="out" onclick="logout()">나가기</button>
+</header>
+
+<nav>
+  <button class="on" data-tab="dash">대시보드</button>
+  <button data-tab="sale">매출</button>
+  <button data-tab="buy">매입</button>
+  <button data-tab="inv">세금계산서</button>
+  <button data-tab="sheet">거래명세표</button>
+  <button data-tab="vat">부가세 집계</button>
+  <button data-tab="vendor">거래처</button>
+</nav>
+
+<main>
+
+<!-- ════════ 대시보드 ════════ -->
+<section id="s-dash" class="on">
+  <h2>대시보드</h2>
+  <p class="sub">기간을 고르면 매출·매입·부가세 예상액을 계산합니다.</p>
+  <div class="bar">
+    <select id="dashYear"></select>
+    <select id="dashMonth">
+      <option value="0">연간 전체</option>
+    </select>
+    <button class="btn" onclick="loadAll(true)">새로고침</button>
+    <span id="dashState" class="hint"></span>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="k">매출 공급가액</div><div class="v" id="dSale">0</div></div>
+    <div class="stat"><div class="k">매입 공급가액</div><div class="v" id="dBuy">0</div></div>
+    <div class="stat"><div class="k">차액 (매출−매입)</div><div class="v" id="dProfit">0</div></div>
+    <div class="stat"><div class="k">부가세 예상 납부액</div><div class="v" id="dVat">0</div></div>
+    <div class="stat"><div class="k">미수금</div><div class="v" id="dUnpaid">0</div></div>
+    <div class="stat"><div class="k">계산서 발행대상</div><div class="v" id="dTodo">0<small> 건</small></div></div>
+  </div>
+
+  <h2 style="font-size:18px">계정과목별 집계</h2>
+  <div class="wrap" style="margin-top:10px">
+    <table>
+      <thead><tr><th>계정과목</th><th>구분</th><th class="num">건수</th><th class="num">공급가액</th><th class="num">부가세</th></tr></thead>
+      <tbody id="dashAcc"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════ 매출 / 매입 ════════ -->
+<section id="s-sale">
+  <h2>매출</h2>
+  <p class="sub">판매·용역·제휴수익 등 들어온 돈을 기록합니다.</p>
+  <div class="bar">
+    <input type="search" id="qSale" placeholder="거래처·품목 검색" oninput="renderTx('매출')">
+    <select id="fSalePay" onchange="renderTx('매출')">
+      <option value="">결제상태 전체</option><option>미수</option><option>부분입금</option><option>입금완료</option>
+    </select>
+    <select id="fSaleInv" onchange="renderTx('매출')">
+      <option value="">계산서 전체</option><option>발행대상</option><option>발행완료</option><option>해당없음</option>
+    </select>
+    <button class="btn" onclick="openTx('매출')">＋ 매출 등록</button>
+    <button class="btn ghost" onclick="exportTx('매출')">엑셀 내려받기</button>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>거래일</th><th>거래처</th><th>품목</th><th class="num">공급가액</th><th class="num">부가세</th><th class="num">합계</th><th>계산서</th><th>결제</th><th></th></tr></thead>
+    <tbody id="tbSale"></tbody>
+  </table></div>
+  <div id="emSale"></div>
+</section>
+
+<section id="s-buy">
+  <h2>매입</h2>
+  <p class="sub">사입·외주·경비 등 나간 돈을 기록합니다. 계정과목을 정확히 넣어야 부가세·종합소득세 때 씁니다.</p>
+  <div class="bar">
+    <input type="search" id="qBuy" placeholder="거래처·품목 검색" oninput="renderTx('매입')">
+    <select id="fBuyAcc" onchange="renderTx('매입')"><option value="">계정과목 전체</option></select>
+    <select id="fBuyPay" onchange="renderTx('매입')">
+      <option value="">결제상태 전체</option><option>미수</option><option>부분입금</option><option>입금완료</option>
+    </select>
+    <button class="btn" onclick="openTx('매입')">＋ 매입 등록</button>
+    <button class="btn ghost" onclick="exportTx('매입')">엑셀 내려받기</button>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>거래일</th><th>거래처</th><th>계정과목</th><th>품목</th><th class="num">공급가액</th><th class="num">부가세</th><th>증빙</th><th>결제</th><th></th></tr></thead>
+    <tbody id="tbBuy"></tbody>
+  </table></div>
+  <div id="emBuy"></div>
+</section>
+
+<!-- ════════ 세금계산서 ════════ -->
+<section id="s-inv">
+  <h2>세금계산서 대장</h2>
+  <p class="sub">발행·수취한 세금계산서를 기록합니다.</p>
+  <div class="notice">
+    실제 전자세금계산서 발행은 국세청 홈택스 또는 발행대행 서비스(팝빌 등)에서 이루어집니다. 이 페이지는 발행할 건을 모아 정리하고, 발행 후 승인번호를 기록해 매입매출장과 맞추는 용도입니다.
+  </div>
+  <div class="bar">
+    <select id="fInvGubun" onchange="renderInv()"><option value="">매출·매입 전체</option><option>매출</option><option>매입</option></select>
+    <select id="fInvState" onchange="renderInv()"><option value="">상태 전체</option><option>작성중</option><option>발행대기</option><option>발행완료</option><option>취소</option></select>
+    <button class="btn" onclick="openInv()">＋ 직접 등록</button>
+    <button class="btn ghost" onclick="buildFromTx()">발행대상 거래 불러오기</button>
+    <button class="btn ghost" onclick="exportInv()">엑셀 내려받기</button>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>작성일</th><th>구분</th><th>거래처</th><th>사업자번호</th><th class="num">공급가액</th><th class="num">세액</th><th>유형</th><th>상태</th><th>승인번호</th><th></th></tr></thead>
+    <tbody id="tbInv"></tbody>
+  </table></div>
+  <div id="emInv"></div>
+</section>
+
+<!-- ════════ 거래명세표 ════════ -->
+<section id="s-sheet">
+  <h2>거래명세표</h2>
+  <p class="sub">거래처와 기간을 고르면 해당 매출 건을 모아 명세표를 만듭니다.</p>
+  <div class="bar">
+    <select id="shVendor"></select>
+    <input type="date" id="shFrom">
+    <input type="date" id="shTo">
+    <button class="btn" onclick="makeSheet()">명세표 만들기</button>
+    <button class="btn ghost" onclick="window.print()">인쇄 / PDF 저장</button>
+  </div>
+  <div id="sheetOut"><div class="empty">거래처와 기간을 고르고 ‘명세표 만들기’를 누르세요.</div></div>
+</section>
+
+<!-- ════════ 부가세 ════════ -->
+<section id="s-vat">
+  <h2>부가세 집계</h2>
+  <p class="sub">분기별 매출세액·매입세액을 모아 신고 전 확인용으로 씁니다.</p>
+  <div class="notice">
+    여기 숫자는 입력된 거래를 그대로 더한 참고용 집계입니다. 실제 신고세액은 홈택스 조회분과 대조하고, 세무대리인 확인을 거쳐 확정하세요. 불공제 매입(접대비, 비영업용 승용차 관련 등)은 ‘과세구분 = 불공제’로 넣으면 매입세액에서 자동 제외됩니다.
+  </div>
+  <div class="bar">
+    <select id="vatYear"></select>
+    <select id="vatQ">
+      <option value="1">1기 예정 (1~3월)</option>
+      <option value="2">1기 확정 (4~6월)</option>
+      <option value="3">2기 예정 (7~9월)</option>
+      <option value="4">2기 확정 (10~12월)</option>
+    </select>
+    <button class="btn" onclick="renderVat()">집계</button>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="k">매출세액</div><div class="v" id="vOut">0</div></div>
+    <div class="stat"><div class="k">매입세액 (공제분)</div><div class="v" id="vIn">0</div></div>
+    <div class="stat"><div class="k">불공제 매입세액</div><div class="v" id="vNo">0</div></div>
+    <div class="stat"><div class="k">차감계 (참고)</div><div class="v" id="vNet">0</div></div>
+  </div>
+  <h2 style="font-size:18px">거래처별 합계</h2>
+  <div class="wrap" style="margin-top:10px"><table>
+    <thead><tr><th>구분</th><th>거래처</th><th>사업자번호</th><th class="num">건수</th><th class="num">공급가액</th><th class="num">세액</th></tr></thead>
+    <tbody id="vatBody"></tbody>
+  </table></div>
+  <div class="bar" style="margin-top:12px"><button class="btn ghost" onclick="exportVat()">엑셀 내려받기</button></div>
+</section>
+
+<!-- ════════ 거래처 ════════ -->
+<section id="s-vendor">
+  <h2>거래처</h2>
+  <p class="sub">한 번 등록하면 매출·매입 입력할 때 사업자번호가 자동으로 채워집니다.</p>
+  <div class="bar">
+    <input type="search" id="qVendor" placeholder="거래처명·사업자번호 검색" oninput="renderVendor()">
+    <select id="fVendorType" onchange="renderVendor()"><option value="">구분 전체</option><option>매출처</option><option>매입처</option><option>양쪽</option></select>
+    <button class="btn" onclick="openVendor()">＋ 거래처 등록</button>
+  </div>
+  <div class="wrap"><table>
+    <thead><tr><th>거래처명</th><th>사업자번호</th><th>대표자</th><th>구분</th><th>제휴</th><th>담당자</th><th>연락처</th><th></th></tr></thead>
+    <tbody id="tbVendor"></tbody>
+  </table></div>
+  <div id="emVendor"></div>
+</section>
+
+</main>
+
+<!-- ════════ 모달: 거래 ════════ -->
+<div class="modal" id="mTx"><div class="card">
+  <h3 id="mTxTitle">매출 등록</h3>
+  <input type="hidden" id="txId"><input type="hidden" id="txGubun">
+  <div class="grid">
+    <div class="f"><label>거래일</label><input type="date" id="txDate"></div>
+    <div class="f"><label>거래처</label>
+      <input list="vendorList" id="txVendor" placeholder="거래처명" oninput="fillVendor()">
+      <datalist id="vendorList"></datalist>
+    </div>
+    <div class="f"><label>사업자번호</label><input id="txBiz" placeholder="000-00-00000"></div>
+    <div class="f full"><label>품목</label><input id="txItem" placeholder="예: 9월 제휴 플랫폼 이용료"></div>
+    <div class="f"><label>규격</label><input id="txSpec"></div>
+    <div class="f"><label>수량</label><input type="number" id="txQty" step="any" oninput="calcTx()"></div>
+    <div class="f"><label>단가</label><input type="number" id="txPrice" step="any" oninput="calcTx()"></div>
+    <div class="f"><label>과세구분</label><select id="txTax" onchange="calcTx()"><option>과세</option><option>면세</option><option>영세율</option><option>불공제</option></select></div>
+    <div class="f"><label>공급가액</label><input type="number" id="txSupply" step="any" oninput="calcVat()"></div>
+    <div class="f"><label>부가세</label><input type="number" id="txVat" step="any" oninput="calcSum()"></div>
+    <div class="f"><label>합계금액</label><input type="number" id="txSum" step="any" readonly style="background:#f2efe6"></div>
+    <div class="f"><label>계정과목</label><select id="txAcc"></select></div>
+    <div class="f"><label>증빙유형</label><select id="txProof"><option>전자세금계산서</option><option>전자계산서</option><option>신용카드</option><option>현금영수증</option><option>간이영수증</option><option>증빙없음</option></select></div>
+    <div class="f"><label>계산서상태</label><select id="txInvSt"><option>발행대상</option><option>발행완료</option><option>해당없음</option></select></div>
+    <div class="f"><label>결제상태</label><select id="txPay"><option>미수</option><option>부분입금</option><option>입금완료</option></select></div>
+    <div class="f"><label>결제일</label><input type="date" id="txPayDate"></div>
+    <div class="f"><label>결제수단</label><select id="txPayWay"><option value=""></option><option>계좌이체</option><option>카드</option><option>현금</option><option>상계</option><option>기타</option></select></div>
+    <div class="f full"><label>메모</label><input id="txMemo"></div>
+  </div>
+  <div class="hint">공급가액만 넣으면 부가세와 합계는 자동 계산됩니다. 합계금액만 아는 경우 ‘합계로 역산’을 누르세요.</div>
+  <div class="acts">
+    <button class="btn ghost sm" onclick="reverseCalc()">합계로 역산</button>
+    <button class="btn ghost" onclick="closeModal('mTx')">취소</button>
+    <button class="btn" id="txSave" onclick="saveTx()">저장</button>
+  </div>
+</div></div>
+
+<!-- ════════ 모달: 거래처 ════════ -->
+<div class="modal" id="mVendor"><div class="card">
+  <h3>거래처</h3>
+  <input type="hidden" id="vdId">
+  <div class="grid">
+    <div class="f"><label>거래처명</label><input id="vdName"></div>
+    <div class="f"><label>사업자번호</label><input id="vdBiz" placeholder="000-00-00000"></div>
+    <div class="f"><label>대표자</label><input id="vdCeo"></div>
+    <div class="f"><label>구분</label><select id="vdType"><option>매출처</option><option>매입처</option><option>양쪽</option></select></div>
+    <div class="f"><label>제휴구분</label><select id="vdPart"><option>제휴업체</option><option>일반거래처</option><option>협력사</option><option>기타</option></select></div>
+    <div class="f"><label>상태</label><select id="vdState"><option>활성</option><option>중지</option></select></div>
+    <div class="f"><label>업태</label><input id="vdUp"></div>
+    <div class="f"><label>종목</label><input id="vdJong"></div>
+    <div class="f full"><label>사업장주소</label><input id="vdAddr"></div>
+    <div class="f"><label>담당자</label><input id="vdMgr"></div>
+    <div class="f"><label>연락처</label><input id="vdTel"></div>
+    <div class="f"><label>이메일</label><input id="vdMail" type="email"></div>
+    <div class="f"><label>계산서 이메일</label><input id="vdInvMail" type="email"></div>
+    <div class="f full"><label>메모</label><input id="vdMemo"></div>
+  </div>
+  <div class="acts">
+    <button class="btn ghost" onclick="closeModal('mVendor')">취소</button>
+    <button class="btn" id="vdSave" onclick="saveVendor()">저장</button>
+  </div>
+</div></div>
+
+<!-- ════════ 모달: 세금계산서 ════════ -->
+<div class="modal" id="mInv"><div class="card">
+  <h3>세금계산서</h3>
+  <input type="hidden" id="ivId">
+  <div class="grid">
+    <div class="f"><label>작성일자</label><input type="date" id="ivDate"></div>
+    <div class="f"><label>발행일자</label><input type="date" id="ivIssued"></div>
+    <div class="f"><label>구분</label><select id="ivGubun"><option>매출</option><option>매입</option></select></div>
+    <div class="f"><label>거래처</label><input list="vendorList" id="ivVendor" oninput="fillVendorInv()"></div>
+    <div class="f"><label>사업자번호</label><input id="ivBiz"></div>
+    <div class="f"><label>대표자</label><input id="ivCeo"></div>
+    <div class="f"><label>문서종류</label><select id="ivKind"><option>세금계산서</option><option>계산서</option><option>수정세금계산서</option></select></div>
+    <div class="f"><label>유형</label><select id="ivType"><option>과세</option><option>영세</option><option>면세</option></select></div>
+    <div class="f"><label>청구/영수</label><select id="ivBill"><option>청구</option><option>영수</option></select></div>
+    <div class="f"><label>공급가액</label><input type="number" id="ivSupply" step="any" oninput="calcInv()"></div>
+    <div class="f"><label>세액</label><input type="number" id="ivTax" step="any" oninput="calcInv2()"></div>
+    <div class="f"><label>합계금액</label><input type="number" id="ivSum" step="any" readonly style="background:#f2efe6"></div>
+    <div class="f full"><label>품목요약</label><input id="ivItem" placeholder="예: 제휴 플랫폼 이용료 외 2건"></div>
+    <div class="f"><label>발행경로</label><select id="ivWay"><option>홈택스</option><option>팝빌</option><option>수기</option><option>기타</option></select></div>
+    <div class="f"><label>상태</label><select id="ivState"><option>작성중</option><option>발행대기</option><option>발행완료</option><option>취소</option></select></div>
+    <div class="f"><label>승인번호</label><input id="ivApprove" placeholder="발행 후 입력"></div>
+    <div class="f"><label>연결 명세표번호</label><input id="ivSheetNo"></div>
+    <div class="f full"><label>비고</label><input id="ivMemo"></div>
+  </div>
+  <div class="acts">
+    <button class="btn ghost" onclick="closeModal('mInv')">취소</button>
+    <button class="btn" id="ivSave" onclick="saveInv()">저장</button>
+  </div>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   설정
+   ══════════════════════════════════════════ */
+const API = 'https://daonpartners.app.n8n.cloud/webhook/daon-ptn-acct';
+const CODES = { 'daon1':'김화진', 'ptn26':'총무담당' };
+
+const ACC_SALE = ['상품매출','용역매출','수수료수입','제휴수익','기타매출'];
+const ACC_BUY  = ['상품매입','외주용역비','광고선전비','지급수수료','임차료','통신비','소모품비','복리후생비','접대비','차량유지비','교육훈련비','세금과공과','기타비용'];
+
+let VENDORS = [], TXS = [], INVS = [];
+let ME = '';
+
+/* ══════════════════════════════════════════
+   유틸
+   ══════════════════════════════════════════ */
+const $ = id => document.getElementById(id);
+const won = n => (Number(n)||0).toLocaleString('ko-KR');
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today = () => new Date().toISOString().slice(0,10);
+
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('on'); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('on'),2600); }
+function closeModal(id){ $(id).classList.remove('on'); }
+
+async function api(payload){
+  try{
+    const r = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const d = await r.json();
+    return d;
+  }catch(e){ return { ok:false, error:'서버에 연결하지 못했습니다. 잠시 후 다시 시도하세요.' }; }
+}
+
+async function listAll(table){
+  let rows = [], cursor = null, guard = 0;
+  do{
+    const d = await api({ action:'list', table, cursor });
+    if(!d.ok) throw new Error(d.error || (table + ' 조회 실패'));
+    rows = rows.concat(d.rows || []);
+    cursor = d.has_more ? d.cursor : null;
+  } while(cursor && ++guard < 40);
+  return rows;
+}
+
+/* ══════════════════════════════════════════
+   로그인
+   ══════════════════════════════════════════ */
+function tryLogin(){
+  const pw = $('gatePw').value.trim();
+  if(CODES[pw]){
+    ME = CODES[pw];
+    sessionStorage.setItem('ptnAuth', pw);
+    $('gate').style.display='none';
+    boot();
+  } else {
+    $('gateMsg').textContent = '접속 코드가 맞지 않습니다.';
+  }
+}
+$('gatePw').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
+function logout(){ sessionStorage.removeItem('ptnAuth'); location.reload(); }
+
+/* ══════════════════════════════════════════
+   탭
+   ══════════════════════════════════════════ */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.remove('on'));
+  document.querySelectorAll('main section').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  $('s-' + b.dataset.tab).classList.add('on');
+  window.scrollTo(0,0);
+});
+
+/* ══════════════════════════════════════════
+   초기 적재
+   ══════════════════════════════════════════ */
+function initSelects(){
+  const y = new Date().getFullYear();
+  for(const sel of ['dashYear','vatYear']){
+    const el = $(sel);
+    el.innerHTML = '';
+    for(let i = y; i >= y-4; i--) el.add(new Option(i + '년', i));
+  }
+  const m = $('dashMonth');
+  for(let i=1;i<=12;i++) m.add(new Option(i + '월', i));
+  m.value = new Date().getMonth()+1;
+  $('dashYear').onchange = renderDash;
+  $('dashMonth').onchange = renderDash;
+
+  const fb = $('fBuyAcc');
+  ACC_BUY.forEach(a => fb.add(new Option(a,a)));
+}
+
+async function boot(){
+  initSelects();
+  await loadAll(false);
+}
+
+async function loadAll(notify){
+  $('dashState').textContent = '불러오는 중…';
+  try{
+    const [v,t,i] = await Promise.all([listAll('vendor'), listAll('tx'), listAll('inv')]);
+    VENDORS = v; TXS = t; INVS = i;
+    $('dashState').textContent = '거래 ' + TXS.length + '건 · 거래처 ' + VENDORS.length + '곳';
+    refreshVendorList();
+    renderDash(); renderTx('매출'); renderTx('매입'); renderInv(); renderVendor(); renderVat();
+    if(notify) toast('최신 자료를 불러왔습니다.');
+  }catch(e){
+    $('dashState').textContent = e.message;
+    toast(e.message);
+  }
+}
+
+function refreshVendorList(){
+  const dl = $('vendorList');
+  dl.innerHTML = VENDORS.filter(v=>v.상태!=='중지').map(v => '<option value="'+esc(v.거래처명)+'">').join('');
+  const sv = $('shVendor');
+  sv.innerHTML = '<option value="">거래처를 고르세요</option>' +
+    VENDORS.map(v => '<option value="'+esc(v.거래처명)+'">'+esc(v.거래처명)+'</option>').join('');
+}
+
+/* ══════════════════════════════════════════
+   대시보드
+   ══════════════════════════════════════════ */
+function inPeriod(d, y, m){
+  if(!d) return false;
+  const dt = String(d).slice(0,10);
+  if(Number(dt.slice(0,4)) !== Number(y)) return false;
+  if(Number(m) === 0) return true;
+  return Number(dt.slice(5,7)) === Number(m);
+}
+
+function renderDash(){
+  const y = $('dashYear').value, m = $('dashMonth').value;
+  const rows = TXS.filter(t => inPeriod(t.거래일자, y, m));
+  const sale = rows.filter(t=>t.구분==='매출'), buy = rows.filter(t=>t.구분==='매입');
+  const sum = (a,k) => a.reduce((s,x)=>s+(Number(x[k])||0),0);
+
+  const s = sum(sale,'공급가액'), b = sum(buy,'공급가액');
+  const sv = sum(sale,'부가세');
+  const bv = buy.filter(t=>t.과세구분!=='불공제').reduce((s2,x)=>s2+(Number(x.부가세)||0),0);
+
+  $('dSale').textContent   = won(s);
+  $('dBuy').textContent    = won(b);
+  $('dProfit').textContent = won(s-b);
+  $('dVat').textContent    = won(sv-bv);
+  $('dUnpaid').textContent = won(TXS.filter(t=>t.구분==='매출'&&t.결제상태!=='입금완료').reduce((a,x)=>a+(Number(x.합계금액)||0),0));
+  $('dTodo').innerHTML     = TXS.filter(t=>t.계산서상태==='발행대상').length + '<small> 건</small>';
+
+  const map = {};
+  rows.forEach(t => {
+    const k = (t.계정과목 || '미분류') + '|' + t.구분;
+    if(!map[k]) map[k] = { acc: t.계정과목||'미분류', g: t.구분, n:0, sup:0, vat:0 };
+    map[k].n++; map[k].sup += Number(t.공급가액)||0; map[k].vat += Number(t.부가세)||0;
+  });
+  const list = Object.values(map).sort((a,b2)=>b2.sup-a.sup);
+  $('dashAcc').innerHTML = list.length ? list.map(r =>
+    '<tr><td>'+esc(r.acc)+'</td><td><span class="tag '+(r.g==='매출'?'t-sale':'t-buy')+'">'+esc(r.g)+'</span></td>'+
+    '<td class="num">'+r.n+'</td><td class="num">'+won(r.sup)+'</td><td class="num">'+won(r.vat)+'</td></tr>').join('')
+    : '<tr><td colspan="5" class="empty">이 기간에 기록된 거래가 없습니다.</td></tr>';
+}
+
+/* ══════════════════════════════════════════
+   거래 (매출/매입)
+   ══════════════════════════════════════════ */
+function renderTx(g){
+  const isS = g === '매출';
+  const q = ($(isS?'qSale':'qBuy').value || '').trim().toLowerCase();
+  const pay = $(isS?'fSalePay':'fBuyPay').value;
+  const extra = isS ? $('fSaleInv').value : $('fBuyAcc').value;
+
+  let rows = TXS.filter(t => t.구분 === g);
+  if(q) rows = rows.filter(t => ((t.거래처명||'')+(t.품목||'')).toLowerCase().includes(q));
+  if(pay) rows = rows.filter(t => t.결제상태 === pay);
+  if(extra) rows = rows.filter(t => isS ? t.계산서상태 === extra : t.계정과목 === extra);
+  rows.sort((a,b)=>String(b.거래일자||'').localeCompare(String(a.거래일자||'')));
+
+  const tb = $(isS?'tbSale':'tbBuy'), em = $(isS?'emSale':'emBuy');
+  if(!rows.length){
+    tb.innerHTML = '';
+    em.innerHTML = '<div class="empty">아직 기록된 '+g+'이 없습니다. ‘＋ '+g+' 등록’으로 첫 건을 넣어보세요.</div>';
+    return;
+  }
+  em.innerHTML = '';
+  tb.innerHTML = rows.map(t => {
+    const payTag = t.결제상태==='입금완료' ? 't-green' : t.결제상태==='미수' ? 't-red' : 't-gray';
+    if(isS){
+      const invTag = t.계산서상태==='발행완료' ? 't-green' : t.계산서상태==='발행대상' ? 't-red' : 't-gray';
+      return '<tr><td>'+esc((t.거래일자||'').slice(0,10))+'</td><td>'+esc(t.거래처명)+'</td><td>'+esc(t.품목)+'</td>'+
+        '<td class="num">'+won(t.공급가액)+'</td><td class="num">'+won(t.부가세)+'</td><td class="num"><b>'+won(t.합계금액)+'</b></td>'+
+        '<td><span class="tag '+invTag+'">'+esc(t.계산서상태||'-')+'</span></td>'+
+        '<td><span class="tag '+payTag+'">'+esc(t.결제상태||'-')+'</span></td>'+
+        '<td><button class="btn ghost sm" onclick="openTx(\'매출\',\''+t.id+'\')">수정</button> '+
+        '<button class="btn del sm" onclick="delTx(\''+t.id+'\')">삭제</button></td></tr>';
+    }
+    return '<tr><td>'+esc((t.거래일자||'').slice(0,10))+'</td><td>'+esc(t.거래처명)+'</td><td>'+esc(t.계정과목)+'</td><td>'+esc(t.품목)+'</td>'+
+      '<td class="num">'+won(t.공급가액)+'</td><td class="num">'+won(t.부가세)+'</td>'+
+      '<td>'+esc(t.증빙유형||'-')+'</td>'+
+      '<td><span class="tag '+payTag+'">'+esc(t.결제상태||'-')+'</span></td>'+
+      '<td><button class="btn ghost sm" onclick="openTx(\'매입\',\''+t.id+'\')">수정</button> '+
+      '<button class="btn del sm" onclick="delTx(\''+t.id+'\')">삭제</button></td></tr>';
+  }).join('');
+}
+
+function openTx(g, id){
+  const acc = $('txAcc');
+  acc.innerHTML = '<option value=""></option>' + (g==='매출'?ACC_SALE:ACC_BUY).map(a=>'<option>'+a+'</option>').join('');
+  $('mTxTitle').textContent = (id ? g+' 수정' : g+' 등록');
+  $('txGubun').value = g;
+  const t = id ? TXS.find(x=>x.id===id) : null;
+  $('txId').value    = id || '';
+  $('txDate').value  = t ? (t.거래일자||'').slice(0,10) : today();
+  $('txVendor').value= t ? (t.거래처명||'') : '';
+  $('txBiz').value   = t ? (t.사업자번호||'') : '';
+  $('txItem').value  = t ? (t.품목||'') : '';
+  $('txSpec').value  = t ? (t.규격||'') : '';
+  $('txQty').value   = t && t.수량 != null ? t.수량 : '';
+  $('txPrice').value = t && t.단가 != null ? t.단가 : '';
+  $('txTax').value   = t ? (t.과세구분||'과세') : '과세';
+  $('txSupply').value= t && t.공급가액 != null ? t.공급가액 : '';
+  $('txVat').value   = t && t.부가세 != null ? t.부가세 : '';
+  $('txSum').value   = t && t.합계금액 != null ? t.합계금액 : '';
+  $('txAcc').value   = t ? (t.계정과목||'') : (g==='매출'?'용역매출':'');
+  $('txProof').value = t ? (t.증빙유형||'전자세금계산서') : '전자세금계산서';
+  $('txInvSt').value = t ? (t.계산서상태||'발행대상') : (g==='매출'?'발행대상':'해당없음');
+  $('txPay').value   = t ? (t.결제상태||'미수') : '미수';
+  $('txPayDate').value = t ? (t.결제일||'').slice(0,10) : '';
+  $('txPayWay').value  = t ? (t.결제수단||'') : '';
+  $('txMemo').value    = t ? (t.메모||'') : '';
+  $('mTx').classList.add('on');
+}
+
+function fillVendor(){
+  const v = VENDORS.find(x => x.거래처명 === $('txVendor').value);
+  if(v && !$('txBiz').value) $('txBiz').value = v.사업자번호 || '';
+}
+function fillVendorInv(){
+  const v = VENDORS.find(x => x.거래처명 === $('ivVendor').value);
+  if(v){ if(!$('ivBiz').value) $('ivBiz').value = v.사업자번호||''; if(!$('ivCeo').value) $('ivCeo').value = v.대표자||''; }
+}
+
+function calcTx(){
+  const q = Number($('txQty').value), p = Number($('txPrice').value);
+  if(q && p) $('txSupply').value = Math.round(q*p);
+  calcVat();
+}
+function calcVat(){
+  const s = Number($('txSupply').value)||0;
+  const tax = $('txTax').value;
+  $('txVat').value = (tax==='면세'||tax==='영세율') ? 0 : Math.round(s*0.1);
+  calcSum();
+}
+function calcSum(){ $('txSum').value = (Number($('txSupply').value)||0) + (Number($('txVat').value)||0); }
+function reverseCalc(){
+  const total = Number(prompt('합계금액(부가세 포함)을 넣으세요.','')||0);
+  if(!total) return;
+  const tax = $('txTax').value;
+  if(tax==='면세'||tax==='영세율'){ $('txSupply').value = total; $('txVat').value = 0; }
+  else { const sup = Math.round(total/1.1); $('txSupply').value = sup; $('txVat').value = total - sup; }
+  calcSum();
+}
+
+async function saveTx(){
+  const g = $('txGubun').value;
+  if(!$('txVendor').value.trim()) return toast('거래처를 넣어주세요.');
+  if(!$('txSupply').value) return toast('공급가액을 넣어주세요.');
+  const props = {
+    거래명: ($('txDate').value||today()).slice(5) + ' ' + $('txVendor').value + ' ' + ($('txItem').value||''),
+    거래일자: $('txDate').value || today(),
+    구분: g,
+    거래처명: $('txVendor').value.trim(),
+    사업자번호: $('txBiz').value.trim(),
+    품목: $('txItem').value.trim(),
+    규격: $('txSpec').value.trim(),
+    수량: $('txQty').value, 단가: $('txPrice').value,
+    공급가액: $('txSupply').value, 부가세: $('txVat').value, 합계금액: $('txSum').value,
+    과세구분: $('txTax').value, 증빙유형: $('txProof').value, 계정과목: $('txAcc').value,
+    계산서상태: $('txInvSt').value, 결제상태: $('txPay').value,
+    결제일: $('txPayDate').value, 결제수단: $('txPayWay').value, 메모: $('txMemo').value.trim()
+  };
+  const id = $('txId').value;
+  $('txSave').disabled = true; $('txSave').textContent = '저장 중…';
+  const d = await api(id ? {action:'update', table:'tx', id, props} : {action:'create', table:'tx', props});
+  $('txSave').disabled = false; $('txSave').textContent = '저장';
+  if(!d.ok) return toast(d.error || '저장하지 못했습니다.');
+  closeModal('mTx'); toast(g + '을 저장했습니다.');
+  await loadAll(false);
+}
+
+async function delTx(id){
+  if(!confirm('이 거래를 삭제할까요? 삭제하면 부가세 집계에서도 빠집니다.')) return;
+  const d = await api({action:'delete', id});
+  if(!d.ok) return toast(d.error || '삭제하지 못했습니다.');
+  toast('삭제했습니다.'); await loadAll(false);
+}
+
+function exportTx(g){
+  const rows = TXS.filter(t=>t.구분===g);
+  const head = ['거래일자','구분','거래처명','사업자번호','품목','규격','수량','단가','공급가액','부가세','합계금액','과세구분','증빙유형','계정과목','계산서상태','결제상태','결제일','결제수단','메모'];
+  csv(head, rows, g + '_' + today());
+}
+
+/* ══════════════════════════════════════════
+   거래처
+   ══════════════════════════════════════════ */
+function renderVendor(){
+  const q = ($('qVendor').value||'').trim().toLowerCase();
+  const ty = $('fVendorType').value;
+  let rows = VENDORS.slice();
+  if(q) rows = rows.filter(v => ((v.거래처명||'')+(v.사업자번호||'')).toLowerCase().includes(q));
+  if(ty) rows = rows.filter(v => v.구분 === ty);
+  rows.sort((a,b)=>String(a.거래처명||'').localeCompare(String(b.거래처명||''),'ko'));
+
+  if(!rows.length){
+    $('tbVendor').innerHTML = '';
+    $('emVendor').innerHTML = '<div class="empty">등록된 거래처가 없습니다. ‘＋ 거래처 등록’을 눌러 시작하세요.</div>';
+    return;
+  }
+  $('emVendor').innerHTML = '';
+  $('tbVendor').innerHTML = rows.map(v =>
+    '<tr'+(v.상태==='중지'?' style="opacity:.5"':'')+'><td><b>'+esc(v.거래처명)+'</b></td><td>'+esc(v.사업자번호)+'</td><td>'+esc(v.대표자)+'</td>'+
+    '<td>'+esc(v.구분)+'</td><td>'+esc(v.제휴구분)+'</td><td>'+esc(v.담당자)+'</td><td>'+esc(v.연락처)+'</td>'+
+    '<td><button class="btn ghost sm" onclick="openVendor(\''+v.id+'\')">수정</button> '+
+    '<button class="btn del sm" onclick="delVendor(\''+v.id+'\')">삭제</button></td></tr>').join('');
+}
+
+function openVendor(id){
+  const v = id ? VENDORS.find(x=>x.id===id) : null;
+  $('vdId').value=id||'';
+  ['vdName','vdBiz','vdCeo','vdUp','vdJong','vdAddr','vdMgr','vdTel','vdMail','vdInvMail','vdMemo'].forEach(k=>$(k).value='');
+  if(v){
+    $('vdName').value=v.거래처명||''; $('vdBiz').value=v.사업자번호||''; $('vdCeo').value=v.대표자||'';
+    $('vdType').value=v.구분||'매출처'; $('vdPart').value=v.제휴구분||'일반거래처'; $('vdState').value=v.상태||'활성';
+    $('vdUp').value=v.업태||''; $('vdJong').value=v.종목||''; $('vdAddr').value=v.사업장주소||'';
+    $('vdMgr').value=v.담당자||''; $('vdTel').value=v.연락처||''; $('vdMail').value=v.이메일||'';
+    $('vdInvMail').value=v.계산서이메일||''; $('vdMemo').value=v.메모||'';
+  } else { $('vdType').value='매출처'; $('vdPart').value='일반거래처'; $('vdState').value='활성'; }
+  $('mVendor').classList.add('on');
+}
+
+async function saveVendor(){
+  if(!$('vdName').value.trim()) return toast('거래처명을 넣어주세요.');
+  const props = {
+    거래처명:$('vdName').value.trim(), 사업자번호:$('vdBiz').value.trim(), 대표자:$('vdCeo').value.trim(),
+    구분:$('vdType').value, 제휴구분:$('vdPart').value, 상태:$('vdState').value,
+    업태:$('vdUp').value.trim(), 종목:$('vdJong').value.trim(), 사업장주소:$('vdAddr').value.trim(),
+    담당자:$('vdMgr').value.trim(), 연락처:$('vdTel').value.trim(),
+    이메일:$('vdMail').value.trim(), 계산서이메일:$('vdInvMail').value.trim(), 메모:$('vdMemo').value.trim()
+  };
+  const id = $('vdId').value;
+  $('vdSave').disabled=true; $('vdSave').textContent='저장 중…';
+  const d = await api(id ? {action:'update',table:'vendor',id,props} : {action:'create',table:'vendor',props});
+  $('vdSave').disabled=false; $('vdSave').textContent='저장';
+  if(!d.ok) return toast(d.error||'저장하지 못했습니다.');
+  closeModal('mVendor'); toast('거래처를 저장했습니다.'); await loadAll(false);
+}
+
+async function delVendor(id){
+  if(!confirm('이 거래처를 삭제할까요? 이미 기록된 거래는 그대로 남습니다.')) return;
+  const d = await api({action:'delete', id});
+  if(!d.ok) return toast(d.error||'삭제하지 못했습니다.');
+  toast('삭제했습니다.'); await loadAll(false);
+}
+
+/* ══════════════════════════════════════════
+   세금계산서
+   ══════════════════════════════════════════ */
+function renderInv(){
+  const g = $('fInvGubun').value, st = $('fInvState').value;
+  let rows = INVS.slice();
+  if(g) rows = rows.filter(i=>i.구분===g);
+  if(st) rows = rows.filter(i=>i.상태===st);
+  rows.sort((a,b)=>String(b.작성일자||'').localeCompare(String(a.작성일자||'')));
+
+  if(!rows.length){
+    $('tbInv').innerHTML='';
+    $('emInv').innerHTML='<div class="empty">대장이 비어 있습니다. ‘발행대상 거래 불러오기’를 누르면 계산서를 끊어야 할 매출 건이 자동으로 채워집니다.</div>';
+    return;
+  }
+  $('emInv').innerHTML='';
+  $('tbInv').innerHTML = rows.map(i=>{
+    const tag = i.상태==='발행완료'?'t-green':i.상태==='취소'?'t-red':'t-gray';
+    return '<tr><td>'+esc((i.작성일자||'').slice(0,10))+'</td>'+
+      '<td><span class="tag '+(i.구분==='매출'?'t-sale':'t-buy')+'">'+esc(i.구분)+'</span></td>'+
+      '<td>'+esc(i.거래처명)+'</td><td>'+esc(i.사업자번호)+'</td>'+
+      '<td class="num">'+won(i.공급가액)+'</td><td class="num">'+won(i.세액)+'</td>'+
+      '<td>'+esc(i.유형)+'</td><td><span class="tag '+tag+'">'+esc(i.상태)+'</span></td>'+
+      '<td>'+esc(i.승인번호||'-')+'</td>'+
+      '<td><button class="btn ghost sm" onclick="openInv(\''+i.id+'\')">수정</button> '+
+      '<button class="btn del sm" onclick="delInv(\''+i.id+'\')">삭제</button></td></tr>';
+  }).join('');
+}
+
+function openInv(id){
+  const i = id ? INVS.find(x=>x.id===id) : null;
+  $('ivId').value=id||'';
+  $('ivDate').value = i?(i.작성일자||'').slice(0,10):today();
+  $('ivIssued').value = i?(i.발행일자||'').slice(0,10):'';
+  $('ivGubun').value = i?(i.구분||'매출'):'매출';
+  $('ivVendor').value=i?(i.거래처명||''):''; $('ivBiz').value=i?(i.사업자번호||''):''; $('ivCeo').value=i?(i.대표자||''):'';
+  $('ivKind').value=i?(i.문서종류||'세금계산서'):'세금계산서';
+  $('ivType').value=i?(i.유형||'과세'):'과세';
+  $('ivBill').value=i?(i.청구영수||'청구'):'청구';
+  $('ivSupply').value=i&&i.공급가액!=null?i.공급가액:''; $('ivTax').value=i&&i.세액!=null?i.세액:''; $('ivSum').value=i&&i.합계금액!=null?i.합계금액:'';
+  $('ivItem').value=i?(i.품목요약||''):'';
+  $('ivWay').value=i?(i.발행경로||'홈택스'):'홈택스';
+  $('ivState').value=i?(i.상태||'작성중'):'작성중';
+  $('ivApprove').value=i?(i.승인번호||''):''; $('ivSheetNo').value=i?(i.연결명세표번호||''):''; $('ivMemo').value=i?(i.비고||''):'';
+  $('mInv').classList.add('on');
+}
+function calcInv(){
+  const s=Number($('ivSupply').value)||0;
+  $('ivTax').value = $('ivType').value==='과세' ? Math.round(s*0.1) : 0;
+  calcInv2();
+}
+function calcInv2(){ $('ivSum').value = (Number($('ivSupply').value)||0)+(Number($('ivTax').value)||0); }
+
+async function saveInv(){
+  if(!$('ivVendor').value.trim()) return toast('거래처를 넣어주세요.');
+  const props = {
+    문서번호: ($('ivDate').value||today()).replace(/-/g,'') + '-' + $('ivVendor').value.trim(),
+    작성일자:$('ivDate').value||today(), 발행일자:$('ivIssued').value, 구분:$('ivGubun').value,
+    거래처명:$('ivVendor').value.trim(), 사업자번호:$('ivBiz').value.trim(), 대표자:$('ivCeo').value.trim(),
+    문서종류:$('ivKind').value, 유형:$('ivType').value, 청구영수:$('ivBill').value,
+    공급가액:$('ivSupply').value, 세액:$('ivTax').value, 합계금액:$('ivSum').value,
+    품목요약:$('ivItem').value.trim(), 발행경로:$('ivWay').value, 상태:$('ivState').value,
+    승인번호:$('ivApprove').value.trim(), 연결명세표번호:$('ivSheetNo').value.trim(), 비고:$('ivMemo').value.trim()
+  };
+  const id=$('ivId').value;
+  $('ivSave').disabled=true; $('ivSave').textContent='저장 중…';
+  const d = await api(id?{action:'update',table:'inv',id,props}:{action:'create',table:'inv',props});
+  $('ivSave').disabled=false; $('ivSave').textContent='저장';
+  if(!d.ok) return toast(d.error||'저장하지 못했습니다.');
+  closeModal('mInv'); toast('세금계산서 기록을 저장했습니다.'); await loadAll(false);
+}
+
+async function delInv(id){
+  if(!confirm('이 기록을 삭제할까요?')) return;
+  const d = await api({action:'delete', id});
+  if(!d.ok) return toast(d.error||'삭제하지 못했습니다.');
+  toast('삭제했습니다.'); await loadAll(false);
+}
+
+async function buildFromTx(){
+  const todo = TXS.filter(t => t.계산서상태 === '발행대상');
+  if(!todo.length) return toast('발행대상으로 표시된 거래가 없습니다.');
+
+  const map = {};
+  todo.forEach(t=>{
+    const ym = (t.거래일자||today()).slice(0,7);
+    const k = t.구분 + '|' + (t.거래처명||'') + '|' + ym;
+    if(!map[k]) map[k] = { 구분:t.구분, 거래처명:t.거래처명, 사업자번호:t.사업자번호, ym, sup:0, vat:0, items:[] };
+    map[k].sup += Number(t.공급가액)||0;
+    map[k].vat += Number(t.부가세)||0;
+    if(t.품목) map[k].items.push(t.품목);
+  });
+  const list = Object.values(map);
+  if(!confirm('발행대상 ' + todo.length + '건을 거래처·월 단위로 묶어 ' + list.length + '장의 계산서 초안을 만듭니다. 진행할까요?')) return;
+
+  let done = 0;
+  for(const g of list){
+    const item = g.items.length > 1 ? g.items[0] + ' 외 ' + (g.items.length-1) + '건' : (g.items[0] || '');
+    const props = {
+      문서번호: g.ym.replace('-','') + '-' + g.거래처명,
+      작성일자: g.ym + '-' + String(new Date(Number(g.ym.slice(0,4)), Number(g.ym.slice(5,7)), 0).getDate()).padStart(2,'0'),
+      구분: g.구분, 거래처명: g.거래처명, 사업자번호: g.사업자번호,
+      문서종류: '세금계산서', 유형: g.vat > 0 ? '과세' : '면세', 청구영수: '청구',
+      공급가액: g.sup, 세액: g.vat, 합계금액: g.sup + g.vat,
+      품목요약: item, 발행경로: '홈택스', 상태: '발행대기'
+    };
+    const d = await api({action:'create', table:'inv', props});
+    if(d.ok) done++;
+    await new Promise(r=>setTimeout(r,350));
+  }
+  toast(done + '장의 초안을 만들었습니다. 홈택스에서 발행한 뒤 승인번호를 넣어주세요.');
+  await loadAll(false);
+}
+
+function exportInv(){
+  const head = ['작성일자','발행일자','구분','거래처명','사업자번호','대표자','문서종류','유형','청구영수','공급가액','세액','합계금액','품목요약','발행경로','상태','승인번호','비고'];
+  csv(head, INVS, '세금계산서대장_' + today());
+}
+
+/* ══════════════════════════════════════════
+   거래명세표
+   ══════════════════════════════════════════ */
+function makeSheet(){
+  const name = $('shVendor').value, from = $('shFrom').value, to = $('shTo').value;
+  if(!name) return toast('거래처를 고르세요.');
+  if(!from || !to) return toast('기간을 고르세요.');
+
+  const rows = TXS.filter(t => t.구분==='매출' && t.거래처명===name &&
+    (t.거래일자||'') >= from && (t.거래일자||'') <= to)
+    .sort((a,b)=>String(a.거래일자).localeCompare(String(b.거래일자)));
+
+  if(!rows.length){
+    $('sheetOut').innerHTML = '<div class="empty">이 기간에 해당 거래처의 매출 기록이 없습니다.</div>';
+    return;
+  }
+  const v = VENDORS.find(x=>x.거래처명===name) || {};
+  const sup = rows.reduce((s,t)=>s+(Number(t.공급가액)||0),0);
+  const vat = rows.reduce((s,t)=>s+(Number(t.부가세)||0),0);
+  const no  = from.replace(/-/g,'') + '-' + String(rows.length).padStart(3,'0');
+
+  $('sheetOut').innerHTML =
+    '<div class="sh-head">'+
+      '<div><h3 class="sh-title">거래명세표</h3>'+
+      '<div class="sh-meta" style="margin-top:8px"><b>명세표번호</b> '+esc(no)+'<br><b>거래기간</b> '+esc(from)+' ~ '+esc(to)+'</div></div>'+
+      '<div class="sh-meta">'+
+        '<b>공급받는자</b> '+esc(name)+'<br>'+
+        '<b>사업자번호</b> '+esc(v.사업자번호||'-')+'<br>'+
+        '<b>대표자</b> '+esc(v.대표자||'-')+'<br>'+
+        '<b>주소</b> '+esc(v.사업장주소||'-')+
+      '</div>'+
+      '<div class="sh-meta">'+
+        '<b>공급자</b> 다온파트너스<br>'+
+        '<b>사업자번호</b> 884-14-02999<br>'+
+        '<b>대표자</b> 김화진<br>'+
+        '<b>주소</b> 충남 아산시 탕정면 용머리길 22 상가동 301호<br>'+
+        '<b>전화</b> 041-534-1124'+
+      '</div>'+
+    '</div>'+
+    '<table><thead><tr><th>일자</th><th>품목</th><th>규격</th><th class="num">수량</th><th class="num">단가</th><th class="num">공급가액</th><th class="num">부가세</th></tr></thead><tbody>'+
+    rows.map(t=>'<tr><td>'+esc((t.거래일자||'').slice(0,10))+'</td><td>'+esc(t.품목)+'</td><td>'+esc(t.규격)+'</td>'+
+      '<td class="num">'+(t.수량!=null?won(t.수량):'')+'</td><td class="num">'+(t.단가!=null?won(t.단가):'')+'</td>'+
+      '<td class="num">'+won(t.공급가액)+'</td><td class="num">'+won(t.부가세)+'</td></tr>').join('')+
+    '</tbody></table>'+
+    '<div class="sh-total"><span>공급가액 '+won(sup)+'원</span><span>부가세 '+won(vat)+'원</span><b>합계 '+won(sup+vat)+'원</b></div>';
+  toast('명세표를 만들었습니다. 인쇄 버튼으로 PDF 저장이 됩니다.');
+}
+
+/* ══════════════════════════════════════════
+   부가세 집계
+   ══════════════════════════════════════════ */
+function renderVat(){
+  const y = $('vatYear').value, q = Number($('vatQ').value);
+  const range = { 1:[1,3], 2:[4,6], 3:[7,9], 4:[10,12] }[q];
+  const rows = TXS.filter(t=>{
+    const d = String(t.거래일자||'').slice(0,10);
+    if(Number(d.slice(0,4)) !== Number(y)) return false;
+    const m = Number(d.slice(5,7));
+    return m >= range[0] && m <= range[1];
+  });
+
+  const out = rows.filter(t=>t.구분==='매출').reduce((s,t)=>s+(Number(t.부가세)||0),0);
+  const inc = rows.filter(t=>t.구분==='매입'&&t.과세구분!=='불공제').reduce((s,t)=>s+(Number(t.부가세)||0),0);
+  const no  = rows.filter(t=>t.구분==='매입'&&t.과세구분==='불공제').reduce((s,t)=>s+(Number(t.부가세)||0),0);
+
+  $('vOut').textContent=won(out); $('vIn').textContent=won(inc);
+  $('vNo').textContent=won(no);   $('vNet').textContent=won(out-inc);
+
+  const map={};
+  rows.forEach(t=>{
+    const k = t.구분+'|'+(t.거래처명||'미상');
+    if(!map[k]) map[k]={g:t.구분,name:t.거래처명||'미상',biz:t.사업자번호||'',n:0,sup:0,vat:0};
+    map[k].n++; map[k].sup+=Number(t.공급가액)||0; map[k].vat+=Number(t.부가세)||0;
+    if(!map[k].biz && t.사업자번호) map[k].biz=t.사업자번호;
+  });
+  const list=Object.values(map).sort((a,b)=>a.g===b.g?b.sup-a.sup:(a.g==='매출'?-1:1));
+  $('vatBody').innerHTML = list.length ? list.map(r=>
+    '<tr><td><span class="tag '+(r.g==='매출'?'t-sale':'t-buy')+'">'+esc(r.g)+'</span></td>'+
+    '<td>'+esc(r.name)+'</td><td>'+esc(r.biz||'-')+'</td><td class="num">'+r.n+'</td>'+
+    '<td class="num">'+won(r.sup)+'</td><td class="num">'+won(r.vat)+'</td></tr>').join('')
+    : '<tr><td colspan="6" class="empty">이 기간에 기록된 거래가 없습니다.</td></tr>';
+  window._vatList = list;
+}
+
+function exportVat(){
+  const list = window._vatList || [];
+  if(!list.length) return toast('내려받을 자료가 없습니다.');
+  const lines = [['구분','거래처','사업자번호','건수','공급가액','세액'].join(',')]
+    .concat(list.map(r=>[r.g,r.name,r.biz,r.n,r.sup,r.vat].map(csvCell).join(',')));
+  download(lines.join('\n'), '부가세집계_' + $('vatYear').value + '_' + $('vatQ').selectedOptions[0].text + '.csv');
+}
+
+/* ══════════════════════════════════════════
+   CSV
+   ══════════════════════════════════════════ */
+function csvCell(v){ const s=String(v==null?'':v); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+function csv(head, rows, name){
+  if(!rows.length) return toast('내려받을 자료가 없습니다.');
+  const lines = [head.join(',')].concat(rows.map(r => head.map(h => csvCell(r[h])).join(',')));
+  download(lines.join('\n'), name + '.csv');
+}
+function download(text, filename){
+  const blob = new Blob(['\uFEFF' + text], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+  toast('엑셀 파일을 내려받았습니다.');
+}
+
+/* ══════════════════════════════════════════
+   시작
+   ══════════════════════════════════════════ */
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('on'); }));
+document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on')); });
+
+(function(){
+  const saved = sessionStorage.getItem('ptnAuth');
+  if(saved && CODES[saved]){ ME = CODES[saved]; $('gate').style.display='none'; boot(); }
+})();
+</script>
+</body>
+</html>
