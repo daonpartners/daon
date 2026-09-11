@@ -636,14 +636,35 @@ function openTx(g, id){
   $('mTx').classList.add('on');
 }
 
+/* 거래처명이 등록된 거래처와 정확히 맞으면 사업자번호·대표자를 덮어씁니다.
+   맞는 거래처가 없으면 손으로 넣은 값을 그대로 둡니다. */
+function findVendor(name){
+  const n = String(name||'').trim();
+  if(!n) return null;
+  return VENDORS.find(x => String(x.거래처명||'').trim() === n) || null;
+}
 function fillVendor(){
-  const v = VENDORS.find(x => x.거래처명 === $('txVendor').value);
-  if(v && !$('txBiz').value) $('txBiz').value = v.사업자번호 || '';
+  const v = findVendor($('txVendor').value);
+  if(v) $('txBiz').value = v.사업자번호 || '';
 }
 function fillVendorInv(){
-  const v = VENDORS.find(x => x.거래처명 === $('ivVendor').value);
-  if(v){ if(!$('ivBiz').value) $('ivBiz').value = v.사업자번호||''; if(!$('ivCeo').value) $('ivCeo').value = v.대표자||''; }
+  const v = findVendor($('ivVendor').value);
+  if(!v) return;
+  $('ivBiz').value = v.사업자번호 || '';
+  $('ivCeo').value = v.대표자 || '';
 }
+
+/* 사업자번호는 숫자만 넣어도 000-00-00000 형태로 맞춰집니다. */
+function bizFormat(s){
+  const d = String(s||'').replace(/\D/g,'').slice(0,10);
+  if(d.length <= 3) return d;
+  if(d.length <= 5) return d.slice(0,3) + '-' + d.slice(3);
+  return d.slice(0,3) + '-' + d.slice(3,5) + '-' + d.slice(5);
+}
+['txBiz','vdBiz','ivBiz'].forEach(id => {
+  const el = $(id);
+  if(el) el.addEventListener('input', () => { el.value = bizFormat(el.value); });
+});
 
 function calcTx(){
   const q = Number($('txQty').value), p = Number($('txPrice').value);
@@ -999,8 +1020,9 @@ function download(text, filename){
 /* ══════════════════════════════════════════
    시작
    ══════════════════════════════════════════ */
-document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if(e.target===m) m.classList.remove('on'); }));
-document.addEventListener('keydown', e => { if(e.key==='Escape') document.querySelectorAll('.modal.on').forEach(m=>m.classList.remove('on')); });
+/* 작성 중인 내용이 날아가지 않도록, 모달은 '취소' 버튼으로만 닫힙니다.
+   바깥 클릭과 ESC로는 닫히지 않습니다. */
+document.querySelectorAll('.modal').forEach(m => m.addEventListener('mousedown', e => { if(e.target===m) e.preventDefault(); }));
 
 (function(){
   const saved = sessionStorage.getItem('ptnAuth');
