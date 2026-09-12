@@ -39,7 +39,7 @@
   --display-en:'Fraunces', 'Noto Serif KR', serif;
   --maxw:680px; --pad:20px;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html{scroll-behavior:smooth}
 body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.68;font-size:16px;word-break:keep-all;-webkit-font-smoothing:antialiased}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
@@ -49,7 +49,11 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .brand{display:flex;align-items:center;gap:9px}
 .brand-mark{height:24px;width:auto;display:block}
 .brand-txt{font-size:13px;color:var(--steel);font-weight:600}
-.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px var(--pad);max-width:var(--maxw);margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px var(--pad);max-width:var(--maxw);margin:0 auto}
+.topbar-outer{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand-lockup{display:flex;align-items:baseline;gap:7px;text-decoration:none}
+.brand-lockup .b1{font-family:var(--display-en);font-weight:800;font-size:19px;color:var(--navy);letter-spacing:.01em}
+.brand-lockup .b2{font-family:var(--body);font-weight:700;font-size:13.5px;color:var(--steel)}
 .topbar a.about-link{font-size:12.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--orange);padding:8px 14px;border-radius:999px;box-shadow:0 2px 0 var(--deep);transition:transform .12s,box-shadow .12s}
 .topbar a.about-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--deep)}
 .topbar__links{display:flex;gap:6px;flex-shrink:0}
@@ -65,18 +69,18 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .about-btn:hover{color:var(--navy)}
 
 /* ══ ① HERO ══ */
-.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:48px 0 42px;position:relative;overflow:hidden;text-align:center}
+.hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:38px 0 32px;position:relative;overflow:hidden;text-align:center}
 .hero::before{content:'';position:absolute;top:-120px;right:-100px;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(227,155,165,.16),transparent 70%)}
 .hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
-.hero__mean{font-family:var(--display-en);font-weight:600;font-style:italic;font-size:clamp(12px,3.6vw,15px);letter-spacing:.04em;color:var(--orange);margin-bottom:16px;white-space:nowrap;position:relative}
-.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,8.5vw,42px);line-height:1.35;letter-spacing:-.012em;margin-bottom:16px;position:relative}
+.hero__mean{font-family:var(--display-en);font-weight:600;font-style:italic;font-size:clamp(11px,3vw,14px);letter-spacing:.04em;color:var(--orange);margin-bottom:14px;white-space:nowrap;position:relative}
+.hero h1{font-family:var(--display);font-weight:900;font-size:clamp(22px,5.6vw,34px);line-height:1.4;letter-spacing:-.01em;margin-bottom:14px;position:relative}
 .hero h1 em{font-style:normal;color:var(--orange)}
-.hero__sub{font-size:16px;color:#D6DEE8;line-height:1.75;max-width:420px;margin:0 auto;position:relative}
-.hero__cta{margin-top:28px;position:relative}
-.hero__cta button{font-family:var(--display);font-weight:800;font-size:16.5px;border:none;cursor:pointer;
-  background:var(--orange);color:var(--navy);box-shadow:0 4px 0 var(--deep);padding:16px 34px;border-radius:999px}
+.hero__sub{font-size:14.5px;color:#D6DEE8;line-height:1.7;max-width:400px;margin:0 auto;position:relative}
+.hero__cta{margin-top:22px;position:relative}
+.hero__cta button{font-family:var(--display);font-weight:800;font-size:15px;border:none;cursor:pointer;
+  background:var(--orange);color:var(--navy);box-shadow:0 4px 0 var(--deep);padding:14px 30px;border-radius:999px}
 .hero__cta button:active{transform:translateY(2px);box-shadow:0 2px 0 var(--deep)}
-.hero__sublink{display:block;margin-top:16px;font-size:13.5px;color:#B9C4D3;text-decoration:underline;position:relative}
+.hero__sublink{display:block;margin-top:14px;font-size:12.5px;color:#B9C4D3;text-decoration:underline;position:relative}
 .hero__sublink:hover{color:#fff}
 
 /* ══ ② TRUST 스탯바 ══ */
@@ -209,38 +213,18 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 </head>
 <body>
 
+<div class="topbar-outer">
 <header class="topbar">
-  <img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22" decoding="async" style="height:22px;width:auto;">
+  <a href="/" class="brand-lockup"><span class="b1">DAON</span><span class="b2">파트너스</span></a>
   <div class="topbar__links">
     <a class="grow-link" href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a>
     <a class="about-link" href="/about">다온지사 소개</a>
   </div>
 </header>
-
-<!-- ① HERO -->
-<section class="hero">
-  <div class="wrap">
-    <div class="hero__mean">DAON PARTNERS · 좋은 일이 다 온다</div>
-    <h1>보험을 넘어, 사람과 사업의<br><em>더 나은 내일</em>을 연결합니다</h1>
-    <p class="hero__sub">개인의 보장부터 사업장의 위험관리, 소상공인 비즈니스와 보험 전문가의 성장까지 다온파트너스가 함께합니다.</p>
-    <div class="hero__cta">
-      <button type="button" onclick="document.getElementById('insTrigger').click()">보험 상담 신청하기</button>
-    </div>
-    <a class="hero__sublink" href="/experts">다온지사 소속 전문가를 찾고 계신가요? →</a>
-  </div>
-</section>
-
-<!-- ② TRUST -->
-<section class="trust">
-  <div class="trustgrid">
-    <div><span class="tag">CHANNEL</span><div class="th">온라인 기반 전문</div><div class="tl">온라인카페·블로그 외</div></div>
-    <div><span class="tag">PARTNERSHIP</span><div class="th">다양한 오프라인</div><div class="tl">산모교실·펫페어·박람회·소상공인 제휴</div></div>
-    <div><span class="tag">RISK CARE</span><div class="th">사업장 위험관리</div><div class="tl">화재·배상·중대재해·보험관리</div></div>
-  </div>
-</section>
+</div>
 
 <!-- ③ SERVICE (2컬럼) + ④ RECRUITING -->
-<section class="sec sec--navygray">
+<section class="sec sec--navygray" style="padding-top:22px">
   <div class="wrap">
     <div class="sec__title">무엇을 도와드릴까요</div>
 
