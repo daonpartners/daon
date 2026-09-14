@@ -1060,7 +1060,7 @@ label{display:block;font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 
         <p class="mini">동의를 받지 않은 고객에게는 광고 문자가 자동 차단됩니다.</p>
       </div>
       <div class="fld"><label style="display:flex;align-items:center;gap:8px;font-weight:700">
-        <input type="checkbox" id="exOptout" style="width:18px;height:18px;padding:0"> 수신거부 고객</label>
+        <input type="checkbox" id="exOptout" style="width:18px;height:18px;padding:0"> 광고수신거부 고객</label>
       </div>
       <button class="btn" onclick="saveExtra()">저장</button>
     </div>
@@ -3269,7 +3269,7 @@ function checkSmsAd(){
   const msgs = [];
   if(warn) msgs.push(warn);
   if(noAgree) msgs.push('광고수신에 동의하지 않은 고객 ' + noAgree + '명은 자동으로 제외됩니다.');
-  if(optout) msgs.push('수신거부 고객 ' + optout + '명은 자동으로 제외됩니다.');
+  if(optout) msgs.push('광고수신거부 고객 ' + optout + '명은 자동으로 제외됩니다.');
   if(msgs.length){ box.innerHTML = msgs.join('<br>'); box.classList.remove('hide'); }
   else box.classList.add('hide');
 }
