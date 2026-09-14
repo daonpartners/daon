@@ -2139,7 +2139,7 @@ function renderCtrTable(list){
   const el = document.getElementById('ctrTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 계약이 없습니다.</div>'; return; }
   let html = '<table class="cust-table"><thead><tr>'
-    + (CTR_PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" onchange="toggleAllCtrPick(this.checked)"></th>' : '')
+    + (CTR_PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" '+(list.every(function(c){return CTR_PICKED_IDS[c.id];})?'checked':'')+' onchange="toggleAllCtrPick(this.checked)"></th>' : '')
     + CTR_TABLE_COLS.map(function(c){
     const arrow = CTR_SORT.key===c.k ? (CTR_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCtrBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
@@ -2740,7 +2740,7 @@ function renderCust(){
       const d = daysAgo(c.lastTouch);
       const meta = [];
       if(c.phone) meta.push(c.phone);
-      if(c.custType==='가망고객') meta.push(c.bizType||'개인');
+      if(c.custType==='가망고객'){ meta.push(c.bizType||'개인'); if(c.birth) meta.push(String(c.birth).slice(0,4)+'년생'); }
       else if(c.lastTouch) meta.push(d===0?'오늘 접촉':(d>9000?'':d+'일 전 접촉'));
       else meta.push('접촉 기록 없음');
       if(c.job) meta.push(c.job);
@@ -2767,12 +2767,17 @@ const CUST_TABLE_COLS_OWNER = [
   {k:'lastTouch', l:'최근접촉'}, {k:'memo', l:'메모'}
 ];
 const CUST_TABLE_COLS_PROSPECT = [
-  {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'dbType', l:'DB구분'},
+  {k:'name', l:'고객명'}, {k:'phone', l:'연락처'}, {k:'birthYear', l:'출생연도'}, {k:'dbType', l:'DB구분'},
   {k:'sms1', l:'1차문자'}, {k:'status1', l:'1차상태'}, {k:'visit', l:'방문예약'},
   {k:'sms2', l:'2차문자'}, {k:'status2', l:'2차상태'}
 ];
 function CUST_TABLE_COLS_FN(){ return FILTER==='prospect' ? CUST_TABLE_COLS_PROSPECT : CUST_TABLE_COLS_OWNER; }
 Object.defineProperty(window, 'CUST_TABLE_COLS', { get: CUST_TABLE_COLS_FN });
+function custColValue(c, colKey){
+  if(colKey === 'birthYear') return c.birth ? (String(c.birth).slice(0,4) + '년생') : '-';
+  if(colKey === 'visit') return c.visit ? '✅ 완료' : '-';
+  return c[colKey] || '-';
+}
 function setCustView(mode){
   CUST_VIEW = mode;
   document.getElementById('custList').classList.toggle('hide', mode!=='card');
@@ -2803,7 +2808,7 @@ function renderCustTable(list){
   const el = document.getElementById('custTable');
   if(!list.length){ el.innerHTML = '<div class="empty">표시할 고객이 없습니다.</div>'; return; }
   let html = '<table class="cust-table"><thead><tr>'
-    + (PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" onchange="toggleAllCustPick(this.checked)"></th>' : '')
+    + (PICK_MODE ? '<th style="width:44px;text-align:center"><input type="checkbox" '+(list.every(function(c){return PICKED_IDS[c.id];})?'checked':'')+' onchange="toggleAllCustPick(this.checked)"></th>' : '')
     + CUST_TABLE_COLS.map(function(c){
     const arrow = CUST_SORT.key===c.k ? (CUST_SORT.dir>0?' ▲':' ▼') : '';
     return '<th onclick="sortCustBy(\''+c.k+'\')">'+esc(c.l)+arrow+'</th>';
@@ -2814,8 +2819,7 @@ function renderCustTable(list){
       + (PICKED_IDS[c.id]?'checked':'') + '></td>' : '';
     const delTd = PICK_MODE ? '' : '<td style="text-align:center"><button class="btn ghost sm" onclick="event.stopPropagation();deleteCustDirect(\''+c.id+'\')" style="color:var(--red);padding:4px 10px">삭제</button></td>';
     return '<tr onclick="'+clickAttr+'" style="cursor:pointer'+(PICKED_IDS[c.id]?';background:var(--org-lt)':'')+'">' + checkTd + CUST_TABLE_COLS.map(function(col){
-      const v = col.k==='visit' ? (c.visit?'✅ 완료':'-') : (c[col.k]||'-');
-      return '<td>'+esc(v)+'</td>';
+      return '<td>'+esc(custColValue(c, col.k))+'</td>';
     }).join('') + delTd + '</tr>';
   }).join('');
   html += '</tbody></table>';
@@ -2830,7 +2834,7 @@ function printCustTable(){
       return '<th>'+esc(c.l)+'</th>';
     }).join('') + '</tr></thead><tbody>';
     html += pickedList.map(function(c){
-      return '<tr>' + CUST_TABLE_COLS.map(function(col){ return '<td>'+esc(c[col.k]||'-')+'</td>'; }).join('') + '</tr>';
+      return '<tr>' + CUST_TABLE_COLS.map(function(col){ return '<td>'+esc(custColValue(c, col.k))+'</td>'; }).join('') + '</tr>';
     }).join('');
     html += '</tbody></table>';
     document.getElementById('printArea').innerHTML = '<h2>' + esc(ME.name) + ' 선택 고객 목록 (' + today() + ' · ' + pickedList.length + '명)</h2>' + html;
