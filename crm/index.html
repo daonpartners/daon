@@ -3201,16 +3201,40 @@ function updateSmsCount(){
   const type = SMS_IMG_DATA ? 'MMS(사진)' : (b <= 90 ? 'SMS' : 'LMS(장문)');
   document.getElementById('smsCount').textContent = s.length + '자 (' + b + '바이트) · ' + type + (IS_BULK_SMS ? ' · '+BULK_TARGETS.length+'명에게 각각 발송' : '');
 }
+function compressImageForSms(file){
+  return new Promise(function(resolve){
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = function(){
+      const MAX = 1600;
+      let w = img.width, h = img.height;
+      if(w > MAX || h > MAX){
+        if(w >= h){ h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    img.onerror = function(){
+      URL.revokeObjectURL(url);
+      const reader = new FileReader();
+      reader.onload = function(ev){ resolve(ev.target.result); };
+      reader.readAsDataURL(file);
+    };
+    img.src = url;
+  });
+}
 function onSmsImgPick(input){
   const f = input.files[0]; if(!f) return;
-  const rd = new FileReader();
-  rd.onload = function(e){
-    SMS_IMG_DATA = e.target.result;
+  compressImageForSms(f).then(function(dataUrl){
+    SMS_IMG_DATA = dataUrl;
     document.getElementById('smsImgThumb').src = SMS_IMG_DATA;
     document.getElementById('smsImgPreview').classList.remove('hide');
     updateSmsCount();
-  };
-  rd.readAsDataURL(f);
+  });
 }
 function removeSmsImg(){
   SMS_IMG_DATA = '';
