@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>사장님 보험 가이드 | 다온파트너스</title>
-<meta name="description" content="업종과 가게 상황을 고르면 확인해야 할 보험을 바로 알려드리고, 담당 설계사가 상담해 드립니다.">
+<meta name="description" content="업종과 사업장 상황을 고르면 확인해야 할 보험을 바로 알려드리고, 담당 설계사가 상담해 드립니다.">
 <meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="https://daon.io.kr/assets/favicon-daon.png">
 <link rel="apple-touch-icon" href="https://daon.io.kr/assets/favicon-daon.png">
@@ -145,10 +145,10 @@ footer b{color:var(--ink2)}
   <main>
     <!-- 시작 -->
     <section class="step on intro" data-step="intro">
-      <h1 class="q">우리 가게에<br>필요한 보험,<br>1분이면 알 수 있어요</h1>
+      <h1 class="q">우리 사업장에<br>필요한 보험,<br>1분이면 알 수 있어요</h1>
       <p class="sub">질문에 답하면 확인해야 할 보험을 바로 보여드려요.</p>
       <ol class="flow">
-        <li><div class="n">1</div><div><b>가게 상황 고르기</b><span>업종, 위치, 직원 수</span></div></li>
+        <li><div class="n">1</div><div><b>사업장 상황 고르기</b><span>업종, 위치, 직원 수</span></div></li>
         <li><div class="n">2</div><div><b>확인할 보험 보기</b><span>법으로 정해진 보험부터</span></div></li>
         <li><div class="n">3</div><div><b>무료 상담 받기</b><span>담당 설계사가 연락드려요</span></div></li>
       </ol>
@@ -157,14 +157,14 @@ footer b{color:var(--ink2)}
 
     <!-- 업종 -->
     <section class="step" data-step="biz">
-      <h2 class="q">어떤 가게를<br>운영하세요?</h2>
+      <h2 class="q">어떤 사업장을<br>운영하세요?</h2>
       <p class="sub">가장 가까운 것 하나를 골라주세요.</p>
       <div class="opts two" id="bizOpts"></div>
     </section>
 
     <!-- 층 (음식점만) -->
     <section class="step" data-step="floor">
-      <h2 class="q">가게가<br>몇 층에 있나요?</h2>
+      <h2 class="q">사업장이<br>몇 층에 있나요?</h2>
       <p class="sub">손님이 드나드는 매장 기준이에요.</p>
       <div class="opts" id="floorOpts"></div>
     </section>
@@ -193,7 +193,7 @@ footer b{color:var(--ink2)}
 
     <!-- 임대/자가 -->
     <section class="step" data-step="own">
-      <h2 class="q">가게 건물은<br>어떤 형태인가요?</h2>
+      <h2 class="q">사업장 건물은<br>어떤 형태인가요?</h2>
       <p class="sub">마지막 질문이에요.</p>
       <div class="opts" id="ownOpts"></div>
     </section>
@@ -215,7 +215,7 @@ footer b{color:var(--ink2)}
       <div class="field"><label for="fName">성함</label><input class="inp" id="fName" type="text" autocomplete="name" placeholder="홍길동"></div>
       <div class="field"><label for="fPhone">휴대폰 번호</label><input class="inp" id="fPhone" type="tel" inputmode="numeric" maxlength="13" autocomplete="tel" placeholder="010-0000-0000"></div>
       <div class="field"><label for="fShop">상호 <em>(선택)</em></label><input class="inp" id="fShop" type="text" placeholder="예) 다온식당"></div>
-      <div class="field"><label for="fArea">가게 지역 <em>(선택)</em></label><input class="inp" id="fArea" type="text" placeholder="예) 아산시 탕정면"></div>
+      <div class="field"><label for="fArea">사업장 지역 <em>(선택)</em></label><input class="inp" id="fArea" type="text" placeholder="예) 아산시 탕정면"></div>
       <div class="field">
         <label>지금 가입한 사업장 보험이 있나요?</label>
         <div class="seg" id="hasSeg"><button type="button" data-v="있음">있어요</button><button type="button" data-v="없음">없어요</button><button type="button" class="on" data-v="모름">잘 몰라요</button></div>
@@ -431,8 +431,8 @@ footer b{color:var(--ink2)}
     if(['5~19인','20~49인','50인 이상'].indexOf(S.staff)>=0)
       law.push({k:'중대재해처벌법 적용', p:'상시 근로자 5명 이상 사업장은 중대재해처벌법 적용 대상이에요. 위험성평가 등 안전관리 의무를 점검해 보세요.', law:'중대재해 처벌 등에 관한 법률'});
 
-    opt.push({k:'화재보험', p:'불이 났을 때 우리 가게 시설, 집기, 재고 피해를 보상받는 보험이에요.' + (S.own==='임대'?' 임대 매장은 건물주에게 물어줄 손해도 함께 확인해 보세요.':'')});
-    opt.push({k:'영업배상책임보험', p:'가게에서 손님이 다치거나 손님 물건이 망가졌을 때 배상하는 보험이에요.'});
+    opt.push({k:'화재보험', p:'불이 났을 때 우리 사업장 시설, 집기, 재고 피해를 보상받는 보험이에요.' + (S.own==='임대'?' 임대 매장은 건물주에게 물어줄 손해도 함께 확인해 보세요.':'')});
+    opt.push({k:'영업배상책임보험', p:'사업장에서 손님이 다치거나 손님 물건이 망가졌을 때 배상하는 보험이에요.'});
     if(S.staff && S.staff!=='1인(대표만)') opt.push({k:'직원 상해보험', p:'일하다 다친 직원의 치료비 등을 보장하는 보험이에요.'});
     if(b==='factory') opt.push({k:'생산물배상책임보험', p:'만들어 판 제품 때문에 다른 사람이 피해를 입었을 때 배상하는 보험이에요.'});
     return {must:must, law:law, opt:opt};
