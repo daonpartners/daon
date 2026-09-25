@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>사업장보험 자료실 | 다온파트너스</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B1E42">
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --ink:#14161A; --ink-2:#3A4048; --steel:#6B7480; --line:#E4E7EA;
+  --paper:#FFFFFF; --navygray:#EEF1F6;
+  --orange:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
+  --navy:#0B1E42; --navy2:#16305C;
+  --display:'Noto Serif KR', serif; --body:'Pretendard', -apple-system, sans-serif;
+  --maxw:760px; --pad:20px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--body);background:var(--navygray);color:var(--ink);line-height:1.6;font-size:16px;word-break:keep-all;-webkit-font-smoothing:antialiased;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--deep);outline-offset:2px}
+.hide{display:none!important}
+
+/* 상단 */
+.top{background:var(--navy);color:#fff;padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--pad);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.back{color:#fff;text-decoration:none;font-size:14px;font-weight:600;opacity:.85}
+.who{font-size:13px;display:flex;align-items:center;gap:8px}
+.who button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600}
+.hero{max-width:var(--maxw);margin:0 auto;padding:18px var(--pad) 30px}
+.hero h1{font-family:var(--display);font-weight:900;font-size:30px;letter-spacing:-.02em;line-height:1.3}
+.hero p{color:#C9D2E3;font-size:14px;margin-top:6px}
+
+/* 본문 */
+.main{max-width:var(--maxw);margin:-14px auto 0;padding:0 var(--pad) calc(90px + env(safe-area-inset-bottom,0px))}
+.bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.count{font-size:13px;color:var(--steel);font-weight:600}
+.btn{border:0;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:700;background:var(--navy);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.pink{background:var(--deep)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:8px 13px;font-size:13px;border-radius:10px}
+.btn.warn{background:#fff;color:#B42318;border:1.5px solid #F2C4C0}
+.btn.warn.armed{background:#B42318;color:#fff;border-color:#B42318}
+
+.list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:520px){.list{grid-template-columns:1fr}}
+.post{background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;padding:0;display:flex;flex-direction:column;color:inherit}
+.post:hover{border-color:var(--orange)}
+.thumb{aspect-ratio:4/3;background:var(--tint);display:flex;align-items:center;justify-content:center;color:var(--deep);font-size:13px;font-weight:600;position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .n{position:absolute;right:8px;bottom:8px;background:rgba(11,30,66,.8);color:#fff;font-size:12px;border-radius:999px;padding:2px 9px}
+.post-b{padding:13px 14px 15px}
+.post-b h3{font-size:16px;font-weight:700;line-height:1.4}
+.post-b p{font-size:13px;color:var(--ink-2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.meta{font-size:12px;color:var(--steel);margin-top:8px}
+
+.state{background:#fff;border-radius:16px;padding:40px 20px;text-align:center;color:var(--steel);font-size:14px}
+.state b{display:block;color:var(--ink);font-size:16px;margin-bottom:6px}
+.state .btn{margin-top:14px}
+
+.fab{position:fixed;right:max(20px,calc(50vw - var(--maxw)/2 + 20px));bottom:calc(20px + env(safe-area-inset-bottom,0px));box-shadow:0 8px 24px rgba(11,30,66,.28);border-radius:999px;padding:14px 22px}
+
+/* 시트(모달) */
+.dim{position:fixed;inset:0;background:rgba(11,30,66,.55);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+@media (min-width:640px){.dim{align-items:center}}
+.sheet{background:#fff;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:20px var(--pad) calc(24px + env(safe-area-inset-bottom,0px))}
+@media (min-width:640px){.sheet{border-radius:20px}}
+.sheet-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:14px}
+.sheet-h h2{font-family:var(--display);font-size:21px;font-weight:700;line-height:1.35}
+.x{background:var(--navygray);border:0;border-radius:50%;width:34px;height:34px;font-size:18px;flex-shrink:0;color:var(--ink)}
+
+.detail-sum{font-size:14.5px;color:var(--ink-2);white-space:pre-wrap;margin-bottom:14px}
+.imgs{display:grid;gap:12px}
+.imgbox{border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.imgbox img{width:100%;display:block;background:var(--tint)}
+.imgbox .fail{padding:30px 16px;text-align:center;font-size:13px;color:var(--steel);background:var(--tint)}
+.imgbox .row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;font-size:13px;color:var(--steel);gap:8px}
+.acts{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+
+label.f{display:block;font-size:13px;font-weight:700;color:var(--ink-2);margin:14px 0 6px}
+label.f span{font-weight:500;color:var(--steel)}
+input[type=text],input[type=number],textarea,select{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 13px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff}
+textarea{min-height:90px;resize:vertical}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pick{border:1.5px dashed var(--orange);background:var(--tint);border-radius:12px;padding:16px;text-align:center;font-size:14px;color:var(--deep);font-weight:700;width:100%}
+.previews{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.previews div{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--navygray);position:relative}
+.previews img{width:100%;height:100%;object-fit:cover}
+.previews small{position:absolute;left:5px;top:5px;background:rgba(11,30,66,.8);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px}
+.hint{font-size:12.5px;color:var(--steel);margin-top:6px}
+.msg{font-size:13.5px;margin-top:12px;border-radius:10px;padding:10px 12px}
+.msg.err{background:#FEF3F2;color:#B42318}
+.msg.ok{background:#ECFDF3;color:#1F6B41}
+.msg:empty{display:none}
+
+.login-in{text-align:center}
+.login-in input{text-align:center;font-size:19px;letter-spacing:2px;font-weight:700;padding:15px;margin-top:6px}
+.login-in .btn{width:100%;margin-top:12px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <a class="back" href="/">‹ 다온파트너스</a>
+    <div class="who">
+      <span id="whoName"></span>
+      <button type="button" id="whoBtn" onclick="onWhoBtn()">로그인</button>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>사업장보험 자료실</h1>
+    <p>상담에 바로 쓰는 사업장보험 안내 이미지. 로그인하면 원본을 내려받을 수 있습니다.</p>
+  </div>
+</header>
+
+<main class="main">
+  <div class="bar">
+    <div class="count" id="count"></div>
+    <button type="button" class="btn ghost sm" onclick="loadList()">새로고침</button>
+  </div>
+  <div id="listArea"><div class="state">자료를 불러오는 중입니다…</div></div>
+</main>
+
+<button type="button" class="btn pink fab" onclick="openWrite()">+ 자료 올리기</button>
+
+<!-- 상세 -->
+<div class="dim hide" id="dDetail" onclick="if(event.target===this)closeSheet('dDetail')">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="sheet-h">
+      <div>
+        <h2 id="dTitle"></h2>
+        <div class="meta" id="dMeta"></div>
+      </div>
+      <button type="button" class="x" aria-label="닫기" onclick="closeSheet('dDetail')">×</button>
+    </div>
+    <div class="detail-sum" id="dSum"></div>
+    <div class="imgs" id="dImgs"></div>
+    <div class="msg" id="dMsg"></div>
+    <div class="acts" id="dActs"></div>
+  </div>
+</div>
+
+<!-- 작성/수정 -->
+<div class="dim hide" id="dWrite" onclick="if(event.target===this)closeSheet('dWrite')">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="wTitle">
+    <div class="sheet-h">
+      <h2 id="wTitle">자료 올리기</h2>
+      <button type="button" class="x" aria-label="닫기" onclick="closeSheet('dWrite')">×</button>
+    </div>
+
+    <label class="f" for="fTitle">제목</label>
+    <input type="text" id="fTitle" maxlength="80" placeholder="예) 음식점 화재보험 필수 체크 3가지">
+
+    <label class="f" for="fSum">설명 <span>(선택)</span></label>
+    <textarea id="fSum" maxlength="1000" placeholder="어떤 상황에서 쓰는 자료인지 적어주세요"></textarea>
+
+    <div class="two">
+      <div>
+        <label class="f" for="fOrder">노출순서 <span>(작을수록 앞)</span></label>
+        <input type="number" id="fOrder" inputmode="numeric" value="10">
+      </div>
+      <div>
+        <label class="f" for="fStatus">공개 여부</label>
+        <select id="fStatus">
+          <option value="게시">게시</option>
+          <option value="숨김">숨김</option>
+        </select>
+      </div>
+    </div>
+
+    <label class="f">이미지 <span>(최대 3장)</span></label>
+    <input type="file" id="fFiles" accept="image/jpeg,image/png,image/webp" multiple class="hide" onchange="onFiles(this)">
+    <button type="button" class="pick" id="pickBtn" onclick="document.getElementById('fFiles').click()">사진 선택</button>
+    <div class="previews" id="previews"></div>
+    <div class="hint" id="imgHint">큰 사진은 자동으로 줄여서 올립니다.</div>
+
+    <div class="msg" id="wMsg"></div>
+    <div class="acts">
+      <button type="button" class="btn" id="saveBtn" onclick="savePost()" style="flex:1">저장하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 로그인 -->
+<div class="dim hide" id="dLogin" onclick="if(event.target===this)closeSheet('dLogin')">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="lTitle" style="max-width:400px">
+    <div class="sheet-h">
+      <h2 id="lTitle">접속코드 입력</h2>
+      <button type="button" class="x" aria-label="닫기" onclick="closeSheet('dLogin')">×</button>
+    </div>
+    <div class="login-in">
+      <p class="hint" id="lReason">다온 CRM과 같은 코드를 사용합니다.</p>
+      <input type="text" id="lCode" autocomplete="off" maxlength="20" placeholder="접속코드" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="msg err" id="lMsg"></div>
+      <button type="button" class="btn" id="lBtn" onclick="doLogin()">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
+var BRANCH = 'daon';
+var ME = null;          // {name, role, code}
+var POSTS = [];
+var CUR = null;         // 상세 보고 있는 글
+var EDIT = null;        // 수정 중인 글 (null이면 새 글)
+var NEW_IMGS = [];      // 새로 고른 이미지 dataURL
+var AFTER_LOGIN = null;
+
+function api(action, p){
+  var body = Object.assign({action:action, branch:BRANCH}, p || {});
+  return fetch(API, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body: JSON.stringify(body)
+  }).then(function(r){ return r.json(); });
+}
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function fmtDate(d){ if(!d) return ''; var s = String(d).slice(0,10).split('-'); return s.length===3 ? s[0]+'.'+s[1]+'.'+s[2] : ''; }
+function setMsg(id, text, type){ var el = document.getElementById(id); el.textContent = text || ''; el.className = 'msg ' + (type || 'err'); }
+
+/* ── 로그인 (다온 CRM 로그인 정보 공유) ── */
+function loadMe(){
+  try{
+    var m = JSON.parse(sessionStorage.getItem('crmMe') || 'null');
+    if(m && m.name && m.code) ME = m;
+  }catch(e){}
+  drawWho();
+}
+function drawWho(){
+  document.getElementById('whoName').textContent = ME ? ME.name + ' 님' : '';
+  document.getElementById('whoBtn').textContent = ME ? '로그아웃' : '로그인';
+}
+function onWhoBtn(){
+  if(ME){
+    ME = null;
+    try{ sessionStorage.removeItem('crmMe'); }catch(e){}
+    drawWho();
+    if(CUR) renderDetail();
+  } else {
+    askLogin('다온 CRM과 같은 코드를 사용합니다.', null);
+  }
+}
+function askLogin(reason, then){
+  AFTER_LOGIN = then;
+  document.getElementById('lReason').textContent = reason;
+  document.getElementById('lCode').value = '';
+  setMsg('lMsg', '');
+  openSheet('dLogin');
+  setTimeout(function(){ document.getElementById('lCode').focus(); }, 60);
+}
+function doLogin(){
+  var code = document.getElementById('lCode').value.trim();
+  if(!code){ setMsg('lMsg', '접속코드를 입력하세요.'); return; }
+  var btn = document.getElementById('lBtn');
+  btn.disabled = true; btn.textContent = '확인 중…';
+  api('auth', {code:code}).then(function(r){
+    btn.disabled = false; btn.textContent = '확인';
+    if(!r || !r.ok){ setMsg('lMsg', (r && r.error) || '등록되지 않은 코드입니다. 지사장에게 확인하세요.'); return; }
+    ME = r; ME.code = code;
+    try{ sessionStorage.setItem('crmMe', JSON.stringify(ME)); }catch(e){}
+    drawWho();
+    closeSheet('dLogin');
+    var f = AFTER_LOGIN; AFTER_LOGIN = null;
+    if(f) f(); else if(CUR) renderDetail();
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = '확인';
+    setMsg('lMsg', '서버에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 누르세요.');
+  });
+}
+function isAdmin(){ return !!(ME && (ME.role === '지사장' || ME.role === '관리자')); }
+function canManage(p){ return !!(ME && p && (isAdmin() || p.author === ME.name)); }
+
+/* ── 목록 ── */
+function loadList(){
+  var area = document.getElementById('listArea');
+  area.innerHTML = '<div class="state">자료를 불러오는 중입니다…</div>';
+  api('bizPostList', {}).then(function(r){
+    if(!r || !r.ok) throw new Error((r && r.error) || 'fail');
+    POSTS = r.posts || [];
+    renderList();
+  }).catch(function(){
+    area.innerHTML = '<div class="state"><b>목록을 불러오지 못했습니다</b>잠시 후 다시 시도하세요.<br><button type="button" class="btn ghost sm" onclick="loadList()">다시 불러오기</button></div>';
+    document.getElementById('count').textContent = '';
+  });
+}
+function renderList(){
+  var area = document.getElementById('listArea');
+  document.getElementById('count').textContent = '자료 ' + POSTS.length + '건';
+  if(!POSTS.length){
+    area.innerHTML = '<div class="state"><b>아직 올라온 자료가 없습니다</b>첫 번째 안내 이미지를 올려보세요.<br><button type="button" class="btn pink sm" onclick="openWrite()">자료 올리기</button></div>';
+    return;
+  }
+  area.innerHTML = '<div class="list">' + POSTS.map(function(p, i){
+    var imgs = p.images || [];
+    var th = imgs.length
+      ? '<img src="' + esc(imgs[0]) + '" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode(\'이미지 반영 중\'))">' + (imgs.length > 1 ? '<span class="n">' + imgs.length + '장</span>' : '')
+      : '이미지 없음';
+    return '<button type="button" class="post" onclick="openDetail(' + i + ')">' +
+      '<div class="thumb">' + th + '</div>' +
+      '<div class="post-b"><h3>' + esc(p.title) + '</h3>' +
+      (p.summary ? '<p>' + esc(p.summary) + '</p>' : '') +
+      '<div class="meta">' + esc(fmtDate(p.date)) + (p.author ? ' · ' + esc(p.author) : '') + '</div></div>' +
+      '</button>';
+  }).join('') + '</div>';
+}
+
+/* ── 상세 ── */
+function openDetail(i){
+  CUR = POSTS[i];
+  setMsg('dMsg', '');
+  renderDetail();
+  openSheet('dDetail');
+}
+function renderDetail(){
+  var p = CUR; if(!p) return;
+  document.getElementById('dTitle').textContent = p.title || '';
+  document.getElementById('dMeta').textContent = fmtDate(p.date) + (p.author ? ' · ' + p.author : '');
+  document.getElementById('dSum').textContent = p.summary || '';
+  var imgs = p.images || [];
+  document.getElementById('dImgs').innerHTML = imgs.map(function(u, k){
+    return '<div class="imgbox">' +
+      '<img src="' + esc(u) + '" alt="' + esc(p.title) + ' ' + (k+1) + '번 이미지" onerror="imgFail(this)">' +
+      '<div class="row"><span>' + (k+1) + ' / ' + imgs.length + '</span>' +
+      '<button type="button" class="btn sm" onclick="downloadImg(' + k + ', this)">' + (ME ? '내려받기' : '로그인 후 내려받기') + '</button></div>' +
+    '</div>';
+  }).join('') || '<div class="state" style="padding:24px">이미지가 없는 자료입니다.</div>';
+
+  var acts = '';
+  if(imgs.length > 1) acts += '<button type="button" class="btn" onclick="downloadAll(this)">' + (ME ? '전체 내려받기' : '로그인 후 전체 내려받기') + '</button>';
+  if(canManage(p)){
+    acts += '<button type="button" class="btn ghost" onclick="openEdit()">수정</button>';
+    acts += '<button type="button" class="btn warn" id="delBtn" onclick="delPost(this)">삭제</button>';
+  }
+  document.getElementById('dActs').innerHTML = acts;
+}
+function imgFail(img){
+  var d = document.createElement('div');
+  d.className = 'fail';
+  d.innerHTML = '이미지를 불러오지 못했습니다.<br>방금 올린 자료라면 1~2분 뒤 새로고침하세요.';
+  img.replaceWith(d);
+}
+
+/* ── 다운로드 (로그인 필요) ── */
+function needLogin(then){
+  if(ME) return false;
+  askLogin('자료를 내려받으려면 접속코드가 필요합니다.', then);
+  return true;
+}
+function fileNameFor(url, k){
+  var ext = (String(url).split('.').pop() || 'jpg').split('?')[0];
+  var base = String(CUR.title || '사업장보험').replace(/[\\/:*?"<>|]/g, '').slice(0, 40);
+  return base + '_' + (k+1) + '.' + ext;
+}
+function saveOne(url, name){
+  return fetch(url, {mode:'cors'}).then(function(r){
+    if(!r.ok) throw new Error('http');
+    return r.blob();
+  }).then(function(b){
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(b);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+  });
+}
+function downloadImg(k, btn){
+  if(needLogin(function(){ renderDetail(); })) return;
+  var url = CUR.images[k];
+  btn.disabled = true; btn.textContent = '받는 중…';
+  saveOne(url, fileNameFor(url, k)).then(function(){
+    btn.disabled = false; btn.textContent = '다시 받기';
+    setMsg('dMsg', '');
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = '내려받기';
+    window.open(url, '_blank');
+    setMsg('dMsg', '새 창에서 이미지를 열었습니다. 이미지를 길게 눌러(PC는 우클릭) 저장하세요.', 'ok');
+  });
+}
+function downloadAll(btn){
+  if(needLogin(function(){ renderDetail(); })) return;
+  var list = CUR.images || [];
+  btn.disabled = true; btn.textContent = '받는 중…';
+  var i = 0, failed = 0;
+  (function next(){
+    if(i >= list.length){
+      btn.disabled = false; btn.textContent = '전체 내려받기';
+      setMsg('dMsg', failed ? failed + '장은 받지 못했습니다. 해당 이미지의 내려받기를 따로 눌러주세요.' : list.length + '장을 내려받았습니다.', failed ? 'err' : 'ok');
+      return;
+    }
+    var k = i++;
+    saveOne(list[k], fileNameFor(list[k], k)).catch(function(){ failed++; }).then(function(){ setTimeout(next, 500); });
+  })();
+}
+
+/* ── 작성/수정 ── */
+function openWrite(){
+  if(needLogin(openWrite)) return;
+  EDIT = null;
+  fillForm({title:'', summary:'', order:10, status:'게시', images:[]});
+  document.getElementById('wTitle').textContent = '자료 올리기';
+  openSheet('dWrite');
+}
+function openEdit(){
+  if(!canManage(CUR)) return;
+  EDIT = CUR;
+  closeSheet('dDetail');
+  fillForm(CUR);
+  document.getElementById('wTitle').textContent = '자료 수정';
+  openSheet('dWrite');
+}
+function fillForm(p){
+  NEW_IMGS = [];
+  document.getElementById('fTitle').value = p.title || '';
+  document.getElementById('fSum').value = p.summary || '';
+  document.getElementById('fOrder').value = (p.order != null ? p.order : 10);
+  document.getElementById('fStatus').value = p.status || '게시';
+  document.getElementById('fFiles').value = '';
+  setMsg('wMsg', '');
+  drawPreviews();
+}
+function drawPreviews(){
+  var box = document.getElementById('previews');
+  var hint = document.getElementById('imgHint');
+  var pick = document.getElementById('pickBtn');
+  if(NEW_IMGS.length){
+    box.innerHTML = NEW_IMGS.map(function(src, k){ return '<div><img src="' + src + '" alt=""><small>' + (k+1) + '</small></div>'; }).join('');
+    hint.textContent = EDIT ? '저장하면 기존 이미지가 이 사진들로 교체됩니다.' : '큰 사진은 자동으로 줄여서 올립니다.';
+    pick.textContent = '사진 다시 선택';
+  } else if(EDIT && (EDIT.images || []).length){
+    box.innerHTML = EDIT.images.map(function(src, k){ return '<div><img src="' + esc(src) + '" alt=""><small>' + (k+1) + '</small></div>'; }).join('');
+    hint.textContent = '현재 이미지입니다. 바꾸려면 사진을 새로 선택하세요(3장 전체 교체).';
+    pick.textContent = '사진 교체';
+  } else {
+    box.innerHTML = '';
+    hint.textContent = '큰 사진은 자동으로 줄여서 올립니다.';
+    pick.textContent = '사진 선택';
+  }
+}
+function shrink(file){
+  return new Promise(function(resolve, reject){
+    var fr = new FileReader();
+    fr.onerror = reject;
+    fr.onload = function(){
+      var img = new Image();
+      img.onerror = reject;
+      img.onload = function(){
+        var max = 1600, w = img.width, h = img.height;
+        if(w > max || h > max){ var r = Math.min(max / w, max / h); w = Math.round(w * r); h = Math.round(h * r); }
+        var c = document.createElement('canvas'); c.width = w; c.height = h;
+        var ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', 0.86));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function onFiles(input){
+  var files = Array.prototype.slice.call(input.files || []);
+  if(!files.length) return;
+  if(files.length > 3) setMsg('wMsg', '이미지는 3장까지만 올라갑니다. 앞의 3장만 사용합니다.');
+  else setMsg('wMsg', '');
+  files = files.slice(0, 3);
+  Promise.all(files.map(shrink)).then(function(list){
+    NEW_IMGS = list;
+    drawPreviews();
+  }).catch(function(){
+    setMsg('wMsg', '사진을 읽지 못했습니다. JPG·PNG 파일인지 확인하세요.');
+  });
+}
+function savePost(){
+  if(needLogin(savePost)) return;
+  var title = document.getElementById('fTitle').value.trim();
+  if(!title){ setMsg('wMsg', '제목을 입력하세요.'); document.getElementById('fTitle').focus(); return; }
+  if(!EDIT && !NEW_IMGS.length){ setMsg('wMsg', '이미지를 1장 이상 선택하세요.'); return; }
+  var payload = {
+    title: title,
+    summary: document.getElementById('fSum').value.trim(),
+    order: Number(document.getElementById('fOrder').value) || 0,
+    status: document.getElementById('fStatus').value,
+    fc: EDIT ? (EDIT.author || ME.name) : ME.name,
+    images: NEW_IMGS,
+    loginCode: ME.code
+  };
+  if(EDIT){
+    payload.pageId = EDIT.id;
+    payload.keepImages = EDIT.images || [];
+  }
+  var btn = document.getElementById('saveBtn');
+  btn.disabled = true; btn.textContent = NEW_IMGS.length ? '이미지 올리는 중…' : '저장 중…';
+  setMsg('wMsg', '');
+  api('bizPostSave', payload).then(function(r){
+    btn.disabled = false; btn.textContent = '저장하기';
+    if(!r || !r.ok){ setMsg('wMsg', (r && r.error) || '저장하지 못했습니다. 다시 눌러주세요.'); return; }
+    closeSheet('dWrite');
+    CUR = null;
+    loadList();
+    if(payload.status === '숨김') toastList('숨김으로 저장했습니다. 목록에는 보이지 않습니다.');
+  }).catch(function(){
+    btn.disabled = false; btn.textContent = '저장하기';
+    setMsg('wMsg', '서버 응답이 없습니다. 인터넷 연결을 확인하고 다시 눌러주세요.');
+  });
+}
+function toastList(t){
+  setTimeout(function(){
+    var c = document.getElementById('count');
+    c.textContent = t;
+  }, 900);
+}
+
+/* ── 삭제 (두 번 눌러 확인) ── */
+function delPost(btn){
+  if(!canManage(CUR)) return;
+  if(!btn.classList.contains('armed')){
+    btn.classList.add('armed'); btn.textContent = '한 번 더 누르면 삭제';
+    setTimeout(function(){ if(btn.isConnected){ btn.classList.remove('armed'); btn.textContent = '삭제'; } }, 4000);
+    return;
+  }
+  btn.disabled = true; btn.textContent = '삭제 중…';
+  api('bizPostDelete', {pageId: CUR.id, loginCode: ME.code}).then(function(r){
+    if(!r || !r.ok) throw new Error('fail');
+    closeSheet('dDetail'); CUR = null; loadList();
+  }).catch(function(){
+    btn.disabled = false; btn.classList.remove('armed'); btn.textContent = '삭제';
+    setMsg('dMsg', '삭제하지 못했습니다. 다시 눌러주세요.');
+  });
+}
+
+/* ── 시트 ── */
+function openSheet(id){ document.getElementById(id).classList.remove('hide'); document.body.style.overflow = 'hidden'; }
+function closeSheet(id){
+  document.getElementById(id).classList.add('hide');
+  if(document.querySelectorAll('.dim:not(.hide)').length === 0) document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){
+  if(e.key !== 'Escape') return;
+  ['dLogin','dWrite','dDetail'].some(function(id){
+    if(!document.getElementById(id).classList.contains('hide')){ closeSheet(id); return true; }
+  });
+});
+
+loadMe();
+loadList();
+</script>
+</body>
+</html>
