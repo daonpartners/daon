@@ -52,8 +52,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 @media (max-width:520px){.list{grid-template-columns:1fr}}
 .post{background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;padding:0;display:flex;flex-direction:column;color:inherit}
 .post:hover{border-color:var(--orange)}
-.thumb{aspect-ratio:4/3;background:var(--tint);display:flex;align-items:center;justify-content:center;color:var(--deep);font-size:13px;font-weight:600;position:relative}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb{aspect-ratio:5/2;min-height:0;overflow:hidden;flex:none;background:var(--tint);display:flex;align-items:center;justify-content:center;color:var(--deep);font-size:13px;font-weight:600;position:relative}
+.thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .thumb .n{position:absolute;right:8px;bottom:8px;background:rgba(11,30,66,.8);color:#fff;font-size:12px;border-radius:999px;padding:2px 9px}
 .post-b{padding:13px 14px 15px}
 .post-b h3{font-size:16px;font-weight:700;line-height:1.4}
