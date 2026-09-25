@@ -168,6 +168,8 @@ textarea.inp{height:auto;min-height:110px;padding:16px 18px;font-size:17px;font-
 .agree.on{border-color:var(--brand);background:var(--brand-lt)}
 .agree.on .box{border-color:var(--brand);background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/17px no-repeat}
 .agree b{display:block;font-size:17px;margin-bottom:4px}
+.agree.opt-in{margin-top:10px;padding:14px 16px}
+.agree.opt-in b{font-size:15px}
 .agree span{display:block;font-size:14px;color:var(--ink2);line-height:1.55}
 
 /* 오류 */
@@ -387,6 +389,11 @@ footer{padding:26px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var
         <span class="box"></span>
         <div><b>정보 제공에 동의합니다</b>
         <span>입력한 정보(주민등록번호 또는 생년월일 포함)와 서류 사진을 보험금 청구 접수 목적으로 다온파트너스에 제공합니다. 청구 접수 외 목적으로 사용하지 않으며, 처리가 끝나면 파기합니다.</span></div>
+      </button>
+      <button class="agree opt-in" type="button" id="adBtn" aria-pressed="false">
+        <span class="box"></span>
+        <div><b>(선택) 보험 상품·이벤트 안내 수신에 동의합니다</b>
+        <span>다온파트너스가 보험 상품, 보장 점검, 이벤트 소식을 문자로 보내드립니다. 동의하지 않아도 청구 접수는 그대로 진행됩니다. 언제든 수신을 거부할 수 있습니다.</span></div>
       </button>
       <div class="err" id="err-confirm"></div>
     </section>
@@ -704,6 +711,10 @@ footer{padding:26px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var
     var b = e.target.closest('[data-go]'); if(!b) return;
     show(STEPS.indexOf(b.dataset.go), true);
   });
+  S.ad = false;
+  $('adBtn').addEventListener('click', function(){
+    S.ad = !S.ad; this.classList.toggle('on', S.ad); this.setAttribute('aria-pressed', S.ad);
+  });
   $('agreeBtn').addEventListener('click', function(){
     S.agree = !S.agree;
     this.classList.toggle('on', S.agree);
@@ -722,6 +733,7 @@ footer{padding:26px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var
     var birth = digits($('fBirth').value);
     var memoParts = [];
     if(S.place) memoParts.push('[QR 접수경로: ' + S.place + ']');
+    memoParts.push(S.ad ? '[광고수신동의: 동의 · ' + new Date().toISOString().slice(0,10) + ' · 온라인 청구신청서]' : '[광고수신동의: 미동의]');
     var payload = {
       name: $('fName').value.trim(),
       phone: $('fPhone').value.trim(),
@@ -744,6 +756,8 @@ footer{padding:26px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var
       memo: memoParts.join(' '),
       place: S.place,
       source: 'claim-app',
+      adConsent: !!S.ad,
+      adConsentAt: S.ad ? new Date().toISOString() : '',
       photos: S.photos,
       submittedAt: new Date().toISOString()
     };
