@@ -528,7 +528,11 @@ function fmtPhone(v){ var n=digits(v).slice(0,11); if(n.length>=8) return n.repl
 function dday(d){ if(!d) return null; return Math.round((new Date(d)-new Date(today()))/864e5); }
 function rrnFront(c){ /* 주민번호 앞자리-성별코드 (뒷자리 나머지는 가림) */
   if(!c.birth) return ''; var b=digits(c.birth); if(b.length!==8) return c.birth;
-  return b.slice(2)+'-'+(c.gcode||'*')+'******';
+  return b.slice(2)+'-'+(c.gcode||'*')+(c.rrnEnc?'******':'');
+}
+function rrnCell(c){ /* 표용: 뒷자리 저장 여부를 구분해서 표시 */
+  var f=rrnFront(c); if(!f) return '<span class="muted">-</span>';
+  return esc(f)+(c.rrnEnc?'':' <span class="tag y" title="주민번호 뒷자리가 저장되어 있지 않습니다">뒷자리 없음</span>');
 }
 function addrOf(c){ return [c.zip?'('+c.zip+')':'', c.addr, c.addr2].filter(Boolean).join(' '); }
 function ctrsOf(c){
@@ -647,7 +651,7 @@ function renderOwner(){
         var cs=ctrsOf(c), prem=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0);
         var mini=cs.slice(0,3).map(function(ct){ return '<span class="tag '+({'장기':'b','자동차':'o','화재':'r','일반':'g'}[ct.category]||'')+'" onclick="event.stopPropagation();openCust(\''+c.id+'\')" title="'+esc(ct.company+' '+ct.product)+'">'+esc((ct.company||'')+' '+(ct.category||''))+'</span>'; }).join('')+(cs.length>3?'<span class="tag">+'+(cs.length-3)+'</span>':'');
         return '<tr class="row'+(PICK.owner[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.owner[c.id]?'checked':'')+' onchange="pick(\'owner\',\''+c.id+'\',this.checked)"></td>'
-          +'<td class="nm">'+esc(c.name)+'</td><td class="nw">'+esc(rrnFront(c))+'</td><td class="nw">'+esc(c.phone)+'</td><td class="addr">'+esc(addrOf(c))+'</td>'
+          +'<td class="nm">'+esc(c.name)+'</td><td class="nw">'+rrnCell(c)+'</td><td class="nw">'+esc(c.phone)+'</td><td class="addr">'+esc(addrOf(c))+'</td>'
           +'<td><div class="ctr-mini">'+(mini||'<span class="muted">-</span>')+'</div></td><td class="num hide-m">'+(prem?won(prem):'-')+'</td></tr>';
       }).join(''):'<tr><td colspan="7" class="empty">조건에 맞는 고객이 없습니다.</td></tr>')+'</tbody>';
   } else {
