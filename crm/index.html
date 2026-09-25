@@ -487,6 +487,26 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 </div>
 <datalist id="custNames"></datalist>
 
+<!-- 광고 수신 동의 등록 창 -->
+<div class="dim modal-dim hide" id="csDim" onclick="closeConsent()"></div>
+<div class="modal hide" id="csModal" style="width:min(620px,96vw)">
+  <div class="drawer-h"><h3>광고 수신 동의 등록</h3><button class="x" onclick="closeConsent()">×</button></div>
+  <div class="drawer-b">
+    <div class="sec-t"><div id="csSum"></div><button class="btn sm" onclick="addMktConsent()">마케팅동의 날짜 있는 고객 추가</button></div>
+    <div class="rcpts" id="csNames" style="max-height:160px;margin-bottom:14px"></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">동의 받은 날짜</label><input class="inp" type="date" id="csDate"></div>
+      <div class="fld"><label class="lbl">동의 방법</label><select class="sel" id="csMethod"><option>서면 동의서</option><option>전화 녹취</option><option>온라인 신청서</option><option>문자 회신</option><option>기타</option></select></div>
+    </div>
+    <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:8px;cursor:pointer">
+      <input type="checkbox" id="csOk" style="margin-top:3px;width:16px;height:16px;accent-color:var(--acc)">
+      <span>위 고객 모두에게 <b>광고성 정보(보험 상품·이벤트 안내) 수신 동의를 실제로 받았습니다.</b><br><span class="muted" style="font-size:12px">날짜와 방법은 고객 메모와 '마케팅동의' 날짜에 기록되어, 나중에 동의 근거로 쓰입니다. 수신거부 고객은 자동으로 제외됩니다.</span></span>
+    </label>
+    <div id="csProg"></div>
+  </div>
+  <div class="drawer-f"><button class="btn" onclick="closeConsent()">닫기</button><div class="spacer"></div><button class="btn pri" id="csGo" onclick="runConsent()">동의 등록</button></div>
+</div>
+
 <!-- 주민번호 뒷자리 일괄 입력 창 -->
 <div class="dim modal-dim hide" id="riDim" onclick="closeRrnImp()"></div>
 <div class="modal hide" id="riModal" style="width:min(860px,96vw)">
@@ -737,7 +757,7 @@ function pickAll(scope,on){
 function drawSelBar(scope){
   var n=Object.keys(PICK[scope]).length, el=$(scope==='owner'?'selOwner':'selPros');
   el.classList.toggle('hide',!n);
-  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button>';
+  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button>';
 }
 function selectedOrFiltered(scope){
   var ids=Object.keys(PICK[scope]);
@@ -796,6 +816,7 @@ function openCust(id){
     +'<dt>주소</dt><dd>'+esc(addrOf(c)||'-')+'</dd>'
     +(c.job?'<dt>직업</dt><dd>'+esc(c.job)+'</dd>':'')
     +(c.custType==='가망고객'&&c.interest?'<dt>관심</dt><dd>'+esc(c.interest)+'</dd>':'')
+    +'<dt>문자 수신</dt><dd>'+(c.optout?'<span class="tag r">수신거부</span>':(c.adAgree?'<span class="tag g">광고 수신 동의</span>':'<span class="tag">광고 수신 미동의</span> <span class="muted" style="font-size:12px">정보성 문자만 발송 가능</span>'))+'</dd>'
     +'<dt>메모</dt><dd>'+esc(c.memo||'-')+'</dd></dl>';
   h+='<div class="sec-t"><h4>'+(c.custType==='가망고객'?'관련 계약':'보유계약')+' '+cs.length+'건</h4><button class="btn sm" onclick="openCtrForm(\'\',\''+esc(c.name).replace(/'/g,"\\'")+'\')">+ 계약 추가</button></div>';
   h+=cs.length?cs.map(function(ct){
@@ -832,7 +853,10 @@ function openCustForm(id, type){
     +'<div class="fld"><label class="lbl">주소</label><div style="display:grid;grid-template-columns:90px 1fr;gap:6px"><input class="inp" id="ffZip" placeholder="우편번호" value="'+v('zip')+'"><input class="inp" id="ffAddr" placeholder="주소" value="'+v('addr')+'"></div><input class="inp" id="ffAddr2" placeholder="상세주소" style="margin-top:6px" value="'+v('addr2')+'"></div>'
     +'<div class="g2"><div class="fld"><label class="lbl">직업</label><input class="inp" id="ffJob" value="'+v('job')+'"></div><div class="fld" id="ffBizBox"><label class="lbl">개인 / 사업자</label><select class="sel" id="ffBiz"><option'+(c&&c.bizType==='사업자'?'':' selected')+'>개인</option><option'+(c&&c.bizType==='사업자'?' selected':'')+'>사업자</option></select></div></div>'
     +'<div class="fld" id="ffIntBox"><label class="lbl">관심 보종</label><div class="chips" id="ffInt">'+['자동차','장기','화재','일반'].map(function(i){ var on=c&&String(c.interest||'').split(',').indexOf(i)>=0; return '<button type="button" class="chip'+(on?' on':'')+'" data-v="'+i+'" onclick="this.classList.toggle(\'on\')">'+i+'</button>'; }).join('')+'</div></div>'
-    +'<div class="fld"><label class="lbl">메모</label><textarea class="ta" id="ffMemo" rows="3">'+v('memo')+'</textarea></div>';
+    +'<div class="fld"><label class="lbl">메모</label><textarea class="ta" id="ffMemo" rows="3">'+v('memo')+'</textarea></div>'
+    +'<div class="fld"><label class="lbl">문자 수신</label>'
+    +'<label style="display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;cursor:pointer"><input type="checkbox" id="ffAd" style="margin-top:3px;accent-color:var(--acc)"'+(c&&c.adAgree?' checked':'')+'><span>광고성 정보 수신에 동의함 <span class="muted" style="font-size:12px">(고객에게 동의를 실제로 받은 경우에만 체크)</span></span></label>'
+    +'<label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="ffOpt" style="accent-color:var(--red)"'+(c&&c.optout?' checked':'')+'><span>수신거부 <span class="muted" style="font-size:12px">(체크하면 모든 문자 발송에서 제외)</span></span></label></div>';
   $('cdFoot').innerHTML='<div class="spacer"></div><button class="btn" onclick="'+(c?'openCust(\''+c.id+'\')':'closeCust()')+'">취소</button><button class="btn pri" id="ffSave" onclick="saveCust()">저장</button>';
   $('custDrawer').dataset.type=t; ffType(t);
   $('custDim').classList.remove('hide'); $('custDrawer').classList.remove('hide');
@@ -866,8 +890,15 @@ function saveCust(){
   api('customerSave',p).then(function(r){
     b.disabled=false; b.textContent='저장';
     if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
-    toast('저장했어요'); var nid=r.id||(c&&c.id);
-    loadAll().then(function(){ if(nid && CUSTOMERS.some(function(x){return x.id===nid;})) openCust(nid); else closeCust(); });
+    var nid=r.id||(c&&c.id);
+    var ad=$('ffAd').checked, oo=$('ffOpt').checked;
+    var needExtra=nid && ((c?!!c.adAgree:false)!==ad || (c?!!c.optout:false)!==oo);
+    var care=['정상','추가상담','보험금청구','해지위험','휴면'], ref=['높음','보통','낮음'];
+    var ex=needExtra?api('custExtra',{pageId:nid, adAgree:ad, optout:oo,
+      careStatus:(c&&care.indexOf(c.careStatus)>=0)?c.careStatus:'정상', referral:(c&&ref.indexOf(c.referral)>=0)?c.referral:'보통',
+      reviewDate:(c&&c.reviewDate)||'', renewDate:(c&&c.renewDate)||'', nextDate:(c&&c.nextDate)||''}).then(function(x){ if(!x.ok) toast('문자 수신 설정 저장 실패: '+(x.error||''),true); }).catch(function(){ toast('문자 수신 설정 저장 실패',true); }):Promise.resolve();
+    toast('저장했어요');
+    ex.then(function(){ return loadAll(); }).then(function(){ if(nid && CUSTOMERS.some(function(x){return x.id===nid;})) openCust(nid); else closeCust(); });
   }).catch(function(){ b.disabled=false; b.textContent='저장'; toast('연결에 실패했습니다',true); });
 }
 function delCust(){
@@ -879,7 +910,7 @@ function delCust(){
   }).catch(function(){ toast('연결에 실패했습니다',true); });
 }
 
-var CUST_KEEP=['name','phone','birth','gcode','grade','source','sourceNote','zip','job','addr','addr2','family','memo','dbType','sms1','status1','sms2','status2','status','bizType','interest','visit'];
+var CUST_KEEP=['name','phone','birth','gcode','grade','source','sourceNote','zip','job','addr','addr2','family','intro','anniv','annivType','consent','mktConsent','nextTouch','lastTouch','memo','dbType','sms1','status1','sms2','status2','status','bizType','interest','visit'];
 
 /* ───────── 주민번호 뒷자리 일괄 입력 ─────────
    엑셀(이름, 주민등록번호, 연락처)을 읽어 기존 고객과 맞춘 뒤,
@@ -1013,6 +1044,73 @@ function runRrnImp(){
   });
 }
 
+/* ───────── 광고 수신 동의 일괄 등록 ─────────
+   실제로 동의를 받은 고객만 등록. '마케팅동의' 날짜 + 메모에 동의 방법을 남기고, '광고수신동의' 체크를 켭니다. */
+var CONSENT_IDS=[], CONSENT_SCOPE='owner', CONSENT_RUNNING=false;
+function openConsent(scope){
+  CONSENT_SCOPE=scope; CONSENT_IDS=Object.keys(PICK[scope]);
+  if(!CONSENT_IDS.length){ toast('먼저 목록에서 고객을 체크하세요',true); return; }
+  $('csDate').value=today(); $('csMethod').value='서면 동의서'; $('csOk').checked=false; $('csProg').innerHTML=''; $('csGo').classList.remove('hide');
+  drawConsent(); $('csDim').classList.remove('hide'); $('csModal').classList.remove('hide');
+}
+function closeConsent(){ if(CONSENT_RUNNING){ toast('저장이 끝날 때까지 기다려주세요',true); return; } $('csDim').classList.add('hide'); $('csModal').classList.add('hide'); }
+function consentList(){ return CONSENT_IDS.map(function(id){ return CUSTOMERS.find(function(c){return c.id===id;}); }).filter(Boolean); }
+function addMktConsent(){
+  var pool=(CONSENT_SCOPE==='owner'?owners():prospects()).filter(function(c){ return c.mktConsent && !c.adAgree && !c.optout; });
+  var n=0; pool.forEach(function(c){ if(CONSENT_IDS.indexOf(c.id)<0){ CONSENT_IDS.push(c.id); n++; } });
+  toast(n?('마케팅동의 날짜가 있는 고객 '+n+'명을 추가했어요'):'추가할 고객이 없습니다'); drawConsent();
+}
+function drawConsent(){
+  var list=consentList(), target=list.filter(function(c){return !c.optout && !c.adAgree;});
+  var already=list.filter(function(c){return c.adAgree;}).length, oo=list.filter(function(c){return c.optout;}).length;
+  $('csSum').innerHTML='<b>'+target.length+'명</b> 등록 예정'+(already?' · 이미 동의 '+already+'명':'')+(oo?' · <span style="color:var(--red)">수신거부 '+oo+'명 제외</span>':'');
+  $('csNames').innerHTML=list.map(function(c){
+    var st=c.optout?'<span class="tag r">수신거부·제외</span>':c.adAgree?'<span class="tag g">이미 동의</span>':(c.mktConsent?'<span class="tag b">마케팅동의 '+esc(c.mktConsent)+'</span>':'');
+    return '<span class="rcpt" style="padding-right:9px">'+esc(c.name)+' '+st+'</span>';
+  }).join('');
+  $('csGo').textContent=target.length+'명 동의 등록'; $('csGo').disabled=!target.length;
+}
+function runConsent(){
+  var list=consentList().filter(function(c){return !c.optout && !c.adAgree;});
+  if(!list.length) return;
+  if(!$('csOk').checked){ toast('실제로 동의를 받았는지 확인란에 체크해 주세요',true); return; }
+  var date=$('csDate').value||today(), method=$('csMethod').value, note='[광고수신동의 '+date+' · '+method+']';
+  CONSENT_RUNNING=true; $('csGo').classList.add('hide');
+  var care=['정상','추가상담','보험금청구','해지위험','휴면'], ref=['높음','보통','낮음'];
+  var idx=0, done=0, ok=0, fail=[];
+  function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+  function call(action, body, attempt){
+    return api(action, body).then(function(r){return r;}, function(){ return {ok:false,net:true,error:'연결 실패'}; }).then(function(r){
+      if(r.ok) return r;
+      if((r.net || /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||''))) && attempt<3) return wait(900*(attempt+1)).then(function(){ return call(action, body, attempt+1); });
+      throw new Error(r.error||'실패');
+    });
+  }
+  function one(c){
+    var p={fc:ME.name, branch:ME.branch, custType:c.custType||'보유고객', pageId:c.id};
+    CUST_KEEP.forEach(function(k){ if(c[k]!==undefined) p[k]=c[k]; else if(k!=='visit') p[k]=''; });
+    if(c.rrnEnc) p.rrnEnc=c.rrnEnc;
+    var d0=c.mktConsent||date; /* 기존 마케팅동의 날짜가 있으면 그 날짜를 유지 */
+    p.mktConsent=d0; p.memo=(p.memo?p.memo+'\n':'')+(c.mktConsent?'[광고수신동의 '+d0+' · 기존 마케팅동의 근거]':note); if(!p.status) p.status='진행중';
+    return call('customerSave', p, 0).then(function(){
+      return call('custExtra', {pageId:c.id, adAgree:true, optout:false,
+        careStatus:care.indexOf(c.careStatus)>=0?c.careStatus:'정상', referral:ref.indexOf(c.referral)>=0?c.referral:'보통',
+        reviewDate:c.reviewDate||'', renewDate:c.renewDate||'', nextDate:c.nextDate||''}, 0);
+    });
+  }
+  function worker(){
+    if(idx>=list.length) return Promise.resolve();
+    var c=list[idx++];
+    return one(c).then(function(){ ok++; }).catch(function(e){ fail.push(c.name+' — '+((e&&e.message)||'실패')); })
+      .then(function(){ done++; $('csProg').innerHTML='<div style="height:8px;background:var(--line2);border-radius:4px;overflow:hidden;margin:10px 0"><div style="height:100%;width:'+Math.round(done/list.length*100)+'%;background:var(--acc)"></div></div>'+done+' / '+list.length+'명 처리'; return worker(); });
+  }
+  Promise.all([worker(), worker()]).then(function(){
+    CONSENT_RUNNING=false;
+    $('csProg').innerHTML='<b>'+ok+'명 동의 등록 완료</b>'+(fail.length?'<div class="warn">'+fail.map(esc).join('<br>')+'</div>':'');
+    PICK[CONSENT_SCOPE]={}; loadAll();
+  });
+}
+
 /* ───────── 계약 입력 ───────── */
 var CF={cfName:'custName',cfCat:'category',cfComp:'company',cfProd:'product',cfDate:'contractDate',cfExp:'expireDate',cfPrem:'premium',cfNo:'policyNo',cfStatus:'status',cfPay:'payMethod',cfTerm:'term',cfDebit:'debitDay',cfDB:'deathBenef',cfMB:'maturityBenef',cfSB:'survivalBenef',cfMail:'mailAddr'};
 function openCtrForm(id, custName){
@@ -1081,7 +1179,7 @@ function smsCheck(){
   if(cat==='광고성'){
     if(!/^\(광고\)/.test(msg.trim())) w.push('맨 앞에 (광고) 표기가 필요합니다.');
     if(!/무료거부|수신거부|080/.test(msg)) w.push('무료 수신거부 안내가 필요합니다.');
-    var no=RCPTS.filter(function(r){return !r.adAgree;}).length; if(no) w.push('광고 수신 미동의 '+no+'명은 자동 제외됩니다.');
+    var no=RCPTS.filter(function(r){return !r.adAgree;}).length; if(no) w.push('광고 수신 미동의 '+no+'명은 발송되지 않습니다. 계약·만기·청구 안내라면 문자 종류를 <b>정보성</b>으로 바꾸세요.');
   }
   var oo=RCPTS.filter(function(r){return r.optout;}).length; if(oo) w.push('수신거부 고객 '+oo+'명은 자동 제외됩니다.');
   if(b>2000) w.push('2000byte를 넘으면 발송되지 않습니다.');
