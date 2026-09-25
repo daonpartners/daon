@@ -309,7 +309,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <section class="page view hide" id="v-owner">
       <div class="ph">
         <div><h2>보유고객</h2><div class="sub">계약을 누르면 고객 기본정보가 열립니다</div></div>
-        <div style="display:flex;gap:8px"><button class="btn" onclick="openCtrForm('')">+ 계약 등록</button><button class="btn pri" onclick="openCustForm('', '보유고객')">+ 고객 등록</button></div>
+        <div style="display:flex;gap:8px"><button class="btn" onclick="openRrnImp()">주민번호 일괄 입력</button><button class="btn" onclick="openCtrForm('')">+ 계약 등록</button><button class="btn pri" onclick="openCustForm('', '보유고객')">+ 고객 등록</button></div>
       </div>
       <div class="card">
         <div class="toolbar">
@@ -333,7 +333,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <section class="page view hide" id="v-prospect">
       <div class="ph">
         <div><h2>가망고객</h2><div class="sub">상담 중이거나 앞으로 연락할 고객</div></div>
-        <button class="btn pri" onclick="openCustForm('', '가망고객')">+ 가망고객 등록</button>
+        <div style="display:flex;gap:8px"><button class="btn" onclick="openRrnImp()">주민번호 일괄 입력</button><button class="btn pri" onclick="openCustForm('', '가망고객')">+ 가망고객 등록</button></div>
       </div>
       <div class="card">
         <div class="toolbar">
@@ -486,6 +486,37 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="cfDel" onclick="delCtr()">삭제</button><div class="spacer"></div><button class="btn" onclick="closeCtrForm()">취소</button><button class="btn pri" id="cfSave" onclick="saveCtr()">저장</button></div>
 </div>
 <datalist id="custNames"></datalist>
+
+<!-- 주민번호 뒷자리 일괄 입력 창 -->
+<div class="dim modal-dim hide" id="riDim" onclick="closeRrnImp()"></div>
+<div class="modal hide" id="riModal" style="width:min(860px,96vw)">
+  <div class="drawer-h"><h3>주민번호 뒷자리 일괄 입력</h3><button class="x" onclick="closeRrnImp()">×</button></div>
+  <div class="drawer-b">
+    <div id="riStep1">
+      <ol style="margin:0 0 16px;padding-left:18px;line-height:1.9">
+        <li>엑셀 첫 줄에 <b>이름</b>, <b>주민등록번호</b> 제목을 넣고 한 줄에 한 명씩 적어주세요. <span class="muted">(연락처 칸은 선택 · 동명이인 구분용)</span></li>
+        <li>파일을 올리면 이름과 생년월일로 CRM 고객을 찾아 연결합니다. 저장 전에 결과를 먼저 보여드립니다.</li>
+        <li>뒷자리는 고객을 한 명씩 수정할 때와 같은 방식으로 <b>암호화되어 저장</b>됩니다. 화면·출력·엑셀에서는 계속 가려집니다.</li>
+      </ol>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="rrnTemplate()">양식 내려받기</button>
+        <label class="btn pri">엑셀 파일 선택<input type="file" id="riFile" accept=".xlsx,.xls,.csv" class="hide" onchange="readRrnFile(this)"></label>
+      </div>
+      <div class="warn" style="margin-top:16px">올린 파일은 이 화면에서만 읽고 CRM 서버로만 전송됩니다. 저장이 끝나면 PC에 남은 원본 엑셀 파일은 직접 삭제해 주세요.</div>
+    </div>
+    <div id="riStep2" class="hide">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px"><div id="riSum"></div><div class="spacer"></div>
+        <button class="btn sm" onclick="rrnAll(true)">연결된 고객 모두 선택</button><button class="btn sm" onclick="rrnAll(false)">선택 해제</button></div>
+      <div class="tbl-wrap" style="max-height:52vh;border:1px solid var(--line);border-radius:8px"><table class="tbl" id="riTbl"></table></div>
+      <p class="muted" style="font-size:12px;margin:8px 0 0">'확인 필요', '못 찾음' 줄은 저장되지 않습니다. 이름·생년월일을 CRM과 맞추거나 연락처 칸을 채워 다시 올리거나, 고객 상세에서 한 명씩 입력해 주세요.</p>
+    </div>
+    <div id="riStep3" class="hide">
+      <div style="height:8px;background:var(--line2);border-radius:4px;overflow:hidden;margin:6px 0 10px"><div id="riBar" style="height:100%;width:0;background:var(--acc);transition:width .2s"></div></div>
+      <div id="riProg"></div><div id="riFail"></div>
+    </div>
+  </div>
+  <div class="drawer-f"><button class="btn" onclick="closeRrnImp()">닫기</button><div class="spacer"></div><button class="btn pri" id="riGo" onclick="runRrnImp()" disabled>저장하기</button></div>
+</div>
 
 <div id="printArea"></div>
 <div class="toast" id="toast"></div>
@@ -819,9 +850,8 @@ function saveCust(){
   if(front && front.length!==6){ toast('주민등록번호 앞자리는 6자리입니다',true); return; }
   if(back && back.length!==7){ toast('주민등록번호 뒷자리는 7자리입니다',true); return; }
   /* 기존 화면이 저장하던 항목과 똑같이 보냄 (화면에 없는 항목은 기존 값 유지) */
-  var KEEP=['name','phone','birth','gcode','grade','source','sourceNote','zip','job','addr','addr2','family','memo','dbType','sms1','status1','sms2','status2','status','bizType','interest','visit'];
   var p={fc:ME.name, branch:ME.branch, custType:t};
-  KEEP.forEach(function(k){ if(c && c[k]!==undefined) p[k]=c[k]; else if(k!=='visit') p[k]=''; });
+  CUST_KEEP.forEach(function(k){ if(c && c[k]!==undefined) p[k]=c[k]; else if(k!=='visit') p[k]=''; });
   Object.assign(p,{name:name, phone:$('ffPhone').value.trim(), zip:$('ffZip').value.trim(), addr:$('ffAddr').value.trim(), addr2:$('ffAddr2').value.trim(), job:$('ffJob').value.trim(), memo:$('ffMemo').value.trim()});
   if(c) p.pageId=c.id;
   if(front){
@@ -847,6 +877,140 @@ function delCust(){
   api('customerDeleteCascade',{pageId:c.id}).then(function(r){
     if(r.ok){ toast('삭제했어요'); closeCust(); loadAll(); } else toast(r.error||'삭제에 실패했습니다',true);
   }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+
+var CUST_KEEP=['name','phone','birth','gcode','grade','source','sourceNote','zip','job','addr','addr2','family','memo','dbType','sms1','status1','sms2','status2','status','bizType','interest','visit'];
+
+/* ───────── 주민번호 뒷자리 일괄 입력 ─────────
+   엑셀(이름, 주민등록번호, 연락처)을 읽어 기존 고객과 맞춘 뒤,
+   한 명씩 입력할 때와 같은 방식(customerSave + rrnBackNew)으로 저장합니다.
+   파일 내용은 이 브라우저에서 CRM 서버로만 전송되고, 작업이 끝나면 메모리에서 지웁니다. */
+var RRN_ROWS=[], RRN_RUNNING=false;
+function openRrnImp(){
+  RRN_ROWS=[]; $('riFile').value=''; $('riGo').classList.remove('hide'); $('riGo').disabled=true; $('riGo').textContent='저장하기'; $('riStep1').classList.remove('hide'); $('riStep2').classList.add('hide'); $('riStep3').classList.add('hide');
+  $('riDim').classList.remove('hide'); $('riModal').classList.remove('hide');
+}
+function closeRrnImp(){
+  if(RRN_RUNNING){ toast('저장이 끝날 때까지 기다려주세요',true); return; }
+  RRN_ROWS=[]; $('riTbl').innerHTML=''; $('riFile').value='';
+  $('riDim').classList.add('hide'); $('riModal').classList.add('hide');
+}
+function rrnTemplate(){
+  var ws=XLSX.utils.aoa_to_sheet([['이름','주민등록번호','연락처'],['홍길동','850820-1234567','010-1234-5678']]);
+  ws['!cols']=[{wch:12},{wch:18},{wch:16}];
+  var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'주민번호'); XLSX.writeFile(wb,'주민번호_일괄입력_양식.xlsx');
+}
+function pickCol(row, names){ for(var i=0;i<names.length;i++){ var v=row[names[i]]; if(v!==undefined && String(v).trim()!=='') return String(v).trim(); } return ''; }
+function parseRrnFull(raw){
+  var d=digits(raw); if(d.length===12) d='0'+d;
+  if(d.length!==13) return null;
+  var g=d.charAt(6); if('1234567890'.indexOf(g)<0) return null;
+  var cent=(g==='1'||g==='2'||g==='5'||g==='6')?'19':(g==='3'||g==='4'||g==='7'||g==='8')?'20':'18';
+  var birth=cent+d.slice(0,2)+'-'+d.slice(2,4)+'-'+d.slice(4,6);
+  var dt=new Date(birth); if(isNaN(dt) || dt.toISOString().slice(0,10)!==birth || birth>today()) return null;
+  return {birth:birth, gcode:g, back:d.slice(6)};
+}
+function readRrnFile(inp){
+  var f=inp.files&&inp.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'array',raw:false});
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:'',raw:false});
+      buildRrnRows(rows);
+    }catch(err){ toast('파일을 읽지 못했습니다. 엑셀(xlsx) 또는 CSV 파일인지 확인하세요',true); }
+    inp.value='';
+  };
+  rd.readAsArrayBuffer(f);
+}
+function buildRrnRows(rows){
+  RRN_ROWS=[];
+  rows.forEach(function(row,i){
+    var name=pickCol(row,['이름','성명','고객명','계약자','피보험자']).replace(/\s+/g,'');
+    var rawR=pickCol(row,['주민등록번호','주민번호']);
+    var phone=pickCol(row,['연락처','전화번호','휴대폰','휴대폰번호','핸드폰']);
+    if(!name && !rawR) return;
+    var r={line:i+2, name:name, phone:phone, cust:null, status:'', note:'', on:false, rrn:null};
+    var pr=parseRrnFull(rawR);
+    if(!name){ r.status='bad'; r.note='이름이 비어 있음'; }
+    else if(!pr){ r.status='bad'; r.note='주민번호 13자리가 아님'; }
+    else {
+      r.rrn=pr;
+      var same=CUSTOMERS.filter(function(c){ return String(c.name||'').replace(/\s+/g,'')===name; });
+      var hit=same.filter(function(c){ return !c.birth || c.birth===pr.birth; });
+      hit=hit.filter(function(c){ return !c.gcode || !c.birth || c.gcode===pr.gcode; });
+      if(hit.length>1 && phone){ var ph=hit.filter(function(c){ return digits(c.phone)===digits(phone); }); if(ph.length) hit=ph; }
+      if(hit.length>1){ var exact=hit.filter(function(c){ return c.birth===pr.birth; }); if(exact.length===1) hit=exact; }
+      if(!same.length){ r.status='miss'; r.note='CRM에 같은 이름의 고객 없음'; }
+      else if(!hit.length){ r.status='miss'; r.note='이름은 같지만 생년월일이 다름'; }
+      else if(hit.length>1){ r.status='dup'; r.note='같은 이름·생년월일 고객 '+hit.length+'명 (연락처 칸을 채워주세요)'; }
+      else {
+        r.cust=hit[0];
+        if(hit[0].rrnEnc){ r.status='has'; r.note='이미 저장됨 · 체크하면 새 번호로 바꿉니다'; }
+        else { r.status='ok'; r.note=hit[0].birth?'연결됨':'연결됨 · 생년월일도 함께 저장'; r.on=true; }
+      }
+    }
+    RRN_ROWS.push(r);
+  });
+  /* 같은 고객이 두 번 나오면 첫 줄만 사용 */
+  var seen={}; RRN_ROWS.forEach(function(r){ if(r.cust){ if(seen[r.cust.id]){ r.status='dup'; r.note=seen[r.cust.id]+'번째 줄과 같은 고객'; r.on=false; r.cust=null; } else seen[r.cust.id]=r.line; } });
+  if(!RRN_ROWS.length){ toast('읽을 수 있는 줄이 없습니다. 첫 줄에 "이름", "주민등록번호" 제목이 있는지 확인하세요',true); return; }
+  $('riStep1').classList.add('hide'); $('riStep2').classList.remove('hide');
+  drawRrnRows();
+}
+function drawRrnRows(){
+  var cnt={ok:0,has:0,miss:0,dup:0,bad:0}, on=0;
+  RRN_ROWS.forEach(function(r){ cnt[r.status]++; if(r.on) on++; });
+  $('riSum').innerHTML='<span class="tag g">연결 '+cnt.ok+'</span> <span class="tag">이미 저장 '+cnt.has+'</span> <span class="tag y">동명이인 '+cnt.dup+'</span> <span class="tag r">못 찾음 '+(cnt.miss+cnt.bad)+'</span>';
+  $('riGo').textContent=on+'명 저장하기'; $('riGo').disabled=!on;
+  var lab={ok:'<span class="tag g">연결</span>',has:'<span class="tag">이미 저장</span>',dup:'<span class="tag y">확인 필요</span>',miss:'<span class="tag r">못 찾음</span>',bad:'<span class="tag r">오류</span>'};
+  $('riTbl').innerHTML='<thead><tr><th class="ck"></th><th>줄</th><th>엑셀 이름</th><th>주민번호</th><th>CRM 고객</th><th>상태</th></tr></thead><tbody>'
+    +RRN_ROWS.map(function(r,i){
+      var can=r.status==='ok'||r.status==='has';
+      return '<tr><td class="ck">'+(can?'<input type="checkbox" '+(r.on?'checked':'')+' onchange="RRN_ROWS['+i+'].on=this.checked;drawRrnRows()">':'')+'</td>'
+        +'<td class="muted">'+r.line+'</td><td class="nm">'+esc(r.name)+'</td>'
+        +'<td class="nw">'+(r.rrn?esc(digits(r.rrn.birth).slice(2)+'-'+r.rrn.gcode+'******'):'<span class="muted">-</span>')+'</td>'
+        +'<td class="nw">'+(r.cust?esc(r.cust.name)+' <span class="muted">'+esc(r.cust.phone||'')+'</span>':'<span class="muted">-</span>')+'</td>'
+        +'<td>'+lab[r.status]+' <span class="muted" style="font-size:12px">'+esc(r.note)+'</span></td></tr>';
+    }).join('')+'</tbody>';
+}
+function rrnAll(on){ RRN_ROWS.forEach(function(r){ if(r.status==='ok'||(r.status==='has'&&on==='all')) r.on=!!on; else if(!on) r.on=false; }); drawRrnRows(); }
+function runRrnImp(){
+  var jobs=RRN_ROWS.filter(function(r){ return r.on && r.cust && r.rrn; });
+  if(!jobs.length) return;
+  if(!confirm(jobs.length+'명의 주민번호 뒷자리를 암호화해서 저장할까요?')) return;
+  RRN_RUNNING=true; $('riStep2').classList.add('hide'); $('riStep3').classList.remove('hide'); $('riGo').classList.add('hide');
+  var done=0, ok=0, fail=[], idx=0;
+  function bar(){ $('riBar').style.width=Math.round(done/jobs.length*100)+'%'; $('riProg').textContent=done+' / '+jobs.length+'명 처리 중…'; }
+  function payload(r){
+    var c=r.cust, p={fc:ME.name, branch:ME.branch, custType:c.custType||'보유고객', pageId:c.id};
+    CUST_KEEP.forEach(function(k){ if(c[k]!==undefined) p[k]=c[k]; else if(k!=='visit') p[k]=''; });
+    p.birth=r.rrn.birth; p.gcode=r.rrn.gcode; p.rrnBackNew=r.rrn.back; if(!p.status) p.status='진행중';
+    return p;
+  }
+  function wait(ms){ return new Promise(function(ok2){ setTimeout(ok2, ms); }); }
+  function one(r, attempt){
+    return api('customerSave', payload(r)).then(function(res){ return res; }, function(){ return {ok:false, net:true, error:'연결 실패'}; })
+      .then(function(res){
+        if(res.ok) return true;
+        var retry=res.net || /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(res.error||''));
+        if(retry && attempt<3) return wait(900*(attempt+1)).then(function(){ return one(r, attempt+1); });
+        throw new Error(res.error||'저장 실패');
+      });
+  }
+  function worker(){
+    if(idx>=jobs.length) return Promise.resolve();
+    var r=jobs[idx++];
+    return one(r,0).then(function(){ ok++; }).catch(function(e){ fail.push(r.name+' ('+r.line+'번째 줄) — '+((e&&e.message)||'실패')); })
+      .then(function(){ r.rrn=null; done++; bar(); return worker(); });
+  }
+  bar();
+  Promise.all([worker(), worker()]).then(function(){
+    RRN_RUNNING=false; RRN_ROWS.forEach(function(r){ r.rrn=null; });
+    $('riProg').innerHTML='<b>'+ok+'명 저장 완료</b>'+(fail.length?' · <span style="color:var(--red)">'+fail.length+'명 실패</span>':'');
+    $('riFail').innerHTML=fail.length?'<div class="warn">'+fail.map(esc).join('<br>')+'</div>':'';
+    loadAll();
+  });
 }
 
 /* ───────── 계약 입력 ───────── */
