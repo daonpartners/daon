@@ -3,247 +3,272 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>전국 사업단·설계사 모집 신청 | 다온파트너스</title>
-<meta name="description" content="전국 권역별 사업단장·팀장·온라인 영업조직 모집. 이름·지역·연락처만 남겨주시면 1:1로 안내드립니다.">
+<title>전국 지역행사·온라인 영업팀 모집 | 다온파트너스</title>
+<meta name="description" content="미래에셋금융서비스 그로우사업부 다온지사. 지역행사·온라인 영업팀의 신입·경력팀장·관리자를 전국에서 모집합니다.">
 <meta name="robots" content="index, follow">
-
-<meta name="naver-site-verification" content="[네이버 서치어드바이저 발급값]">
-<meta name="google-site-verification" content="[구글 서치콘솔 발급값]">
-
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="다온파트너스">
-<meta property="og:title" content="전국 사업단·설계사 모집">
-<meta property="og:description" content="지금 이 글을 보신 분, 기회입니다. 이름·지역·연락처만 남겨주세요.">
+<meta property="og:title" content="전국 지역행사·온라인 영업팀 모집">
+<meta property="og:description" content="현장과 온라인, 두 가지 영업 시장을 함께 엽니다. 이름과 연락처만 남겨주세요.">
 <meta property="og:url" content="https://daon.io.kr/join1">
 <meta name="theme-color" content="#0B1E42">
-
 <link rel="canonical" href="https://daon.io.kr/join1">
-
 <link rel="icon" type="image/png" href="/assets/favicon-daon.png">
 <link rel="apple-touch-icon" href="/assets/favicon-daon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <style>
 :root{
-  --ink:#0B1B33; --ink2:#5B6B82; --paper:#F5F7FA; --card:#FFFFFF;
-  /* 다온파트너스 브랜드 컬러 : --orange = 네이비(주요 액션), --pink = 베이비핑크(강조) */
-  --tint:#F9E9EC; --line:#DEE4EC; --orange:#0B1E42; --deep:#061229;
-  --pink:#E39BA5; --pink-deep:#A85F6C;
-  --navy:#0B1E42; --navy2:#16305C; --red:#C4472F; --r:14px;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Malgun Gothic",sans-serif;
+  --navy:#0B1E42; --navy2:#16305C; --pink:#E39BA5; --pink-dk:#A85F6C; --tint:#F9E9EC;
+  --ink:#14161A; --ink2:#4A525C; --ink3:#8A929C; --line:#E4E7EA; --bg:#F4F6F9; --err:#C4472F;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html{scroll-behavior:smooth}
-body{margin:0;padding:0;font-family:var(--sans);background:var(--paper);color:var(--ink);line-height:1.62;font-size:16px;word-break:keep-all;-webkit-font-smoothing:antialiased}
-.wrap{max-width:560px;margin:0 auto;padding:0 18px 60px}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+  font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer}
+.wrap{max-width:560px;margin:0 auto;padding:0 20px}
 
-/* ── 히어로: 광고 크리에이티브 톤(네이비+오렌지) ── */
-.hero{background:linear-gradient(180deg,var(--navy) 0%,var(--navy2) 100%);color:#fff;padding:30px 18px 28px;position:relative;overflow:hidden}
-.hero::after{content:'';position:absolute;left:0;right:0;bottom:0;height:5px;background:var(--orange)}
-.hero-in{max-width:560px;margin:0 auto}
-.brandline{font-size:11.5px;color:#A9B6C9;font-weight:600;letter-spacing:.02em;text-align:right;margin-bottom:16px}
-.tagchip{display:inline-block;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.04em;background:var(--orange);color:#fff;padding:6px 12px;border-radius:999px;margin-bottom:14px}
-h1{margin:0 0 10px;font-size:clamp(24px,7.6vw,32px);line-height:1.32;font-weight:800;letter-spacing:-.02em;color:#fff}
-h1 em{font-style:normal;color:var(--orange)}
-.hero__sub{font-size:14.5px;color:#C6D0DE;line-height:1.7;margin-bottom:18px}
+/* 상단 */
+.hero{background:var(--navy);color:#fff;padding:calc(22px + env(safe-area-inset-top,0px)) 0 44px}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px}
+.hero-top img{height:20px;width:auto;display:block}
+.hero-top span{font-size:12.5px;color:#AFC0D8}
+.hero h1{font-size:34px;line-height:1.3;letter-spacing:-.6px;margin:0 0 14px;font-weight:800}
+.hero h1 span{display:block;color:var(--pink)}
+.hero p{margin:0;color:#C9D3E3;font-size:16.5px}
+.hero .cta{margin-top:28px}
+.roles{display:flex;gap:8px;margin-top:20px}
+.roles span{border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:6px 14px;font-size:14px;font-weight:700;color:#fff}
+.role-grid{display:grid;gap:10px}
+.role{background:#fff;border-radius:18px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start}
+.role em{flex:none;font-style:normal;width:40px;height:40px;border-radius:50%;background:var(--navy);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px}
+.role b{display:block;font-size:18.5px;margin:1px 0 3px}
+.role p{margin:0;font-size:15px;color:var(--ink2)}
 
-.regionpills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
-.pill{font-family:var(--mono);font-size:11px;font-weight:600;color:#DCE4EE;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:6px 10px;border-radius:999px}
+/* 팀 */
+.sec{padding:36px 0 0}
+.sec h2{font-size:21px;margin:0 0 14px;letter-spacing:-.3px}
+.teams{display:grid;gap:12px}
+.team{background:#fff;border-radius:18px;padding:20px;display:flex;gap:16px;align-items:flex-start}
+.team .ic{flex:none;width:52px;height:52px;border-radius:16px;background:var(--tint);display:flex;align-items:center;justify-content:center;font-size:26px}
+.team b{display:block;font-size:18.5px;margin-bottom:2px}
+.team p{margin:0;color:var(--ink2);font-size:15px}
+.team .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.team .tags i{font-style:normal;font-size:13px;font-weight:700;color:var(--pink-dk);background:var(--tint);padding:4px 10px;border-radius:20px}
 
-.winbox{background:rgba(227,155,165,.16);border:1px solid rgba(227,155,165,.45);border-radius:12px;padding:14px 16px;margin-bottom:4px}
-.winbox p{margin:0;font-size:13.5px;color:#FFD9AE;font-weight:600;line-height:1.6}
-.winbox b{color:var(--orange);font-weight:800}
+/* 지원 */
+.perks{background:#fff;border-radius:18px;padding:6px 20px}
+.perk{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+.perk:last-child{border-bottom:0}
+.perk .ic{flex:none;width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px}
+.perk b{display:block;font-size:16.5px}
+.perk span{display:block;color:var(--ink3);font-size:14.5px}
 
-/* ── 폼 카드 ── */
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 18px;margin-top:16px;box-shadow:0 4px 18px rgba(11,27,51,.06)}
-.field{margin-bottom:15px}
-.field:last-child{margin-bottom:0}
-label.lb{display:block;font-size:14.5px;font-weight:700;color:var(--ink2);margin-bottom:7px;letter-spacing:-.01em}
-.inp{width:100%;font-family:var(--sans);font-size:17px;color:var(--ink);background:#FAFBFC;border:1.5px solid var(--line);border-radius:10px;padding:13px;outline:none;transition:border-color .15s}
-.inp::placeholder{color:#AFB9C7}
-.inp:focus{border-color:var(--orange);background:#fff}
-
-.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.opt{position:relative}
-.opt input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
-.opt span{display:block;text-align:center;border:1.5px solid var(--line);border-radius:10px;padding:13px 6px;background:#FAFBFC;font-size:16px;font-weight:700;transition:all .14s}
-.opt input:checked + span{border-color:var(--orange);background:var(--tint);color:var(--deep)}
-.opt input:focus-visible + span{outline:2px solid var(--navy);outline-offset:2px}
-
-.err{display:none;margin-top:7px;font-size:12px;color:var(--red);font-weight:600}
+/* 신청 */
+.form{background:#fff;border-radius:18px;padding:22px 20px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:14.5px;font-weight:700;color:var(--ink2);margin-bottom:8px}
+.inp{width:100%;height:54px;border:2px solid var(--line);border-radius:14px;padding:0 16px;font-size:17px;font-weight:600;background:#fff;outline:none}
+.inp:focus{border-color:var(--navy)}
+.inp::placeholder{color:#B0B8C1;font-weight:500}
+.inp.bad{border-color:var(--err)}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips.three{grid-template-columns:1fr 1fr 1fr}
+.chips button{min-height:50px;border-radius:14px;border:2px solid var(--line);font-weight:700;font-size:15.5px;padding:6px}
+.chips button.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.agree{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;padding:14px;border-radius:14px;background:var(--bg);margin-top:4px}
+.agree .box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid #C5CBD3;background:#fff;margin-top:1px}
+.agree.on .box{border-color:var(--navy);background:var(--navy) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/15px no-repeat}
+.agree span{font-size:13.5px;color:var(--ink2);line-height:1.55}
+.err{display:none;margin:14px 0 0;color:var(--err);font-weight:700;font-size:15px}
 .err.on{display:block}
-
-.agree{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px}
-.chk{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:var(--ink2);line-height:1.6}
-.chk input{margin-top:3px;width:17px;height:17px;accent-color:var(--orange);flex-shrink:0}
-.chk b{color:var(--deep)}
-
-.submit{width:100%;border:0;border-radius:12px;cursor:pointer;background:var(--orange);color:#fff;font-family:var(--sans);font-size:17px;font-weight:800;padding:16px;letter-spacing:-.02em;margin-top:16px;box-shadow:0 3px 0 var(--deep);transition:transform .1s,box-shadow .1s}
-.submit:active{transform:translateY(2px);box-shadow:0 1px 0 var(--deep)}
-.submit:disabled{background:#D9DEE5;box-shadow:none;cursor:not-allowed}
-
-/* ── 오픈채팅 CTA ── */
-.kakao{display:flex;align-items:center;gap:12px;background:#FEE500;border-radius:14px;padding:15px 16px;margin-top:14px;text-decoration:none;color:#3C1E1E}
-.kakao__ico{width:38px;height:38px;border-radius:10px;background:#3C1E1E;color:#FEE500;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-.kakao__txt strong{display:block;font-size:14.5px;font-weight:800}
-.kakao__txt span{font-size:12px;color:#5B4632}
-
-.done{display:none;text-align:center;padding:40px 10px}
+.cta{display:flex;align-items:center;justify-content:center;width:100%;height:58px;border-radius:16px;background:var(--pink);color:var(--navy);font-size:18px;font-weight:800;text-decoration:none}
+.cta:active{filter:brightness(.95)}
+.cta:disabled{background:#D1D6DB;color:#fff}
+.form .cta{margin-top:18px;background:var(--navy);color:#fff}
+.alt{display:flex;gap:8px;margin-top:12px}
+.alt a{flex:1;display:flex;align-items:center;justify-content:center;height:52px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none}
+.alt .kakao{background:#FEE500;color:#191919}
+.alt .tel{background:#fff;color:var(--navy);border:2px solid var(--line)}
+.done{display:none;background:#fff;border-radius:18px;padding:36px 20px;text-align:center}
 .done.on{display:block}
-.done h2{font-family:var(--sans);font-weight:800;font-size:21px;margin-bottom:10px;color:var(--navy)}
-.done p{color:var(--ink2);font-size:14px}
-
-.foot{margin-top:26px;padding-top:16px;border-top:1px solid var(--line);font-size:11px;color:#94A0B0;line-height:1.7;text-align:center}
-
-/* ══ 다온파트너스 브랜드 컬러 보정 : 어두운 배경 위 강조는 베이비핑크 ══ */
-.hero::after{background:var(--pink)}
-.tagchip{background:var(--pink);color:#3A1A20}
-h1 em{color:var(--pink)}
-.winbox p{color:#F3DDE1}
-.winbox b{color:var(--pink)}
-.opt input:checked + span{border-color:var(--pink);background:var(--tint);color:var(--navy)}
-.chk b{color:var(--pink-deep)}
-.inp:focus{border-color:var(--pink)}
-
-@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important} html{scroll-behavior:auto}}
+.done .mark{width:72px;height:72px;border-radius:50%;background:var(--navy);margin:0 auto 18px;display:flex;align-items:center;justify-content:center}
+.done h3{font-size:22px;margin:0 0 8px}
+.done p{margin:0;color:var(--ink2)}
+.cta:focus-visible,.chips button:focus-visible,.agree:focus-visible,.alt a:focus-visible{outline:3px solid #2F6FEB;outline-offset:2px}
+.foot{padding:30px 0 calc(40px + env(safe-area-inset-bottom,0px));color:var(--ink3);font-size:12.5px;line-height:1.7;text-align:center}
 </style>
 </head>
 <body>
 
-<section class="hero">
-  <div class="hero-in">
-    <img src="/assets/logo-daon-wordmark-white.png" alt="다온파트너스" width="59" height="20"
-         decoding="async" style="height:20px;width:auto;display:block;margin-left:auto;margin-bottom:8px;">
-    <span class="tagchip">전국 사업단 모집 · 권역별 진행</span>
-    <h1>전국 제휴 소상공인영업<br>및 <em>온라인 영업조직</em></h1>
-    <p class="hero__sub">네이버카페 입점 운영 · 온라인+오프라인 제휴 기반<br>모집 직책 : 팀장 · 사업단장</p>
-    <div class="regionpills">
-      <span class="pill">경기북부권</span>
-      <span class="pill">강원도</span>
-      <span class="pill">충북</span>
-      <span class="pill">전라도권</span>
-      <span class="pill">경상도권</span>
-      <span class="pill">제주권</span>
-      <span class="pill">외 지역 상담</span>
+<header class="hero">
+  <div class="wrap">
+    <div class="hero-top">
+      <img src="/assets/logo-daon-wordmark-white.png" alt="다온파트너스" width="59" height="20">
+      <span>미래에셋금융서비스 그로우사업부 다온지사</span>
     </div>
-    <div class="winbox"><p>혼자 시장을 찾지 마세요. <b>시장을 만드는 조직</b>과 함께하세요.</p></div>
+    <h1>전국 지역행사·<span>온라인 영업팀 모집</span></h1>
+    <p>사람을 만나는 현장과 시간 제약 없는 온라인.<br>두 가지 영업 시장을 함께 열어갈 분을 찾습니다.</p>
+    <div class="roles"><span>신입</span><span>경력팀장</span><span>관리자</span></div>
+    <a class="cta" href="#apply">지원 상담 신청하기</a>
   </div>
-</section>
+</header>
 
-<div class="wrap">
+<main class="wrap">
 
-  <form id="leadForm" novalidate>
-    <div style="position:absolute;left:-9999px" aria-hidden="true">
-      <input type="text" id="hp" tabindex="-1" autocomplete="off">
+  <section class="sec">
+    <h2>모집 구분</h2>
+    <div class="role-grid">
+      <div class="role"><em>1</em><div><b>신입</b><p>보험 영업이 처음인 분. 교육부터 현장 실무까지 함께합니다.</p></div></div>
+      <div class="role"><em>2</em><div><b>경력팀장</b><p>보험 영업 경력을 바탕으로 팀을 꾸려 영업을 이끌어갈 분.</p></div></div>
+      <div class="role"><em>3</em><div><b>관리자</b><p>영업 조직을 관리하고 설계사를 육성할 분.</p></div></div>
     </div>
+  </section>
 
-    <section class="card">
-      <div class="field"><label class="lb" for="f_name">이름</label><input class="inp" id="f_name" type="text" placeholder="홍길동" autocomplete="name" maxlength="20"></div>
-      <div class="field"><label class="lb" for="f_area">지역</label><input class="inp" id="f_area" type="text" placeholder="예) 경기북부권 / 강원도 / 충북 등" maxlength="30"></div>
-      <div class="field"><label class="lb" for="f_phone">연락처</label><input class="inp" id="f_phone" type="tel" inputmode="numeric" placeholder="010-0000-0000" autocomplete="tel" maxlength="13"></div>
-
-      <div class="field">
-        <label class="lb">지원 분야</label>
-        <div class="opts">
-          <label class="opt"><input type="radio" name="apply" value="신입"><span>신입</span></label>
-          <label class="opt"><input type="radio" name="apply" value="경력팀장"><span>경력팀장</span></label>
-          <label class="opt"><input type="radio" name="apply" value="사업단장"><span>사업단장</span></label>
-          <label class="opt"><input type="radio" name="apply" value="기타"><span>기타</span></label>
+  <section class="sec">
+    <h2>활동하는 팀</h2>
+    <div class="teams">
+      <div class="team">
+        <div class="ic">🎪</div>
+        <div>
+          <b>지역행사 영업팀</b>
+          <p>지역 축제와 소상공인 행사, 박람회 현장에서 고객을 직접 만나 상담합니다.</p>
+          <div class="tags"><i>지역 축제</i><i>소상공인 행사</i><i>박람회·펫페어</i></div>
         </div>
       </div>
-      <p class="err" id="e_form"></p>
-
-      <div class="agree">
-        <label class="chk">
-          <input type="checkbox" id="f_agree">
-          <span>개인정보(이름·지역·연락처·지원분야) 수집·이용에 동의합니다. <b>(필수)</b> 상담 안내 목적으로만 사용하며 1년 후 파기합니다.</span>
-        </label>
+      <div class="team">
+        <div class="ic">💻</div>
+        <div>
+          <b>온라인 영업팀</b>
+          <p>블로그, 카페, SNS, 유튜브로 고객을 만납니다. 시간과 장소에 얽매이지 않아요.</p>
+          <div class="tags"><i>블로그</i><i>카페</i><i>SNS</i><i>유튜브</i></div>
+        </div>
       </div>
-
-      <button class="submit" type="submit" id="btnSubmit">신청하기</button>
-    </section>
-
-    <a class="kakao" href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">
-      <span class="kakao__ico">talk</span>
-      <span class="kakao__txt"><strong>1:1 오픈채팅으로 바로 문의</strong><span>지금 바로 카톡으로 편하게 물어보세요</span></span>
-    </a>
-
-    <div id="doneBox" class="done">
-      <h2>신청이 접수되었습니다</h2>
-      <p>담당자가 확인 후 빠르게 1:1로 연락드립니다.<br>급하시면 위 오픈채팅으로도 문의 가능합니다.</p>
     </div>
-  </form>
+  </section>
 
-  <p class="foot">미래에셋금융서비스 다온파트너스 · 문의 010-8183-0010<br>본 페이지는 위촉(파트너) 희망자 상담 신청 접수를 목적으로 합니다.</p>
-</div>
+  <section class="sec">
+    <h2>이렇게 지원해요</h2>
+    <div class="perks">
+      <div class="perk"><div class="ic">📊</div><div><b>월 DB 20건 지원</b><span>상담의 시작을 든든하게</span></div></div>
+      <div class="perk"><div class="ic">📘</div><div><b>체계적인 교육</b><span>신입과 경력에 맞춘 교육</span></div></div>
+      <div class="perk"><div class="ic">🤝</div><div><b>실무 지원</b><span>경력 총무의 현장 업무 지원</span></div></div>
+      <div class="perk"><div class="ic">👤</div><div><b>개인 브랜딩 지원</b><span>콘텐츠 제작과 채널 운영 지원</span></div></div>
+      <div class="perk"><div class="ic">⭐</div><div><b>투명한 수수료</b><span>원수사 룰 지급, 과도한 환수 지양</span></div></div>
+      <div class="perk"><div class="ic">💗</div><div><b>그로우 복지</b><span>건강검진, 장례 지원, 아이돌봄, 경조사 지원</span></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="apply">
+    <h2>지원 상담 신청</h2>
+    <div class="form" id="formBox">
+      <div style="position:absolute;left:-9999px" aria-hidden="true"><input type="text" id="hp" tabindex="-1" autocomplete="off"></div>
+      <div class="field"><label for="fName">이름</label><input class="inp" id="fName" type="text" placeholder="홍길동" autocomplete="name" maxlength="20"></div>
+      <div class="field"><label for="fPhone">연락처</label><input class="inp" id="fPhone" type="tel" inputmode="numeric" placeholder="010-0000-0000" autocomplete="tel" maxlength="13"></div>
+      <div class="field"><label for="fArea">활동 희망 지역</label><input class="inp" id="fArea" type="text" placeholder="예) 충남 아산, 경기 수원" maxlength="30"></div>
+      <div class="field">
+        <label>모집 구분</label>
+        <div class="chips three" data-k="role">
+          <button type="button" data-v="신입">신입</button>
+          <button type="button" data-v="경력팀장">경력팀장</button>
+          <button type="button" data-v="관리자">관리자</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>희망 팀</label>
+        <div class="chips" data-k="team">
+          <button type="button" data-v="지역행사팀">지역행사팀</button>
+          <button type="button" data-v="온라인영업팀">온라인 영업팀</button>
+          <button type="button" data-v="둘다">둘 다 관심 있어요</button>
+          <button type="button" data-v="상담후결정">상담 후 정할게요</button>
+        </div>
+      </div>
+      <button class="agree" type="button" id="agreeBtn" aria-pressed="false">
+        <span class="box"></span>
+        <span>개인정보(이름, 연락처, 지역, 모집 구분, 희망 팀) 수집·이용에 동의합니다. (필수) 위촉 상담 안내 목적으로만 사용하며 1년 후 파기합니다.</span>
+      </button>
+      <p class="err" id="err"></p>
+      <button class="cta" type="button" id="submitBtn">신청하기</button>
+    </div>
+
+    <div class="done" id="doneBox">
+      <div class="mark"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h3>신청이 접수됐어요</h3>
+      <p>담당자가 확인 후 1:1로 연락드립니다.</p>
+    </div>
+
+    <div class="alt">
+      <a class="kakao" href="https://open.kakao.com/me/daonp" target="_blank" rel="noopener">카카오톡 문의</a>
+      <a class="tel" href="tel:01040077901">전화 010-4007-7901</a>
+    </div>
+  </section>
+
+  <p class="foot">미래에셋금융서비스 그로우사업부 다온지사<br>본 페이지는 위촉(파트너) 희망자 상담 신청 접수를 목적으로 합니다.</p>
+</main>
 
 <script>
-const WEBHOOK_URL = "https://daonpartners.app.n8n.cloud/webhook/daon-join1-lead";
-
 (function(){
-  "use strict";
-  const $ = id => document.getElementById(id);
-  const form = $("leadForm");
-  const fName = $("f_name"), fArea = $("f_area"), fPhone = $("f_phone"), fAgree = $("f_agree"), hp = $("hp");
-  const btnSubmit = $("btnSubmit"), err = $("e_form");
-  const val = n => { const el = form.querySelector('input[name="'+n+'"]:checked'); return el ? el.value : ""; };
+  var WEBHOOK = 'https://daonpartners.app.n8n.cloud/webhook/daon-join1-lead';
+  var $ = function(id){ return document.getElementById(id); };
+  var S = { role:'', team:'', agree:false };
 
-  fPhone.addEventListener("input", e => {
-    let v = e.target.value.replace(/[^0-9]/g,"").slice(0,11);
-    if(v.length > 7) v = v.replace(/(\d{3})(\d{4})(\d+)/,"$1-$2-$3");
-    else if(v.length > 3) v = v.replace(/(\d{3})(\d+)/,"$1-$2");
-    e.target.value = v;
+  document.querySelectorAll('.chips').forEach(function(g){
+    g.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      g.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+      S[g.dataset.k] = b.dataset.v; $('err').classList.remove('on');
+    });
   });
+  $('agreeBtn').addEventListener('click', function(){
+    S.agree = !S.agree; this.classList.toggle('on', S.agree); this.setAttribute('aria-pressed', S.agree); $('err').classList.remove('on');
+  });
+  $('fPhone').addEventListener('input', function(){
+    var v = this.value.replace(/[^0-9]/g,'').slice(0,11);
+    if(v.length >= 8) v = v.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'); else if(v.length >= 4) v = v.replace(/(\d{3})(\d{1,4})/,'$1-$2');
+    this.value = v;
+  });
+  document.querySelectorAll('.inp').forEach(function(el){ el.addEventListener('input', function(){ el.classList.remove('bad'); }); });
 
-  form.addEventListener("submit", async function(e){
-    e.preventDefault();
-    if (hp.value !== "") return;
+  function fail(msg, el){ var e = $('err'); e.textContent = msg; e.classList.add('on'); if(el){ el.classList.add('bad'); el.focus(); } }
 
-    const phoneOK = /^01[016789][-\s]?\d{3,4}[-\s]?\d{4}$/.test(fPhone.value.trim());
-    err.classList.remove("on");
+  $('submitBtn').addEventListener('click', function(){
+    if($('hp').value !== '') return;
+    var name = $('fName').value.trim(), phone = $('fPhone').value.trim(), area = $('fArea').value.trim();
+    if(!name) return fail('이름을 입력해 주세요.', $('fName'));
+    if(!/^01\d{8,9}$/.test(phone.replace(/[^0-9]/g,''))) return fail('연락처를 다시 확인해 주세요.', $('fPhone'));
+    if(!area) return fail('활동 희망 지역을 입력해 주세요.', $('fArea'));
+    if(!S.role) return fail('모집 구분을 골라주세요.');
+    if(!S.team) return fail('희망 팀을 골라주세요.');
+    if(!S.agree) return fail('개인정보 수집·이용에 동의해 주세요.');
 
-    if (fName.value.trim() === "") { err.textContent = "이름을 입력해 주세요."; err.classList.add("on"); return; }
-    if (fArea.value.trim() === "") { err.textContent = "지역을 입력해 주세요."; err.classList.add("on"); return; }
-    if (!phoneOK) { err.textContent = "연락처를 다시 확인해 주세요."; err.classList.add("on"); return; }
-    if (val("apply") === "") { err.textContent = "지원 분야를 선택해 주세요."; err.classList.add("on"); return; }
-    if (!fAgree.checked) { err.textContent = "개인정보 수집·이용에 동의해 주세요."; err.classList.add("on"); return; }
-
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "접수 중...";
-
-    const params = new URLSearchParams(location.search);
-    const payload = {
-      name: fName.value.trim(),
-      area: fArea.value.trim(),
-      phone: fPhone.value.trim(),
-      apply: val("apply"),
-      agree: true,
-      sourcePage: "join1",
-      manager: params.get("m") || "",
-      utm_source: params.get("utm_source") || "direct",
-      utm_medium: params.get("utm_medium") || "",
-      utm_campaign: params.get("utm_campaign") || "",
-      referrer: document.referrer || "",
+    var btn = this; btn.disabled = true; btn.textContent = '접수 중…';
+    var params = new URLSearchParams(location.search);
+    var teamLabel = {'지역행사팀':'지역행사팀','온라인영업팀':'온라인영업팀','둘다':'지역행사+온라인','상담후결정':'상담 후 결정'}[S.team];
+    var payload = {
+      name: name, phone: phone, area: area,
+      apply: S.role + ' / ' + teamLabel,
+      role: S.role, team: S.team,
+      agree: true, sourcePage: 'join1',
+      manager: params.get('m') || '',
+      utm_source: params.get('utm_source') || 'direct',
+      utm_medium: params.get('utm_medium') || '',
+      utm_campaign: params.get('utm_campaign') || '',
+      referrer: document.referrer || '',
       submittedAt: new Date().toISOString()
     };
-
-    try {
-      const res = await fetch(WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error("bad response");
-      document.querySelector(".card").style.display = "none";
-      $("doneBox").classList.add("on");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    } catch (e2) {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "신청하기";
-      err.textContent = "전송에 실패했습니다. 잠시 후 다시 시도해 주시거나 위 오픈채팅으로 문의해 주세요.";
-      err.classList.add("on");
-    }
+    fetch(WEBHOOK, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+      .then(function(res){
+        if(!res.ok) throw new Error('bad');
+        $('formBox').style.display = 'none';
+        $('doneBox').classList.add('on');
+        $('apply').scrollIntoView({behavior:'smooth', block:'start'});
+      })
+      .catch(function(){
+        btn.disabled = false; btn.textContent = '신청하기';
+        fail('전송하지 못했어요. 잠시 후 다시 시도하시거나 아래 카카오톡·전화로 문의해 주세요.');
+      });
   });
 })();
 </script>
