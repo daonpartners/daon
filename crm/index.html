@@ -536,7 +536,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-h"><h3 id="fcT">설계사 등록</h3><button class="x" onclick="closeFcForm()">×</button></div>
   <div class="drawer-b">
     <div class="g2"><div class="fld"><label class="lbl">이름 *</label><input class="inp" id="fcName"></div><div class="fld"><label class="lbl">연락처</label><input class="inp" id="fcPhone" oninput="this.value=fmtPhone(this.value)"></div></div>
-    <div class="g2"><div class="fld" id="fcCodeBox"><label class="lbl">접속코드 *</label><input class="inp" id="fcCode" placeholder="로그인할 때 쓰는 코드"></div>
+    <div class="g2"><div class="fld" id="fcCodeBox"><label class="lbl" id="fcCodeL">접속코드 *</label><input class="inp" id="fcCode" placeholder="로그인할 때 쓰는 코드" autocomplete="off"></div>
       <div class="fld"><label class="lbl">역할</label><select class="sel" id="fcRole"><option>설계사</option><option>지사장</option><option>관리자</option></select></div></div>
     <div class="g2">
       <div class="fld"><label class="lbl">손보 추가 수수료 (%)</label><input class="inp" id="fcAddS" inputmode="decimal" oninput="fcCalc()"><div class="muted" style="font-size:12px;margin-top:4px" id="fcTS"></div></div>
@@ -545,7 +545,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="fcActive" checked style="accent-color:var(--acc)"> 활성 (체크 해제 시 로그인 불가)</label>
     <p class="muted" style="font-size:12px;margin:12px 0 0" id="fcNote"></p>
   </div>
-  <div class="drawer-f"><div class="spacer"></div><button class="btn" onclick="closeFcForm()">취소</button><button class="btn pri" id="fcSaveBtn" onclick="saveFc()">저장</button></div>
+  <div class="drawer-f"><button class="btn danger hide" id="fcDelBtn" onclick="delFc()">설계사 삭제</button><div class="spacer"></div><button class="btn" onclick="closeFcForm()">취소</button><button class="btn pri" id="fcSaveBtn" onclick="saveFc()">저장</button></div>
 </div>
 
 <!-- 광고 수신 동의 등록 창 -->
@@ -1559,7 +1559,7 @@ function renderFcTable(){
       var ts=Number(f.sonboRatio)||100, tl=Number(f.saengboRatio)||100;
       return '<tr><td class="nm">'+esc(f.name)+'</td><td>'+esc(f.role||'설계사')+'</td><td class="nw">'+esc(f.phone||'-')+'</td>'
         +'<td class="num">'+BASE_TABLE+' + <b>'+addOf(ts)+'</b> = '+ts+'%</td><td class="num">'+BASE_TABLE+' + <b>'+addOf(tl)+'</b> = '+tl+'%</td>'
-        +'<td>'+(f.active?'<span class="tag g">활성</span>':'<span class="tag">비활성</span>')+'</td><td><button class="btn sm" onclick="openFcForm(\''+f.id+'\')">수정</button></td></tr>';
+        +'<td>'+(f.active?'<span class="tag g">활성</span>':'<span class="tag">비활성</span>')+'</td><td class="nw"><button class="btn sm" onclick="openFcForm(\''+f.id+'\')">수정</button> '+(f.name!==ME.name?'<button class="btn sm danger" onclick="openFcForm(\''+f.id+'\');setTimeout(delFc,50)">삭제</button>':'')+'</td></tr>';
     }).join(''):'<tr><td colspan="7" class="empty">등록된 설계사가 없습니다.</td></tr>')+'</tbody>';
 }
 function renderAwardTable(){
@@ -1585,35 +1585,58 @@ function openFcForm(id){
   $('fcName').value=f?f.name:''; $('fcPhone').value=f?(f.phone||''):''; $('fcRole').value=f?(f.role||'설계사'):'설계사';
   $('fcAddS').value=f?addOf(f.sonboRatio||100):15; $('fcAddL').value=f?addOf(f.saengboRatio||100):15;
   $('fcActive').checked=f?!!f.active:true; $('fcCode').value='';
-  $('fcCodeBox').classList.toggle('hide',!!f);
-  $('fcNote').textContent=f?'접속코드는 보안상 여기서 바꿀 수 없습니다. 바꾸려면 기존 화면의 설계사 관리에서 새로 등록하세요.':'접속코드는 설계사가 로그인할 때 쓰는 번호입니다. 다른 설계사와 겹치지 않게 정해주세요.';
+  $('fcCodeL').textContent=f?'새 접속코드 (바꿀 때만 입력)':'접속코드 *';
+  $('fcCode').placeholder=f?'비워두면 기존 코드 유지':'로그인할 때 쓰는 코드 (4자 이상)';
+  $('fcDelBtn').classList.toggle('hide', !f || f.name===ME.name);
+  $('fcNote').textContent='접속코드는 보안상 화면에 표시하지 않습니다. 새 코드를 입력하면 저장할 때 바뀌고, 다른 설계사와 겹치면 저장되지 않습니다.';
   fcCalc(); $('fcDim').classList.remove('hide'); $('fcModal').classList.remove('hide');
 }
 function closeFcForm(){ $('fcDim').classList.add('hide'); $('fcModal').classList.add('hide'); }
 function fcCalc(){
   ['S','L'].forEach(function(k){ var a=Number($('fcAdd'+k).value||0); $('fcT'+k).textContent='적용 테이블 '+BASE_TABLE+' + '+(isFinite(a)?a:0)+' = '+(BASE_TABLE+(isFinite(a)?a:0))+'%'; });
 }
+var FC_API='https://daonpartners.app.n8n.cloud/webhook/daon-fc';
+function fcApi(action,p){ return fetch(FC_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({action:action,by:ME.code||'',byName:ME.name||''},p||{}))}).then(function(r){return r.json();}); }
 function saveFc(){
   var name=$('fcName').value.trim(); if(!name){ toast('이름을 입력하세요',true); return; }
   var aS=Number($('fcAddS').value||0), aL=Number($('fcAddL').value||0);
   if(!isFinite(aS)||!isFinite(aL)||aS<0||aL<0||aS>100||aL>100){ toast('추가 수수료는 0~100 사이 숫자로 입력하세요',true); return; }
-  var f=FC_EDIT;
+  var f=FC_EDIT, newCode=$('fcCode').value.trim();
+  if(!f && newCode.length<4){ toast('접속코드를 4자 이상 입력하세요',true); return; }
+  if(f && newCode && newCode.length<4){ toast('접속코드는 4자 이상으로 정해주세요',true); return; }
   /* 설계사 수정은 모든 항목을 덮어쓰므로, 화면에 없는 항목은 기존 값을 그대로 보냄 */
   var p={branch:ME.branch, name:name, phone:$('fcPhone').value.trim(), role:$('fcRole').value,
     rank:f?(f.rank||'FC'):'FC', workStatus:f?(f.workStatus||'활동'):'활동', dept:f?(f.dept||''):'', sendNo:f?(f.sendNo||''):'',
     license:f?(f.license||''):'', joinDate:f?(f.joinDate||''):today(),
-    sonboRatio:Math.round((BASE_TABLE+aS)*100)/100, saengboRatio:Math.round((BASE_TABLE+aL)*100)/100, active:$('fcActive').checked};
-  p.by=ME.code||''; p.byName=ME.name||''; /* 서버가 요청자(지사장·관리자) 권한을 확인함 */
+    sonboRatio:Math.round((BASE_TABLE+aS)*100)/100, saengboRatio:Math.round((BASE_TABLE+aL)*100)/100, active:$('fcActive').checked,
+    by:ME.code||'', byName:ME.name||''};
   if(f) p.pageId=f.id;
-  else { var code=$('fcCode').value.trim(); if(!code){ toast('접속코드를 입력하세요',true); return; } p.loginCode=code; p.appointDate=p.joinDate; }
-  var b=$('fcSaveBtn'); b.disabled=true;
+  else { p.loginCode='tmp-'+Date.now().toString(36)+Math.random().toString(36).slice(2,8); p.appointDate=p.joinDate; } /* 임시코드로 만든 뒤 중복검사를 거쳐 실제 코드로 교체 */
+  var b=$('fcSaveBtn'); b.disabled=true; b.textContent='저장 중…';
+  var done=function(msg,bad){ b.disabled=false; b.textContent='저장'; toast(msg,bad); };
   api('fcSave',p).then(function(r){
-    b.disabled=false;
-    if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
-    toast('저장했어요'); closeFcForm();
-    if(f && f.name===ME.name){ ME.sonboRatio=p.sonboRatio; ME.saengboRatio=p.saengboRatio; try{ sessionStorage.setItem('crmMe',JSON.stringify(ME)); }catch(e){} }
-    loadFeeSet(); initFeeFcPicker();
-  }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
+    if(!r.ok){ done(r.error||'저장에 실패했습니다',true); return; }
+    var pid=f?f.id:r.id;
+    var codeJob=newCode&&pid?fcApi('fcCode',{pageId:pid,newCode:newCode}):Promise.resolve({ok:true});
+    return codeJob.then(function(c){
+      if(!c.ok){ done((f?'정보는 저장됐지만 ':'설계사는 등록됐지만 ')+'접속코드가 적용되지 않았어요: '+(c.error||'')+' — [수정]에서 다른 코드로 다시 입력하세요',true); }
+      else done(f?'저장했어요':'설계사를 등록했어요');
+      closeFcForm();
+      if(f && f.name===ME.name){ ME.sonboRatio=p.sonboRatio; ME.saengboRatio=p.saengboRatio; if(newCode&&c.ok) ME.code=newCode; try{ sessionStorage.setItem('crmMe',JSON.stringify(ME)); }catch(e){} }
+      loadFeeSet(); initFeeFcPicker();
+    });
+  }).catch(function(){ done('연결에 실패했습니다',true); });
+}
+function delFc(){
+  var f=FC_EDIT; if(!f) return;
+  if(f.name===ME.name){ toast('본인 계정은 삭제할 수 없습니다',true); return; }
+  var ans=prompt(f.name+' 설계사를 삭제합니다.\n삭제하면 이 설계사는 로그인할 수 없고, 목록에서 사라집니다.\n(고객·계약 기록은 그대로 남습니다. Notion 휴지통에서 30일 안에 복구 가능)\n\n잠시 쉬는 경우라면 삭제 대신 [활성] 체크를 해제하세요.\n\n계속하려면 "삭제"라고 입력하세요.');
+  if(ans===null) return;
+  if(ans.trim()!=='삭제'){ toast('"삭제"를 정확히 입력해야 진행됩니다',true); return; }
+  fcApi('fcDelete',{pageId:f.id}).then(function(r){
+    if(!r.ok){ toast(r.error||'삭제에 실패했습니다',true); return; }
+    toast(f.name+' 설계사를 삭제했어요'); closeFcForm(); loadFeeSet(); initFeeFcPicker();
+  }).catch(function(){ toast('연결에 실패했습니다',true); });
 }
 
 /* ───────── 일정 ───────── */
