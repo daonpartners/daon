@@ -755,7 +755,9 @@ function pickAll(scope,on){
   scope==='prospect'?renderPros():renderOwner();
 }
 function drawSelBar(scope){
-  var n=Object.keys(PICK[scope]).length, el=$(scope==='owner'?'selOwner':'selPros');
+  var el0=$(scope==='owner'?'selOwner':'selPros');
+  if(BULK_DEL && BULK_DEL.scope===scope){ el0.classList.remove('hide'); el0.innerHTML=delProgHtml(); return; }
+  var n=Object.keys(PICK[scope]).length, el=el0;
   el.classList.toggle('hide',!n);
   el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
 }
@@ -1113,17 +1115,23 @@ function runConsent(){
 
 /* ───────── 선택 삭제 ─────────
    고객 삭제 시 그 고객에 연결(고객ID)된 계약도 함께 삭제됩니다(한 명씩 삭제와 동일한 customerDeleteCascade). */
-var BULK_DEL_RUNNING=false;
+var BULK_DEL=null;
+function delProgHtml(){
+  var d=BULK_DEL, pct=Math.round(d.done/d.total*100);
+  return '<div style="flex:1"><div style="display:flex;justify-content:space-between"><span>삭제 중… '+d.done+' / '+d.total+'명 ('+pct+'%)'+(d.fail.length?' · 실패 '+d.fail.length:'')+'</span><span>'+(d.eta?'약 '+d.eta+' 남음 · ':'')+'창을 닫지 마세요</span></div>'
+    +'<div style="height:6px;background:#F6DCC7;border-radius:3px;margin-top:6px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--acc);transition:width .3s"></div></div></div>';
+}
+window.addEventListener('beforeunload', function(e){ if(BULK_DEL){ e.preventDefault(); e.returnValue=''; } });
 function bulkDelete(scope){
-  if(BULK_DEL_RUNNING) return;
+  if(BULK_DEL) return;
   var list=CUSTOMERS.filter(function(c){ return PICK[scope][c.id]; });
   if(!list.length){ toast('삭제할 고객을 체크하세요',true); return; }
   var linked=CONTRACTS.filter(function(ct){ return ct.customerId && PICK[scope][ct.customerId]; }).length;
   var msg=list.length+'명을 삭제합니다.'+(linked?'\n이 고객들에게 연결된 계약 '+linked+'건도 함께 삭제됩니다.':'')+'\n삭제하면 되돌릴 수 없습니다.\n\n계속하려면 "삭제"라고 입력하세요.';
   var ans=prompt(msg); if(ans===null) return;
   if(ans.trim()!=='삭제'){ toast('"삭제"를 정확히 입력해야 진행됩니다',true); return; }
-  BULK_DEL_RUNNING=true;
-  var idx=0, done=0, ok=0, fail=[], bar=$(scope==='owner'?'selOwner':'selPros');
+  BULK_DEL={scope:scope,total:list.length,done:0,ok:0,fail:[],t0:Date.now(),eta:''};
+  var idx=0, lastDraw=0;
   function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
   function one(c, attempt){
     return api('customerDeleteCascade',{pageId:c.id}).then(function(r){return r;},function(){ return {ok:false,net:true,error:'연결 실패'}; }).then(function(r){
@@ -1132,17 +1140,29 @@ function bulkDelete(scope){
       throw new Error(r.error||'삭제 실패');
     });
   }
+  function redraw(force){
+    var d=BULK_DEL; if(!d) return;
+    if(d.done){ var per=(Date.now()-d.t0)/d.done, left=Math.round(per*(d.total-d.done)/1000); d.eta=left>=60?Math.ceil(left/60)+'분':left+'초'; }
+    var now=Date.now();
+    if(force || now-lastDraw>1500){ lastDraw=now; scope==='prospect'?renderPros():renderOwner(); }   /* 지워진 고객을 목록에서 바로 빼기 */
+    else drawSelBar(scope);
+  }
   function worker(){
     if(idx>=list.length) return Promise.resolve();
     var c=list[idx++];
-    return one(c,0).then(function(){ ok++; delete PICK[scope][c.id]; }).catch(function(e){ fail.push(c.name+' — '+((e&&e.message)||'실패')); })
-      .then(function(){ done++; bar.innerHTML='삭제 중… '+done+' / '+list.length+'명'; return worker(); });
+    return one(c,0).then(function(){
+      BULK_DEL.ok++; delete PICK[scope][c.id];
+      CUSTOMERS=CUSTOMERS.filter(function(x){ return x.id!==c.id; });
+      CONTRACTS=CONTRACTS.filter(function(ct){ return ct.customerId!==c.id; });
+    }).catch(function(e){ BULK_DEL.fail.push(c.name+' — '+((e&&e.message)||'실패')); })
+      .then(function(){ BULK_DEL.done++; redraw(false); return worker(); });
   }
-  bar.innerHTML='삭제 중… 0 / '+list.length+'명';
+  redraw(true);
+  toast(list.length+'명 삭제를 시작했어요. 끝날 때까지 창을 닫지 마세요');
   Promise.all([worker(), worker()]).then(function(){
-    BULK_DEL_RUNNING=false;
-    toast(ok+'명 삭제했어요'+(fail.length?' · '+fail.length+'명 실패':''), !!fail.length);
-    if(fail.length) alert('삭제하지 못한 고객\n\n'+fail.join('\n'));
+    var d=BULK_DEL; BULK_DEL=null;
+    toast(d.ok+'명 삭제 완료'+(d.fail.length?' · '+d.fail.length+'명 실패':''), !!d.fail.length);
+    if(d.fail.length) alert('삭제하지 못한 고객 '+d.fail.length+'명\n(다시 체크해서 삭제하면 됩니다)\n\n'+d.fail.join('\n'));
     loadAll();
   });
 }
