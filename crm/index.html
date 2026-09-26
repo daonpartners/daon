@@ -58,6 +58,8 @@ a{color:inherit}
 .side{width:var(--side);flex:none;background:var(--navy);color:#C7CFDD;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
 .side-brand{padding:20px 20px 18px;font-weight:800;font-size:16px;color:#fff}
 .side-brand b{color:var(--acc)}
+.side-home{display:block;margin-top:4px;font-size:12px;font-weight:500;color:#8C97AB;text-decoration:none}
+.side-home:hover{color:#fff}
 .nav{flex:1;padding:4px 10px;overflow:auto}
 .nav button{display:flex;align-items:center;gap:10px;width:100%;height:40px;padding:0 12px;border-radius:8px;color:#C7CFDD;font-size:14px;font-weight:500;text-align:left}
 .nav button:hover{background:rgba(255,255,255,.06)}
@@ -290,14 +292,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 <!-- 앱 -->
 <div class="shell hide" id="app">
   <aside class="side">
-    <div class="side-brand">다온 <b>영업관리</b></div>
+    <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
     <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button></div>
   </aside>
 
   <div class="main">
     <div class="topbar">
-      <div class="r1"><b>다온 <i>영업관리</i></b><button onclick="logout()"><span id="meName2"></span> · 로그아웃</button></div>
+      <div class="r1"><b>다온 <i>영업관리</i> <a href="https://daon.io.kr/" style="color:#A9B4C8;font-size:12px;font-weight:500;text-decoration:none;margin-left:6px">홈페이지 ↗</a></b><button onclick="logout()"><span id="meName2"></span> · 로그아웃</button></div>
       <div class="mnav" id="mnav"></div>
     </div>
 
@@ -640,6 +642,7 @@ var ICON = {
   todo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>',
   me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M5.5 17c.6-1.9 2-3 3.5-3s2.9 1.1 3.5 3M15 10h4M15 13h3"/></svg>',
   feeset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
 var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['feeset','설계사·수수료 설정']];
@@ -706,8 +709,9 @@ function drawNav(){
   var NV=NAV.filter(function(n){ return n[0]!=='feeset' || isAdmin(); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
-  }).join('')+'<hr><button onclick="location.href=\'./classic.html\'" title="엑셀 가져오기, 지사관리, 리쿠르팅 등">'+ICON.old+'기존 화면</button>';
-  $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'./classic.html\'">기존 화면</button>';
+  }).join('')+'<hr><button onclick="location.href=\'./classic.html\'" title="엑셀 가져오기, 지사관리, 리쿠르팅 등">'+ICON.old+'기존 화면</button>'
+    +'<button onclick="location.href=\'https://daon.io.kr/\'" title="daon.io.kr 홈페이지">'+ICON.web+'홈페이지로 가기</button>';
+  $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'./classic.html\'">기존 화면</button><button onclick="location.href=\'https://daon.io.kr/\'">홈페이지</button>';
 }
 function go(v){
   VIEW=v;
