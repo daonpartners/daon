@@ -1603,6 +1603,7 @@ function saveFc(){
     rank:f?(f.rank||'FC'):'FC', workStatus:f?(f.workStatus||'활동'):'활동', dept:f?(f.dept||''):'', sendNo:f?(f.sendNo||''):'',
     license:f?(f.license||''):'', joinDate:f?(f.joinDate||''):today(),
     sonboRatio:Math.round((BASE_TABLE+aS)*100)/100, saengboRatio:Math.round((BASE_TABLE+aL)*100)/100, active:$('fcActive').checked};
+  p.by=ME.code||''; p.byName=ME.name||''; /* 서버가 요청자(지사장·관리자) 권한을 확인함 */
   if(f) p.pageId=f.id;
   else { var code=$('fcCode').value.trim(); if(!code){ toast('접속코드를 입력하세요',true); return; } p.loginCode=code; p.appointDate=p.joinDate; }
   var b=$('fcSaveBtn'); b.disabled=true;
