@@ -757,7 +757,7 @@ function pickAll(scope,on){
 function drawSelBar(scope){
   var n=Object.keys(PICK[scope]).length, el=$(scope==='owner'?'selOwner':'selPros');
   el.classList.toggle('hide',!n);
-  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button>';
+  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
 }
 function selectedOrFiltered(scope){
   var ids=Object.keys(PICK[scope]);
@@ -1108,6 +1108,42 @@ function runConsent(){
     CONSENT_RUNNING=false;
     $('csProg').innerHTML='<b>'+ok+'명 동의 등록 완료</b>'+(fail.length?'<div class="warn">'+fail.map(esc).join('<br>')+'</div>':'');
     PICK[CONSENT_SCOPE]={}; loadAll();
+  });
+}
+
+/* ───────── 선택 삭제 ─────────
+   고객 삭제 시 그 고객에 연결(고객ID)된 계약도 함께 삭제됩니다(한 명씩 삭제와 동일한 customerDeleteCascade). */
+var BULK_DEL_RUNNING=false;
+function bulkDelete(scope){
+  if(BULK_DEL_RUNNING) return;
+  var list=CUSTOMERS.filter(function(c){ return PICK[scope][c.id]; });
+  if(!list.length){ toast('삭제할 고객을 체크하세요',true); return; }
+  var linked=CONTRACTS.filter(function(ct){ return ct.customerId && PICK[scope][ct.customerId]; }).length;
+  var msg=list.length+'명을 삭제합니다.'+(linked?'\n이 고객들에게 연결된 계약 '+linked+'건도 함께 삭제됩니다.':'')+'\n삭제하면 되돌릴 수 없습니다.\n\n계속하려면 "삭제"라고 입력하세요.';
+  var ans=prompt(msg); if(ans===null) return;
+  if(ans.trim()!=='삭제'){ toast('"삭제"를 정확히 입력해야 진행됩니다',true); return; }
+  BULK_DEL_RUNNING=true;
+  var idx=0, done=0, ok=0, fail=[], bar=$(scope==='owner'?'selOwner':'selPros');
+  function wait(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+  function one(c, attempt){
+    return api('customerDeleteCascade',{pageId:c.id}).then(function(r){return r;},function(){ return {ok:false,net:true,error:'연결 실패'}; }).then(function(r){
+      if(r.ok) return true;
+      if((r.net || /많|rate|429|바쁨|잠시|too many|too fast|throttle/i.test(String(r.error||''))) && attempt<3) return wait(900*(attempt+1)).then(function(){ return one(c, attempt+1); });
+      throw new Error(r.error||'삭제 실패');
+    });
+  }
+  function worker(){
+    if(idx>=list.length) return Promise.resolve();
+    var c=list[idx++];
+    return one(c,0).then(function(){ ok++; delete PICK[scope][c.id]; }).catch(function(e){ fail.push(c.name+' — '+((e&&e.message)||'실패')); })
+      .then(function(){ done++; bar.innerHTML='삭제 중… '+done+' / '+list.length+'명'; return worker(); });
+  }
+  bar.innerHTML='삭제 중… 0 / '+list.length+'명';
+  Promise.all([worker(), worker()]).then(function(){
+    BULK_DEL_RUNNING=false;
+    toast(ok+'명 삭제했어요'+(fail.length?' · '+fail.length+'명 실패':''), !!fail.length);
+    if(fail.length) alert('삭제하지 못한 고객\n\n'+fail.join('\n'));
+    loadAll();
   });
 }
 
