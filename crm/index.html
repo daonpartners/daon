@@ -174,6 +174,22 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .calcbox{background:var(--acc-lt);border-radius:8px;padding:10px 12px;font-size:13px;margin:8px 0 12px;display:flex;justify-content:space-between}
 .calcbox b{color:var(--acc-dk)}
 
+.mbars{display:flex;align-items:flex-end;gap:6px;height:170px;padding-top:10px;overflow-x:auto}
+.mbar{flex:1;min-width:38px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;cursor:pointer}
+.mbar i{display:block;width:70%;background:#F3C9A8;border-radius:5px 5px 0 0;min-height:2px}
+.mbar.next i{background:var(--acc)}
+.mbar.sel i{background:var(--navy)}
+.mbar b{font-size:10.5px;font-weight:700;margin-bottom:3px;white-space:nowrap}
+.mbar span{font-size:11px;color:var(--ink3);margin-top:4px;white-space:nowrap}
+.fee-tbl th,.fee-tbl td{white-space:nowrap}
+.fee-tbl td.pd{max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.fee-tbl .sub2{display:block;font-size:11px;color:var(--ink3)}
+.prevbox{margin-top:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.prevbox div{display:flex;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line2);font-size:13px}
+.prevbox div:last-child{border-bottom:0}
+.prevbox div.hl{background:var(--acc-lt);font-weight:700;color:var(--acc-dk)}
+.ratio-in{width:70px;height:32px;border:1px solid #D5D9E0;border-radius:6px;padding:0 8px;text-align:right}
+
 /* 일정 */
 .cal-g{display:grid;grid-template-columns:1fr 320px;gap:16px}
 .cal-head{display:flex;align-items:center;gap:8px}
@@ -385,39 +401,40 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 
     <!-- 수수료 -->
     <section class="page view hide" id="v-fee">
-      <div class="ph"><div><h2>예상수수료</h2><div class="sub" id="feeYm"></div></div></div>
-      <div class="fee-cards">
-        <div class="stat hl"><div class="k">이달 예상 총액</div><div class="v" id="fTotal">-</div></div>
-        <div class="stat"><div class="k">손보 수수료</div><div class="v" id="fSonbo">-</div></div>
-        <div class="stat"><div class="k">생보 수수료</div><div class="v" id="fSaengbo">-</div></div>
-        <div class="stat"><div class="k">시책 합계</div><div class="v" id="fInc">-</div></div>
+      <div class="ph">
+        <div><h2>예상수수료</h2><div class="sub" id="feeSub">원수사 수수료 예시표 기준 추정치입니다. 실제 지급액과 다를 수 있습니다.</div></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <select class="sel hide" id="feeFc" style="width:auto;min-width:150px" onchange="loadFeeList()"></select>
+          <button class="btn pri" onclick="openFeeForm('')">+ 계약 입력</button>
+        </div>
       </div>
-      <div class="fee-g">
-        <div class="card">
-          <div class="card-h"><h3>이달 계약 실적 <span class="tag" id="dealCnt">0건</span></h3></div>
-          <div class="tbl-wrap"><table class="tbl" id="tDeal"></table></div>
-          <div class="tfoot"><span>수수료는 등록된 수수료율 기준 추정치이며 실제 지급액과 다를 수 있습니다.</span></div>
-        </div>
-        <div class="card">
-          <div class="card-h"><h3>실적 추가</h3><div class="seg"><button id="dkS" class="on" onclick="dealKind('손보')">손보</button><button id="dkL" onclick="dealKind('생보')">생보</button></div></div>
-          <div class="card-b">
-            <div id="dealS">
-              <div class="fld"><label class="lbl">보험사</label><select class="sel" id="sComp" onchange="sCompChg()"><option value="">불러오는 중…</option></select></div>
-              <div class="fld"><label class="lbl">상품</label><select class="sel" id="sProd" onchange="sProdChg()" disabled><option value="">보험사 먼저 선택</option></select></div>
-              <div class="fld"><label class="lbl">옵션</label><select class="sel" id="sOpt" onchange="sCalc()" disabled><option value="">상품 먼저 선택</option></select></div>
-              <div class="g2"><div class="fld"><label class="lbl">월 보험료</label><input class="inp" id="sPrem" inputmode="numeric" oninput="numOnly(this);sCalc()"></div>
-              <div class="fld"><label class="lbl">시책 (선택)</label><input class="inp" id="sInc" inputmode="numeric" oninput="numOnly(this)"></div></div>
-              <div class="calcbox hide" id="sCalcBox"><span>초회 <b id="sM0">-</b></span><span>1차년 <b id="sY1">-</b></span></div>
-              <button class="btn pri block" onclick="addDealS()">손보 실적 추가</button>
-            </div>
-            <div id="dealL" class="hide">
-              <div class="g2"><div class="fld"><label class="lbl">보험사</label><input class="inp" id="lComp"></div><div class="fld"><label class="lbl">상품명</label><input class="inp" id="lProd"></div></div>
-              <div class="g2"><div class="fld"><label class="lbl">월 보험료</label><input class="inp" id="lPrem" inputmode="numeric" oninput="numOnly(this)"></div><div class="fld"><label class="lbl">예상 수수료</label><input class="inp" id="lFee" inputmode="numeric" oninput="numOnly(this)"></div></div>
-              <div class="fld"><label class="lbl">시책 (선택)</label><input class="inp" id="lInc" inputmode="numeric" oninput="numOnly(this)"></div>
-              <button class="btn pri block" onclick="addDealL()">생보 실적 추가</button>
-            </div>
-          </div>
-        </div>
+      <div class="fee-cards">
+        <div class="stat hl"><div class="k" id="fcNextK">익월 예상수수료</div><div class="v" id="fcNext">-</div><div class="k" style="margin-top:4px;font-weight:500" id="fcNextS"></div></div>
+        <div class="stat"><div class="k">다음 달 입금 예상 (전체)</div><div class="v" id="fcNextAll">-</div></div>
+        <div class="stat"><div class="k">향후 15개월 합계</div><div class="v" id="fc15">-</div></div>
+        <div class="stat"><div class="k">입력 계약 · 월보험료</div><div class="v" id="fcCnt">-</div></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-h"><h3>월별 입금 예상</h3><span class="muted" style="font-size:12px">막대를 누르면 그 달 내역이 보입니다 · 원수사 15회차 시상은 유지율에 따라 달라 제외</span></div>
+        <div class="card-b"><div class="mbars" id="mBars"></div><div id="mDetail"></div></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>계약별 수수료</h3><span class="muted" style="font-size:12px" id="feeRatioInfo"></span></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl fee-tbl" id="tFee"></table></div>
+      </div>
+    </section>
+
+    <!-- 수수료 설정 (관리자) -->
+    <section class="page view hide" id="v-feeset">
+      <div class="ph"><div><h2>설계사 · 수수료 설정</h2><div class="sub">설계사 접속코드와 추가 수수료, 회사별 시상을 관리합니다. 기본 테이블은 70%입니다.</div></div>
+        <button class="btn pri" onclick="openFcForm('')">+ 설계사 등록</button></div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-h"><h3>설계사 목록</h3><span class="muted" style="font-size:12px">적용 테이블 = 기본 70% + 추가</span></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tFc"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>회사별 시상</h3><span class="muted" style="font-size:12px">월보험료 대비 % · 기본원수사시상은 익월, 사업부시상은 15회차 지급</span></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tAward"></table></div>
       </div>
     </section>
 
@@ -486,6 +503,50 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="cfDel" onclick="delCtr()">삭제</button><div class="spacer"></div><button class="btn" onclick="closeCtrForm()">취소</button><button class="btn pri" id="cfSave" onclick="saveCtr()">저장</button></div>
 </div>
 <datalist id="custNames"></datalist>
+
+<!-- 예상수수료 계약 입력 창 -->
+<div class="dim modal-dim hide" id="ffDim" onclick="closeFeeForm()"></div>
+<div class="modal hide" id="ffModal" style="width:min(640px,96vw)">
+  <div class="drawer-h"><h3 id="ffT">계약 입력</h3><button class="x" onclick="closeFeeForm()">×</button></div>
+  <div class="drawer-b">
+    <div class="fld"><label class="lbl">구분</label><div class="seg"><button type="button" id="fkS" class="on" onclick="feeKind('손보')">손보</button><button type="button" id="fkL" onclick="feeKind('생보')">생보</button></div></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">보험사 *</label><select class="sel" id="fComp" onchange="feeCompChg()"></select></div>
+      <div class="fld"><label class="lbl">상품 검색</label><input class="inp" id="fProdQ" placeholder="상품명 일부 입력" oninput="feeProdList()"></div>
+    </div>
+    <div class="fld"><label class="lbl">상품 *</label><select class="sel" id="fProd" onchange="feeOptList()" size="1"></select></div>
+    <div class="fld"><label class="lbl">옵션 (구분·납기 등) *</label><select class="sel" id="fOpt" onchange="feePreview()"></select></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">계약자 *</label><input class="inp" id="fHolder" list="custNames"></div>
+      <div class="fld"><label class="lbl">피보험자</label><input class="inp" id="fInsured" list="custNames"></div>
+    </div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">월 보험료 *</label><input class="inp" id="fPrem" inputmode="numeric" oninput="numOnly(this);feePreview()"></div>
+      <div class="fld"><label class="lbl">계약일 *</label><input class="inp" type="date" id="fDate" onchange="feePreview()"></div>
+    </div>
+    <div class="fld"><label class="lbl">메모</label><input class="inp" id="fMemo"></div>
+    <div id="fPrev"></div>
+  </div>
+  <div class="drawer-f"><button class="btn danger hide" id="fDel" onclick="delFee()">해지 (삭제)</button><div class="spacer"></div><button class="btn" onclick="closeFeeForm()">취소</button><button class="btn pri" id="fSave" onclick="saveFee()">저장</button></div>
+</div>
+
+<!-- 설계사 등록/수정 창 -->
+<div class="dim modal-dim hide" id="fcDim" onclick="closeFcForm()"></div>
+<div class="modal hide" id="fcModal" style="width:min(520px,96vw)">
+  <div class="drawer-h"><h3 id="fcT">설계사 등록</h3><button class="x" onclick="closeFcForm()">×</button></div>
+  <div class="drawer-b">
+    <div class="g2"><div class="fld"><label class="lbl">이름 *</label><input class="inp" id="fcName"></div><div class="fld"><label class="lbl">연락처</label><input class="inp" id="fcPhone" oninput="this.value=fmtPhone(this.value)"></div></div>
+    <div class="g2"><div class="fld" id="fcCodeBox"><label class="lbl">접속코드 *</label><input class="inp" id="fcCode" placeholder="로그인할 때 쓰는 코드"></div>
+      <div class="fld"><label class="lbl">역할</label><select class="sel" id="fcRole"><option>설계사</option><option>지사장</option><option>관리자</option></select></div></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">손보 추가 수수료 (%)</label><input class="inp" id="fcAddS" inputmode="decimal" oninput="fcCalc()"><div class="muted" style="font-size:12px;margin-top:4px" id="fcTS"></div></div>
+      <div class="fld"><label class="lbl">생보 추가 수수료 (%)</label><input class="inp" id="fcAddL" inputmode="decimal" oninput="fcCalc()"><div class="muted" style="font-size:12px;margin-top:4px" id="fcTL"></div></div>
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="fcActive" checked style="accent-color:var(--acc)"> 활성 (체크 해제 시 로그인 불가)</label>
+    <p class="muted" style="font-size:12px;margin:12px 0 0" id="fcNote"></p>
+  </div>
+  <div class="drawer-f"><div class="spacer"></div><button class="btn" onclick="closeFcForm()">취소</button><button class="btn pri" id="fcSaveBtn" onclick="saveFc()">저장</button></div>
+</div>
 
 <!-- 광고 수신 동의 등록 창 -->
 <div class="dim modal-dim hide" id="csDim" onclick="closeConsent()"></div>
@@ -559,9 +620,11 @@ var ICON = {
   fee:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>',
   cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
   todo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>',
+  feeset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['feeset','설계사·수수료 설정']];
+function isAdmin(){ return !!(ME && /지사장|관리자|대표|본부장|사업단장/.test(ME.role||'')); }
 
 /* ───────── 공통 ───────── */
 function $(id){ return document.getElementById(id); }
@@ -617,14 +680,15 @@ function boot(){
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
   loadAll(); loadTodos(); loadFee(); loadTpl();
-  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h;})) go(h);
+  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && (h!=='feeset'||isAdmin());})) go(h);
 }
 function drawNav(){
   var cnt={owner:'stO',prospect:'stP'};
-  $('nav').innerHTML=NAV.map(function(n){
+  var NV=NAV.filter(function(n){ return n[0]!=='feeset' || isAdmin(); });
+  $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
   }).join('')+'<hr><button onclick="location.href=\'./classic.html\'" title="엑셀 가져오기, 지사관리, 리쿠르팅 등">'+ICON.old+'기존 화면</button>';
-  $('mnav').innerHTML=NAV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'./classic.html\'">기존 화면</button>';
+  $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'./classic.html\'">기존 화면</button>';
 }
 function go(v){
   VIEW=v;
@@ -632,7 +696,8 @@ function go(v){
   document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===v); });
   history.replaceState(null,'','#'+v);
   if(v==='owner') renderOwner(); if(v==='prospect') renderPros(); if(v==='cal') renderCal(); if(v==='todo') renderTodos(); if(v==='sms') renderRcpts();
-  if(v==='fee' && !SONBO_FEE) loadSonboFee();
+  if(v==='fee') loadFeeList();
+  if(v==='feeset') loadFeeSet();
   window.scrollTo(0,0);
 }
 
@@ -1289,61 +1354,266 @@ function sendSms(){
   }).catch(function(e){ b.disabled=false; b.textContent='발송하기'; toast((e&&e.message)||'연결에 실패했습니다',true); });
 }
 
-/* ───────── 예상수수료 ───────── */
-function loadFee(){
-  var ym=today().slice(0,7); $('feeYm').textContent=ym.replace('-','년 ')+'월 · 손보 수수료율 '+(ME.sonboRatio||100)+'% 적용';
-  api('goalGet',{fc:ME.name,branch:ME.branch}).then(function(r){
-    if(!r.ok) return;
-    $('fTotal').textContent=won(r.estCommission); $('fSonbo').textContent=won(r.sonboFee); $('fSaengbo').textContent=won(r.saengboFee); $('fInc').textContent=won(r.incentiveSum);
-    $('stFee').innerHTML=wonShort(r.estCommission)+'<small>원</small>';
+/* ───────── 예상수수료 ─────────
+   기준: 원수사 수수료 예시표(100%). 설계사 테이블 = 기본 70% + 관리자가 지정한 추가 %.
+   지급 일정(계약월=1회차, n회차 수수료는 계약월+n개월에 입금):
+     익월: 익월수수료(기본+추가) + 기본원수사시상
+     7~12회차: (1차년 − 익월) ÷ 6 을 매월
+     13~15회차: 2차년 ÷ 3 을 매월, 15회차에 사업부시상
+     원수사 15회차 시상: 유지율에 따라 달라 금액 표시 안 함 */
+var FEE_API='https://daonpartners.app.n8n.cloud/webhook/daon-fee';
+var FEE_TABLE=null, FEE_ITEMS=[], AWARDS={}, FCS=[], FEE_FC=null, FEE_EDIT='', FEE_KIND='손보', FEE_SEL_M=null;
+var BASE_TABLE=70;
+function feeApi(action,p){ return fetch(FEE_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({action:action},p||{}))}).then(function(r){return r.json();}); }
+function loadFeeTable(){
+  if(FEE_TABLE) return Promise.resolve(FEE_TABLE);
+  return fetch('./fee-table.json').then(function(r){return r.json();}).then(function(d){ FEE_TABLE=d; return d; });
+}
+function loadAwards(){
+  return feeApi('settingsList').then(function(r){ AWARDS={}; ((r.ok&&r.items)||[]).forEach(function(a){ AWARDS[a.company]=a; }); return r; });
+}
+function loadFcs(){
+  return api('fcList',{branch:ME.branch}).then(function(r){ FCS=(r.ok&&r.items)||[]; return FCS; });
+}
+/* 보는 설계사: 본인 또는 (관리자) 선택한 설계사 */
+function feeTarget(){
+  if(FEE_FC) return FEE_FC;
+  return {name:ME.name, sonboRatio:ME.sonboRatio||100, saengboRatio:ME.saengboRatio||100};
+}
+function tableOf(fc,kind){ var v=Number(kind==='생보'?fc.saengboRatio:fc.sonboRatio); return isFinite(v)&&v>0?v:100; }
+function calcFee(c, fc){
+  var t=tableOf(fc,c.kind)/100, p=Number(c.premium)||0, aw=AWARDS[c.company]||{};
+  var m0full=p*(c.m0||0)/100;
+  var base=Math.round(m0full*Math.min(t,BASE_TABLE/100));
+  var nextFee=Math.round(m0full*t);
+  var add=nextFee-base;
+  var y1=Math.round(p*(c.y1||0)/100*t);
+  var per712=Math.round(Math.max(0,y1-nextFee)/6);
+  var y2=Math.round(p*(c.y2||0)/100*t);
+  var per2=Math.round(y2/3);
+  var baseAward=Math.round(p*(Number(aw.basePct)||0)/100);
+  var bizAward=Math.round(p*(Number(aw.bizPct)||0)/100);
+  return {base:base, add:add, next:nextFee, per712:per712, y1:y1, y2:y2, per2:per2, baseAward:baseAward, bizAward:bizAward, table:t*100};
+}
+function mIdx(d){ return (+d.slice(0,4))*12+(+d.slice(5,7))-1; }
+function mLabel(i){ return Math.floor(i/12)+'.'+String(i%12+1).padStart(2,'0'); }
+function scheduleOf(c, fc){
+  var f=calcFee(c,fc), M=mIdx(c.contractDate), out=[];
+  out.push({m:M+1, amt:f.next+f.baseAward, t:'익월수수료'+(f.baseAward?' + 기본시상':''), c:c});
+  for(var n=7;n<=12;n++) if(f.per712) out.push({m:M+n, amt:f.per712, t:n+'회차', c:c});
+  for(var k=13;k<=15;k++) if(f.per2||(k===15&&f.bizAward)) out.push({m:M+k, amt:f.per2+(k===15?f.bizAward:0), t:k+'회차 (2차년)'+(k===15&&f.bizAward?' + 사업부시상':''), c:c});
+  return out;
+}
+function loadFeeList(){
+  var tgt=feeTarget();
+  $('tFee').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
+  return Promise.all([loadAwards(), feeApi('feeList',{fc:tgt.name})]).then(function(res){
+    var r=res[1]; FEE_ITEMS=(r.ok&&r.items)||[]; renderFee();
+  }).catch(function(){ $('tFee').innerHTML='<tbody><tr><td class="empty">연결에 실패했습니다.</td></tr></tbody>'; });
+}
+function renderFee(){
+  var fc=feeTarget(), now=mIdx(today()), next=now+1;
+  $('feeRatioInfo').textContent=fc.name+' · 손보 테이블 '+tableOf(fc,'손보')+'% · 생보 테이블 '+tableOf(fc,'생보')+'% (기본 '+BASE_TABLE+'% + 추가)';
+  var byM={}, all=[];
+  FEE_ITEMS.forEach(function(c){ if(!c.contractDate) return; scheduleOf(c,fc).forEach(function(x){ (byM[x.m]=byM[x.m]||[]).push(x); all.push(x); }); });
+  var sum=function(m){ return (byM[m]||[]).reduce(function(s,x){return s+x.amt;},0); };
+  /* 익월 예상 = 이번 달 계약의 (익월수수료 + 기본시상) */
+  var thisM=FEE_ITEMS.filter(function(c){ return c.contractDate && mIdx(c.contractDate)===now; });
+  var nextOnly=thisM.reduce(function(s,c){ var f=calcFee(c,fc); return s+f.next+f.baseAward; },0);
+  $('fcNextK').textContent=mLabel(next).replace('.','년 ')+'월 익월 예상수수료';
+  $('fcNext').textContent=won(nextOnly); $('fcNextS').textContent='이번 달 계약 '+thisM.length+'건의 익월수수료 + 기본시상';
+  $('fcNextAll').textContent=won(sum(next));
+  var s15=0; for(var i=next;i<next+15;i++) s15+=sum(i); $('fc15').textContent=won(s15);
+  var prem=FEE_ITEMS.reduce(function(s,c){return s+(Number(c.premium)||0);},0);
+  $('fcCnt').innerHTML=FEE_ITEMS.length+'<small>건</small> <span style="font-size:14px;font-weight:600">'+wonShort(prem)+'원</span>';
+  if(!FEE_FC) $('stFee').innerHTML=wonShort(sum(next))+'<small>원</small>';
+  /* 월별 막대 */
+  var max=1, cols=[]; for(var k=next-1;k<next+15;k++){ var v=sum(k); cols.push([k,v]); if(v>max) max=v; }
+  if(FEE_SEL_M===null) FEE_SEL_M=next;
+  $('mBars').innerHTML=cols.map(function(c){ return '<div class="mbar'+(c[0]===next?' next':'')+(c[0]===FEE_SEL_M?' sel':'')+'" onclick="FEE_SEL_M='+c[0]+';renderFee()"><b>'+(c[1]?wonShort(c[1]):'')+'</b><i style="height:'+Math.max(2,Math.round(c[1]/max*130))+'px"></i><span>'+mLabel(c[0]).slice(2)+'</span></div>'; }).join('');
+  var det=(byM[FEE_SEL_M]||[]).slice().sort(function(a,b){return b.amt-a.amt;});
+  $('mDetail').innerHTML='<div style="margin-top:14px;font-weight:700">'+mLabel(FEE_SEL_M).replace('.','년 ')+'월 입금 예상 '+won(sum(FEE_SEL_M))+'</div>'
+    +(det.length?'<table class="tbl" style="margin-top:6px"><tbody>'+det.map(function(x){ return '<tr><td class="nm">'+esc(x.c.holder)+'</td><td class="muted">'+esc(x.c.company)+' · '+esc(x.c.product)+'</td><td>'+esc(x.t)+'</td><td class="num">'+won(x.amt)+'</td></tr>'; }).join('')+'</tbody></table>':'<div class="empty" style="padding:12px">이 달에 들어올 예상 금액이 없습니다.</div>')
+    +((byM[FEE_SEL_M]||[]).some(function(x){return /15회차/.test(x.t);})?'<div class="muted" style="font-size:12px;margin-top:6px">원수사 15회차 시상은 유지율에 따라 달라 포함하지 않았습니다.</div>':'');
+  /* 계약 표 */
+  var head='<thead><tr><th>계약자</th><th>피보험자</th><th>보험사</th><th>상품</th><th class="num">월보험료</th><th class="num">기본수수료<span class="sub2">'+BASE_TABLE+'%</span></th><th class="num">추가수수료</th><th class="num">익월수수료</th><th class="num">7~12회차<span class="sub2">매월 × 6</span></th><th class="num">2차년<span class="sub2">13~15회차 매월 × 3</span></th><th class="num">기본원수사시상<span class="sub2">익월</span></th><th class="num">사업부시상<span class="sub2">15회차</span></th><th>원수사 15회차 시상</th><th>계약일</th></tr></thead>';
+  $('tFee').innerHTML=head+'<tbody>'+(FEE_ITEMS.length?FEE_ITEMS.map(function(c){
+    var f=calcFee(c,fc);
+    return '<tr class="row" onclick="openFeeForm(\''+c.id+'\')"><td class="nm">'+esc(c.holder)+'</td><td>'+esc(c.insured||'-')+'</td><td>'+catKind(c.kind)+' '+esc(c.company)+'</td>'
+      +'<td class="pd" title="'+esc(c.product+' · '+c.option)+'">'+esc(c.product)+'<span class="sub2">'+esc(c.option)+'</span></td>'
+      +'<td class="num">'+won(c.premium)+'</td><td class="num">'+won(f.base)+'</td><td class="num">'+won(f.add)+'</td><td class="num"><b>'+won(f.next)+'</b></td>'
+      +'<td class="num">'+won(f.per712)+'</td><td class="num">'+won(f.per2)+'</td><td class="num">'+(f.baseAward?won(f.baseAward):'-')+'</td><td class="num">'+(f.bizAward?won(f.bizAward):'-')+'</td>'
+      +'<td class="muted">유지율에 따라 별도</td><td class="nw">'+esc(c.contractDate)+'</td></tr>';
+  }).join(''):'<tr><td colspan="14" class="empty">입력된 계약이 없습니다. [+ 계약 입력]으로 추가하세요.</td></tr>')+'</tbody>';
+}
+function catKind(k){ return '<span class="tag '+(k==='생보'?'b':'o')+'">'+esc(k||'손보')+'</span>'; }
+
+/* ── 계약 입력 창 ── */
+function openFeeForm(id){
+  var c=id?FEE_ITEMS.find(function(x){return x.id===id;}):null; FEE_EDIT=id||'';
+  $('ffT').textContent=c?'계약 수정':'계약 입력'; $('fDel').classList.toggle('hide',!c);
+  $('ffDim').classList.remove('hide'); $('ffModal').classList.remove('hide');
+  $('fPrev').innerHTML='<div class="muted" style="font-size:13px">수수료표 불러오는 중…</div>';
+  loadFeeTable().then(function(){
+    feeKind(c?(c.kind||'손보'):'손보', true);
+    $('fHolder').value=c?c.holder:''; $('fInsured').value=c?(c.insured||''):''; $('fPrem').value=c?c.premium:''; $('fDate').value=c?c.contractDate:today(); $('fMemo').value=c?(c.memo||''):'';
+    $('fProdQ').value='';
+    if(c){ $('fComp').value=c.company; feeCompChg(); $('fProd').value=c.product; feeOptList(); var opts=feeRows(); var oi=opts.findIndex(function(r){return r.o===c.option;}); if(oi>=0) $('fOpt').value=oi; }
+    feePreview();
+  }).catch(function(){ $('fPrev').innerHTML='<div class="err">수수료표(fee-table.json)를 불러오지 못했습니다.</div>'; });
+}
+function closeFeeForm(){ $('ffDim').classList.add('hide'); $('ffModal').classList.add('hide'); }
+function feeKind(k, keep){
+  FEE_KIND=k; $('fkS').classList.toggle('on',k==='손보'); $('fkL').classList.toggle('on',k==='생보');
+  var comps=Object.keys(FEE_TABLE[k]||{});
+  $('fComp').innerHTML='<option value="">보험사 선택</option>'+comps.map(function(c){return '<option>'+esc(c)+'</option>';}).join('');
+  $('fProd').innerHTML=''; $('fOpt').innerHTML=''; if(!keep) feePreview();
+}
+function feeCompChg(){ $('fProdQ').value=''; feeProdList(); }
+function feeProdList(){
+  var comp=$('fComp').value, q=$('fProdQ').value.trim().toLowerCase(), rows=(FEE_TABLE[FEE_KIND]||{})[comp]||[], names=[];
+  rows.forEach(function(r){ if(names.indexOf(r.p)<0 && (!q || r.p.toLowerCase().indexOf(q)>=0)) names.push(r.p); });
+  $('fProd').innerHTML=(names.length?'<option value="">상품 선택 ('+names.length+'개)</option>':'<option value="">'+(comp?'검색 결과 없음':'보험사를 먼저 선택')+'</option>')+names.map(function(n){return '<option>'+esc(n)+'</option>';}).join('');
+  if(names.length===1){ $('fProd').value=names[0]; }
+  feeOptList();
+}
+function feeRows(){ var comp=$('fComp').value, prod=$('fProd').value; return ((FEE_TABLE[FEE_KIND]||{})[comp]||[]).filter(function(r){return r.p===prod;}); }
+function feeOptList(){
+  var rows=feeRows();
+  $('fOpt').innerHTML=rows.length?rows.map(function(r,i){ return '<option value="'+i+'">'+esc(r.o||'기본')+' · 익월 '+r.m0.toFixed(1)+'% / 1차년 '+r.y1.toFixed(1)+'% / 2차년 '+r.y2.toFixed(1)+'%</option>'; }).join(''):'<option value="">상품을 먼저 선택</option>';
+  feePreview();
+}
+function feeCur(){
+  var rows=feeRows(), r=rows[$('fOpt').value];
+  if(!r) return null;
+  return {kind:FEE_KIND, company:$('fComp').value, product:r.p, option:r.o, m0:r.m0, y1:r.y1, y2:r.y2, y3:r.y3||0,
+    premium:Number($('fPrem').value||0), contractDate:$('fDate').value, holder:$('fHolder').value.trim(), insured:$('fInsured').value.trim()};
+}
+function feePreview(){
+  var c=feeCur(); if(!c||!c.premium){ $('fPrev').innerHTML='<div class="muted" style="font-size:13px">보험사·상품·옵션·보험료를 넣으면 수수료가 계산됩니다.</div>'; return; }
+  var f=calcFee(c,feeTarget()), M=c.contractDate?mIdx(c.contractDate):null;
+  var ml=function(n){ return M===null?'':' ('+mLabel(M+n).replace('.','년 ')+'월)'; };
+  $('fPrev').innerHTML='<div class="prevbox">'
+    +'<div><span>기본수수료 ('+BASE_TABLE+'%)</span><b>'+won(f.base)+'</b></div>'
+    +'<div><span>추가수수료 ('+Math.max(0,f.table-BASE_TABLE)+'%)</span><b>'+won(f.add)+'</b></div>'
+    +'<div class="hl"><span>익월수수료'+ml(1)+'</span><span>'+won(f.next)+'</span></div>'
+    +'<div><span>기본원수사시상'+ml(1)+'</span><b>'+(f.baseAward?won(f.baseAward):'설정 없음')+'</b></div>'
+    +'<div class="hl"><span>익월 예상수수료 (익월수수료 + 기본시상)</span><span>'+won(f.next+f.baseAward)+'</span></div>'
+    +'<div><span>7~12회차'+ml(7)+' ~ </span><b>매월 '+won(f.per712)+' × 6</b></div>'
+    +'<div><span>2차년 13~15회차'+ml(13)+' ~ </span><b>매월 '+won(f.per2)+' × 3</b></div>'
+    +'<div><span>사업부시상 15회차'+ml(15)+'</span><b>'+(f.bizAward?won(f.bizAward):'설정 없음')+'</b></div>'
+    +'<div><span>원수사 15회차 시상</span><span class="muted">유지율에 따라 별도</span></div>'
+    +'<div><span>합계 (원수사 15회차 시상 제외)</span><b>'+won(f.y1+f.y2+f.baseAward+f.bizAward)+'</b></div></div>'
+    +'<div class="muted" style="font-size:12px;margin-top:6px">'+esc(feeTarget().name)+' 테이블 '+f.table+'% 적용 · 수수료표 '+esc((FEE_TABLE&&FEE_TABLE.version)||'')+'</div>';
+}
+function saveFee(){
+  var c=feeCur();
+  if(!c){ toast('보험사·상품·옵션을 선택하세요',true); return; }
+  if(!c.holder){ toast('계약자를 입력하세요',true); return; }
+  if(!c.premium){ toast('월 보험료를 입력하세요',true); return; }
+  if(!c.contractDate){ toast('계약일을 입력하세요',true); return; }
+  var b=$('fSave'); b.disabled=true;
+  feeApi('feeSave',Object.assign({pageId:FEE_EDIT, fc:feeTarget().name, branch:ME.branch, tableVer:(FEE_TABLE&&FEE_TABLE.version)||'', memo:$('fMemo').value.trim()},c)).then(function(r){
+    b.disabled=false;
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
+    toast(FEE_EDIT?'수정했어요':'계약을 입력했어요'); closeFeeForm(); loadFeeList();
+  }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
+}
+function delFee(){
+  if(!FEE_EDIT||!confirm('해지된 계약으로 삭제할까요?\n이 계약의 앞으로 받을 예상수수료가 모두 빠집니다.')) return;
+  feeApi('feeDelete',{pageId:FEE_EDIT}).then(function(r){
+    if(!r.ok){ toast(r.error||'삭제에 실패했습니다',true); return; }
+    toast('삭제했어요'); closeFeeForm(); loadFeeList();
+  }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+function initFeeFcPicker(){
+  if(!isAdmin()) return;
+  loadFcs().then(function(){
+    var sel=$('feeFc'); sel.classList.remove('hide');
+    sel.innerHTML='<option value="">내 계약 ('+esc(ME.name)+')</option>'+FCS.filter(function(f){return f.name!==ME.name;}).map(function(f){ return '<option value="'+esc(f.id)+'">'+esc(f.name)+(f.active?'':' (비활성)')+'</option>'; }).join('');
+    sel.onchange=function(){ var f=FCS.find(function(x){return x.id===sel.value;}); FEE_FC=f||null; FEE_SEL_M=null; loadFeeList(); };
+    var me=FCS.find(function(x){return x.name===ME.name;}); if(me){ ME.sonboRatio=me.sonboRatio; ME.saengboRatio=me.saengboRatio; }
+  });
+}
+function loadFee(){ /* 홈 카드용: 본인 기준 */
+  Promise.all([loadAwards(), feeApi('feeList',{fc:ME.name})]).then(function(res){
+    var items=(res[1].ok&&res[1].items)||[], fc={name:ME.name,sonboRatio:ME.sonboRatio||100,saengboRatio:ME.saengboRatio||100}, next=mIdx(today())+1, s=0;
+    items.forEach(function(c){ if(c.contractDate) scheduleOf(c,fc).forEach(function(x){ if(x.m===next) s+=x.amt; }); });
+    $('stFee').innerHTML=wonShort(s)+'<small>원</small>';
   }).catch(function(){});
-  api('dealList',{fc:ME.name,branch:ME.branch,ym:ym}).then(function(r){
-    var it=(r.ok&&r.items)||[]; $('dealCnt').textContent=it.length+'건';
-    $('tDeal').innerHTML='<thead><tr><th>구분</th><th>보험사</th><th>상품</th><th class="num">월 보험료</th><th class="num">초회</th><th class="num">1차년</th><th class="num">시책</th><th></th></tr></thead><tbody>'
-      +(it.length?it.map(function(d){ return '<tr><td><span class="tag '+(d.category==='손보'?'o':'b')+'">'+esc(d.category)+'</span></td><td class="nw">'+esc(d.company)+'</td><td>'+esc(d.product)+(d.option?'<br><small class="muted">'+esc(d.option)+'</small>':'')+'</td>'
-        +'<td class="num">'+won(d.premium)+'</td><td class="num">'+(d.m0Fee?won(d.m0Fee):'-')+'</td><td class="num">'+won(d.y1Fee)+'</td><td class="num">'+(d.incentive?won(d.incentive):'-')+'</td>'
-        +'<td><button class="btn sm danger" onclick="delDeal(\''+d.id+'\')">삭제</button></td></tr>'; }).join(''):'<tr><td colspan="8" class="empty">이번 달 입력된 실적이 없습니다.</td></tr>')+'</tbody>';
-  }).catch(function(){});
+  initFeeFcPicker();
 }
-function dealKind(k){ DEAL_KIND=k; $('dkS').classList.toggle('on',k==='손보'); $('dkL').classList.toggle('on',k==='생보'); $('dealS').classList.toggle('hide',k!=='손보'); $('dealL').classList.toggle('hide',k!=='생보'); }
-function loadSonboFee(){
-  fetch(SONBO_FEE_URL).then(function(r){return r.json();}).then(function(d){ SONBO_FEE=d; $('sComp').innerHTML='<option value="">선택</option>'+Object.keys(d).map(function(c){return '<option>'+esc(c)+'</option>';}).join(''); })
-    .catch(function(){ $('sComp').innerHTML='<option value="">수수료표를 불러오지 못했습니다</option>'; });
+
+/* ── 설계사·수수료 설정 (관리자) ── */
+var FC_EDIT=null;
+function loadFeeSet(){
+  if(!isAdmin()) return;
+  $('tFc').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
+  Promise.all([loadFcs(), loadAwards()]).then(function(){ renderFcTable(); renderAwardTable(); })
+    .catch(function(){ toast('불러오지 못했습니다',true); });
 }
-function sCompChg(){
-  var c=$('sComp').value, p=$('sProd'); $('sOpt').innerHTML='<option value="">상품 먼저 선택</option>'; $('sOpt').disabled=true; $('sCalcBox').classList.add('hide');
-  if(!c){ p.disabled=true; return; }
-  var prods=[]; SONBO_FEE[c].forEach(function(r){ if(prods.indexOf(r.p)<0) prods.push(r.p); });
-  p.innerHTML='<option value="">선택</option>'+prods.map(function(x){return '<option>'+esc(x)+'</option>';}).join(''); p.disabled=false;
+function addOf(v){ v=Number(v); if(!isFinite(v)||!v) return ''; return Math.round((v-BASE_TABLE)*100)/100; }
+function renderFcTable(){
+  $('tFc').innerHTML='<thead><tr><th>이름</th><th>역할</th><th>연락처</th><th class="num">손보 테이블</th><th class="num">생보 테이블</th><th>상태</th><th></th></tr></thead><tbody>'
+    +(FCS.length?FCS.map(function(f){
+      var ts=Number(f.sonboRatio)||100, tl=Number(f.saengboRatio)||100;
+      return '<tr><td class="nm">'+esc(f.name)+'</td><td>'+esc(f.role||'설계사')+'</td><td class="nw">'+esc(f.phone||'-')+'</td>'
+        +'<td class="num">'+BASE_TABLE+' + <b>'+addOf(ts)+'</b> = '+ts+'%</td><td class="num">'+BASE_TABLE+' + <b>'+addOf(tl)+'</b> = '+tl+'%</td>'
+        +'<td>'+(f.active?'<span class="tag g">활성</span>':'<span class="tag">비활성</span>')+'</td><td><button class="btn sm" onclick="openFcForm(\''+f.id+'\')">수정</button></td></tr>';
+    }).join(''):'<tr><td colspan="7" class="empty">등록된 설계사가 없습니다.</td></tr>')+'</tbody>';
 }
-function sProdChg(){
-  var c=$('sComp').value, pr=$('sProd').value, o=$('sOpt'); $('sCalcBox').classList.add('hide');
-  if(!pr){ o.disabled=true; return; }
-  var rows=SONBO_FEE[c].filter(function(r){return r.p===pr;}); o.dataset.rows=JSON.stringify(rows);
-  o.innerHTML='<option value="">선택</option>'+rows.map(function(r,i){ return '<option value="'+i+'">'+esc([r.g1,r.g2,r.term,r.mat].filter(Boolean).join(' · ')||'기본')+'</option>'; }).join(''); o.disabled=false;
+function renderAwardTable(){
+  var list=Object.keys(AWARDS).map(function(k){return AWARDS[k];}).sort(function(a,b){ return a.kind===b.kind?a.company.localeCompare(b.company,'ko'):(a.kind==='손보'?-1:1); });
+  $('tAward').innerHTML='<thead><tr><th>구분</th><th>보험사</th><th class="num">기본원수사시상 (%)</th><th class="num">사업부시상 (%)</th><th></th></tr></thead><tbody>'
+    +list.map(function(a){
+      return '<tr><td>'+catKind(a.kind)+'</td><td class="nm">'+esc(a.company)+'</td>'
+        +'<td class="num"><input class="ratio-in" id="aw-b-'+a.id+'" value="'+(a.basePct||0)+'" inputmode="decimal"></td>'
+        +'<td class="num"><input class="ratio-in" id="aw-z-'+a.id+'" value="'+(a.bizPct||0)+'" inputmode="decimal"></td>'
+        +'<td><button class="btn sm" onclick="saveAward(\''+a.id+'\')">저장</button></td></tr>';
+    }).join('')+'</tbody>';
 }
-function sRow(){ var o=$('sOpt'); if(o.value===''||!o.dataset.rows) return null; return JSON.parse(o.dataset.rows)[o.value]; }
-function sCalc(){
-  var row=sRow(), prem=Number($('sPrem').value||0); if(!row||!prem){ $('sCalcBox').classList.add('hide'); return; }
-  var ratio=(ME.sonboRatio||100)/100;
-  $('sM0').textContent=won(Math.round(prem*row.m0/100*ratio)); $('sY1').textContent=won(Math.round(prem*row.y1/100*ratio)); $('sCalcBox').classList.remove('hide');
+function saveAward(id){
+  var b=Number($('aw-b-'+id).value), z=Number($('aw-z-'+id).value);
+  if(!isFinite(b)||!isFinite(z)||b<0||z<0){ toast('0 이상의 숫자를 입력하세요',true); return; }
+  feeApi('settingsSave',{pageId:id, basePct:b, bizPct:z}).then(function(r){
+    if(r.ok){ toast('시상을 저장했어요'); loadAwards(); } else toast(r.error||'저장에 실패했습니다',true);
+  }).catch(function(){ toast('연결에 실패했습니다',true); });
 }
-function addDealS(){
-  var row=sRow(), prem=Number($('sPrem').value||0);
-  if(!$('sComp').value||!row||!prem){ toast('보험사·상품·옵션·보험료를 모두 입력하세요',true); return; }
-  var ratio=(ME.sonboRatio||100)/100;
-  api('dealAdd',{fc:ME.name,branch:ME.branch,ym:today().slice(0,7),category:'손보',company:$('sComp').value,product:$('sProd').value,option:[row.g1,row.g2,row.term,row.mat].filter(Boolean).join(' · '),premium:prem,m0Fee:Math.round(prem*row.m0/100*ratio),y1Fee:Math.round(prem*row.y1/100*ratio),incentive:Number($('sInc').value||0)})
-    .then(function(r){ if(r.ok){ toast('손보 실적을 추가했어요'); $('sPrem').value=''; $('sInc').value=''; $('sCalcBox').classList.add('hide'); loadFee(); } else toast(r.error||'추가에 실패했습니다',true); })
-    .catch(function(){ toast('연결에 실패했습니다',true); });
+function openFcForm(id){
+  var f=id?FCS.find(function(x){return x.id===id;}):null; FC_EDIT=f;
+  $('fcT').textContent=f?'설계사 수정':'설계사 등록';
+  $('fcName').value=f?f.name:''; $('fcPhone').value=f?(f.phone||''):''; $('fcRole').value=f?(f.role||'설계사'):'설계사';
+  $('fcAddS').value=f?addOf(f.sonboRatio||100):15; $('fcAddL').value=f?addOf(f.saengboRatio||100):15;
+  $('fcActive').checked=f?!!f.active:true; $('fcCode').value='';
+  $('fcCodeBox').classList.toggle('hide',!!f);
+  $('fcNote').textContent=f?'접속코드는 보안상 여기서 바꿀 수 없습니다. 바꾸려면 기존 화면의 설계사 관리에서 새로 등록하세요.':'접속코드는 설계사가 로그인할 때 쓰는 번호입니다. 다른 설계사와 겹치지 않게 정해주세요.';
+  fcCalc(); $('fcDim').classList.remove('hide'); $('fcModal').classList.remove('hide');
 }
-function addDealL(){
-  var comp=$('lComp').value.trim(), prod=$('lProd').value.trim(), prem=Number($('lPrem').value||0), fee=Number($('lFee').value||0);
-  if(!comp||!prod||!prem||!fee){ toast('보험사·상품명·보험료·수수료를 모두 입력하세요',true); return; }
-  api('dealAdd',{fc:ME.name,branch:ME.branch,ym:today().slice(0,7),category:'생보',company:comp,product:prod,option:'',premium:prem,m0Fee:0,y1Fee:fee,incentive:Number($('lInc').value||0)})
-    .then(function(r){ if(r.ok){ toast('생보 실적을 추가했어요'); ['lComp','lProd','lPrem','lFee','lInc'].forEach(function(i){$(i).value='';}); loadFee(); } else toast(r.error||'추가에 실패했습니다',true); })
-    .catch(function(){ toast('연결에 실패했습니다',true); });
+function closeFcForm(){ $('fcDim').classList.add('hide'); $('fcModal').classList.add('hide'); }
+function fcCalc(){
+  ['S','L'].forEach(function(k){ var a=Number($('fcAdd'+k).value||0); $('fcT'+k).textContent='적용 테이블 '+BASE_TABLE+' + '+(isFinite(a)?a:0)+' = '+(BASE_TABLE+(isFinite(a)?a:0))+'%'; });
 }
-function delDeal(id){ if(!confirm('이 실적을 삭제할까요?')) return; api('dealDelete',{pageId:id}).then(function(r){ if(r.ok){ toast('삭제했어요'); loadFee(); } else toast(r.error||'삭제에 실패했습니다',true); }); }
+function saveFc(){
+  var name=$('fcName').value.trim(); if(!name){ toast('이름을 입력하세요',true); return; }
+  var aS=Number($('fcAddS').value||0), aL=Number($('fcAddL').value||0);
+  if(!isFinite(aS)||!isFinite(aL)||aS<0||aL<0||aS>100||aL>100){ toast('추가 수수료는 0~100 사이 숫자로 입력하세요',true); return; }
+  var f=FC_EDIT;
+  /* 설계사 수정은 모든 항목을 덮어쓰므로, 화면에 없는 항목은 기존 값을 그대로 보냄 */
+  var p={branch:ME.branch, name:name, phone:$('fcPhone').value.trim(), role:$('fcRole').value,
+    rank:f?(f.rank||'FC'):'FC', workStatus:f?(f.workStatus||'활동'):'활동', dept:f?(f.dept||''):'', sendNo:f?(f.sendNo||''):'',
+    license:f?(f.license||''):'', joinDate:f?(f.joinDate||''):today(),
+    sonboRatio:Math.round((BASE_TABLE+aS)*100)/100, saengboRatio:Math.round((BASE_TABLE+aL)*100)/100, active:$('fcActive').checked};
+  if(f) p.pageId=f.id;
+  else { var code=$('fcCode').value.trim(); if(!code){ toast('접속코드를 입력하세요',true); return; } p.loginCode=code; p.appointDate=p.joinDate; }
+  var b=$('fcSaveBtn'); b.disabled=true;
+  api('fcSave',p).then(function(r){
+    b.disabled=false;
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
+    toast('저장했어요'); closeFcForm();
+    if(f && f.name===ME.name){ ME.sonboRatio=p.sonboRatio; ME.saengboRatio=p.saengboRatio; try{ sessionStorage.setItem('crmMe',JSON.stringify(ME)); }catch(e){} }
+    loadFeeSet(); initFeeFcPicker();
+  }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
+}
 
 /* ───────── 일정 ───────── */
 function ymOf(y,m){ return y+'-'+String(m+1).padStart(2,'0'); }
