@@ -281,6 +281,7 @@ if (!code) {
       const contentItems = [];
       if (p.blog) contentItems.push({ ico: "📝", label: p.name + " 블로그", url: p.blog });
       if (p.youtube) contentItems.push({ ico: "🎬", label: p.name + " 유튜브", url: p.youtube });
+      if (p.instagram) contentItems.push({ ico: "📷", label: p.name + " 인스타그램", url: p.instagram });
       if (contentItems.length) {
         document.getElementById("p-contentSec").style.display = "block";
         document.getElementById("p-content").innerHTML = contentItems.map(c =>
