@@ -1694,13 +1694,20 @@ function renderMyProfile(){
     +'<div class="fld"><label class="lbl">카카오톡 링크</label><input class="inp" id="myKakao" placeholder="https://open.kakao.com/..." value="'+v('kakao')+'"></div></div>'
     +'<div class="g2"><div class="fld"><label class="lbl">블로그 링크</label><input class="inp" id="myBlog" placeholder="https://blog.naver.com/..." value="'+v('blog')+'"></div>'
     +'<div class="fld"><label class="lbl">유튜브 링크</label><input class="inp" id="myYt" placeholder="https://youtube.com/..." value="'+v('youtube')+'"></div></div>'
+    +'<div class="g2"><div class="fld"><label class="lbl">인스타그램 링크</label><input class="inp" id="myInsta" placeholder="https://instagram.com/아이디" value="'+v('instagram')+'"></div><div></div></div>'
     +'<div class="fld"><label class="lbl">전문분야</label><div class="chips" id="mySpec">'+SPECS.map(function(x){ var on=(pf.specialties||[]).indexOf(x)>=0; return '<button type="button" class="chip'+(on?' on':'')+'" data-v="'+x+'" onclick="this.classList.toggle(\'on\')">'+x+'</button>'; }).join('')+'</div></div>'
     +'<div class="muted" style="font-size:12px;margin-bottom:12px">이메일·링크는 새 값으로 바꿀 수 있지만, 칸을 비워서 지우는 것은 지원되지 않습니다. 이름·연락처·직함·사번은 지사장이 관리합니다. 명함은 프로필 페이지에서 자동으로 만들어지며 [명함 이미지 다운로드]로 받을 수 있습니다.</div>'
     +'<button class="btn pri" id="mySave" onclick="saveMyProfile()">저장</button>';
 }
+function normInsta(v){ /* @아이디 나 아이디만 입력해도 주소로 바꿔줌 */
+  v=String(v||'').trim(); if(!v) return '';
+  if(/^https?:\/\//i.test(v)) return v;
+  v=v.replace(/^@/,'').replace(/^(www\.)?instagram\.com\//i,'').replace(/\/+$/,'');
+  return /^[A-Za-z0-9._]{1,30}$/.test(v) ? 'https://www.instagram.com/'+v+'/' : v;
+}
 function saveMyProfile(){
   var b=$('mySave'); b.disabled=true;
-  fcApi('profileSelf',{intro:$('myIntro').value.trim(), email:$('myEmail').value.trim(), kakao:$('myKakao').value.trim(), blog:$('myBlog').value.trim(), youtube:$('myYt').value.trim(),
+  fcApi('profileSelf',{intro:$('myIntro').value.trim(), email:$('myEmail').value.trim(), kakao:$('myKakao').value.trim(), blog:$('myBlog').value.trim(), youtube:$('myYt').value.trim(), instagram:normInsta($('myInsta').value),
     specialties:[].map.call(document.querySelectorAll('#mySpec .chip.on'),function(x){return x.dataset.v;})}).then(function(r){
     b.disabled=false;
     if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
