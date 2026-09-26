@@ -90,9 +90,15 @@ textarea{min-height:90px;resize:vertical}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .pick{border:1.5px dashed var(--orange);background:var(--tint);border-radius:12px;padding:16px;text-align:center;font-size:14px;color:var(--deep);font-weight:700;width:100%}
 .previews{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.previews div{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--navygray);position:relative}
+.previews > div{aspect-ratio:1;border-radius:10px;overflow:hidden;background:var(--navygray);position:relative}
 .previews img{width:100%;height:100%;object-fit:cover}
 .previews small{position:absolute;left:5px;top:5px;background:rgba(11,30,66,.8);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px}
+.previews > div.is-main{box-shadow:inset 0 0 0 3px #E39BA5}
+.previews small.is-main{background:#E39BA5;color:#0B1E42;font-weight:800}
+.previews .mv{position:absolute;left:0;right:0;bottom:0;display:flex;gap:3px;padding:4px;background:linear-gradient(to top,rgba(11,30,66,.75),rgba(11,30,66,0))}
+.previews .mv button{flex:1;height:26px;border:0;border-radius:6px;background:rgba(255,255,255,.92);color:#0B1E42;font-size:12px;font-weight:700;cursor:pointer;padding:0}
+.previews .mv button:disabled{opacity:.35;cursor:default}
+.previews .mv button.rm{flex:0 0 26px;color:#B42318}
 .hint{font-size:12.5px;color:var(--steel);margin-top:6px}
 .msg{font-size:13.5px;margin-top:12px;border-radius:10px;padding:10px 12px}
 .msg.err{background:#FEF3F2;color:#B42318}
@@ -175,7 +181,7 @@ textarea{min-height:90px;resize:vertical}
       </div>
     </div>
 
-    <label class="f">이미지 <span>(최대 3장)</span></label>
+    <label class="f">이미지 <span>(최대 3장 · 1번이 대표 사진)</span></label>
     <input type="file" id="fFiles" accept="image/jpeg,image/png,image/webp" multiple class="hide" onchange="onFiles(this)">
     <button type="button" class="pick" id="pickBtn" onclick="document.getElementById('fFiles').click()">사진 선택</button>
     <div class="previews" id="previews"></div>
@@ -418,6 +424,7 @@ function openEdit(){
 }
 function fillForm(p){
   NEW_IMGS = [];
+  KEEP_ORDER = (p.images || []).slice();
   document.getElementById('fTitle').value = p.title || '';
   document.getElementById('fSum').value = p.summary || '';
   document.getElementById('fOrder').value = (p.order != null ? p.order : 10);
@@ -426,21 +433,48 @@ function fillForm(p){
   setMsg('wMsg', '');
   drawPreviews();
 }
+var KEEP_ORDER = [];   /* 수정 시 기존 이미지 순서 */
+function curList(){ return NEW_IMGS.length ? NEW_IMGS : KEEP_ORDER; }
+function moveImg(k, d){
+  var list = curList(), t = k + d;
+  if(t < 0 || t >= list.length) return;
+  var x = list[k]; list[k] = list[t]; list[t] = x;
+  drawPreviews();
+}
+function makeMain(k){
+  var list = curList(); if(k <= 0) return;
+  list.unshift(list.splice(k, 1)[0]);
+  drawPreviews();
+}
+function removeImg(k){ NEW_IMGS.splice(k, 1); drawPreviews(); }
+function previewHtml(list, isNew){
+  return list.map(function(src, k){
+    return '<div' + (k === 0 ? ' class="is-main"' : '') + '><img src="' + (isNew ? src : esc(src)) + '" alt="">'
+      + '<small' + (k === 0 ? ' class="is-main"' : '') + '>' + (k === 0 ? '1 대표' : (k+1)) + '</small>'
+      + (list.length > 1 || isNew ? '<div class="mv">'
+        + '<button type="button" title="앞으로" onclick="moveImg(' + k + ',-1)"' + (k === 0 ? ' disabled' : '') + '>◀</button>'
+        + '<button type="button" title="대표 사진으로" onclick="makeMain(' + k + ')"' + (k === 0 ? ' disabled' : '') + '>대표</button>'
+        + '<button type="button" title="뒤로" onclick="moveImg(' + k + ',1)"' + (k === list.length - 1 ? ' disabled' : '') + '>▶</button>'
+        + (isNew ? '<button type="button" class="rm" title="빼기" onclick="removeImg(' + k + ')">✕</button>' : '')
+        + '</div>' : '')
+      + '</div>';
+  }).join('');
+}
 function drawPreviews(){
   var box = document.getElementById('previews');
   var hint = document.getElementById('imgHint');
   var pick = document.getElementById('pickBtn');
   if(NEW_IMGS.length){
-    box.innerHTML = NEW_IMGS.map(function(src, k){ return '<div><img src="' + src + '" alt=""><small>' + (k+1) + '</small></div>'; }).join('');
-    hint.textContent = EDIT ? '저장하면 기존 이미지가 이 사진들로 교체됩니다.' : '큰 사진은 자동으로 줄여서 올립니다.';
+    box.innerHTML = previewHtml(NEW_IMGS, true);
+    hint.textContent = '1번 사진이 목록에 보이는 대표 사진입니다. ◀ ▶ · [대표]로 순서를 바꾸세요.' + (EDIT ? ' 저장하면 기존 이미지가 이 사진들로 교체됩니다.' : '');
     pick.textContent = '사진 다시 선택';
-  } else if(EDIT && (EDIT.images || []).length){
-    box.innerHTML = EDIT.images.map(function(src, k){ return '<div><img src="' + esc(src) + '" alt=""><small>' + (k+1) + '</small></div>'; }).join('');
-    hint.textContent = '현재 이미지입니다. 바꾸려면 사진을 새로 선택하세요(3장 전체 교체).';
+  } else if(EDIT && KEEP_ORDER.length){
+    box.innerHTML = previewHtml(KEEP_ORDER, false);
+    hint.textContent = '현재 이미지입니다. 순서만 바꿀 수도 있고, 사진을 새로 선택하면 전체 교체됩니다. 1번이 대표 사진입니다.';
     pick.textContent = '사진 교체';
   } else {
     box.innerHTML = '';
-    hint.textContent = '큰 사진은 자동으로 줄여서 올립니다.';
+    hint.textContent = '큰 사진은 자동으로 줄여서 올립니다. 1번 사진이 목록 대표 사진이 됩니다.';
     pick.textContent = '사진 선택';
   }
 }
@@ -492,7 +526,7 @@ function savePost(){
   };
   if(EDIT){
     payload.pageId = EDIT.id;
-    payload.keepImages = EDIT.images || [];
+    payload.keepImages = KEEP_ORDER.length ? KEEP_ORDER : (EDIT.images || []);
   }
   var btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.textContent = NEW_IMGS.length ? '이미지 올리는 중…' : '저장 중…';
