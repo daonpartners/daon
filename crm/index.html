@@ -198,6 +198,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 
 .tbl td.ed{cursor:text;max-width:220px;white-space:pre-wrap;font-size:13px;color:var(--ink2)}
 .tbl td.ed:hover{background:#FFF8F2}
+#prosDb button{height:30px;padding:0 10px;font-size:12.5px}
 #tPros .sticky0{position:sticky;left:0;background:#fff;z-index:2}
 #tPros .sticky1{position:sticky;left:34px;background:#fff;z-index:2;box-shadow:1px 0 0 var(--line2)}
 #tPros thead .sticky0,#tPros thead .sticky1{background:#FAFBFC;z-index:3}
@@ -362,12 +363,15 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <section class="page view hide" id="v-prospect">
       <div class="ph">
         <div><h2>가망고객</h2><div class="sub">관리 칸을 누르면 바로 입력됩니다 · 관리상태를 계약전환으로 바꾸면 보유고객으로 이동</div></div>
-        <div style="display:flex;gap:8px"><button class="btn" onclick="openRrnImp()">주민번호 일괄 입력</button><button class="btn pri" onclick="openCustForm('', '가망고객')">+ 가망고객 등록</button></div>
+        <div style="display:flex;gap:8px"><button class="btn" onclick="openRrnImp()">주민번호 일괄 입력</button><button class="btn" onclick="openProsImp()">가망고객 일괄 등록</button><button class="btn pri" onclick="openCustForm('', '가망고객')">+ 가망고객 등록</button></div>
       </div>
       <div class="card">
         <div class="toolbar">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qPros" placeholder="이름, 연락처, 주소, 지역, 메모, 관리내용 검색" oninput="renderPros()"></div>
           <div class="chips" id="prosCat"></div>
+        </div>
+        <div class="toolbar" style="padding:8px 14px;gap:6px">
+          <span class="muted" style="font-size:12px;font-weight:700">DB 구분</span><div class="seg" id="prosDb"></div>
         </div>
         <div class="selbar hide" id="selPros"></div>
         <div class="toolbar" style="padding:8px 14px">
@@ -575,6 +579,36 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="fcDelBtn" onclick="delFc()">설계사 삭제</button><div class="spacer"></div><button class="btn" onclick="closeFcForm()">취소</button><button class="btn pri" id="fcSaveBtn" onclick="saveFc()">저장</button></div>
 </div>
 
+<!-- DB 구분 일괄 변경 창 -->
+<div class="dim modal-dim hide" id="dbDim" onclick="closeDbBulk()"></div>
+<div class="modal hide" id="dbModal" style="width:min(560px,96vw)">
+  <div class="drawer-h"><h3>DB 구분 일괄 변경</h3><button class="x" onclick="closeDbBulk()">×</button></div>
+  <div class="drawer-b"><p class="muted" style="margin:0 0 12px" id="dbCnt"></p><div id="dbBox"></div><div id="dbProg"></div></div>
+  <div class="drawer-f"><button class="btn" onclick="closeDbBulk()">닫기</button><div class="spacer"></div><button class="btn pri" id="dbGo" onclick="runDbBulk()">적용</button></div>
+</div>
+
+<!-- 가망고객 일괄 등록 창 -->
+<div class="dim modal-dim hide" id="piDim" onclick="closeProsImp()"></div>
+<div class="modal hide" id="piModal" style="width:min(920px,96vw)">
+  <div class="drawer-h"><h3>가망고객 일괄 등록</h3><button class="x" onclick="closeProsImp()">×</button></div>
+  <div class="drawer-b">
+    <div id="piStep1">
+      <ol style="margin:0 0 14px;padding-left:18px;line-height:1.9">
+        <li>[양식 내려받기]로 엑셀을 받아 한 줄에 한 명씩 채워주세요. <b>이름</b>과 <b>연락처</b>는 필수입니다.</li>
+        <li><b>DB구분</b> 칸에는 사입DB·행사DB·중도DB·온라인DB 중 하나를 적습니다. 행사DB는 행사일·행사명, 온라인DB는 채널·채널명을 함께 적어주세요.</li>
+        <li>올리면 저장 전에 결과를 먼저 보여드립니다. 이미 등록된 연락처는 건너뜁니다.</li>
+      </ol>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" onclick="prosTemplate()">양식 내려받기</button><label class="btn pri">엑셀 파일 선택<input type="file" id="piFile" accept=".xlsx,.xls,.csv" class="hide" onchange="readProsFile(this)"></label></div>
+    </div>
+    <div id="piStep2" class="hide">
+      <div id="piSum" style="margin-bottom:10px"></div>
+      <div class="tbl-wrap" style="max-height:52vh;border:1px solid var(--line);border-radius:8px"><table class="tbl" id="piTbl"></table></div>
+    </div>
+    <div id="piStep3" class="hide"><div style="height:8px;background:var(--line2);border-radius:4px;overflow:hidden;margin:6px 0 10px"><div id="piBar" style="height:100%;width:0;background:var(--acc)"></div></div><div id="piProg"></div></div>
+  </div>
+  <div class="drawer-f"><button class="btn" onclick="closeProsImp()">닫기</button><div class="spacer"></div><button class="btn pri" id="piGo" onclick="runProsImp()" disabled>등록하기</button></div>
+</div>
+
 <!-- 광고 수신 동의 등록 창 -->
 <div class="dim modal-dim hide" id="csDim" onclick="closeConsent()"></div>
 <div class="modal hide" id="csModal" style="width:min(620px,96vw)">
@@ -756,6 +790,155 @@ function regionOf(c){
   for(var i=0;i<REGION_ALIAS.length;i++){ if(REGION_ALIAS[i][0].test(a)) return REGION_ALIAS[i][1]; }
   return a?'기타':'';
 }
+/* ───────── 가망고객 DB 구분 ─────────
+   DB구분(dbType) + 상세(sourceNote, '유입경로비고' 칸)를 사용.
+   행사DB: '행사일 | 행사명', 온라인DB: '채널 | 채널명', 사입·중도DB: 자유 메모 */
+var DB_TYPES=['사입DB','행사DB','중도DB','온라인DB'], PROS_DB='전체';
+var DB_HINT={'사입DB':'구입처·구입일 등 (선택)','중도DB':'예전 가입·해지 시기, 관리 중단 사유 등 (선택)'};
+function dbOf(c){ return c.dbType||''; }
+function dbDetail(c){
+  var n=String(c.sourceNote||''), parts=n.split(' | ');
+  if(c.dbType==='행사DB' && parts.length===2) return (parts[0]?parts[0]+' · ':'')+parts[1];
+  if(c.dbType==='온라인DB' && parts.length===2) return parts[0]+(parts[1]?' · '+parts[1]:'');
+  return n;
+}
+function dbTag(t){ var m={'사입DB':'','행사DB':'o','중도DB':'r','온라인DB':'b'}; return t?'<span class="tag '+(m[t]!==undefined?m[t]:'y')+'">'+esc(t)+'</span>':'<span class="muted">-</span>'; }
+/* 입력칸 묶음 (등록창·일괄변경창·엑셀 공통) */
+function dbFieldsHtml(pf, type, note){
+  var parts=String(note||'').split(' | ');
+  var evD=type==='행사DB'&&parts.length===2?parts[0]:'', evN=type==='행사DB'?(parts.length===2?parts[1]:note||''):'';
+  var onC=type==='온라인DB'&&parts.length===2?parts[0]:'블로그', onN=type==='온라인DB'?(parts.length===2?parts[1]:note||''):'';
+  var free=(type==='사입DB'||type==='중도DB')?(note||''):'';
+  return '<div class="fld"><label class="lbl">DB 구분</label><div class="seg" id="'+pf+'Type">'+['없음'].concat(DB_TYPES).map(function(t){ var v=t==='없음'?'':t; return '<button type="button" data-v="'+v+'" class="'+((type||'')===v?'on':'')+'" onclick="dbPick(\''+pf+'\',\''+v+'\')">'+t+'</button>'; }).join('')+'</div></div>'
+    +'<div id="'+pf+'Ev" class="g2 '+(type==='행사DB'?'':'hide')+'"><div class="fld"><label class="lbl">행사일</label><input class="inp" type="date" id="'+pf+'EvD" value="'+esc(evD)+'"></div><div class="fld"><label class="lbl">행사명 *</label><input class="inp" id="'+pf+'EvN" placeholder="예) 아산 펫페어" value="'+esc(evN)+'"></div></div>'
+    +'<div id="'+pf+'On" class="g2 '+(type==='온라인DB'?'':'hide')+'"><div class="fld"><label class="lbl">채널</label><select class="sel" id="'+pf+'OnC">'+['블로그','카페','인스타그램','유튜브','홈페이지','기타'].map(function(x){return '<option'+(x===onC?' selected':'')+'>'+x+'</option>';}).join('')+'</select></div><div class="fld"><label class="lbl">블로그·카페명 *</label><input class="inp" id="'+pf+'OnN" placeholder="예) 아산맘카페" value="'+esc(onN)+'"></div></div>'
+    +'<div id="'+pf+'Fr" class="fld '+((type==='사입DB'||type==='중도DB')?'':'hide')+'"><label class="lbl">상세</label><input class="inp" id="'+pf+'FrN" placeholder="'+esc(DB_HINT[type]||'')+'" value="'+esc(free)+'"></div>';
+}
+function dbPick(pf,v){
+  document.querySelectorAll('#'+pf+'Type button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===v); });
+  $(pf+'Ev').classList.toggle('hide', v!=='행사DB'); $(pf+'On').classList.toggle('hide', v!=='온라인DB');
+  $(pf+'Fr').classList.toggle('hide', !(v==='사입DB'||v==='중도DB')); if(DB_HINT[v]) $(pf+'FrN').placeholder=DB_HINT[v];
+}
+function dbRead(pf){
+  var b=document.querySelector('#'+pf+'Type button.on'), t=b?b.dataset.v:'';
+  if(t==='행사DB'){ var n=$(pf+'EvN').value.trim(); if(!n) return {err:'행사명을 입력하세요'}; return {dbType:t, sourceNote:($(pf+'EvD').value||'')+' | '+n}; }
+  if(t==='온라인DB'){ var m=$(pf+'OnN').value.trim(); if(!m) return {err:'블로그·카페명을 입력하세요'}; return {dbType:t, sourceNote:$(pf+'OnC').value+' | '+m}; }
+  if(t==='사입DB'||t==='중도DB') return {dbType:t, sourceNote:$(pf+'FrN').value.trim()};
+  return {dbType:'', sourceNote:''};
+}
+
+var DB_BULK_RUN=false;
+function openDbBulk(){
+  var ids=Object.keys(PICK.prospect); if(!ids.length){ toast('가망고객을 먼저 체크하세요',true); return; }
+  $('dbCnt').textContent='선택한 가망고객 '+ids.length+'명의 DB 구분과 상세를 아래 값으로 바꿉니다.';
+  $('dbBox').innerHTML=dbFieldsHtml('dbB', PROS_DB!=='전체'&&DB_TYPES.indexOf(PROS_DB)>=0?PROS_DB:'행사DB', '');
+  $('dbProg').innerHTML=''; $('dbGo').disabled=false;
+  $('dbDim').classList.remove('hide'); $('dbModal').classList.remove('hide');
+}
+function closeDbBulk(){ if(DB_BULK_RUN) return; $('dbDim').classList.add('hide'); $('dbModal').classList.add('hide'); }
+function runDbBulk(){
+  var v=dbRead('dbB'); if(v.err){ toast(v.err,true); return; }
+  var list=Object.keys(PICK.prospect).map(function(id){return CUSTOMERS.find(function(x){return x.id===id;});}).filter(Boolean);
+  DB_BULK_RUN=true; $('dbGo').disabled=true;
+  var idx=0, ok=0, fail=[];
+  function worker(){
+    if(idx>=list.length) return Promise.resolve();
+    var c=list[idx++];
+    return custQuickSave(c,{dbType:v.dbType, sourceNote:v.sourceNote}).then(function(r){ if(r.ok){ ok++; c.dbType=v.dbType; c.sourceNote=v.sourceNote; } else fail.push(c.name); }, function(){ fail.push(c.name); })
+      .then(function(){ $('dbProg').innerHTML='<div class="muted" style="margin-top:10px">'+(ok+fail.length)+' / '+list.length+'명 처리</div>'; return worker(); });
+  }
+  Promise.all([worker(),worker()]).then(function(){
+    DB_BULK_RUN=false; PICK.prospect={};
+    toast(ok+'명 DB 구분을 바꿨어요'+(fail.length?' · 실패 '+fail.length+'명':''), !!fail.length);
+    closeDbBulk(); renderPros();
+  });
+}
+/* 가망고객 엑셀 일괄 등록 */
+var PI_ROWS=[], PI_RUN=false;
+function openProsImp(){ PI_ROWS=[]; $('piFile').value=''; $('piStep1').classList.remove('hide'); $('piStep2').classList.add('hide'); $('piStep3').classList.add('hide'); $('piGo').classList.remove('hide'); $('piGo').disabled=true; $('piDim').classList.remove('hide'); $('piModal').classList.remove('hide'); }
+function closeProsImp(){ if(PI_RUN){ toast('등록이 끝날 때까지 기다려주세요',true); return; } PI_ROWS=[]; $('piDim').classList.add('hide'); $('piModal').classList.add('hide'); }
+function prosTemplate(){
+  var ws=XLSX.utils.aoa_to_sheet([['이름','연락처','생년월일','우편번호','주소','상세주소','직업','메모','DB구분','행사일','행사명','채널','채널명','DB상세'],
+    ['홍길동','010-1234-5678','1985-08-20','31460','충남 아산시 탕정면 용머리길 22','301호','자영업','','행사DB','2026-09-20','아산 펫페어','','',''],
+    ['김온라인','010-2222-3333','','','','','','','온라인DB','','','카페','아산맘카페',''],
+    ['이중도','010-4444-5555','','','','','','','중도DB','','','','','2023년 해지']]);
+  ws['!cols']=[{wch:10},{wch:15},{wch:12},{wch:9},{wch:30},{wch:12},{wch:10},{wch:16},{wch:10},{wch:12},{wch:16},{wch:10},{wch:16},{wch:16}];
+  var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'가망고객'); XLSX.writeFile(wb,'가망고객_일괄등록_양식.xlsx');
+}
+function normBirth(v){
+  var d=digits(v); if(d.length===6){ d=(+d.slice(0,2)>+today().slice(2,4)?'19':'20')+d; }
+  if(d.length!==8) return '';
+  var s=d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8); return isNaN(new Date(s))?'':s;
+}
+function normDbType(v){ v=String(v||'').replace(/\s/g,''); if(!v) return ''; if(!/DB$/i.test(v)) v+='DB'; v=v.replace(/db$/i,'DB'); return DB_TYPES.indexOf(v)>=0?v:null; }
+function readProsFile(inp){
+  var f=inp.files&&inp.files[0]; if(!f) return;
+  var rd=new FileReader();
+  rd.onload=function(e){
+    try{
+      var wb=XLSX.read(e.target.result,{type:'array',raw:false,cellDates:false});
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:'',raw:false});
+      var phones={}; CUSTOMERS.forEach(function(c){ if(c.phone) phones[digits(c.phone)]=c.name; });
+      var seen={};
+      PI_ROWS=rows.map(function(r,i){
+        var g=function(ks){ for(var j=0;j<ks.length;j++){ var v=r[ks[j]]; if(v!==undefined&&String(v).trim()!=='') return String(v).trim(); } return ''; };
+        var o={line:i+2, name:g(['이름','성명','고객명']).replace(/\s+/g,''), phone:fmtPhone(g(['연락처','전화번호','휴대폰'])), birth:normBirth(g(['생년월일'])), zip:g(['우편번호']), addr:g(['주소']), addr2:g(['상세주소']), job:g(['직업']), memo:g(['메모'])};
+        var t=normDbType(g(['DB구분','구분'])), note='';
+        if(t==='행사DB') note=(normBirth(g(['행사일']))||g(['행사일']))+' | '+g(['행사명']);
+        else if(t==='온라인DB') note=(g(['채널'])||'기타')+' | '+g(['채널명','블로그명','카페명']);
+        else if(t) note=g(['DB상세','상세']);
+        o.dbType=t||''; o.sourceNote=note;
+        var pd=digits(o.phone);
+        if(!o.name&&!pd) o.st='skip';
+        else if(!o.name) { o.st='bad'; o.note='이름 없음'; }
+        else if(!/^01\d{8,9}$/.test(pd)) { o.st='bad'; o.note='연락처 확인 필요'; }
+        else if(t===null) { o.st='bad'; o.note='DB구분은 사입·행사·중도·온라인 중 하나'; }
+        else if(t==='행사DB'&&!g(['행사명'])) { o.st='bad'; o.note='행사명 없음'; }
+        else if(t==='온라인DB'&&!g(['채널명','블로그명','카페명'])) { o.st='bad'; o.note='채널명 없음'; }
+        else if(phones[pd]) { o.st='dup'; o.note='이미 등록됨 ('+phones[pd]+')'; }
+        else if(seen[pd]) { o.st='dup'; o.note=seen[pd]+'번째 줄과 같은 연락처'; }
+        else { o.st='ok'; seen[pd]=o.line; }
+        return o;
+      }).filter(function(o){ return o.st!=='skip'; });
+      drawProsImp();
+    }catch(err){ toast('파일을 읽지 못했습니다',true); }
+    inp.value='';
+  };
+  rd.readAsArrayBuffer(f);
+}
+function drawProsImp(){
+  var c={ok:0,dup:0,bad:0}; PI_ROWS.forEach(function(r){ c[r.st]++; });
+  $('piStep1').classList.add('hide'); $('piStep2').classList.remove('hide');
+  $('piSum').innerHTML='<span class="tag g">등록 '+c.ok+'</span> <span class="tag">이미 있음 '+c.dup+'</span> <span class="tag r">확인 필요 '+c.bad+'</span>';
+  $('piGo').textContent=c.ok+'명 등록하기'; $('piGo').disabled=!c.ok;
+  var lab={ok:'<span class="tag g">등록</span>',dup:'<span class="tag">건너뜀</span>',bad:'<span class="tag r">확인</span>'};
+  $('piTbl').innerHTML='<thead><tr><th>줄</th><th>이름</th><th>연락처</th><th>DB 구분</th><th>DB 상세</th><th>주소</th><th>상태</th></tr></thead><tbody>'
+    +PI_ROWS.map(function(r){ return '<tr><td class="muted">'+r.line+'</td><td class="nm">'+esc(r.name)+'</td><td class="nw">'+esc(r.phone)+'</td><td>'+dbTag(r.dbType)+'</td><td>'+esc(dbDetail(r))+'</td><td class="addr">'+esc(r.addr)+'</td><td>'+lab[r.st]+' <span class="muted" style="font-size:12px">'+esc(r.note||'')+'</span></td></tr>'; }).join('')+'</tbody>';
+}
+function runProsImp(){
+  var jobs=PI_ROWS.filter(function(r){return r.st==='ok';}); if(!jobs.length) return;
+  if(!confirm(jobs.length+'명을 가망고객으로 등록할까요?')) return;
+  PI_RUN=true; $('piStep2').classList.add('hide'); $('piStep3').classList.remove('hide'); $('piGo').classList.add('hide');
+  var idx=0, done=0, ok=0, fail=[];
+  function one(r){
+    var p={fc:ME.name, branch:ME.branch, custType:'가망고객'};
+    CUST_KEEP.forEach(function(k){ if(k!=='visit') p[k]=''; });
+    Object.assign(p,{name:r.name, phone:r.phone, birth:r.birth, zip:r.zip, addr:r.addr, addr2:r.addr2, job:r.job, memo:r.memo, dbType:r.dbType, sourceNote:r.sourceNote, status:'진행중'});
+    return api('customerSave',p);
+  }
+  function worker(){
+    if(idx>=jobs.length) return Promise.resolve();
+    var r=jobs[idx++];
+    return one(r).then(function(x){ if(x.ok) ok++; else fail.push(r.name+' — '+(x.error||'실패')); }, function(){ fail.push(r.name+' — 연결 실패'); })
+      .then(function(){ done++; $('piBar').style.width=Math.round(done/jobs.length*100)+'%'; $('piProg').textContent=done+' / '+jobs.length+'명 등록 중…'; return worker(); });
+  }
+  Promise.all([worker(),worker()]).then(function(){
+    PI_RUN=false;
+    $('piProg').innerHTML='<b>'+ok+'명 등록 완료</b>'+(fail.length?'<div class="warn">'+fail.map(esc).join('<br>')+'</div>':'');
+    loadAll();
+  });
+}
+
 /* ───────── 가망관리 추가항목 (관리1~6차·현재반응) ───────── */
 var CUST_API='https://daonpartners.app.n8n.cloud/webhook/daon-cust';
 var EXTRA={}, EXTRA_KEYS=['관리1차','관리2차','관리3차','관리4차','관리5차','관리6차','현재반응'];
@@ -850,33 +1033,41 @@ function prospects(){
     if(c.custType!=='가망고객') return false;
     var rg=regionOf(c)||'미입력';
     if(PROS_CAT!=='전체' && rg!==PROS_CAT) return false;
+    if(PROS_DB!=='전체' && (dbOf(c)||'미분류')!==PROS_DB) return false;
     if(!q) return true;
-    return [c.name,c.phone,addrOf(c),c.memo,c.job,rg].concat(EXTRA_KEYS.map(function(k){return ex(c,k);})).join(' ').toLowerCase().indexOf(q)>=0;
+    return [c.name,c.phone,addrOf(c),c.memo,c.job,rg,c.dbType,c.sourceNote].concat(EXTRA_KEYS.map(function(k){return ex(c,k);})).join(' ').toLowerCase().indexOf(q)>=0;
   });
 }
 function edCell(c,k,w){
   var v=ex(c,k);
   return '<td class="ed" style="min-width:'+(w||120)+'px" onclick="event.stopPropagation();editExtra(this,\''+c.id+'\',\''+k+'\')" title="눌러서 입력">'+(v?esc(v):'<span class="muted">+</span>')+'</td>';
 }
+function drawDbTabs(){
+  var cnt={}; CUSTOMERS.forEach(function(c){ if(c.custType==='가망고객'){ var t=dbOf(c)||'미분류'; cnt[t]=(cnt[t]||0)+1; } });
+  var others=Object.keys(cnt).filter(function(t){ return DB_TYPES.indexOf(t)<0 && t!=='미분류'; });
+  var tabs=['전체'].concat(DB_TYPES).concat(others).concat(cnt['미분류']?['미분류']:[]);
+  var total=Object.keys(cnt).reduce(function(s,k){return s+cnt[k];},0);
+  $('prosDb').innerHTML=tabs.map(function(t){ return '<button type="button" class="'+(t===PROS_DB?'on':'')+'" onclick="PROS_DB=\''+t+'\';renderPros()">'+t+' <span style="opacity:.6">'+(t==='전체'?total:(cnt[t]||0))+'</span></button>'; }).join('');
+}
 function renderPros(){
-  drawChips();
+  drawChips(); drawDbTabs();
   var list=sortBy(prospects(),SORT.prospect.k,SORT.prospect.d,function(c,k){ if(k==='region') return regionOf(c); if(EXTRA_KEYS.indexOf(k)>=0) return ex(c,k); return custGetter(c,k); });
   $('prosCount').textContent='가망고객 '+list.length+'명';
   var all=list.length && list.every(function(c){return PICK.prospect[c.id];});
   $('tPros').innerHTML='<thead><tr><th class="ck sticky0"><input type="checkbox" '+(all?'checked':'')+' onclick="pickAll(\'prospect\',this.checked)"></th>'
-    +th('prospect','name','이름','sticky1')+th('prospect','rrn','주민등록번호')+th('prospect','birth','생년월일')+th('prospect','phone','연락처')+th('prospect','region','지역')
+    +th('prospect','name','이름','sticky1')+th('prospect','dbType','DB 구분')+th('prospect','sourceNote','DB 상세')+th('prospect','rrn','주민등록번호')+th('prospect','birth','생년월일')+th('prospect','phone','연락처')+th('prospect','region','지역')
     +th('prospect','zip','우편번호')+th('prospect','addr','주소')+th('prospect','addr2','상세주소')+th('prospect','job','직업')+th('prospect','memo','메모')
     +EXTRA_KEYS.map(function(k){ return th('prospect',k,k.replace('관리','')+(k==='현재반응'?'':' 관리')); }).join('')
     +th('prospect','nextTouch','다음 연락일정')+'<th>관리상태</th></tr></thead><tbody>'
     +(list.length?list.map(function(c){
       return '<tr class="row'+(PICK.prospect[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck sticky0" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.prospect[c.id]?'checked':'')+' onchange="pick(\'prospect\',\''+c.id+'\',this.checked)"></td>'
-        +'<td class="nm sticky1">'+esc(c.name)+'</td><td class="nw">'+(c.rrnEnc?esc(rrnFront(c)):'<span class="muted">-</span>')+'</td><td class="nw">'+esc(c.birth||'-')+'</td><td class="nw">'+esc(c.phone)+'</td>'
+        +'<td class="nm sticky1">'+esc(c.name)+'</td><td class="nw">'+dbTag(dbOf(c))+'</td><td class="addr" style="max-width:200px" title="'+esc(dbDetail(c))+'">'+esc(dbDetail(c))+'</td><td class="nw">'+(c.rrnEnc?esc(rrnFront(c)):'<span class="muted">-</span>')+'</td><td class="nw">'+esc(c.birth||'-')+'</td><td class="nw">'+esc(c.phone)+'</td>'
         +'<td class="nw">'+(regionOf(c)?'<span class="tag b">'+regionOf(c)+'</span>':'<span class="muted">-</span>')+'</td>'
         +'<td class="nw">'+esc(c.zip||'')+'</td><td class="addr">'+esc(c.addr||'')+'</td><td class="addr" style="max-width:140px">'+esc(c.addr2||'')+'</td><td class="nw">'+esc(c.job||'')+'</td><td class="addr" style="max-width:180px">'+esc(c.memo||'')+'</td>'
         +EXTRA_KEYS.map(function(k){ return edCell(c,k,k==='현재반응'?160:120); }).join('')
         +'<td class="nw" onclick="event.stopPropagation()"><input type="date" class="inp" style="height:30px;width:140px;font-size:13px" value="'+esc(c.nextTouch||'')+'" onchange="setNextTouch(\''+c.id+'\',this.value,this)"></td>'
         +'<td class="nw" onclick="event.stopPropagation()"><select class="sel" style="height:30px;width:auto;font-size:13px" onchange="setProsStatus(\''+c.id+'\',this)"><option selected>가망유지</option><option>계약전환</option></select></td></tr>';
-    }).join(''):'<tr><td colspan="22" class="empty">조건에 맞는 가망고객이 없습니다.</td></tr>')+'</tbody>';
+    }).join(''):'<tr><td colspan="24" class="empty">조건에 맞는 가망고객이 없습니다.</td></tr>')+'</tbody>';
   drawSelBar('prospect');
 }
 function editExtra(td,id,k){
@@ -952,7 +1143,7 @@ function drawSelBar(scope){
   if(BULK_DEL && BULK_DEL.scope===scope){ el0.classList.remove('hide'); el0.innerHTML=delProgHtml(); return; }
   var n=Object.keys(PICK[scope]).length, el=el0;
   el.classList.toggle('hide',!n);
-  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="bulkMove(\''+scope+'\')">'+(scope==='owner'?'가망고객으로 이동':'보유고객으로 전환')+'</button><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
+  el.innerHTML=n+'명 선택됨 <div class="spacer"></div>'+(scope==='prospect'?'<button class="btn sm" onclick="openDbBulk()">DB 구분 변경</button>':'')+'<button class="btn sm" onclick="bulkMove(\''+scope+'\')">'+(scope==='owner'?'가망고객으로 이동':'보유고객으로 전환')+'</button><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
 }
 function selectedOrFiltered(scope){
   var ids=Object.keys(PICK[scope]);
@@ -987,7 +1178,7 @@ function excelOut(scope){
     var o={'이름':c.name,'주민등록번호':c.rrnEnc||scope==='owner'?rrnFront(c):'', '생년월일':c.birth||'','연락처':c.phone||'','우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
     if(scope==='owner'){ var cs=ctrsOf(c); o['보유계약 수']=cs.length; o['월 보험료 합계']=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0); }
     else {
-      o={'이름':c.name,'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','지역':regionOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
+      o={'이름':c.name,'DB구분':c.dbType||'','DB상세':dbDetail(c),'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','지역':regionOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
       EXTRA_KEYS.forEach(function(k){ o[k]=ex(c,k); });
       o['다음연락일정']=c.nextTouch||''; o['관리상태']='가망유지';
     }
@@ -1014,6 +1205,7 @@ function openCust(id){
     +'<dt>'+(c.rrnEnc?'주민등록번호':'생년월일')+'</dt><dd>'+rr+'</dd>'
     +'<dt>주소</dt><dd>'+esc(addrOf(c)||'-')+'</dd>'
     +(c.job?'<dt>직업</dt><dd>'+esc(c.job)+'</dd>':'')
+    +(c.custType==='가망고객'?'<dt>DB 구분</dt><dd>'+dbTag(c.dbType)+(dbDetail(c)?' '+esc(dbDetail(c)):'')+'</dd>':'')
     +(c.custType==='가망고객'&&c.interest?'<dt>관심</dt><dd>'+esc(c.interest)+'</dd>':'')
     +'<dt>문자 수신</dt><dd>'+(c.optout?'<span class="tag r">수신거부</span>':(c.adAgree?'<span class="tag g">광고 수신 동의</span>':'<span class="tag">광고 수신 미동의</span> <span class="muted" style="font-size:12px">정보성 문자만 발송 가능</span>'))+'</dd>'
     +'<dt>메모</dt><dd>'+esc(c.memo||'-')+'</dd></dl>';
@@ -1051,6 +1243,7 @@ function openCustForm(id, type){
     +'<div class="muted" style="font-size:12px;margin-top:4px">뒷자리는 암호화되어 저장됩니다. 가망고객은 앞자리(생년월일)만 입력해도 됩니다.</div></div>'
     +'<div class="fld"><label class="lbl">주소</label><div style="display:grid;grid-template-columns:90px 1fr;gap:6px"><input class="inp" id="ffZip" placeholder="우편번호" value="'+v('zip')+'"><input class="inp" id="ffAddr" placeholder="주소" value="'+v('addr')+'"></div><input class="inp" id="ffAddr2" placeholder="상세주소" style="margin-top:6px" value="'+v('addr2')+'"></div>'
     +'<div class="g2"><div class="fld"><label class="lbl">직업</label><input class="inp" id="ffJob" value="'+v('job')+'"></div><div></div></div>'
+    +'<div id="ffDbBox">'+dbFieldsHtml('ffDb', c?(c.dbType||''):(type==='가망고객'&&PROS_DB!=='전체'&&PROS_DB!=='미분류'&&DB_TYPES.indexOf(PROS_DB)>=0?PROS_DB:''), c?(c.sourceNote||''):'')+'</div>'
     +'<div class="fld" id="ffIntBox"><label class="lbl">관심 보종</label><div class="chips" id="ffInt">'+['자동차','장기','화재','일반'].map(function(i){ var on=c&&String(c.interest||'').split(',').indexOf(i)>=0; return '<button type="button" class="chip'+(on?' on':'')+'" data-v="'+i+'" onclick="this.classList.toggle(\'on\')">'+i+'</button>'; }).join('')+'</div></div>'
     +'<div class="fld"><label class="lbl">메모</label><textarea class="ta" id="ffMemo" rows="3">'+v('memo')+'</textarea></div>'
     +'<div class="fld"><label class="lbl">문자 수신</label>'
@@ -1064,7 +1257,7 @@ function openCustForm(id, type){
 function ffType(t){
   $('custDrawer').dataset.type=t;
   document.querySelectorAll('#ffType button').forEach(function(b){ b.classList.toggle('on', b.textContent===t); });
-  $('ffIntBox').classList.toggle('hide', t!=='가망고객');
+  $('ffIntBox').classList.toggle('hide', t!=='가망고객'); $('ffDbBox').classList.toggle('hide', t!=='가망고객');
 }
 function saveCust(){
   var c=CUR_CUST?CUSTOMERS.find(function(x){return x.id===CUR_CUST;}):null;
@@ -1083,7 +1276,7 @@ function saveCust(){
     p.birth=cent+front.slice(0,2)+'-'+front.slice(2,4)+'-'+front.slice(4,6); if(g) p.gcode=g;
   } else { p.birth=''; }
   if(back) p.rrnBackNew=back; else if(c&&c.rrnEnc) p.rrnEnc=c.rrnEnc;
-  if(t==='가망고객'){ p.interest=[].map.call(document.querySelectorAll('#ffInt .chip.on'),function(b){return b.dataset.v;}).join(','); }
+  if(t==='가망고객'){ var dbv=dbRead('ffDb'); if(dbv.err){ toast(dbv.err,true); return; } p.dbType=dbv.dbType; p.sourceNote=dbv.sourceNote; p.interest=[].map.call(document.querySelectorAll('#ffInt .chip.on'),function(b){return b.dataset.v;}).join(','); }
   if(!p.status) p.status='진행중';
   var b=$('ffSave'); b.disabled=true; b.textContent='저장 중…';
   api('customerSave',p).then(function(r){
