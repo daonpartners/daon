@@ -196,6 +196,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .myphoto{width:110px;height:110px;border-radius:50%;object-fit:cover;background:var(--line2);border:1px solid var(--line);flex:none}
 .pubtag{font-size:12px}
 
+.tbl td.ed{cursor:text;max-width:220px;white-space:pre-wrap;font-size:13px;color:var(--ink2)}
+.tbl td.ed:hover{background:#FFF8F2}
+#tPros .sticky0{position:sticky;left:0;background:#fff;z-index:2}
+#tPros .sticky1{position:sticky;left:34px;background:#fff;z-index:2;box-shadow:1px 0 0 var(--line2)}
+#tPros thead .sticky0,#tPros thead .sticky1{background:#FAFBFC;z-index:3}
+#tPros tr.picked .sticky0,#tPros tr.picked .sticky1{background:#FFF8F2}
+
 /* 일정 */
 .cal-g{display:grid;grid-template-columns:1fr 320px;gap:16px}
 .cal-head{display:flex;align-items:center;gap:8px}
@@ -354,12 +361,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <!-- 가망고객 -->
     <section class="page view hide" id="v-prospect">
       <div class="ph">
-        <div><h2>가망고객</h2><div class="sub">상담 중이거나 앞으로 연락할 고객</div></div>
+        <div><h2>가망고객</h2><div class="sub">관리 칸을 누르면 바로 입력됩니다 · 관리상태를 계약전환으로 바꾸면 보유고객으로 이동</div></div>
         <div style="display:flex;gap:8px"><button class="btn" onclick="openRrnImp()">주민번호 일괄 입력</button><button class="btn pri" onclick="openCustForm('', '가망고객')">+ 가망고객 등록</button></div>
       </div>
       <div class="card">
         <div class="toolbar">
-          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qPros" placeholder="이름, 연락처, 주소, 메모 검색" oninput="renderPros()"></div>
+          <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qPros" placeholder="이름, 연락처, 주소, 지역, 메모, 관리내용 검색" oninput="renderPros()"></div>
           <div class="chips" id="prosCat"></div>
         </div>
         <div class="selbar hide" id="selPros"></div>
@@ -736,16 +743,42 @@ function loadAll(){
     if($('stO')) $('stO').textContent=own.length; if($('stP')) $('stP').textContent=pros.length;
     $('custNames').innerHTML=CUSTOMERS.map(function(c){ return '<option value="'+esc(c.name)+'">'; }).join('');
     if(VIEW==='owner') renderOwner(); if(VIEW==='prospect') renderPros();
-    loadSchedules();
+    loadSchedules(); loadExtra();
   });
+}
+
+/* ───────── 지역(시·도) 판별 ───────── */
+var REGIONS=['서울','경기','인천','강원','충북','충남','대전','세종','전북','전남','광주','경북','경남','대구','울산','부산','제주'];
+var REGION_ALIAS=[[/^서울/,'서울'],[/^경기/,'경기'],[/^인천/,'인천'],[/^강원/,'강원'],[/^(충청북도|충북)/,'충북'],[/^(충청남도|충남)/,'충남'],[/^대전/,'대전'],[/^세종/,'세종'],
+  [/^(전라북도|전북)/,'전북'],[/^(전라남도|전남)/,'전남'],[/^광주/,'광주'],[/^(경상북도|경북)/,'경북'],[/^(경상남도|경남)/,'경남'],[/^대구/,'대구'],[/^울산/,'울산'],[/^부산/,'부산'],[/^제주/,'제주']];
+function regionOf(c){
+  var a=String((c&&c.addr)||'').replace(/^\s*\(?\d{5}\)?\s*/,'').trim();   /* 앞에 붙은 우편번호 제거 */
+  for(var i=0;i<REGION_ALIAS.length;i++){ if(REGION_ALIAS[i][0].test(a)) return REGION_ALIAS[i][1]; }
+  return a?'기타':'';
+}
+/* ───────── 가망관리 추가항목 (관리1~6차·현재반응) ───────── */
+var CUST_API='https://daonpartners.app.n8n.cloud/webhook/daon-cust';
+var EXTRA={}, EXTRA_KEYS=['관리1차','관리2차','관리3차','관리4차','관리5차','관리6차','현재반응'];
+function custApi(action,p){ if(!ME.code) return Promise.resolve({ok:false,error:'보안을 위해 로그아웃 후 다시 로그인해 주세요.'}); return fetch(CUST_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({action:action,by:ME.code},p||{}))}).then(function(r){return r.json();}); }
+function loadExtra(){ return custApi('extraList').then(function(r){ if(r.ok){ EXTRA=r.items||{}; if(VIEW==='prospect') renderPros(); } }).catch(function(){}); }
+function ex(c,k){ return (EXTRA[c.id]&&EXTRA[c.id][k])||''; }
+/* 고객 한 명의 일부 항목만 바꿔 저장 (나머지는 기존 값 그대로 보냄) */
+function custQuickSave(c, patch){
+  var p={fc:ME.name, branch:ME.branch, custType:c.custType||'보유고객', pageId:c.id};
+  CUST_KEEP.forEach(function(k){ if(c[k]!==undefined) p[k]=c[k]; else if(k!=='visit') p[k]=''; });
+  if(c.rrnEnc) p.rrnEnc=c.rrnEnc;
+  if(!p.status) p.status='진행중';
+  Object.assign(p, patch||{});
+  return api('customerSave',p);
 }
 
 /* ───────── 보유고객 ───────── */
 var CATS=['전체','장기','자동차','화재','일반'];
 function drawChips(){
   $('ownerCat').innerHTML=CATS.map(function(c){ return '<button class="chip'+(c===OWNER_CAT?' on':'')+'" onclick="OWNER_CAT=\''+c+'\';drawChips();renderOwner()">'+c+'</button>'; }).join('');
-  var pc=['전체','개인','사업자'];
-  $('prosCat').innerHTML=pc.map(function(c){ return '<button class="chip'+(c===PROS_CAT?' on':'')+'" onclick="PROS_CAT=\''+c+'\';drawChips();renderPros()">'+c+'</button>'; }).join('');
+  var cnt={}; CUSTOMERS.forEach(function(c){ if(c.custType==='가망고객'){ var r=regionOf(c)||'미입력'; cnt[r]=(cnt[r]||0)+1; } });
+  var pc=['전체'].concat(REGIONS.filter(function(r){return cnt[r];})).concat(cnt['기타']?['기타']:[]).concat(cnt['미입력']?['미입력']:[]);
+  $('prosCat').innerHTML=pc.map(function(c){ return '<button class="chip'+(c===PROS_CAT?' on':'')+'" onclick="PROS_CAT=\''+c+'\';drawChips();renderPros()">'+c+(c!=='전체'?' <span style="opacity:.6">'+cnt[c]+'</span>':'')+'</button>'; }).join('');
 }
 function setOwnerView(v){ OWNER_VIEW=v; $('ovCust').classList.toggle('on',v==='cust'); $('ovCtr').classList.toggle('on',v==='ctr'); renderOwner(); }
 function owners(){
@@ -815,25 +848,96 @@ function prospects(){
   var q=$('qPros').value.trim().toLowerCase();
   return CUSTOMERS.filter(function(c){
     if(c.custType!=='가망고객') return false;
-    if(PROS_CAT!=='전체' && (c.bizType||'개인')!==PROS_CAT) return false;
+    var rg=regionOf(c)||'미입력';
+    if(PROS_CAT!=='전체' && rg!==PROS_CAT) return false;
     if(!q) return true;
-    return [c.name,c.phone,addrOf(c),c.memo,c.interest].join(' ').toLowerCase().indexOf(q)>=0;
+    return [c.name,c.phone,addrOf(c),c.memo,c.job,rg].concat(EXTRA_KEYS.map(function(k){return ex(c,k);})).join(' ').toLowerCase().indexOf(q)>=0;
   });
 }
+function edCell(c,k,w){
+  var v=ex(c,k);
+  return '<td class="ed" style="min-width:'+(w||120)+'px" onclick="event.stopPropagation();editExtra(this,\''+c.id+'\',\''+k+'\')" title="눌러서 입력">'+(v?esc(v):'<span class="muted">+</span>')+'</td>';
+}
 function renderPros(){
-  var list=sortBy(prospects(),SORT.prospect.k,SORT.prospect.d,custGetter);
+  drawChips();
+  var list=sortBy(prospects(),SORT.prospect.k,SORT.prospect.d,function(c,k){ if(k==='region') return regionOf(c); if(EXTRA_KEYS.indexOf(k)>=0) return ex(c,k); return custGetter(c,k); });
   $('prosCount').textContent='가망고객 '+list.length+'명';
   var all=list.length && list.every(function(c){return PICK.prospect[c.id];});
-  $('tPros').innerHTML='<thead><tr><th class="ck"><input type="checkbox" '+(all?'checked':'')+' onclick="pickAll(\'prospect\',this.checked)"></th>'
-    +th('prospect','name','이름')+th('prospect','birth','주민번호 / 생년월일')+th('prospect','phone','연락처')+th('prospect','addr','주소','addr')+th('prospect','interest','관심')+th('prospect','memo','메모','hide-m')+'</tr></thead><tbody>'
+  $('tPros').innerHTML='<thead><tr><th class="ck sticky0"><input type="checkbox" '+(all?'checked':'')+' onclick="pickAll(\'prospect\',this.checked)"></th>'
+    +th('prospect','name','이름','sticky1')+th('prospect','rrn','주민등록번호')+th('prospect','birth','생년월일')+th('prospect','phone','연락처')+th('prospect','region','지역')
+    +th('prospect','zip','우편번호')+th('prospect','addr','주소')+th('prospect','addr2','상세주소')+th('prospect','job','직업')+th('prospect','memo','메모')
+    +EXTRA_KEYS.map(function(k){ return th('prospect',k,k.replace('관리','')+(k==='현재반응'?'':' 관리')); }).join('')
+    +th('prospect','nextTouch','다음 연락일정')+'<th>관리상태</th></tr></thead><tbody>'
     +(list.length?list.map(function(c){
-      var id=c.rrnEnc?rrnFront(c):(c.birth||'');
-      return '<tr class="row'+(PICK.prospect[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.prospect[c.id]?'checked':'')+' onchange="pick(\'prospect\',\''+c.id+'\',this.checked)"></td>'
-        +'<td class="nm">'+esc(c.name)+(c.bizType==='사업자'?' <span class="tag">사업자</span>':'')+'</td><td class="nw">'+esc(id)+'</td><td class="nw">'+esc(c.phone)+'</td><td class="addr">'+esc(addrOf(c))+'</td>'
-        +'<td>'+(c.interest?String(c.interest).split(',').filter(Boolean).map(function(i){return '<span class="tag o">'+esc(i)+'</span>';}).join(' '):'<span class="muted">-</span>')+'</td>'
-        +'<td class="addr hide-m">'+esc(c.memo)+'</td></tr>';
-    }).join(''):'<tr><td colspan="7" class="empty">조건에 맞는 가망고객이 없습니다.</td></tr>')+'</tbody>';
+      return '<tr class="row'+(PICK.prospect[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck sticky0" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.prospect[c.id]?'checked':'')+' onchange="pick(\'prospect\',\''+c.id+'\',this.checked)"></td>'
+        +'<td class="nm sticky1">'+esc(c.name)+'</td><td class="nw">'+(c.rrnEnc?esc(rrnFront(c)):'<span class="muted">-</span>')+'</td><td class="nw">'+esc(c.birth||'-')+'</td><td class="nw">'+esc(c.phone)+'</td>'
+        +'<td class="nw">'+(regionOf(c)?'<span class="tag b">'+regionOf(c)+'</span>':'<span class="muted">-</span>')+'</td>'
+        +'<td class="nw">'+esc(c.zip||'')+'</td><td class="addr">'+esc(c.addr||'')+'</td><td class="addr" style="max-width:140px">'+esc(c.addr2||'')+'</td><td class="nw">'+esc(c.job||'')+'</td><td class="addr" style="max-width:180px">'+esc(c.memo||'')+'</td>'
+        +EXTRA_KEYS.map(function(k){ return edCell(c,k,k==='현재반응'?160:120); }).join('')
+        +'<td class="nw" onclick="event.stopPropagation()"><input type="date" class="inp" style="height:30px;width:140px;font-size:13px" value="'+esc(c.nextTouch||'')+'" onchange="setNextTouch(\''+c.id+'\',this.value,this)"></td>'
+        +'<td class="nw" onclick="event.stopPropagation()"><select class="sel" style="height:30px;width:auto;font-size:13px" onchange="setProsStatus(\''+c.id+'\',this)"><option selected>가망유지</option><option>계약전환</option></select></td></tr>';
+    }).join(''):'<tr><td colspan="22" class="empty">조건에 맞는 가망고객이 없습니다.</td></tr>')+'</tbody>';
   drawSelBar('prospect');
+}
+function editExtra(td,id,k){
+  if(td.querySelector('textarea')) return;
+  var c=CUSTOMERS.find(function(x){return x.id===id;}); if(!c) return;
+  var old=ex(c,k);
+  td.innerHTML='<textarea class="ta" rows="2" style="min-width:160px;font-size:13px;padding:6px 8px">'+esc(old)+'</textarea>';
+  var ta=td.querySelector('textarea'); ta.focus(); ta.select();
+  var done=false;
+  function fin(save){
+    if(done) return; done=true;
+    var v=ta.value.trim();
+    if(!save||v===old){ td.innerHTML=old?esc(old):'<span class="muted">+</span>'; return; }
+    td.innerHTML='<span class="muted">저장 중…</span>';
+    custApi('extraSave',{pageId:id,key:k,value:v}).then(function(r){
+      if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); td.innerHTML=old?esc(old):'<span class="muted">+</span>'; return; }
+      EXTRA[id]=EXTRA[id]||{}; EXTRA[id][k]=v; td.innerHTML=v?esc(v):'<span class="muted">+</span>'; toast(k+' 저장');
+    }).catch(function(){ toast('연결에 실패했습니다',true); td.innerHTML=old?esc(old):'<span class="muted">+</span>'; });
+  }
+  ta.addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); fin(true); } if(e.key==='Escape') fin(false); });
+  ta.addEventListener('blur',function(){ fin(true); });
+}
+function setNextTouch(id,v,el){
+  var c=CUSTOMERS.find(function(x){return x.id===id;}); if(!c) return;
+  el.disabled=true;
+  custQuickSave(c,{nextTouch:v}).then(function(r){
+    el.disabled=false;
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); el.value=c.nextTouch||''; return; }
+    c.nextTouch=v; toast('다음 연락일정 저장'); loadSchedules();
+  }).catch(function(){ el.disabled=false; el.value=c.nextTouch||''; toast('연결에 실패했습니다',true); });
+}
+function setProsStatus(id,sel){
+  if(sel.value!=='계약전환') return;
+  var c=CUSTOMERS.find(function(x){return x.id===id;}); if(!c) return;
+  if(!confirm(c.name+' 고객을 계약전환 처리할까요?\n보유고객 목록으로 이동합니다.')){ sel.value='가망유지'; return; }
+  moveCustType([id],'보유고객');
+}
+/* 선택한 고객을 보유 ↔ 가망으로 이동 */
+function moveCustType(ids,type){
+  var list=ids.map(function(id){return CUSTOMERS.find(function(x){return x.id===id;});}).filter(Boolean);
+  if(!list.length) return;
+  var idx=0, ok=0, fail=[];
+  toast(list.length+'명 '+(type==='보유고객'?'보유고객으로 전환':'가망고객으로 이동')+' 중…');
+  function worker(){
+    if(idx>=list.length) return Promise.resolve();
+    var c=list[idx++];
+    return custQuickSave(c,{custType:type, status:type==='보유고객'?'계약완료':(c.status==='계약완료'?'진행중':c.status||'진행중')})
+      .then(function(r){ if(r.ok){ ok++; c.custType=type; } else fail.push(c.name); }, function(){ fail.push(c.name); })
+      .then(worker);
+  }
+  Promise.all([worker(),worker()]).then(function(){
+    PICK.owner={}; PICK.prospect={};
+    toast(ok+'명 '+(type==='보유고객'?'보유고객으로 전환했어요':'가망고객으로 이동했어요')+(fail.length?' · 실패 '+fail.length+'명':''), !!fail.length);
+    loadAll();
+  });
+}
+function bulkMove(scope){
+  var ids=Object.keys(PICK[scope]); if(!ids.length) return;
+  var to=scope==='owner'?'가망고객':'보유고객';
+  if(!confirm(ids.length+'명을 '+(to==='보유고객'?'보유고객으로 전환(계약전환)':'가망고객으로 이동')+'할까요?')) return;
+  moveCustType(ids,to);
 }
 
 /* ───────── 선택 ───────── */
@@ -848,7 +952,7 @@ function drawSelBar(scope){
   if(BULK_DEL && BULK_DEL.scope===scope){ el0.classList.remove('hide'); el0.innerHTML=delProgHtml(); return; }
   var n=Object.keys(PICK[scope]).length, el=el0;
   el.classList.toggle('hide',!n);
-  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
+  el.innerHTML=n+'명 선택됨 <div class="spacer"></div><button class="btn sm" onclick="bulkMove(\''+scope+'\')">'+(scope==='owner'?'가망고객으로 이동':'보유고객으로 전환')+'</button><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
 }
 function selectedOrFiltered(scope){
   var ids=Object.keys(PICK[scope]);
@@ -869,8 +973,8 @@ function printList(scope){
       });
     });
   } else {
-    h='<tr><th>이름</th><th>주민번호/생년월일</th><th>연락처</th><th>주소</th><th>관심</th><th>메모</th></tr>'+list.map(function(c){
-      return '<tr><td>'+esc(c.name)+'</td><td>'+esc(c.rrnEnc?rrnFront(c):(c.birth||''))+'</td><td>'+esc(c.phone)+'</td><td>'+esc(addrOf(c))+'</td><td>'+esc(c.interest)+'</td><td>'+esc(c.memo)+'</td></tr>';
+    h='<tr><th>이름</th><th>생년월일</th><th>연락처</th><th>주소</th><th>직업</th><th>1차</th><th>2차</th><th>3차</th><th>4차</th><th>5차</th><th>6차</th><th>현재반응</th><th>다음연락</th></tr>'+list.map(function(c){
+      return '<tr><td>'+esc(c.name)+'</td><td>'+esc(c.birth||'')+'</td><td>'+esc(c.phone)+'</td><td>'+esc(addrOf(c))+'</td><td>'+esc(c.job||'')+'</td>'+EXTRA_KEYS.map(function(k){return '<td>'+esc(ex(c,k))+'</td>';}).join('')+'<td>'+esc(c.nextTouch||'')+'</td></tr>';
     }).join('');
   }
   $('printArea').innerHTML='<h1>'+title+' 목록</h1><p>'+esc(ME.name)+' · '+today()+' · '+list.length+'명 · 주민등록번호 뒷자리는 가려서 출력됩니다</p><table>'+h+'</table>';
@@ -882,7 +986,11 @@ function excelOut(scope){
   var base=list.map(function(c){
     var o={'이름':c.name,'주민등록번호':c.rrnEnc||scope==='owner'?rrnFront(c):'', '생년월일':c.birth||'','연락처':c.phone||'','우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
     if(scope==='owner'){ var cs=ctrsOf(c); o['보유계약 수']=cs.length; o['월 보험료 합계']=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0); }
-    else { o['구분']=c.bizType||'개인'; o['관심']=c.interest||''; }
+    else {
+      o={'이름':c.name,'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','지역':regionOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
+      EXTRA_KEYS.forEach(function(k){ o[k]=ex(c,k); });
+      o['다음연락일정']=c.nextTouch||''; o['관리상태']='가망유지';
+    }
     return o;
   });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(base), scope==='owner'?'보유고객':'가망고객');
@@ -942,7 +1050,7 @@ function openCustForm(id, type){
     +'<div class="fld"><label class="lbl">주민등록번호</label><div style="display:flex;gap:6px;align-items:center"><input class="inp" id="ffFront" inputmode="numeric" maxlength="6" placeholder="앞 6자리" style="flex:1" value="'+esc(c&&c.birth?digits(c.birth).slice(2):'')+'" oninput="numOnly(this)"><span>-</span><input class="inp" id="ffBack" inputmode="numeric" maxlength="7" placeholder="'+(c&&c.rrnEnc?'저장됨 · 바꿀 때만 입력':'뒤 7자리 (선택)')+'" style="flex:1;-webkit-text-security:disc" oninput="numOnly(this)"></div>'
     +'<div class="muted" style="font-size:12px;margin-top:4px">뒷자리는 암호화되어 저장됩니다. 가망고객은 앞자리(생년월일)만 입력해도 됩니다.</div></div>'
     +'<div class="fld"><label class="lbl">주소</label><div style="display:grid;grid-template-columns:90px 1fr;gap:6px"><input class="inp" id="ffZip" placeholder="우편번호" value="'+v('zip')+'"><input class="inp" id="ffAddr" placeholder="주소" value="'+v('addr')+'"></div><input class="inp" id="ffAddr2" placeholder="상세주소" style="margin-top:6px" value="'+v('addr2')+'"></div>'
-    +'<div class="g2"><div class="fld"><label class="lbl">직업</label><input class="inp" id="ffJob" value="'+v('job')+'"></div><div class="fld" id="ffBizBox"><label class="lbl">개인 / 사업자</label><select class="sel" id="ffBiz"><option'+(c&&c.bizType==='사업자'?'':' selected')+'>개인</option><option'+(c&&c.bizType==='사업자'?' selected':'')+'>사업자</option></select></div></div>'
+    +'<div class="g2"><div class="fld"><label class="lbl">직업</label><input class="inp" id="ffJob" value="'+v('job')+'"></div><div></div></div>'
     +'<div class="fld" id="ffIntBox"><label class="lbl">관심 보종</label><div class="chips" id="ffInt">'+['자동차','장기','화재','일반'].map(function(i){ var on=c&&String(c.interest||'').split(',').indexOf(i)>=0; return '<button type="button" class="chip'+(on?' on':'')+'" data-v="'+i+'" onclick="this.classList.toggle(\'on\')">'+i+'</button>'; }).join('')+'</div></div>'
     +'<div class="fld"><label class="lbl">메모</label><textarea class="ta" id="ffMemo" rows="3">'+v('memo')+'</textarea></div>'
     +'<div class="fld"><label class="lbl">문자 수신</label>'
@@ -956,7 +1064,7 @@ function openCustForm(id, type){
 function ffType(t){
   $('custDrawer').dataset.type=t;
   document.querySelectorAll('#ffType button').forEach(function(b){ b.classList.toggle('on', b.textContent===t); });
-  $('ffBizBox').style.visibility=t==='가망고객'?'visible':'hidden'; $('ffIntBox').classList.toggle('hide', t!=='가망고객');
+  $('ffIntBox').classList.toggle('hide', t!=='가망고객');
 }
 function saveCust(){
   var c=CUR_CUST?CUSTOMERS.find(function(x){return x.id===CUR_CUST;}):null;
@@ -975,7 +1083,7 @@ function saveCust(){
     p.birth=cent+front.slice(0,2)+'-'+front.slice(2,4)+'-'+front.slice(4,6); if(g) p.gcode=g;
   } else { p.birth=''; }
   if(back) p.rrnBackNew=back; else if(c&&c.rrnEnc) p.rrnEnc=c.rrnEnc;
-  if(t==='가망고객'){ p.bizType=$('ffBiz').value; p.interest=[].map.call(document.querySelectorAll('#ffInt .chip.on'),function(b){return b.dataset.v;}).join(','); }
+  if(t==='가망고객'){ p.interest=[].map.call(document.querySelectorAll('#ffInt .chip.on'),function(b){return b.dataset.v;}).join(','); }
   if(!p.status) p.status='진행중';
   var b=$('ffSave'); b.disabled=true; b.textContent='저장 중…';
   api('customerSave',p).then(function(r){
