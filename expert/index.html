@@ -175,12 +175,12 @@ const params = new URLSearchParams(location.search);
 const code = params.get("a") || "";
 
 const consultPages = [
-  { label: "☂️ 보장분석", path: "/consult" },
-  { label: "🩺 모든보험", path: "/health-consult" },
-  { label: "🔎 암보험", path: "/cancer-consult" },
-  { label: "🔥 화재보험", path: "/fire-consult" },
-  { label: "🐶 펫보험", path: "/pet-consult" },
-  { label: "🚗 자동차보험", path: "/auto-consult" }
+  { label: "🩺 건강보험", path: "/ask/", pick: "종합건강" },
+  { label: "🎗️ 암보험", path: "/ask/", pick: "암" },
+  { label: "🚗 자동차보험", path: "/ask/", pick: "자동차" },
+  { label: "🐶 펫보험", path: "/ask/", pick: "펫" },
+  { label: "🔥 화재보험", path: "/ask/", pick: "화재" },
+  { label: "☂️ 보험 점검", path: "/ask/", pick: "보험점검" }
 ];
 
 if (!code) {
@@ -237,7 +237,7 @@ if (!code) {
       });
 
       document.getElementById("p-consult").innerHTML = consultPages.map(c =>
-        `<a href="${c.path}?m=${encodeURIComponent(code)}"><div class="cbtn">${c.label}</div></a>`
+        `<a href="${c.path}?m=${encodeURIComponent(code)}${c.pick ? "&pick=" + encodeURIComponent(c.pick) : ""}"><div class="cbtn">${c.label}</div></a>`
       ).join('');
 
       // 디지털 명함 채우기
