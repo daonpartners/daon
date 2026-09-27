@@ -134,7 +134,7 @@ textarea{min-height:90px;resize:vertical}
   <div id="listArea"><div class="state">자료를 불러오는 중입니다…</div></div>
 </main>
 
-<button type="button" class="btn pink fab" onclick="openWrite()">+ 자료 올리기</button>
+<button type="button" class="btn pink fab hide" id="fabWrite" onclick="openWrite()">+ 자료 올리기</button>
 
 <!-- 상세 -->
 <div class="dim hide" id="dDetail" onclick="if(event.target===this)closeSheet('dDetail')">
@@ -243,6 +243,7 @@ function loadMe(){
 function drawWho(){
   document.getElementById('whoName').textContent = ME ? ME.name + ' 님' : '';
   document.getElementById('whoBtn').textContent = ME ? '로그아웃' : '로그인';
+  document.getElementById('fabWrite').classList.toggle('hide', !isAdmin());
 }
 function onWhoBtn(){
   if(ME){
@@ -281,8 +282,8 @@ function doLogin(){
     setMsg('lMsg', '서버에 연결하지 못했습니다. 인터넷 연결을 확인하고 다시 누르세요.');
   });
 }
-function isAdmin(){ return !!(ME && (ME.role === '지사장' || ME.role === '관리자')); }
-function canManage(p){ return !!(ME && p && (isAdmin() || p.author === ME.name)); }
+function isAdmin(){ return !!(ME && ME.role === '지사장'); }   /* 자료 올리기·수정·삭제는 지사장만 */
+function canManage(p){ return !!(ME && p && isAdmin()); }
 
 /* ── 목록 ── */
 function loadList(){
@@ -409,6 +410,7 @@ function downloadAll(btn){
 /* ── 작성/수정 ── */
 function openWrite(){
   if(needLogin(openWrite)) return;
+  if(!isAdmin()){ alert('자료 올리기는 지사장만 할 수 있습니다.'); return; }
   EDIT = null;
   fillForm({title:'', summary:'', order:10, status:'게시', images:[]});
   document.getElementById('wTitle').textContent = '자료 올리기';
