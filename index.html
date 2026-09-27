@@ -272,14 +272,14 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <div class="col">
         <div class="col__label">고객 전용</div>
         <div class="gate">
-          <button type="button" class="gate-card" id="insTrigger" style="width:100%;text-align:left;border:1.5px solid var(--line);background:#fff;cursor:pointer;font-family:var(--body);">
+          <a href="/ask/?m=daon" id="insTrigger" style="display:block;text-decoration:none;color:inherit"><div class="gate-card">
             <div class="gate-ico">🛡️</div>
             <div class="gate-body">
               <h3>개인 보험 상담문의</h3>
-              <p>분야별 상담 · 카카오톡으로 문의</p>
+              <p>건강·암·자동차·펫·화재 한 번에 상담 신청</p>
             </div>
             <div class="gate-arrow">›</div>
-          </button>
+          </div></a>
 
           <a href="/claim/app/?m=daon">
             <div class="gate-card">
@@ -375,7 +375,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <script>
 (function(){
   var overlay = document.getElementById("insModalOverlay");
-  var trigger = document.getElementById("insTrigger");
+  var trigger = null; /* 개인 보험 상담은 /ask/ 페이지로 바로 이동 */
   var closeBtn = document.getElementById("insModalClose");
 
   function openModal(){
@@ -386,7 +386,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
     overlay.classList.remove("on");
     document.body.style.overflow = "";
   }
-  trigger.addEventListener("click", openModal);
+  if(trigger) trigger.addEventListener("click", openModal);
   closeBtn.addEventListener("click", closeModal);
   overlay.addEventListener("click", function(e){ if(e.target === overlay) closeModal(); });
   document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
