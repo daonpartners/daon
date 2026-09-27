@@ -48,6 +48,18 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .btn.warn{background:#fff;color:#B42318;border:1.5px solid #F2C4C0}
 .btn.warn.armed{background:#B42318;color:#fff;border-color:#B42318}
 
+.tabs{display:flex;gap:6px;margin:26px 0 12px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;color:var(--steel)}
+.tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.tabs button span{opacity:.6;margin-left:4px;font-weight:600}
+.movebar{position:sticky;top:8px;z-index:5;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FFF4EC;border:1.5px solid #F6DCC7;border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:14px;font-weight:700;color:#8A4B1E}
+.movebar .sp{flex:1}
+.post{position:relative}
+.post .ck{position:absolute;left:10px;top:10px;z-index:2;width:26px;height:26px;border-radius:8px;border:2px solid #fff;background:rgba(11,30,66,.35);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.post.sel{border-color:var(--orange);box-shadow:0 0 0 2px var(--orange) inset}
+.post.sel .ck{background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/16px no-repeat}
+.cattag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px;background:#EEF3FE;color:#2F5FB3;vertical-align:1px}
+.cattag.d{background:#FFF1E6;color:#B45A17}
 .list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:520px){.list{grid-template-columns:1fr}}
 .post{background:#fff;border:1.5px solid var(--line);border-radius:16px;overflow:hidden;text-align:left;padding:0;display:flex;flex-direction:column;color:inherit}
@@ -127,10 +139,12 @@ textarea{min-height:90px;resize:vertical}
 </header>
 
 <main class="main">
+  <div class="tabs" id="catTabs"></div>
   <div class="bar">
     <div class="count" id="count"></div>
-    <button type="button" class="btn ghost sm" onclick="loadList()">새로고침</button>
+    <div style="display:flex;gap:6px"><button type="button" class="btn ghost sm hide" id="moveBtn" onclick="toggleMove()">분류 이동</button><button type="button" class="btn ghost sm" onclick="loadList()">새로고침</button></div>
   </div>
+  <div class="movebar hide" id="moveBar"></div>
   <div id="listArea"><div class="state">자료를 불러오는 중입니다…</div></div>
 </main>
 
@@ -181,6 +195,9 @@ textarea{min-height:90px;resize:vertical}
       </div>
     </div>
 
+    <label class="f" for="fCat">분류</label>
+    <select id="fCat"><option value="업종별">업종별 (음식점·학원·병원 등)</option><option value="담보별">담보별 (임원배상·화재·배상책임 등)</option></select>
+
     <label class="f">이미지 <span>(최대 3장 · 1번이 대표 사진)</span></label>
     <input type="file" id="fFiles" accept="image/jpeg,image/png,image/webp" multiple class="hide" onchange="onFiles(this)">
     <button type="button" class="pick" id="pickBtn" onclick="document.getElementById('fFiles').click()">사진 선택</button>
@@ -219,6 +236,10 @@ var CUR = null;         // 상세 보고 있는 글
 var EDIT = null;        // 수정 중인 글 (null이면 새 글)
 var NEW_IMGS = [];      // 새로 고른 이미지 dataURL
 var AFTER_LOGIN = null;
+var CAT_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-biz';
+var CATS = {}, TAB = '업종별', MOVE = false, PICKED = {};
+function catApi(p){ return fetch(CAT_API, {method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify(p)}).then(function(r){ return r.json(); }); }
+function catOf(p){ return CATS[p.id] || '업종별'; }
 
 function api(action, p){
   var body = Object.assign({action:action, branch:BRANCH}, p || {});
@@ -244,6 +265,8 @@ function drawWho(){
   document.getElementById('whoName').textContent = ME ? ME.name + ' 님' : '';
   document.getElementById('whoBtn').textContent = ME ? '로그아웃' : '로그인';
   document.getElementById('fabWrite').classList.toggle('hide', !isAdmin());
+  document.getElementById('moveBtn').classList.toggle('hide', !isAdmin());
+  if(!isAdmin() && MOVE){ MOVE = false; PICKED = {}; if(POSTS.length) renderList(); }
 }
 function onWhoBtn(){
   if(ME){
@@ -289,30 +312,68 @@ function canManage(p){ return !!(ME && p && isAdmin()); }
 function loadList(){
   var area = document.getElementById('listArea');
   area.innerHTML = '<div class="state">자료를 불러오는 중입니다…</div>';
-  api('bizPostList', {}).then(function(r){
+  var catJob = catApi({action:'catList'}).then(function(r){ if(r && r.ok) CATS = r.cats || {}; }).catch(function(){});
+  return api('bizPostList', {}).then(function(r){
     if(!r || !r.ok) throw new Error((r && r.error) || 'fail');
     POSTS = r.posts || [];
-    renderList();
+    return catJob.then(function(){ renderList(); });
   }).catch(function(){
     area.innerHTML = '<div class="state"><b>목록을 불러오지 못했습니다</b>잠시 후 다시 시도하세요.<br><button type="button" class="btn ghost sm" onclick="loadList()">다시 불러오기</button></div>';
     document.getElementById('count').textContent = '';
   });
 }
+function drawTabs(){
+  var n = {업종별:0, 담보별:0}; POSTS.forEach(function(p){ n[catOf(p)]++; });
+  document.getElementById('catTabs').innerHTML = ['업종별','담보별','전체'].map(function(t){
+    return '<button type="button" class="' + (t === TAB ? 'on' : '') + '" onclick="TAB=\'' + t + '\';renderList()">' + t + '<span>' + (t === '전체' ? POSTS.length : n[t]) + '</span></button>';
+  }).join('');
+  document.getElementById('moveBtn').classList.toggle('hide', !isAdmin());
+}
+function toggleMove(){ MOVE = !MOVE; PICKED = {}; renderList(); }
+function drawMoveBar(){
+  var bar = document.getElementById('moveBar'), k = Object.keys(PICKED).length;
+  bar.classList.toggle('hide', !MOVE);
+  document.getElementById('moveBtn').textContent = MOVE ? '분류 이동 끝내기' : '분류 이동';
+  if(!MOVE) return;
+  bar.innerHTML = '<span>' + (k ? k + '건 선택됨' : '옮길 자료를 눌러 선택하세요') + '</span><span class="sp"></span>'
+    + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'업종별\')">업종별로 이동</button>'
+    + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'담보별\')">담보별로 이동</button>'
+    + '<button type="button" class="btn ghost sm" onclick="toggleMove()">취소</button>';
+}
+function onCard(i){
+  var p = VIEWLIST[i]; if(!p) return;
+  if(MOVE){ if(PICKED[p.id]) delete PICKED[p.id]; else PICKED[p.id] = true; renderList(); return; }
+  CUR = p; setMsg('dMsg', ''); renderDetail(); openSheet('dDetail');
+}
+function moveTo(cat){
+  var ids = Object.keys(PICKED); if(!ids.length) return;
+  if(!ME || !ME.code){ askLogin('분류를 바꾸려면 로그인이 필요합니다.', null); return; }
+  var bar = document.getElementById('moveBar'); bar.innerHTML = '<span>' + ids.length + '건 옮기는 중…</span>';
+  catApi({action:'catSet', by:ME.code, cat:cat, ids:ids}).then(function(r){
+    if(!r || !r.ok){ alert((r && (r.error || (r.failed + '건 실패'))) || '옮기지 못했습니다.'); }
+    ids.forEach(function(id){ if(!r || r.ok) CATS[id] = cat; });
+    MOVE = false; PICKED = {}; TAB = cat; renderList();
+  }).catch(function(){ alert('연결에 실패했습니다.'); drawMoveBar(); });
+}
+var VIEWLIST = [];
 function renderList(){
   var area = document.getElementById('listArea');
-  document.getElementById('count').textContent = '자료 ' + POSTS.length + '건';
+  drawTabs(); drawMoveBar();
+  VIEWLIST = TAB === '전체' ? POSTS : POSTS.filter(function(p){ return catOf(p) === TAB; });
+  document.getElementById('count').textContent = TAB + ' 자료 ' + VIEWLIST.length + '건';
   if(!POSTS.length){
     area.innerHTML = '<div class="state"><b>아직 올라온 자료가 없습니다</b>첫 번째 안내 이미지를 올려보세요.<br><button type="button" class="btn pink sm" onclick="openWrite()">자료 올리기</button></div>';
     return;
   }
-  area.innerHTML = '<div class="list">' + POSTS.map(function(p, i){
+  if(!VIEWLIST.length){ area.innerHTML = '<div class="state"><b>' + TAB + ' 자료가 없습니다</b>' + (isAdmin() ? '[분류 이동]으로 자료를 옮기거나 새로 올려보세요.' : '') + '</div>'; return; }
+  area.innerHTML = '<div class="list">' + VIEWLIST.map(function(p, i){
     var imgs = p.images || [];
     var th = imgs.length
       ? '<img src="' + esc(imgs[0]) + '" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode(\'이미지 반영 중\'))">' + (imgs.length > 1 ? '<span class="n">' + imgs.length + '장</span>' : '')
       : '이미지 없음';
-    return '<button type="button" class="post" onclick="openDetail(' + i + ')">' +
+    return '<button type="button" class="post' + (MOVE && PICKED[p.id] ? ' sel' : '') + '" onclick="onCard(' + i + ')">' + (MOVE ? '<span class="ck"></span>' : '') +
       '<div class="thumb">' + th + '</div>' +
-      '<div class="post-b"><h3>' + esc(p.title) + '</h3>' +
+      '<div class="post-b"><h3>' + (TAB === '전체' ? '<span class="cattag' + (catOf(p) === '담보별' ? ' d' : '') + '">' + catOf(p) + '</span>' : '') + esc(p.title) + '</h3>' +
       (p.summary ? '<p>' + esc(p.summary) + '</p>' : '') +
       '<div class="meta">' + esc(fmtDate(p.date)) + (p.author ? ' · ' + esc(p.author) : '') + '</div></div>' +
       '</button>';
@@ -431,6 +492,7 @@ function fillForm(p){
   document.getElementById('fSum').value = p.summary || '';
   document.getElementById('fOrder').value = (p.order != null ? p.order : 10);
   document.getElementById('fStatus').value = p.status || '게시';
+  document.getElementById('fCat').value = p.id ? (CATS[p.id] || '업종별') : (TAB === '담보별' ? '담보별' : '업종별');
   document.getElementById('fFiles').value = '';
   setMsg('wMsg', '');
   drawPreviews();
@@ -530,6 +592,9 @@ function savePost(){
     payload.pageId = EDIT.id;
     payload.keepImages = KEEP_ORDER.length ? KEEP_ORDER : (EDIT.images || []);
   }
+  var wantCat = document.getElementById('fCat').value;
+  var beforeIds = {}; POSTS.forEach(function(x){ beforeIds[x.id] = 1; });
+  var editId = EDIT ? EDIT.id : '';
   var btn = document.getElementById('saveBtn');
   btn.disabled = true; btn.textContent = NEW_IMGS.length ? '이미지 올리는 중…' : '저장 중…';
   setMsg('wMsg', '');
@@ -538,7 +603,16 @@ function savePost(){
     if(!r || !r.ok){ setMsg('wMsg', (r && r.error) || '저장하지 못했습니다. 다시 눌러주세요.'); return; }
     closeSheet('dWrite');
     CUR = null;
-    loadList();
+    loadList().then(function(){
+      /* 분류 저장: 수정이면 그 글, 새 글이면 목록에 새로 생긴 글 */
+      var ids = editId ? [editId] : POSTS.filter(function(x){ return !beforeIds[x.id]; }).map(function(x){ return x.id; });
+      ids = ids.filter(function(id){ return (CATS[id] || '업종별') !== wantCat; });
+      if(!ids.length) return;
+      return catApi({action:'catSet', by:ME.code, cat:wantCat, ids:ids}).then(function(r){
+        if(r && r.ok){ ids.forEach(function(id){ CATS[id] = wantCat; }); TAB = wantCat; renderList(); }
+        else toastList('분류 저장 실패 — [분류 이동]으로 다시 옮겨주세요');
+      });
+    });
     if(payload.status === '숨김') toastList('숨김으로 저장했습니다. 목록에는 보이지 않습니다.');
   }).catch(function(){
     btn.disabled = false; btn.textContent = '저장하기';
