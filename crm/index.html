@@ -371,6 +371,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qPros" placeholder="이름, 연락처, 주소, 지역, 메모, 관리내용 검색" oninput="renderPros()"></div>
           <div class="chips" id="prosCat"></div>
         </div>
+        <div class="toolbar hide" id="prosSub" style="padding:8px 14px;gap:6px;background:#FAFBFC"></div>
         <div class="toolbar" style="padding:8px 14px;gap:6px">
           <span class="muted" style="font-size:12px;font-weight:700">DB 구분</span><div class="seg" id="prosDb"></div>
         </div>
@@ -669,7 +670,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 var API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
 var SONBO_FEE_URL = './sonbo-fee.json';
 var ME = null, CUSTOMERS = [], CONTRACTS = [], TODOS = [], TPLS = [], SCHEDULES = [], SONBO_FEE = null;
-var OWNER_COMP = '';
+var OWNER_COMP = '', PROS_SUB = '';
 var VIEW = 'home', OWNER_VIEW = 'cust', OWNER_CAT = '전체', PROS_CAT = '전체', TODO_F = 'open';
 var PICK = {owner:{}, prospect:{}};
 var SORT = {owner:{k:'name',d:1}, ctr:{k:'contractDate',d:-1}, prospect:{k:'name',d:1}};
@@ -784,15 +785,68 @@ function loadAll(){
   });
 }
 
-/* ───────── 지역(시·도) 판별 ───────── */
+/* ───────── 지역 판별 (시·도 → 시·군·구) ─────────
+   행정구역 기준: 2026년 (대구 군위군 편입 2023, 인천 제물포구·영종구·검단구 2026.7 신설 반영, 이전 명칭도 인식) */
+var SIGUN={
+  '서울':'종로구 중구 용산구 성동구 광진구 동대문구 중랑구 성북구 강북구 도봉구 노원구 은평구 서대문구 마포구 양천구 강서구 구로구 금천구 영등포구 동작구 관악구 서초구 강남구 송파구 강동구',
+  '부산':'중구 서구 동구 영도구 부산진구 동래구 남구 북구 해운대구 사하구 금정구 강서구 연제구 수영구 사상구 기장군',
+  '대구':'중구 동구 서구 남구 북구 수성구 달서구 달성군 군위군',
+  '인천':'제물포구 영종구 중구 동구 미추홀구 연수구 남동구 부평구 계양구 서구 검단구 강화군 옹진군',
+  '광주':'동구 서구 남구 북구 광산구',
+  '대전':'동구 중구 서구 유성구 대덕구',
+  '울산':'중구 남구 동구 북구 울주군',
+  '세종':'세종시',
+  '경기':'수원시 성남시 의정부시 안양시 부천시 광명시 평택시 동두천시 안산시 고양시 과천시 구리시 남양주시 오산시 시흥시 군포시 의왕시 하남시 용인시 파주시 이천시 안성시 김포시 화성시 광주시 양주시 포천시 여주시 연천군 가평군 양평군',
+  '강원':'춘천시 원주시 강릉시 동해시 태백시 속초시 삼척시 홍천군 횡성군 영월군 평창군 정선군 철원군 화천군 양구군 인제군 고성군 양양군',
+  '충북':'청주시 충주시 제천시 보은군 옥천군 영동군 증평군 진천군 괴산군 음성군 단양군',
+  '충남':'천안시 공주시 보령시 아산시 서산시 논산시 계룡시 당진시 금산군 부여군 서천군 청양군 홍성군 예산군 태안군',
+  '전북':'전주시 군산시 익산시 정읍시 남원시 김제시 완주군 진안군 무주군 장수군 임실군 순창군 고창군 부안군',
+  '전남':'목포시 여수시 순천시 나주시 광양시 담양군 곡성군 구례군 고흥군 보성군 화순군 장흥군 강진군 해남군 영암군 무안군 함평군 영광군 장성군 완도군 진도군 신안군',
+  '경북':'포항시 경주시 김천시 안동시 구미시 영주시 영천시 상주시 문경시 경산시 의성군 청송군 영양군 영덕군 청도군 고령군 성주군 칠곡군 예천군 봉화군 울진군 울릉군',
+  '경남':'창원시 진주시 통영시 사천시 김해시 밀양시 거제시 양산시 의령군 함안군 창녕군 고성군 남해군 하동군 산청군 함양군 거창군 합천군',
+  '제주':'제주시 서귀포시'
+};
 var REGIONS=['서울','경기','인천','강원','충북','충남','대전','세종','전북','전남','광주','경북','경남','대구','울산','부산','제주'];
-var REGION_ALIAS=[[/^서울/,'서울'],[/^경기/,'경기'],[/^인천/,'인천'],[/^강원/,'강원'],[/^(충청북도|충북)/,'충북'],[/^(충청남도|충남)/,'충남'],[/^대전/,'대전'],[/^세종/,'세종'],
-  [/^(전라북도|전북)/,'전북'],[/^(전라남도|전남)/,'전남'],[/^광주/,'광주'],[/^(경상북도|경북)/,'경북'],[/^(경상남도|경남)/,'경남'],[/^대구/,'대구'],[/^울산/,'울산'],[/^부산/,'부산'],[/^제주/,'제주']];
-function regionOf(c){
-  var a=String((c&&c.addr)||'').replace(/^\s*\(?\d{5}\)?\s*/,'').trim();   /* 앞에 붙은 우편번호 제거 */
-  for(var i=0;i<REGION_ALIAS.length;i++){ if(REGION_ALIAS[i][0].test(a)) return REGION_ALIAS[i][1]; }
-  return a?'기타':'';
+var METRO={'서울':1,'부산':1,'대구':1,'인천':1,'광주':1,'대전':1,'울산':1};
+Object.keys(SIGUN).forEach(function(k){ SIGUN[k]=SIGUN[k].split(' '); });
+/* 시·군 이름만으로 도를 찾는 표 (광역시 구·군, 중복 이름은 제외) */
+var SIGUN_TO_DO={}, SIGUN_DUP={};
+Object.keys(SIGUN).forEach(function(d){ if(METRO[d]) return; SIGUN[d].forEach(function(n){ if(SIGUN_TO_DO[n] && SIGUN_TO_DO[n]!==d) SIGUN_DUP[n]=1; else SIGUN_TO_DO[n]=d; }); });
+var DO_ALIAS=[[/^서울/,'서울'],[/^경기/,'경기'],[/^인천/,'인천'],[/^강원/,'강원'],[/^(충청북도|충북)/,'충북'],[/^(충청남도|충남)/,'충남'],[/^대전/,'대전'],[/^세종/,'세종'],
+  [/^(전라북도|전북)/,'전북'],[/^(전라남도|전남)/,'전남'],[/^광주(광역시)?$/,'광주'],[/^(경상북도|경북)/,'경북'],[/^(경상남도|경남)/,'경남'],[/^대구/,'대구'],[/^울산/,'울산'],[/^부산/,'부산'],[/^제주/,'제주']];
+var REGION_CACHE={};
+function parseRegion(addr){
+  var a=String(addr||'').replace(/^\s*\(?\d{5}\)?\s*/,'').replace(/[,()]/g,' ').trim();
+  if(!a) return {sido:'',sigun:''};
+  if(REGION_CACHE[a]) return REGION_CACHE[a];
+  var t=a.split(/\s+/), sido='', sigun='', t0=t[0]||'', t1=t[1]||'';
+  var fit=function(d,x){ if(!x) return ''; if(SIGUN[d].indexOf(x)>=0) return x;
+    var withSuf=SIGUN[d].filter(function(n){ return n.replace(/[시군구]$/,'')===x.replace(/[시군구]$/,''); }); return withSuf.length===1?withSuf[0]:''; };
+  /* 1) 첫 단어가 시·도인 경우 */
+  if(/^광주시$/.test(t0) || (/^광주/.test(t0) && t1 && !fit('광주',t1) && /[읍면]$/.test(t1))){ sido='경기'; sigun='광주시'; }
+  else {
+    for(var i=0;i<DO_ALIAS.length;i++){ if(DO_ALIAS[i][0].test(t0)){ sido=DO_ALIAS[i][1]; break; } }
+    if(!sido && /^광주/.test(t0)) sido='광주';
+    if(sido){
+      if(sido==='세종') sigun='세종시';
+      else {
+        sigun=fit(sido,t1);
+        if(!sigun && METRO[sido]===undefined && /시$/.test(t1)) sigun='';          /* 목록에 없는 시 → 확인 필요 */
+        if(!sigun && METRO[sido] && t[2]) sigun=fit(sido,t[2]);                      /* '서울 시 강남구' 같은 표기 */
+      }
+    } else {
+      /* 2) 도 없이 시·군부터 쓴 경우 (예: 아산시 탕정면) */
+      var n=t0, cand=SIGUN_TO_DO[n]?n:(Object.keys(SIGUN_TO_DO).filter(function(k){ return k.replace(/[시군]$/,'')===n; })[0]||'');
+      if(cand && !SIGUN_DUP[cand]){ sido=SIGUN_TO_DO[cand]; sigun=cand; }
+      else if(cand && SIGUN_DUP[cand]){ sido='확인필요'; sigun=cand; }
+      else sido='확인필요';
+    }
+  }
+  var r={sido:sido, sigun:sigun}; REGION_CACHE[a]=r; return r;
 }
+function regionOf(c){ return parseRegion(c&&c.addr).sido; }
+function sigunOf(c){ return parseRegion(c&&c.addr).sigun; }
+function regionLabel(c){ var r=parseRegion(c&&c.addr); if(!r.sido) return ''; return r.sido==='세종'?'세종':(r.sido+(r.sigun?' '+r.sigun:'')); }
 /* ───────── 가망고객 DB 구분 ─────────
    DB구분(dbType) + 상세(sourceNote, '유입경로비고' 칸)를 사용.
    행사DB: '행사일 | 행사명', 온라인DB: '채널 | 채널명', 사입·중도DB: 자유 메모 */
@@ -980,9 +1034,14 @@ function fillCompSel(){
 var CATS=['전체','장기','자동차','화재','일반'];
 function drawChips(){
   $('ownerCat').innerHTML=CATS.map(function(c){ return '<button class="chip'+(c===OWNER_CAT?' on':'')+'" onclick="OWNER_CAT=\''+c+'\';drawChips();renderOwner()">'+c+'</button>'; }).join('');
-  var cnt={}; CUSTOMERS.forEach(function(c){ if(c.custType==='가망고객'){ var r=regionOf(c)||'미입력'; cnt[r]=(cnt[r]||0)+1; } });
-  var pc=['전체'].concat(REGIONS.filter(function(r){return cnt[r];})).concat(cnt['기타']?['기타']:[]).concat(cnt['미입력']?['미입력']:[]);
-  $('prosCat').innerHTML=pc.map(function(c){ return '<button class="chip'+(c===PROS_CAT?' on':'')+'" onclick="PROS_CAT=\''+c+'\';drawChips();renderPros()">'+c+(c!=='전체'?' <span style="opacity:.6">'+cnt[c]+'</span>':'')+'</button>'; }).join('');
+  var cnt={}, sub={}; CUSTOMERS.forEach(function(c){ if(c.custType==='가망고객'){ var r=regionOf(c)||'미입력'; cnt[r]=(cnt[r]||0)+1; if(r===PROS_CAT){ var g=sigunOf(c)||'시·군 확인필요'; sub[g]=(sub[g]||0)+1; } } });
+  var pc=['전체'].concat(REGIONS.filter(function(r){return cnt[r];})).concat(cnt['확인필요']?['확인필요']:[]).concat(cnt['미입력']?['미입력']:[]);
+  if(PROS_CAT!=='전체' && !cnt[PROS_CAT]){ PROS_CAT='전체'; PROS_SUB=''; }
+  $('prosCat').innerHTML=pc.map(function(c){ return '<button class="chip'+(c===PROS_CAT?' on':'')+'" onclick="PROS_CAT=\''+c+'\';PROS_SUB=\'\';renderPros()">'+c+(c!=='전체'?' <span style="opacity:.6">'+cnt[c]+'</span>':'')+'</button>'; }).join('');
+  var sk=Object.keys(sub), order=SIGUN[PROS_CAT]||[];
+  sk.sort(function(a,b){ var ia=order.indexOf(a), ib=order.indexOf(b); return (ia<0?999:ia)-(ib<0?999:ib); });
+  $('prosSub').classList.toggle('hide', PROS_CAT==='전체' || PROS_CAT==='미입력' || PROS_CAT==='세종' || !sk.length);
+  $('prosSub').innerHTML='<span class="muted" style="font-size:12px;font-weight:700">'+esc(PROS_CAT)+' 시·군·구</span>'+['전체'].concat(sk).map(function(g){ var v=g==='전체'?'':g; return '<button class="chip'+(v===PROS_SUB?' on':'')+'" onclick="PROS_SUB=\''+v+'\';renderPros()">'+esc(g)+(g!=='전체'?' <span style="opacity:.6">'+sub[g]+'</span>':'')+'</button>'; }).join('');
 }
 function setOwnerView(v){ OWNER_VIEW=v; $('ovCust').classList.toggle('on',v==='cust'); $('ovCtr').classList.toggle('on',v==='ctr'); renderOwner(); }
 function owners(){
@@ -1056,9 +1115,10 @@ function prospects(){
     if(c.custType!=='가망고객') return false;
     var rg=regionOf(c)||'미입력';
     if(PROS_CAT!=='전체' && rg!==PROS_CAT) return false;
+    if(PROS_SUB && (sigunOf(c)||'시·군 확인필요')!==PROS_SUB) return false;
     if(PROS_DB!=='전체' && (dbOf(c)||'미분류')!==PROS_DB) return false;
     if(!q) return true;
-    return [c.name,c.phone,addrOf(c),c.memo,c.job,rg,c.dbType,c.sourceNote].concat(EXTRA_KEYS.map(function(k){return ex(c,k);})).join(' ').toLowerCase().indexOf(q)>=0;
+    return [c.name,c.phone,addrOf(c),c.memo,c.job,rg,sigunOf(c),c.dbType,c.sourceNote].concat(EXTRA_KEYS.map(function(k){return ex(c,k);})).join(' ').toLowerCase().indexOf(q)>=0;
   });
 }
 function edCell(c,k,w){
@@ -1074,7 +1134,7 @@ function drawDbTabs(){
 }
 function renderPros(){
   drawChips(); drawDbTabs();
-  var list=sortBy(prospects(),SORT.prospect.k,SORT.prospect.d,function(c,k){ if(k==='region') return regionOf(c); if(EXTRA_KEYS.indexOf(k)>=0) return ex(c,k); return custGetter(c,k); });
+  var list=sortBy(prospects(),SORT.prospect.k,SORT.prospect.d,function(c,k){ if(k==='region') return regionLabel(c); if(EXTRA_KEYS.indexOf(k)>=0) return ex(c,k); return custGetter(c,k); });
   $('prosCount').textContent='가망고객 '+list.length+'명';
   var all=list.length && list.every(function(c){return PICK.prospect[c.id];});
   $('tPros').innerHTML='<thead><tr><th class="ck sticky0"><input type="checkbox" '+(all?'checked':'')+' onclick="pickAll(\'prospect\',this.checked)"></th>'
@@ -1085,7 +1145,7 @@ function renderPros(){
     +(list.length?list.map(function(c){
       return '<tr class="row'+(PICK.prospect[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck sticky0" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.prospect[c.id]?'checked':'')+' onchange="pick(\'prospect\',\''+c.id+'\',this.checked)"></td>'
         +'<td class="nm sticky1">'+esc(c.name)+'</td><td class="nw">'+dbTag(dbOf(c))+'</td><td class="addr" style="max-width:200px" title="'+esc(dbDetail(c))+'">'+esc(dbDetail(c))+'</td><td class="nw">'+(c.rrnEnc?esc(rrnFront(c)):'<span class="muted">-</span>')+'</td><td class="nw">'+esc(c.birth||'-')+'</td><td class="nw">'+esc(c.phone)+'</td>'
-        +'<td class="nw">'+(regionOf(c)?'<span class="tag b">'+regionOf(c)+'</span>':'<span class="muted">-</span>')+'</td>'
+        +'<td class="nw">'+(regionOf(c)?(regionOf(c)==='확인필요'?'<span class="tag y" title="주소에서 시·도를 찾지 못했습니다">확인필요</span>':'<span class="tag b">'+regionOf(c)+'</span>')+(sigunOf(c)?' '+esc(sigunOf(c)):''):'<span class="muted">-</span>')+'</td>'
         +'<td class="nw">'+esc(c.zip||'')+'</td><td class="addr">'+esc(c.addr||'')+'</td><td class="addr" style="max-width:140px">'+esc(c.addr2||'')+'</td><td class="nw">'+esc(c.job||'')+'</td><td class="addr" style="max-width:180px">'+esc(c.memo||'')+'</td>'
         +EXTRA_KEYS.map(function(k){ return edCell(c,k,k==='현재반응'?160:120); }).join('')
         +'<td class="nw" onclick="event.stopPropagation()"><input type="date" class="inp" style="height:30px;width:140px;font-size:13px" value="'+esc(c.nextTouch||'')+'" onchange="setNextTouch(\''+c.id+'\',this.value,this)"></td>'
@@ -1201,7 +1261,7 @@ function excelOut(scope){
     var o={'이름':c.name,'주민등록번호':c.rrnEnc||scope==='owner'?rrnFront(c):'', '생년월일':c.birth||'','연락처':c.phone||'','우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
     if(scope==='owner'){ var cs=ctrsOf(c); o['보유계약 수']=cs.length; o['월 보험료 합계']=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0); }
     else {
-      o={'이름':c.name,'DB구분':c.dbType||'','DB상세':dbDetail(c),'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','지역':regionOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
+      o={'이름':c.name,'DB구분':c.dbType||'','DB상세':dbDetail(c),'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','시도':regionOf(c),'시군구':sigunOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
       EXTRA_KEYS.forEach(function(k){ o[k]=ex(c,k); });
       o['다음연락일정']=c.nextTouch||''; o['관리상태']='가망유지';
     }
