@@ -76,6 +76,13 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
 .send:disabled{background:#E3E5E8;color:#9AA0A8}
 .subrow{display:flex;justify-content:center;gap:14px;margin-top:8px;font-size:12.5px;color:var(--ink3)}
 .subrow a{color:var(--navy);font-weight:700;text-decoration:none}
+.agree{display:flex;gap:10px;align-items:flex-start;margin-top:10px;padding:12px;border-radius:12px;background:var(--bg);font-size:12.5px;color:var(--ink2);line-height:1.5;cursor:pointer}
+.agree input{flex:none;width:18px;height:18px;margin-top:1px;accent-color:var(--navy)}
+.agree b{color:var(--ink)}
+.err{display:none;margin:12px 0 0;color:#C4472F;font-weight:700;font-size:13.5px}
+.err.on{display:block}
+.inp.bad{border-color:#C4472F;background:#FFF6F4}
+.send.pri{background:var(--navy);color:#fff}
 .guide{margin-top:12px;background:#fff;border-radius:18px;padding:16px 18px;font-size:13px;color:var(--ink2)}
 .guide ol{margin:6px 0 0;padding-left:18px}
 .toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:#16181C;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
@@ -94,7 +101,7 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
 
   <section class="hero">
     <h1>어떤 보험이<br>궁금하세요?</h1>
-    <p>여러 개 골라도 됩니다. 고른 내용을 카카오톡으로 보내시면 담당 설계사가 답변드려요.</p>
+    <p>여러 개 골라도 됩니다. 신청하시면 담당 설계사가 원하시는 방식으로 연락드려요.</p>
     <div class="fc hide" id="fcBox"><img id="fcImg" alt=""><div><b id="fcName"></b><span id="fcTitle"></span></div></div>
   </section>
 
@@ -178,28 +185,41 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
     </div>
   </section>
 
-  <section class="card">
-    <h2><span class="n">2</span>남기실 말씀</h2>
-    <p class="help">궁금한 점, 원하는 보장, 통화 가능한 시간 등 (선택)</p>
-    <textarea class="inp" id="memo" maxlength="500" placeholder="예) 암 진단금을 늘리고 싶어요. 평일 저녁 통화 가능해요."></textarea>
-    <div class="f" style="margin-top:14px"><span class="lb">답변 받을 방법</span><div class="seg" data-k="reply"><button type="button" class="on">카카오톡</button><button type="button">전화 통화</button></div></div>
+  <section class="card" id="contactCard">
+    <h2><span class="n">2</span>연락받을 정보</h2>
+    <p class="help">상담 신청을 위해 꼭 필요한 정보입니다.</p>
+    <div class="row2">
+      <div class="f"><label class="lb" for="uName">이름 *</label><input class="inp" id="uName" autocomplete="name" maxlength="20" placeholder="홍길동"></div>
+      <div class="f"><label class="lb" for="uPhone">휴대폰 번호 *</label><input class="inp" id="uPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
+    </div>
+    <div class="f"><span class="lb">원하는 상담 방식 *</span><div class="seg" data-k="way"><button type="button">💬 카카오톡</button><button type="button">📞 전화</button><button type="button">🤝 대면</button></div></div>
+    <div class="f"><span class="lb">연락 가능한 시간 <em>(선택)</em></span><div class="seg" data-k="time"><button type="button">언제나</button><button type="button">평일 낮</button><button type="button">평일 저녁</button><button type="button">주말</button></div></div>
+    <div class="f hide" id="meetBox"><label class="lb" for="uArea">만나실 지역 <em>(대면 상담)</em></label><input class="inp" id="uArea" maxlength="30" placeholder="예) 아산시 배방읍, 천안 불당동"></div>
+    <div class="f"><label class="lb" for="memo">남기실 말씀 <em>(선택)</em></label><textarea class="inp" id="memo" maxlength="500" placeholder="예) 암 진단금을 늘리고 싶어요."></textarea></div>
+    <label class="agree"><input type="checkbox" id="agree1"><span><b>[필수] 개인정보 수집·이용 동의</b><br>이름·연락처·상담 내용을 보험 상담 목적으로만 이용하며, 상담 종료 후 1년간 보관 후 파기합니다. 동의하지 않으면 상담 신청을 할 수 없습니다.</span></label>
+    <label class="agree"><input type="checkbox" id="agree2"><span><b>[선택] 보험 상품·이벤트 안내 수신 동의</b><br>동의하지 않아도 상담 신청은 그대로 진행됩니다.</span></label>
+    <p class="err" id="err"></p>
   </section>
 
-  <div class="guide"><b>보내는 방법</b>
-    <ol><li>아래 노란 버튼을 누르면 고른 내용이 복사되고 카카오톡 채팅창이 열립니다.</li><li>채팅창에 <b>붙여넣기</b> 후 보내주세요. 사진도 함께 보내실 수 있습니다.</li></ol>
-  </div>
+  <section class="card hide" id="doneCard" style="text-align:center;padding:30px 20px">
+    <div style="width:64px;height:64px;border-radius:50%;background:var(--ok);margin:0 auto 14px;display:flex;align-items:center;justify-content:center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+    <h2 style="justify-content:center;font-size:20px">상담 신청이 접수됐어요</h2>
+    <p class="help" id="doneMsg" style="margin:6px 0 16px;font-size:14px"></p>
+    <button type="button" class="send" id="btnKakaoAfter" style="height:50px;font-size:15px">💬 카카오톡으로 사진·추가 내용 보내기</button>
+    <p class="help" style="margin:8px 0 0;font-size:12px">자동차등록증·반려동물 사진 등은 카카오톡으로 보내주시면 됩니다.</p>
+  </section>
 
   <footer class="foot">
     <p><b>다온파트너스</b> · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>
     <p>이 페이지는 상담 안내를 위한 창구이며, 신청만으로 보험계약이 체결되지 않습니다. 보장 내용·보험료는 보험회사의 인수 심사 결과에 따라 달라질 수 있습니다. 계약 체결 전 상품설명서와 약관을 반드시 확인하세요. 기존 계약을 해지하고 새로 가입하면 인수 거절, 보험료 인상, 보장 내용 변경이 있을 수 있습니다.</p>
-    <p>이 페이지에서는 성명·연락처 등 개인정보를 받지 않습니다. 고르신 내용은 이 브라우저 안에서만 처리되며, 카카오톡 상담 과정에서 제공하신 정보는 보험 상담 목적으로만 이용됩니다. 주민등록번호 등 고유식별정보는 수집하지 않습니다.</p>
+    <p>수집 항목: 이름, 휴대폰 번호, 상담 내용 · 이용 목적: 보험 상담 및 안내 · 보유 기간: 상담 종료 후 1년. 주민등록번호 등 고유식별정보는 수집하지 않습니다. 개인정보 보호책임자 다온파트너스 041-534-1124</p>
   </footer>
 </div>
 
 <div class="dock">
   <div class="dock-in">
-    <button class="send" id="btnSend" type="button" disabled>💬 <span id="sendTxt">상담 분야를 골라주세요</span></button>
-    <div class="subrow"><span>카카오톡이 어려우시면</span><a id="callBottom" href="tel:0415341124">전화 상담 041-534-1124</a></div>
+    <button class="send pri" id="btnSend" type="button" disabled><span id="sendTxt">상담 분야를 골라주세요</span></button>
+    <div class="subrow"><span>급하시면</span><a id="callBottom" href="tel:0415341124">전화 상담 041-534-1124</a></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -211,7 +231,8 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
   var PROFILE_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-expert-profile';
   var HEALTH = [['암','🎗️'],['뇌·심장','❤️'],['수술비','🏥'],['간병인','🤝'],['치매','🧠'],['실손(실비)','🧾'],['종합건강','🩺'],['운전자','🚦'],['어린이·태아','👶'],['종신','🕊️'],['연금','💰']];
   var ETC = [['자동차','🚗','설계 요청'],['펫','🐶','설계 요청'],['화재','🔥','주택 가설계'],['보험점검','☂️','가입한 보험 점검'],['기타','➕','']];
-  var SEL = {}, SEG = {reply:'카카오톡'}, KAKAO = CHANNEL, FC = null;
+  var SEL = {}, SEG = {}, KAKAO = CHANNEL, FC = null;
+  var LEAD_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-health-lead';
   var $ = function(id){ return document.getElementById(id); };
   var params = new URLSearchParams(location.search);
   var code = params.get('m') || params.get('a') || '';
@@ -231,7 +252,7 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
     $('dFire').classList.toggle('hide', !SEL['화재']);
     $('pickedTxt').textContent = keys.length ? '선택: ' + keys.join(', ') : '';
     $('btnSend').disabled = !keys.length;
-    $('sendTxt').textContent = keys.length ? '카카오톡으로 상담 보내기' : '상담 분야를 골라주세요';
+    $('sendTxt').textContent = keys.length ? '상담 신청하기' : '상담 분야를 골라주세요';
   }
   document.querySelectorAll('.picks').forEach(function(box){
     box.addEventListener('click', function(e){
@@ -243,8 +264,9 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
     seg.addEventListener('click', function(e){
       var b = e.target.closest('button'); if(!b) return;
       var k = seg.dataset.k, v = b.textContent.trim();
-      if(SEG[k] === v && k !== 'reply'){ delete SEG[k]; b.classList.remove('on'); }
+      if(SEG[k] === v && k !== 'way'){ delete SEG[k]; b.classList.remove('on'); }
       else { SEG[k] = v; seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); }); }
+      if(k === 'way') $('meetBox').classList.toggle('hide', SEG.way.indexOf('대면') < 0);
       if(k === 'driver'){ $('cSpouse').classList.toggle('hide', SEG.driver !== '부부한정'); $('cDrvEtcBox').classList.toggle('hide', SEG.driver !== '기타'); }
     });
   });
@@ -310,7 +332,6 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
       add('주소', [v('fAddr'), v('fDetail')].filter(Boolean).join(' ')); add('거주 방식', SEG.own); add('일상생활배상책임', SEG.liab);
     }
     if(v('memo')){ L.push(''); L.push('■ 남기실 말씀'); L.push(v('memo')); }
-    L.push(''); L.push('답변 받을 방법: ' + (SEG.reply || '카카오톡'));
     if(code) L.push('(페이지 코드 ' + code + ')');
     return L.join('\n');
   }
@@ -321,17 +342,50 @@ textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
   }
   function legacy(t){ var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); var ok = false; try{ ok = document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); return ok; }
 
+  function way(){ return (SEG.way || '').replace(/^[^가-힣]+/, ''); }
+  $('uPhone').addEventListener('input', function(){
+    var n = this.value.replace(/[^0-9]/g,'').slice(0,11);
+    this.value = n.length >= 8 ? n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3') : (n.length >= 4 ? n.replace(/(\d{3})(\d{1,4})/,'$1-$2') : n);
+    this.classList.remove('bad');
+  });
+  $('uName').addEventListener('input', function(){ this.classList.remove('bad'); });
+  function fail(msg, el){ var e = $('err'); e.textContent = msg; e.classList.add('on'); if(el){ el.classList.add('bad'); el.focus(); } else $('contactCard').scrollIntoView({behavior:'smooth', block:'center'}); toast(msg); }
+  var sending = false;
   $('btnSend').addEventListener('click', function(){
-    if(!Object.keys(SEL).length) return;
+    if(sending || !Object.keys(SEL).length) return;
+    $('err').classList.remove('on');
     if(SEL['자동차'] && !v('cNum')){ toast('자동차보험은 차량번호를 적어주세요'); $('cNum').focus(); return; }
     if(SEL['화재'] && !v('fAddr')){ toast('화재보험은 가입할 주소를 입력해 주세요'); $('btnAddr').focus(); return; }
     if(SEL['화재'] && !SEG.own){ toast('화재보험 거주 방식을 골라주세요'); return; }
-    var text = buildText();
-    /* 복사는 버튼을 누른 그 순간에 먼저 처리해야 모바일에서도 확실히 됨 */
-    var ok = legacy(text);
-    if(!ok && navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).catch(function(){}); ok = true; }
-    toast(ok ? '내용이 복사됐어요. 채팅창에 붙여넣기 후 보내주세요' : '복사가 안 됐어요. 채팅창에 직접 적어주세요');
-    var w = window.open(KAKAO, '_blank'); if(!w) setTimeout(function(){ location.href = KAKAO; }, 600);
+    var name = v('uName'), phone = v('uPhone');
+    if(name.length < 2) return fail('이름을 입력해 주세요', $('uName'));
+    if(!/^01\d{8,9}$/.test(phone.replace(/[^0-9]/g,''))) return fail('휴대폰 번호를 확인해 주세요', $('uPhone'));
+    if(!SEG.way) return fail('원하는 상담 방식을 골라주세요');
+    if(!$('agree1').checked) return fail('개인정보 수집·이용에 동의해 주세요');
+    var detail = buildText();
+    var head = ['상담방식: ' + way() + (SEG.time ? ' · ' + SEG.time : '') + (way() === '대면' && v('uArea') ? ' · 지역 ' + v('uArea') : ''),
+      '광고수신동의: ' + ($('agree2').checked ? '동의' : '미동의')].join('\n');
+    var payload = {
+      name: name, phone: phone,
+      interests: Object.keys(SEL), interestEtc: '',
+      callTime: way() + (SEG.time ? ' / ' + SEG.time : ''),
+      memo: head + '\n\n' + detail,
+      origin: '통합상담', manager: code, consentRequired: true, consentMarketing: $('agree2').checked,
+      utm_source: params.get('utm_source') || 'direct', utm_medium: params.get('utm_medium') || '', utm_campaign: params.get('utm_campaign') || '',
+      referrer: document.referrer || '', submittedAt: new Date().toISOString()
+    };
+    sending = true; var btn = $('btnSend'); btn.disabled = true; $('sendTxt').textContent = '접수 중…';
+    fetch(LEAD_API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
+      .then(function(r){ if(!r.ok) throw new Error('bad'); })
+      .then(function(){
+        document.querySelectorAll('.card, .detail').forEach(function(el){ if(el.id !== 'doneCard') el.classList.add('hide'); });
+        $('doneCard').classList.remove('hide');
+        $('doneMsg').innerHTML = (FC ? FC.name + ' 설계사가 ' : '담당 설계사가 ') + '<b>' + way() + '</b>' + (way() === '대면' ? ' 상담 일정을 잡기 위해 먼저 연락드립니다.' : '(으)로 연락드립니다.');
+        document.querySelector('.dock').classList.add('hide');
+        window.scrollTo({top:0, behavior:'smooth'});
+        $('btnKakaoAfter').onclick = function(){ legacy('[상담 신청 후 추가 내용] ' + name + '\n' + detail); var w = window.open(KAKAO, '_blank'); if(!w) location.href = KAKAO; };
+      })
+      .catch(function(){ sending = false; btn.disabled = false; $('sendTxt').textContent = '다시 신청하기'; fail('접수하지 못했어요. 잠시 후 다시 시도하시거나 전화로 문의해 주세요.'); });
   });
 })();
 </script>
