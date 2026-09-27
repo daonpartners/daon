@@ -345,6 +345,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
         <div class="toolbar">
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qOwner" placeholder="이름, 연락처, 주소, 보험사, 상품 검색" oninput="renderOwner()"></div>
           <div class="chips" id="ownerCat"></div>
+          <select class="sel" id="ownerComp" style="width:auto;min-width:150px;height:34px" onchange="OWNER_COMP=this.value;renderOwner()"><option value="">보험사 전체</option></select>
           <div class="spacer"></div>
           <div class="seg"><button id="ovCust" class="on" onclick="setOwnerView('cust')">고객별</button><button id="ovCtr" onclick="setOwnerView('ctr')">계약별</button></div>
         </div>
@@ -668,6 +669,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 var API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
 var SONBO_FEE_URL = './sonbo-fee.json';
 var ME = null, CUSTOMERS = [], CONTRACTS = [], TODOS = [], TPLS = [], SCHEDULES = [], SONBO_FEE = null;
+var OWNER_COMP = '';
 var VIEW = 'home', OWNER_VIEW = 'cust', OWNER_CAT = '전체', PROS_CAT = '전체', TODO_F = 'open';
 var PICK = {owner:{}, prospect:{}};
 var SORT = {owner:{k:'name',d:1}, ctr:{k:'contractDate',d:-1}, prospect:{k:'name',d:1}};
@@ -776,6 +778,7 @@ function loadAll(){
     $('stOwner').innerHTML=own.length+'<small>명</small>'; $('stCtr').innerHTML=CONTRACTS.length+'<small>건</small>'; $('stPros').innerHTML=pros.length+'<small>명</small>';
     if($('stO')) $('stO').textContent=own.length; if($('stP')) $('stP').textContent=pros.length;
     $('custNames').innerHTML=CUSTOMERS.map(function(c){ return '<option value="'+esc(c.name)+'">'; }).join('');
+    fillCompSel();
     if(VIEW==='owner') renderOwner(); if(VIEW==='prospect') renderPros();
     loadSchedules(); loadExtra();
   });
@@ -955,6 +958,24 @@ function custQuickSave(c, patch){
   return api('customerSave',p);
 }
 
+/* ───────── 보험사 이름 정리 (같은 회사 다른 표기를 하나로) ───────── */
+function compKey(n){
+  n=String(n||'').replace(/\(.*?\)|（.*?）/g,'').replace(/\s+/g,'').trim();
+  if(!n) return '기타';
+  n=n.replace(/주식회사|㈜/g,'');
+  if(/^현대해상/.test(n)) return '현대해상';
+  if(/^(DB|디비|동부)/i.test(n)) return /생명/.test(n)?'DB생명':'DB손보';
+  if(/^(KB|케이비|LIG)/i.test(n)) return /생명|라이프/.test(n)?'KB라이프':'KB손보';
+  n=n.replace(/손해보험$/,'손보').replace(/화재해상보험$/,'화재').replace(/화재보험$/,'화재').replace(/생명보험$/,'생명');
+  return n;
+}
+function fillCompSel(){
+  var cnt={}; CONTRACTS.forEach(function(ct){ var k=compKey(ct.company); cnt[k]=(cnt[k]||0)+1; });
+  var keys=Object.keys(cnt).sort(function(a,b){ return cnt[b]-cnt[a] || a.localeCompare(b,'ko'); });
+  if(OWNER_COMP && !cnt[OWNER_COMP]) OWNER_COMP='';
+  $('ownerComp').innerHTML='<option value="">보험사 전체 ('+keys.length+'곳)</option>'+keys.map(function(k){ return '<option value="'+esc(k)+'"'+(k===OWNER_COMP?' selected':'')+'>'+esc(k)+' · '+cnt[k]+'건</option>'; }).join('');
+}
+
 /* ───────── 보유고객 ───────── */
 var CATS=['전체','장기','자동차','화재','일반'];
 function drawChips(){
@@ -970,6 +991,7 @@ function owners(){
     if(c.custType==='가망고객') return false;
     var cs=ctrsOf(c);
     if(OWNER_CAT!=='전체' && !cs.some(function(ct){return ct.category===OWNER_CAT;})) return false;
+    if(OWNER_COMP && !cs.some(function(ct){return compKey(ct.company)===OWNER_COMP && (OWNER_CAT==='전체'||ct.category===OWNER_CAT);})) return false;
     if(!q) return true;
     var hay=[c.name,c.phone,addrOf(c),c.birth].concat(cs.map(function(ct){return ct.company+' '+ct.product;})).join(' ').toLowerCase();
     return hay.indexOf(q)>=0 || digits(c.phone).indexOf(digits(q)||'@')>=0;
@@ -980,6 +1002,7 @@ function ownerCtrs(){
   return CONTRACTS.filter(function(ct){
     var c=custOfCtr(ct); if(c && c.custType==='가망고객') return false;
     if(OWNER_CAT!=='전체' && ct.category!==OWNER_CAT) return false;
+    if(OWNER_COMP && compKey(ct.company)!==OWNER_COMP) return false;
     if(!q) return true;
     return [ct.custName,ct.company,ct.product,ct.policyNo,c?c.phone:''].join(' ').toLowerCase().indexOf(q)>=0;
   });
