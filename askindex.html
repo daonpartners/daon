@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>보험 상담 신청 | 다온파트너스</title>
+<meta name="description" content="암·뇌심장·수술비·간병인·치매·실손 등 건강보험과 자동차·펫·화재보험 상담을 한 번에 신청하세요.">
+<meta property="og:title" content="보험 상담 신청 | 다온파트너스">
+<meta property="og:description" content="궁금한 보험을 고르고 카카오톡으로 보내면 담당 설계사가 답변드립니다.">
+<meta name="theme-color" content="#0B1E42">
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--pink:#E39BA5;--pink-dk:#A85F6C;--tint:#FBEFF1;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F5F6F8;--ok:#1E9E5A;--kakao:#FEE500}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px calc(150px + env(safe-area-inset-bottom,0px))}
+.hide{display:none!important}
+
+/* 상단 */
+.top{display:flex;align-items:center;justify-content:space-between;padding:calc(14px + env(safe-area-inset-top,0px)) 0 14px}
+.top img{height:20px;width:auto;display:block}
+.top a{font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 14px}
+.hero{background:var(--navy);color:#fff;border-radius:22px;padding:24px 22px 22px}
+.hero h1{margin:0 0 6px;font-size:23px;line-height:1.35;letter-spacing:-.5px}
+.hero p{margin:0;font-size:14px;color:#C3CEDF}
+.fc{display:flex;align-items:center;gap:12px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.14)}
+.fc img{width:44px;height:44px;border-radius:50%;object-fit:cover;background:#fff}
+.fc b{display:block;font-size:15px}
+.fc span{font-size:12.5px;color:#AFC0D8}
+
+/* 카드 */
+.card{background:#fff;border-radius:18px;padding:20px 18px;margin-top:12px}
+.card h2{margin:0 0 4px;font-size:17px;letter-spacing:-.3px;display:flex;align-items:center;gap:8px}
+.card h2 .n{flex:none;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center}
+.card .help{margin:0 0 14px;font-size:13px;color:var(--ink3)}
+.grp{font-size:12.5px;font-weight:700;color:var(--ink2);margin:14px 0 8px}
+.grp:first-of-type{margin-top:0}
+.picks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pick{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:64px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-weight:700;font-size:14px;padding:8px 4px;text-align:center;transition:border-color .15s,background .15s}
+.pick i{font-style:normal;font-size:20px;line-height:1}
+.pick small{font-size:11px;font-weight:500;color:var(--ink3)}
+.pick.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.pick.on small{color:#AFC0D8}
+.picked{margin-top:12px;font-size:13px;color:var(--pink-dk);font-weight:700;min-height:20px}
+
+/* 세부 입력 */
+.detail{border:1.5px solid var(--line);border-radius:18px;background:#fff;margin-top:12px;overflow:hidden}
+.detail-h{display:flex;align-items:center;gap:10px;padding:16px 18px;background:#FAFBFC;border-bottom:1px solid var(--line)}
+.detail-h b{font-size:16px}
+.detail-h span{margin-left:auto;font-size:12px;color:var(--ink3)}
+.detail-b{padding:16px 18px 18px}
+.f{margin-bottom:14px}
+.f:last-child{margin-bottom:0}
+.lb{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin-bottom:6px}
+.lb em{font-style:normal;font-weight:500;color:var(--ink3);font-size:12px}
+.inp{width:100%;height:46px;border:1.5px solid var(--line);border-radius:12px;padding:0 13px;background:#fff;outline:none;font-size:15px}
+.inp:focus{border-color:var(--navy)}
+textarea.inp{height:auto;min-height:78px;padding:11px 13px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;min-width:64px;height:40px;padding:0 12px;border:1.5px solid var(--line);border-radius:10px;font-size:14px;font-weight:600;color:var(--ink2);background:#fff}
+.seg button.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.addr{display:flex;gap:6px}
+.addr .inp{flex:1}
+.addr button{flex:none;height:46px;padding:0 14px;border-radius:12px;background:var(--navy);color:#fff;font-weight:700;font-size:14px}
+.photo{background:var(--tint);color:var(--pink-dk);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.5}
+
+/* 하단 */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(to top,#fff 80%,rgba(255,255,255,0));padding:16px 16px calc(14px + env(safe-area-inset-bottom,0px))}
+.dock-in{max-width:528px;margin:0 auto}
+.send{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:56px;border-radius:16px;background:var(--kakao);color:#191919;font-size:17px;font-weight:800}
+.send:disabled{background:#E3E5E8;color:#9AA0A8}
+.subrow{display:flex;justify-content:center;gap:14px;margin-top:8px;font-size:12.5px;color:var(--ink3)}
+.subrow a{color:var(--navy);font-weight:700;text-decoration:none}
+.guide{margin-top:12px;background:#fff;border-radius:18px;padding:16px 18px;font-size:13px;color:var(--ink2)}
+.guide ol{margin:6px 0 0;padding-left:18px}
+.toast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:#16181C;color:#fff;padding:12px 18px;border-radius:12px;font-size:14px;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
+.toast.on{opacity:1}
+.foot{margin-top:18px;font-size:11.5px;color:var(--ink3);line-height:1.7}
+.foot p{margin:0 0 6px}
+.pick:focus-visible,.seg button:focus-visible,.send:focus-visible,.addr button:focus-visible{outline:3px solid #2F6FEB;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="59" height="20">
+    <a id="callTop" href="tel:0415341124">전화 상담</a>
+  </header>
+
+  <section class="hero">
+    <h1>어떤 보험이<br>궁금하세요?</h1>
+    <p>여러 개 골라도 됩니다. 고른 내용을 카카오톡으로 보내시면 담당 설계사가 답변드려요.</p>
+    <div class="fc hide" id="fcBox"><img id="fcImg" alt=""><div><b id="fcName"></b><span id="fcTitle"></span></div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">1</span>상담 분야 선택</h2>
+    <p class="help">해당하는 것을 모두 눌러주세요.</p>
+    <div class="grp">건강보험</div>
+    <div class="picks" id="pkHealth"></div>
+    <div class="grp">자동차 · 펫 · 화재 · 기타</div>
+    <div class="picks" id="pkEtc"></div>
+    <div class="picked" id="pickedTxt"></div>
+  </section>
+
+  <!-- 건강보험 -->
+  <section class="detail hide" id="dHealth">
+    <div class="detail-h">🩺 <b>건강보험 상담</b><span>선택 입력</span></div>
+    <div class="detail-b">
+      <div class="f"><span class="lb">현재 가입한 보험</span><div class="seg" data-k="hasIns"><button type="button">있어요</button><button type="button">없어요</button><button type="button">잘 몰라요</button></div></div>
+      <div class="f"><span class="lb">상담받을 분</span><div class="seg" data-k="who"><button type="button">본인</button><button type="button">배우자</button><button type="button">자녀</button><button type="button">부모님</button></div></div>
+      <div class="f"><label class="lb" for="hAge">상담받을 분 나이 <em>(대략)</em></label><input class="inp" id="hAge" inputmode="numeric" placeholder="예) 45세" maxlength="10"></div>
+    </div>
+  </section>
+
+  <!-- 자동차보험 -->
+  <section class="detail hide" id="dCar">
+    <div class="detail-h">🚗 <b>자동차보험 설계</b><span>차량번호·갱신일 필요</span></div>
+    <div class="detail-b">
+      <div class="row2">
+        <div class="f"><label class="lb" for="cNum">차량번호</label><input class="inp" id="cNum" placeholder="예) 12가 3456" maxlength="15"></div>
+        <div class="f"><label class="lb" for="cExp">갱신일자 <em>(현재 만기일)</em></label><input class="inp" id="cExp" type="date"></div>
+      </div>
+      <div class="f"><span class="lb">블랙박스</span><div class="seg" data-k="bb"><button type="button">있음</button><button type="button">없음</button></div></div>
+      <div class="f"><span class="lb">주행거리 특약</span><div class="seg" data-k="mileage"><button type="button">희망</button><button type="button">비희망</button><button type="button">모름</button></div></div>
+      <div class="f"><span class="lb">운전자 범위</span><div class="seg" data-k="driver"><button type="button">본인만</button><button type="button">부부한정</button><button type="button">가족한정</button><button type="button">기타</button></div></div>
+      <div class="row2 hide" id="cSpouse">
+        <div class="f"><label class="lb" for="cSpName">배우자 이름</label><input class="inp" id="cSpName" maxlength="20"></div>
+        <div class="f"><label class="lb" for="cSpBirth">배우자 생년월일</label><input class="inp" id="cSpBirth" inputmode="numeric" placeholder="예) 1985-03-12" maxlength="10"></div>
+      </div>
+      <div class="f hide" id="cDrvEtcBox"><label class="lb" for="cDrvEtc">운전자 범위 상세</label><input class="inp" id="cDrvEtc" placeholder="예) 자녀 1명 추가(만 26세)" maxlength="60"></div>
+      <div class="photo">📷 <b>자동차등록증, 블랙박스, 계기판 사진</b>이 있으면 카카오톡 채팅창에 함께 보내주세요. 할인 반영과 설계 정확도가 올라갑니다.</div>
+    </div>
+  </section>
+
+  <!-- 펫보험 -->
+  <section class="detail hide" id="dPet">
+    <div class="detail-h">🐶 <b>펫보험 설계</b><span>선택 입력</span></div>
+    <div class="detail-b">
+      <div class="row2">
+        <div class="f"><label class="lb" for="pName">이름</label><input class="inp" id="pName" maxlength="20"></div>
+        <div class="f"><label class="lb" for="pBirth">생년월일</label><input class="inp" id="pBirth" inputmode="numeric" placeholder="예) 2022-05-01" maxlength="10"></div>
+      </div>
+      <div class="row2">
+        <div class="f"><label class="lb" for="pBreed">동물 종류 / 품종</label><input class="inp" id="pBreed" placeholder="예) 강아지 / 말티즈" maxlength="30"></div>
+        <div class="f"><label class="lb" for="pColor">털색</label><input class="inp" id="pColor" maxlength="15"></div>
+      </div>
+      <div class="f"><span class="lb">성별</span><div class="seg" data-k="pSex"><button type="button">수컷</button><button type="button">암컷</button><button type="button">모름</button></div></div>
+      <div class="f"><span class="lb">중성화</span><div class="seg" data-k="pNeuter"><button type="button">완료</button><button type="button">안 함</button><button type="button">모름</button></div></div>
+      <div class="f"><span class="lb">동물등록</span><div class="seg" data-k="pReg"><button type="button">등록됨</button><button type="button">미등록</button><button type="button">모름</button></div></div>
+      <div class="f"><span class="lb">예방접종</span><div class="seg" data-k="pVac"><button type="button">접종함</button><button type="button">일부 접종</button><button type="button">안 함</button><button type="button">모름</button></div></div>
+      <div class="f"><label class="lb" for="pDis">현재 치료 중이거나 관찰 중인 질병</label><input class="inp" id="pDis" placeholder="없으면 '없음'" maxlength="100"></div>
+      <div class="f"><label class="lb" for="pVisit">최근 6개월 이내 동물병원 방문</label><input class="inp" id="pVisit" placeholder="없으면 '없음'" maxlength="100"></div>
+      <div class="f"><span class="lb">난치성 질환</span><div class="seg" data-k="pRare"><button type="button">있음</button><button type="button">없음</button><button type="button">모름</button></div></div>
+      <div class="f"><label class="lb" for="pMed">현재 복용 중인 약</label><input class="inp" id="pMed" placeholder="없으면 '없음'" maxlength="60"></div>
+      <div class="row2">
+        <div class="f"><label class="lb" for="pHosp">다니는 동물병원</label><input class="inp" id="pHosp" maxlength="30"></div>
+        <div class="f"><label class="lb" for="pHospArea">동물병원 지역</label><input class="inp" id="pHospArea" placeholder="예) 아산" maxlength="20"></div>
+      </div>
+      <div class="photo">📷 반려동물 사진(정면·옆모습)을 카카오톡 채팅창에 함께 보내주세요. 고지 내용이 사실과 다르면 보험금 지급이 제한될 수 있습니다.</div>
+    </div>
+  </section>
+
+  <!-- 화재보험 -->
+  <section class="detail hide" id="dFire">
+    <div class="detail-h">🔥 <b>주택 화재보험 가설계</b><span>주소·거주방식 필요</span></div>
+    <div class="detail-b">
+      <div class="f"><span class="lb">가입할 주소</span><div class="addr"><input class="inp" id="fAddr" placeholder="주소 검색을 눌러주세요" readonly><button type="button" id="btnAddr">주소 검색</button></div></div>
+      <div class="f"><label class="lb" for="fDetail">동 / 호수</label><input class="inp" id="fDetail" placeholder="예) 105동 1204호" maxlength="40"></div>
+      <div class="f"><span class="lb">거주 방식</span><div class="seg" data-k="own"><button type="button">자가</button><button type="button">임대인</button><button type="button">임차인</button></div></div>
+      <div class="f"><span class="lb">일상생활배상책임 가입</span><div class="seg" data-k="liab"><button type="button">가입</button><button type="button">미가입</button><button type="button">모름</button></div>
+        <p class="help" style="margin:6px 2px 0;font-size:12px;color:var(--ink3)">누수·화재로 이웃에 손해를 입혔을 때 쓰는 특약입니다. 이미 있으면 빼고 설계합니다.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="n">2</span>남기실 말씀</h2>
+    <p class="help">궁금한 점, 원하는 보장, 통화 가능한 시간 등 (선택)</p>
+    <textarea class="inp" id="memo" maxlength="500" placeholder="예) 암 진단금을 늘리고 싶어요. 평일 저녁 통화 가능해요."></textarea>
+    <div class="f" style="margin-top:14px"><span class="lb">답변 받을 방법</span><div class="seg" data-k="reply"><button type="button" class="on">카카오톡</button><button type="button">전화 통화</button></div></div>
+  </section>
+
+  <div class="guide"><b>보내는 방법</b>
+    <ol><li>아래 노란 버튼을 누르면 고른 내용이 복사되고 카카오톡 채팅창이 열립니다.</li><li>채팅창에 <b>붙여넣기</b> 후 보내주세요. 사진도 함께 보내실 수 있습니다.</li></ol>
+  </div>
+
+  <footer class="foot">
+    <p><b>다온파트너스</b> · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>
+    <p>이 페이지는 상담 안내를 위한 창구이며, 신청만으로 보험계약이 체결되지 않습니다. 보장 내용·보험료는 보험회사의 인수 심사 결과에 따라 달라질 수 있습니다. 계약 체결 전 상품설명서와 약관을 반드시 확인하세요. 기존 계약을 해지하고 새로 가입하면 인수 거절, 보험료 인상, 보장 내용 변경이 있을 수 있습니다.</p>
+    <p>이 페이지에서는 성명·연락처 등 개인정보를 받지 않습니다. 고르신 내용은 이 브라우저 안에서만 처리되며, 카카오톡 상담 과정에서 제공하신 정보는 보험 상담 목적으로만 이용됩니다. 주민등록번호 등 고유식별정보는 수집하지 않습니다.</p>
+  </footer>
+</div>
+
+<div class="dock">
+  <div class="dock-in">
+    <button class="send" id="btnSend" type="button" disabled>💬 <span id="sendTxt">상담 분야를 골라주세요</span></button>
+    <div class="subrow"><span>카카오톡이 어려우시면</span><a id="callBottom" href="tel:0415341124">전화 상담 041-534-1124</a></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" async></script>
+<script>
+(function(){
+  var CHANNEL = 'https://pf.kakao.com/_ZVtsX/chat';
+  var PROFILE_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-expert-profile';
+  var HEALTH = [['암','🎗️'],['뇌·심장','❤️'],['수술비','🏥'],['간병인','🤝'],['치매','🧠'],['실손(실비)','🧾'],['종합건강','🩺'],['운전자','🚦'],['어린이·태아','👶'],['종신','🕊️'],['연금','💰']];
+  var ETC = [['자동차','🚗','설계 요청'],['펫','🐶','설계 요청'],['화재','🔥','주택 가설계'],['보험점검','☂️','가입한 보험 점검'],['기타','➕','']];
+  var SEL = {}, SEG = {reply:'카카오톡'}, KAKAO = CHANNEL, FC = null;
+  var $ = function(id){ return document.getElementById(id); };
+  var params = new URLSearchParams(location.search);
+  var code = params.get('m') || params.get('a') || '';
+
+  function pickBtn(x){ return '<button type="button" class="pick" data-v="'+x[0]+'"><i>'+x[1]+'</i>'+x[0]+(x[2]?'<small>'+x[2]+'</small>':'')+'</button>'; }
+  $('pkHealth').innerHTML = HEALTH.map(pickBtn).join('');
+  $('pkEtc').innerHTML = ETC.map(pickBtn).join('');
+  var HEALTH_KEYS = HEALTH.map(function(x){ return x[0]; });
+
+  function refresh(){
+    document.querySelectorAll('.pick').forEach(function(b){ b.classList.toggle('on', !!SEL[b.dataset.v]); });
+    var keys = Object.keys(SEL);
+    var hasHealth = keys.some(function(k){ return HEALTH_KEYS.indexOf(k) >= 0; });
+    $('dHealth').classList.toggle('hide', !hasHealth);
+    $('dCar').classList.toggle('hide', !SEL['자동차']);
+    $('dPet').classList.toggle('hide', !SEL['펫']);
+    $('dFire').classList.toggle('hide', !SEL['화재']);
+    $('pickedTxt').textContent = keys.length ? '선택: ' + keys.join(', ') : '';
+    $('btnSend').disabled = !keys.length;
+    $('sendTxt').textContent = keys.length ? '카카오톡으로 상담 보내기' : '상담 분야를 골라주세요';
+  }
+  document.querySelectorAll('.picks').forEach(function(box){
+    box.addEventListener('click', function(e){
+      var b = e.target.closest('.pick'); if(!b) return;
+      var v = b.dataset.v; if(SEL[v]) delete SEL[v]; else SEL[v] = 1; refresh();
+    });
+  });
+  document.querySelectorAll('.seg').forEach(function(seg){
+    seg.addEventListener('click', function(e){
+      var b = e.target.closest('button'); if(!b) return;
+      var k = seg.dataset.k, v = b.textContent.trim();
+      if(SEG[k] === v && k !== 'reply'){ delete SEG[k]; b.classList.remove('on'); }
+      else { SEG[k] = v; seg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); }); }
+      if(k === 'driver'){ $('cSpouse').classList.toggle('hide', SEG.driver !== '부부한정'); $('cDrvEtcBox').classList.toggle('hide', SEG.driver !== '기타'); }
+    });
+  });
+
+  /* ?pick=암,자동차 로 미리 선택 */
+  (params.get('pick') || '').split(',').forEach(function(p){
+    p = decodeURIComponent(p).trim(); if(!p) return;
+    var all = HEALTH.concat(ETC).map(function(x){ return x[0]; });
+    var hit = all.filter(function(a){ return a === p || a.indexOf(p) === 0; })[0];
+    if(hit) SEL[hit] = 1;
+  });
+  refresh();
+
+  /* 주소 검색 */
+  $('btnAddr').addEventListener('click', function(){
+    if(!(window.daum && daum.Postcode)){ $('fAddr').readOnly = false; $('fAddr').placeholder = '주소를 직접 입력해 주세요'; $('fAddr').focus(); return; }
+    new daum.Postcode({ oncomplete: function(d){ $('fAddr').value = d.roadAddress || d.jibunAddress || d.address; $('fDetail').focus(); } }).open();
+  });
+
+  /* 담당 설계사 (설계사 페이지에서 들어온 경우) */
+  if(code && /^[0-9A-Za-z-]{3,20}$/.test(code)){
+    fetch(PROFILE_API + '?a=' + encodeURIComponent(code), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(p){
+      if(!p || !p.name) return;
+      FC = p;
+      $('fcName').textContent = '담당 ' + p.name + ' 설계사';
+      $('fcTitle').textContent = p.title || '다온파트너스';
+      if(p.photo){ $('fcImg').src = p.photo; } else $('fcImg').classList.add('hide');
+      $('fcBox').classList.remove('hide');
+      if(p.kakao) KAKAO = p.kakao;
+      if(p.phone){ var t = String(p.phone).replace(/[^0-9]/g,''); $('callTop').href = 'tel:' + t; $('callBottom').href = 'tel:' + t;
+        $('callBottom').textContent = '전화 상담 ' + t.replace(/(\d{3})(\d{3,4})(\d{4})/, '$1-$2-$3'); }
+    }).catch(function(){});
+  }
+
+  /* 보낼 내용 만들기 */
+  function v(id){ return ($(id).value || '').trim(); }
+  function buildText(){
+    var L = [], keys = Object.keys(SEL);
+    L.push('[보험 상담 신청]');
+    if(FC) L.push('담당: ' + FC.name + ' 설계사');
+    L.push('상담 분야: ' + keys.join(', '));
+    var hs = keys.filter(function(k){ return HEALTH_KEYS.indexOf(k) >= 0; });
+    var add = function(label, val){ if(val) L.push('· ' + label + ': ' + val); };
+    if(hs.length){
+      L.push(''); L.push('■ 건강보험 (' + hs.join(', ') + ')');
+      add('현재 가입 보험', SEG.hasIns); add('상담받을 분', SEG.who); add('나이', v('hAge'));
+    }
+    if(SEL['자동차']){
+      L.push(''); L.push('■ 자동차보험');
+      add('차량번호', v('cNum')); add('갱신일자', v('cExp')); add('블랙박스', SEG.bb); add('주행거리 특약', SEG.mileage); add('운전자 범위', SEG.driver);
+      if(SEG.driver === '부부한정'){ add('배우자 이름', v('cSpName')); add('배우자 생년월일', v('cSpBirth')); }
+      if(SEG.driver === '기타') add('운전자 범위 상세', v('cDrvEtc'));
+    }
+    if(SEL['펫']){
+      L.push(''); L.push('■ 펫보험');
+      add('이름', v('pName')); add('생년월일', v('pBirth')); add('종류/품종', v('pBreed')); add('털색', v('pColor'));
+      add('성별', SEG.pSex); add('중성화', SEG.pNeuter); add('동물등록', SEG.pReg); add('예방접종', SEG.pVac);
+      add('치료·관찰 중 질병', v('pDis')); add('6개월 내 병원 방문', v('pVisit')); add('난치성 질환', SEG.pRare); add('복용 약', v('pMed'));
+      add('동물병원', [v('pHosp'), v('pHospArea')].filter(Boolean).join(' / '));
+    }
+    if(SEL['화재']){
+      L.push(''); L.push('■ 주택 화재보험');
+      add('주소', [v('fAddr'), v('fDetail')].filter(Boolean).join(' ')); add('거주 방식', SEG.own); add('일상생활배상책임', SEG.liab);
+    }
+    if(v('memo')){ L.push(''); L.push('■ 남기실 말씀'); L.push(v('memo')); }
+    L.push(''); L.push('답변 받을 방법: ' + (SEG.reply || '카카오톡'));
+    if(code) L.push('(페이지 코드 ' + code + ')');
+    return L.join('\n');
+  }
+  function toast(t){ var el = $('toast'); el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove('on'); }, 3200); }
+  function copy(t){
+    if(navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(t).then(function(){ return true; }).catch(function(){ return legacy(t); });
+    return Promise.resolve(legacy(t));
+  }
+  function legacy(t){ var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); var ok = false; try{ ok = document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); return ok; }
+
+  $('btnSend').addEventListener('click', function(){
+    if(!Object.keys(SEL).length) return;
+    if(SEL['자동차'] && !v('cNum')){ toast('자동차보험은 차량번호를 적어주세요'); $('cNum').focus(); return; }
+    if(SEL['화재'] && !v('fAddr')){ toast('화재보험은 가입할 주소를 입력해 주세요'); $('btnAddr').focus(); return; }
+    if(SEL['화재'] && !SEG.own){ toast('화재보험 거주 방식을 골라주세요'); return; }
+    var text = buildText();
+    /* 복사는 버튼을 누른 그 순간에 먼저 처리해야 모바일에서도 확실히 됨 */
+    var ok = legacy(text);
+    if(!ok && navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).catch(function(){}); ok = true; }
+    toast(ok ? '내용이 복사됐어요. 채팅창에 붙여넣기 후 보내주세요' : '복사가 안 됐어요. 채팅창에 직접 적어주세요');
+    var w = window.open(KAKAO, '_blank'); if(!w) setTimeout(function(){ location.href = KAKAO; }, 600);
+  });
+})();
+</script>
+</body>
+</html>
