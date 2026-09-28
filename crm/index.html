@@ -466,7 +466,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 
     <!-- 일정 -->
     <section class="page view hide" id="v-cal">
-      <div class="ph"><div><h2>일정관리</h2><div class="sub">내 일정 · 계약 만기 · 고객 생일 · 연락 예정일을 한 곳에서</div></div></div>
+      <div class="ph"><div><h2>일정관리</h2><div class="sub">내 일정 · 계약 만기 · 고객 생일 · 연락 예정일을 한 곳에서 · [삭제]는 내 화면에서만 지워집니다</div></div></div>
       <div class="cal-g">
         <div class="card">
           <div class="card-h"><div class="cal-head"><button class="btn sm" onclick="calMove(-1)">‹</button><h3 id="calTitle"></h3><button class="btn sm" onclick="calMove(1)">›</button><button class="btn sm" onclick="calMove(0)">오늘</button></div>
@@ -2123,7 +2123,23 @@ function loadSchedules(){
   return api('scheduleList',{ym:ym,fc:ME.name,branch:ME.branch}).then(function(r){ SCHEDULES=(r.ok&&r.items)||[]; }).catch(function(){ SCHEDULES=[]; })
     .then(function(){ if(VIEW==='cal') renderCal(); renderAgenda(); });
 }
-function eventsOf(y,m){
+/* 내 화면에서만 삭제(숨김): 로그인한 사람별로 이 기기에 저장. GROW·지사 원본 일정은 건드리지 않음 */
+function hideKey(){ return 'crmHiddenEv:'+(ME&&ME.name||''); }
+function hiddenSet(){ try{ return JSON.parse(localStorage.getItem(hideKey())||'{}'); }catch(e){ return {}; } }
+function saveHidden(h){ try{ localStorage.setItem(hideKey(),JSON.stringify(h)); }catch(e){ toast('이 브라우저에서는 숨김을 저장할 수 없습니다',true); } }
+function evKey(e){ if(e.sch) return 's:'+e.sch.id; if(e.cls==='exp') return 'e:'+e.ctr+':'+e.date; if(e.cls==='bd') return 'b:'+e.cust+':'+e.date.slice(0,7); if(e.cls==='nt') return 'n:'+e.cust+':'+e.date; return ''; }
+var EV_TMP=[];
+function hideEv(i){
+  var e=EV_TMP[i]; if(!e) return;
+  if(!confirm('"'+e.t+'" 일정을 내 화면에서 삭제할까요?\n다른 사람 화면'+(e.cls==='grow'?'과 GROW 홈페이지':'')+'에는 그대로 남습니다.')) return;
+  var h=hiddenSet(); h[evKey(e)]={t:e.t,d:e.date}; saveHidden(h); toast('내 화면에서 삭제했어요'); renderCal(); renderAgenda();
+}
+function unhideDay(ds){ var h=hiddenSet(); Object.keys(h).forEach(function(k){ if(h[k]&&h[k].d===ds) delete h[k]; }); saveHidden(h); toast('숨긴 일정을 다시 보이게 했어요'); renderCal(); renderAgenda(); }
+function eventsOf(y,m,withHidden){
+  var ev=eventsAll(y,m); if(withHidden) return ev;
+  var h=hiddenSet(); return ev.filter(function(e){ return !h[evKey(e)]; });
+}
+function eventsAll(y,m){
   var ym=ymOf(y,m), ev=[];
   SCHEDULES.forEach(function(s){ if(s.date&&s.date.slice(0,7)===ym) ev.push({date:s.date,cls:s.source==='grow'?'grow':'sch',t:s.title,s:[s.category,s.time,s.place].filter(Boolean).join(' · '),sch:s}); });
   CONTRACTS.forEach(function(ct){ if(ct.expireDate&&ct.expireDate.slice(0,7)===ym) ev.push({date:ct.expireDate,cls:'exp',t:(ct.custName||'')+' '+(ct.category||'')+' 만기',s:ct.company+' · '+ct.product,ctr:ct.id}); });
@@ -2165,11 +2181,15 @@ function drawDay(ds){
   var list=eventsOf(CAL.y,CAL.m).filter(function(e){return e.date===ds;});
   $('dayList').innerHTML=list.length?list.map(function(e,i){
     var act='';
-    if(e.sch && e.cls==='sch') act='<button class="btn sm" onclick="editSch(\''+e.sch.id+'\')">수정</button><button class="btn sm danger" onclick="delSch(\''+e.sch.id+'\')">삭제</button>';
+    EV_TMP[i]=e;
+    if(e.sch && e.cls==='sch') act='<button class="btn sm" onclick="editSch(\''+e.sch.id+'\')">수정</button>'+(isAdmin()?'<button class="btn sm" title="지사 전체에서 삭제" onclick="delSch(\''+e.sch.id+'\')">전체 삭제</button>':'');
     else if(e.ctr) act='<button class="btn sm" onclick="openCtrForm(\''+e.ctr+'\')">계약 보기</button>';
     else if(e.cust) act='<button class="btn sm" onclick="openCust(\''+e.cust+'\')">고객 보기</button>';
+    act+='<button class="btn sm danger" title="내 화면에서만 삭제됩니다" onclick="hideEv('+i+')">삭제</button>';
     return '<div class="it"><span class="dot" style="background:'+col[e.cls]+'"></span><div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(e.t)+(e.cls==='grow'?' <span class="tag">GROW ON</span>':'')+'</div><div class="muted" style="font-size:12px">'+esc(e.s)+'</div></div><div style="display:flex;gap:4px">'+act+'</div></div>';
   }).join(''):'<div class="empty" style="padding:14px">이 날은 일정이 없습니다.</div>';
+  var hid=eventsOf(CAL.y,CAL.m,true).filter(function(e){ return e.date===ds; }).length-list.length;
+  if(hid>0) $('dayList').innerHTML+='<div class="muted" style="font-size:12px;padding:8px 0 0">내 화면에서 삭제한 일정 '+hid+'건 · <button class="btn sm" style="height:24px" onclick="unhideDay(\''+ds+'\')">다시 보기</button></div>';
   $('schForm').classList.remove('hide'); if(!SCH_EDIT) resetSchForm(true);
 }
 function resetSchForm(keepOpen){ SCH_EDIT=null; $('schFormT').textContent='일정 추가'; $('schTitle').value=''; $('schTime').value=''; $('schPlace').value=''; $('schCat').value='상담'; $('schCancel').classList.add('hide'); }
@@ -2181,7 +2201,7 @@ function saveSch(){
     .catch(function(){ toast('연결에 실패했습니다',true); });
 }
 function delSch(id){
-  var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s||!confirm('이 일정을 삭제할까요?')) return;
+  var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s||!confirm('이 일정을 지사 전체에서 삭제할까요?\n다른 설계사 화면에서도 사라집니다. 내 화면에서만 지우려면 [삭제]를 누르세요.')) return;
   api('scheduleDelete',{pageId:id,source:s.source||'daon',fc:ME.name}).then(function(r){ if(r.ok){ toast('삭제했어요'); SCH_EDIT=null; loadSchedules(); } else toast(r.error||'삭제에 실패했습니다',true); });
 }
 function renderAgenda(){
