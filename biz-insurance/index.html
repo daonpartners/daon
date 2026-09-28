@@ -52,6 +52,17 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .tabs button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;color:var(--steel)}
 .tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
 .tabs button span{opacity:.6;margin-left:4px;font-weight:600}
+.subtabs{display:flex;gap:8px;width:100%;margin-top:4px;flex-wrap:wrap}
+.subtabs button{flex:1 1 0;min-width:96px;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px 10px;font-size:15px;font-weight:800;color:var(--steel)}
+.subtabs button span{opacity:.6;margin-left:6px;font-weight:700}
+.subtabs button.must{border-color:#F3B4B4;color:#B42318;background:#FFF5F5}
+.subtabs button.opt{border-color:#B7CCF2;color:#1F4E9E;background:#F3F7FF}
+.subtabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.subtabs button.must.on{background:#D92D20;border-color:#D92D20;color:#fff}
+.subtabs button.opt.on{background:#2563C9;border-color:#2563C9;color:#fff}
+.lawbadge{position:absolute;right:10px;top:10px;z-index:2;font-size:12.5px;font-weight:800;border-radius:8px;padding:4px 10px;color:#fff;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.lawbadge.must{background:#D92D20}
+.lawbadge.opt{background:#2563C9}
 .movebar{position:sticky;top:8px;z-index:5;display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#FFF4EC;border:1.5px solid #F6DCC7;border-radius:14px;padding:10px 12px;margin-bottom:12px;font-size:14px;font-weight:700;color:#8A4B1E}
 .movebar .sp{flex:1}
 .post{position:relative}
@@ -196,7 +207,7 @@ textarea{min-height:90px;resize:vertical}
     </div>
 
     <label class="f" for="fCat">분류</label>
-    <select id="fCat"><option value="업종별">업종별 (음식점·학원·병원 등)</option><option value="담보별">담보별 (임원배상·화재·배상책임 등)</option></select>
+    <select id="fCat"><option value="업종별">업종별 (음식점·학원·병원 등)</option><option value="의무보험">담보별 · 의무보험 (법으로 가입 의무)</option><option value="임의보험">담보별 · 임의보험 (선택 가입)</option></select>
 
     <label class="f">이미지 <span>(최대 3장 · 1번이 대표 사진)</span></label>
     <input type="file" id="fFiles" accept="image/jpeg,image/png,image/webp" multiple class="hide" onchange="onFiles(this)">
@@ -237,9 +248,11 @@ var EDIT = null;        // 수정 중인 글 (null이면 새 글)
 var NEW_IMGS = [];      // 새로 고른 이미지 dataURL
 var AFTER_LOGIN = null;
 var CAT_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-biz';
-var CATS = {}, TAB = '업종별', MOVE = false, PICKED = {};
+var CATS = {}, TAB = '업종별', SUB = '전체', MOVE = false, PICKED = {};
 function catApi(p){ return fetch(CAT_API, {method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify(p)}).then(function(r){ return r.json(); }); }
-function catOf(p){ return CATS[p.id] || '업종별'; }
+function rawCat(p){ return CATS[p.id] || '업종별'; }
+function catOf(p){ var c = rawCat(p); return c === '업종별' ? '업종별' : '담보별'; }          /* 큰 분류 */
+function subOf(p){ var c = rawCat(p); return (c === '의무보험' || c === '임의보험') ? c : (c === '업종별' ? '' : '미분류'); }
 
 function api(action, p){
   var body = Object.assign({action:action, branch:BRANCH}, p || {});
@@ -324,9 +337,14 @@ function loadList(){
 }
 function drawTabs(){
   var n = {업종별:0, 담보별:0}; POSTS.forEach(function(p){ n[catOf(p)]++; });
+  var sn = {의무보험:0, 임의보험:0, 미분류:0}; POSTS.forEach(function(p){ var s = subOf(p); if(s) sn[s]++; });
   document.getElementById('catTabs').innerHTML = ['업종별','담보별','전체'].map(function(t){
-    return '<button type="button" class="' + (t === TAB ? 'on' : '') + '" onclick="TAB=\'' + t + '\';renderList()">' + t + '<span>' + (t === '전체' ? POSTS.length : n[t]) + '</span></button>';
-  }).join('');
+    return '<button type="button" class="' + (t === TAB ? 'on' : '') + '" onclick="TAB=\'' + t + '\';SUB=\'전체\';renderList()">' + t + '<span>' + (t === '전체' ? POSTS.length : n[t]) + '</span></button>';
+  }).join('')
+  + (TAB === '담보별' ? '<div class="subtabs">' + ['전체','의무보험','임의보험'].concat(sn['미분류'] ? ['미분류'] : []).map(function(t){
+      var cls = t === '의무보험' ? 'must' : (t === '임의보험' ? 'opt' : '');
+      return '<button type="button" class="' + cls + (t === SUB ? ' on' : '') + '" onclick="SUB=\'' + t + '\';renderList()">' + (t === '의무보험' ? '⚠️ ' : (t === '임의보험' ? '🛡️ ' : '')) + t + '<span>' + (t === '전체' ? n['담보별'] : sn[t]) + '</span></button>';
+    }).join('') + '</div>' : '');
   document.getElementById('moveBtn').classList.toggle('hide', !isAdmin());
 }
 function toggleMove(){ MOVE = !MOVE; PICKED = {}; renderList(); }
@@ -337,7 +355,8 @@ function drawMoveBar(){
   if(!MOVE) return;
   bar.innerHTML = '<span>' + (k ? k + '건 선택됨' : '옮길 자료를 눌러 선택하세요') + '</span><span class="sp"></span>'
     + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'업종별\')">업종별로 이동</button>'
-    + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'담보별\')">담보별로 이동</button>'
+    + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'의무보험\')">담보별 · 의무보험</button>'
+    + '<button type="button" class="btn sm" ' + (k ? '' : 'disabled') + ' onclick="moveTo(\'임의보험\')">담보별 · 임의보험</button>'
     + '<button type="button" class="btn ghost sm" onclick="toggleMove()">취소</button>';
 }
 function onCard(i){
@@ -352,15 +371,16 @@ function moveTo(cat){
   catApi({action:'catSet', by:ME.code, cat:cat, ids:ids}).then(function(r){
     if(!r || !r.ok){ alert((r && (r.error || (r.failed + '건 실패'))) || '옮기지 못했습니다.'); }
     ids.forEach(function(id){ if(!r || r.ok) CATS[id] = cat; });
-    MOVE = false; PICKED = {}; TAB = cat; renderList();
+    MOVE = false; PICKED = {}; TAB = cat === '업종별' ? '업종별' : '담보별'; SUB = cat === '업종별' ? '전체' : cat; renderList();
   }).catch(function(){ alert('연결에 실패했습니다.'); drawMoveBar(); });
 }
 var VIEWLIST = [];
 function renderList(){
   var area = document.getElementById('listArea');
   drawTabs(); drawMoveBar();
-  VIEWLIST = TAB === '전체' ? POSTS : POSTS.filter(function(p){ return catOf(p) === TAB; });
-  document.getElementById('count').textContent = TAB + ' 자료 ' + VIEWLIST.length + '건';
+  VIEWLIST = TAB === '전체' ? POSTS : POSTS.filter(function(p){ return catOf(p) === TAB && (TAB !== '담보별' || SUB === '전체' || subOf(p) === SUB); });
+  if(TAB === '담보별') VIEWLIST = VIEWLIST.slice().sort(function(a,b){ var o = {의무보험:0, 임의보험:1, 미분류:2}; return o[subOf(a)] - o[subOf(b)]; });
+  document.getElementById('count').textContent = (TAB === '담보별' && SUB !== '전체' ? SUB : TAB) + ' 자료 ' + VIEWLIST.length + '건';
   if(!POSTS.length){
     area.innerHTML = '<div class="state"><b>아직 올라온 자료가 없습니다</b>첫 번째 안내 이미지를 올려보세요.<br><button type="button" class="btn pink sm" onclick="openWrite()">자료 올리기</button></div>';
     return;
@@ -371,9 +391,11 @@ function renderList(){
     var th = imgs.length
       ? '<img src="' + esc(imgs[0]) + '" alt="" loading="lazy" onerror="this.replaceWith(document.createTextNode(\'이미지 반영 중\'))">' + (imgs.length > 1 ? '<span class="n">' + imgs.length + '장</span>' : '')
       : '이미지 없음';
+    var sb = subOf(p);
     return '<button type="button" class="post' + (MOVE && PICKED[p.id] ? ' sel' : '') + '" onclick="onCard(' + i + ')">' + (MOVE ? '<span class="ck"></span>' : '') +
+      (sb === '의무보험' ? '<span class="lawbadge must">의무보험</span>' : (sb === '임의보험' ? '<span class="lawbadge opt">임의보험</span>' : '')) +
       '<div class="thumb">' + th + '</div>' +
-      '<div class="post-b"><h3>' + (TAB === '전체' ? '<span class="cattag' + (catOf(p) === '담보별' ? ' d' : '') + '">' + catOf(p) + '</span>' : '') + esc(p.title) + '</h3>' +
+      '<div class="post-b"><h3>' + (TAB === '전체' && catOf(p) === '업종별' ? '<span class="cattag">업종별</span>' : '') + esc(p.title) + '</h3>' +
       (p.summary ? '<p>' + esc(p.summary) + '</p>' : '') +
       '<div class="meta">' + esc(fmtDate(p.date)) + (p.author ? ' · ' + esc(p.author) : '') + '</div></div>' +
       '</button>';
@@ -492,7 +514,8 @@ function fillForm(p){
   document.getElementById('fSum').value = p.summary || '';
   document.getElementById('fOrder').value = (p.order != null ? p.order : 10);
   document.getElementById('fStatus').value = p.status || '게시';
-  document.getElementById('fCat').value = p.id ? (CATS[p.id] || '업종별') : (TAB === '담보별' ? '담보별' : '업종별');
+  var rc = p.id ? (CATS[p.id] || '업종별') : (TAB === '담보별' ? (SUB === '임의보험' ? '임의보험' : '의무보험') : '업종별');
+  document.getElementById('fCat').value = rc === '담보별' ? '의무보험' : rc;
   document.getElementById('fFiles').value = '';
   setMsg('wMsg', '');
   drawPreviews();
@@ -609,7 +632,7 @@ function savePost(){
       ids = ids.filter(function(id){ return (CATS[id] || '업종별') !== wantCat; });
       if(!ids.length) return;
       return catApi({action:'catSet', by:ME.code, cat:wantCat, ids:ids}).then(function(r){
-        if(r && r.ok){ ids.forEach(function(id){ CATS[id] = wantCat; }); TAB = wantCat; renderList(); }
+        if(r && r.ok){ ids.forEach(function(id){ CATS[id] = wantCat; }); TAB = wantCat === '업종별' ? '업종별' : '담보별'; SUB = wantCat === '업종별' ? '전체' : wantCat; renderList(); }
         else toastList('분류 저장 실패 — [분류 이동]으로 다시 옮겨주세요');
       });
     });
