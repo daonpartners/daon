@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>정육마트 장부</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --paper:#FFFFFF; --page:#F3F5F7; --ink:#1C2127; --sub:#4A545E; --line:#C8CFD6;
+  --head:#E7EBEF; --zebra:#F8FAFB; --bar:#7A1F24; --bar-ink:#FFFFFF;
+  --excel:#1E7145; --excel-bg:#E6F2EA; --buy:#1F4E8C; --buy-bg:#E8EFF8;
+  --warn:#B42318; --warn-bg:#FDECEA; --ok:#1E7145; --ok-bg:#E6F2EA; --sel:#FFF6D6;
+  --fs:18px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B1F24; --page:#121519; --ink:#ECEFF2; --sub:#AAB4BE; --line:#3A424B;
+    --head:#262C33; --zebra:#1F242A; --bar:#5E181C; --excel:#5CC08A; --excel-bg:#173024;
+    --buy:#8DB4EA; --buy-bg:#1A2636; --warn:#FF8A80; --warn-bg:#3A1C1C; --ok:#5CC08A; --ok-bg:#173024; --sel:#3A3420;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1F24; --page:#121519; --ink:#ECEFF2; --sub:#AAB4BE; --line:#3A424B;
+  --head:#262C33; --zebra:#1F242A; --bar:#5E181C; --excel:#5CC08A; --excel-bg:#173024;
+  --buy:#8DB4EA; --buy-bg:#1A2636; --warn:#FF8A80; --warn-bg:#3A1C1C; --ok:#5CC08A; --ok-bg:#173024; --sel:#3A3420;
+}
+:root.big{--fs:21px}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--page);color:var(--ink);
+  font-family:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  font-size:var(--fs);line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--excel);outline-offset:2px}
+
+/* 상단바 */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bar);color:var(--bar-ink);
+  display:flex;align-items:center;gap:14px;padding:10px 18px;flex-wrap:wrap}
+.top h1{margin:0;font-size:1.25em;font-weight:700;letter-spacing:-.01em}
+.top .date{opacity:.9}
+.top .sp{flex:1}
+.top button{background:transparent;border:2px solid rgba(255,255,255,.7);color:#fff;border-radius:8px;padding:4px 12px;min-height:44px}
+.top .store{font-size:.8em;opacity:.85}
+
+.wrap{display:flex;align-items:flex-start;max-width:1500px;margin:0 auto}
+nav{position:sticky;top:76px;width:196px;flex:none;padding:14px 10px;display:flex;flex-direction:column;gap:6px}
+nav button{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:transparent;
+  padding:12px 14px;border-radius:10px;min-height:52px;font-weight:500}
+nav button .ic{font-size:1.2em;width:1.4em;text-align:center}
+nav button:hover{background:var(--head)}
+nav button[aria-current="page"]{background:var(--paper);box-shadow:inset 5px 0 0 var(--bar);font-weight:700}
+main{flex:1;min-width:0;padding:18px 18px 60px}
+
+h2{font-size:1.45em;margin:4px 0 4px}
+.lead{color:var(--sub);margin:0 0 16px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.panel h3{margin:0 0 12px;font-size:1.1em}
+
+/* 입력 폼 */
+.form{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px 14px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f.wide{grid-column:span 2}
+.f span{font-weight:500;color:var(--sub);font-size:.9em}
+.f input,.f select,.f textarea{border:2px solid var(--line);border-radius:8px;padding:9px 10px;min-height:50px;background:var(--paper);width:100%}
+.f input:focus,.f select:focus{border-color:var(--excel);outline:none}
+.f input.num{text-align:right;font-variant-numeric:tabular-nums}
+.f small{color:var(--sub);font-size:.8em}
+.toggle{display:flex;gap:0;border:2px solid var(--line);border-radius:8px;overflow:hidden;min-height:50px}
+.toggle button{flex:1;border:0;background:var(--paper);font-weight:500}
+.toggle button[aria-pressed="true"]{background:var(--excel);color:#fff}
+.toggle button.bad[aria-pressed="true"]{background:var(--warn);color:#fff}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.btn{border:2px solid var(--line);background:var(--paper);border-radius:10px;padding:10px 20px;min-height:52px;font-weight:700}
+.btn.main{background:var(--bar);border-color:var(--bar);color:#fff}
+.btn.xl{background:var(--excel);border-color:var(--excel);color:#fff}
+.btn.danger{border-color:var(--warn);color:var(--warn)}
+.btn.danger.solid{background:var(--warn);color:#fff}
+.btn.sm{min-height:44px;padding:6px 14px;font-weight:500}
+.msg{padding:10px 14px;border-radius:8px;font-weight:500}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+.msg.bad{background:var(--warn-bg);color:var(--warn)}
+.msg:empty{display:none}
+.note{background:var(--head);border-radius:8px;padding:10px 14px;color:var(--sub);font-size:.88em;margin-top:12px}
+
+/* 기간 선택 */
+.range{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.range button{border:2px solid var(--line);background:var(--paper);border-radius:8px;padding:6px 14px;min-height:46px}
+.range button[aria-pressed="true"]{border-color:var(--excel);background:var(--excel-bg);font-weight:700}
+.range input{border:2px solid var(--line);border-radius:8px;padding:6px 8px;min-height:46px;background:var(--paper)}
+.range .srch{min-width:180px}
+
+/* 엑셀형 표 */
+.sheetbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 8px}
+.sheetbar .cnt{color:var(--sub)}
+.sheetbar .sp{flex:1}
+.sheetwrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:4px;background:var(--paper)}
+table.sheet{border-collapse:separate;border-spacing:0;width:100%;font-variant-numeric:tabular-nums;font-size:.95em}
+.sheet th,.sheet td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 10px;white-space:nowrap}
+.sheet thead th{position:sticky;top:0;background:var(--head);font-weight:700;text-align:center;z-index:2;cursor:pointer;user-select:none}
+.sheet thead th.rn,.sheet td.rn{background:var(--head);color:var(--sub);text-align:center;width:3.2em;font-weight:500;cursor:default}
+.sheet tbody tr:nth-child(even) td:not(.rn){background:var(--zebra)}
+.sheet tbody tr{cursor:pointer}
+.sheet tbody tr:hover td:not(.rn){background:var(--sel)}
+.sheet tbody tr.on td{background:var(--sel)!important;box-shadow:inset 0 2px 0 var(--excel),inset 0 -2px 0 var(--excel)}
+.sheet td.n{text-align:right}
+.sheet td.c{text-align:center}
+.sheet td.neg{color:var(--warn)}
+.sheet td.flag{color:var(--warn);font-weight:700}
+.sheet tfoot td{position:sticky;bottom:0;background:var(--excel-bg);font-weight:700;border-top:2px solid var(--excel);z-index:1}
+.sheet .empty{padding:30px;text-align:center;color:var(--sub);cursor:default}
+.sorted::after{content:" ▲";font-size:.7em}
+.sorted.desc::after{content:" ▼"}
+
+/* 홈 */
+.today{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:18px}
+.stat{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.stat .l{color:var(--sub);font-weight:500}
+.stat .v{font-size:1.9em;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat .s{color:var(--sub);font-size:.85em}
+.stat.hero{border-left:8px solid var(--bar)}
+.stat.buy{border-left:8px solid var(--buy)}
+.todo{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.todo li{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;background:var(--head)}
+.todo li.bad{background:var(--warn-bg);color:var(--warn);font-weight:500}
+.todo li.ok{background:var(--ok-bg);color:var(--ok)}
+.todo li .sp{flex:1}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.tag{display:inline-block;padding:1px 8px;border-radius:6px;font-size:.85em;font-weight:500}
+.tag.free{background:var(--ok-bg);color:var(--ok)}
+.tag.tax{background:var(--buy-bg);color:var(--buy)}
+
+/* 급여명세서 인쇄 */
+#slip{display:none}
+@media print{
+  body{background:#fff;color:#000}
+  .top,nav,.noprint{display:none!important}
+  main{padding:0}
+  body.printslip main>*{display:none}
+  body.printslip #slip{display:block}
+  .sheetwrap{max-height:none;overflow:visible;border:0}
+  .sheet thead th,.sheet tfoot td{position:static}
+}
+.slip table{border-collapse:collapse;width:100%;margin:10px 0}
+.slip td,.slip th{border:1px solid #666;padding:6px 10px}
+.slip td.n{text-align:right}
+
+@media (max-width:900px){
+  .wrap{flex-direction:column}
+  nav{position:sticky;top:0;width:100%;flex-direction:row;overflow-x:auto;padding:8px;background:var(--page);z-index:10;border-bottom:1px solid var(--line)}
+  nav button{flex:none;min-height:48px;padding:8px 12px}
+  nav button[aria-current="page"]{box-shadow:inset 0 -4px 0 var(--bar)}
+  main{padding:12px 10px 60px}
+  .cols2{grid-template-columns:1fr}
+  .f.wide{grid-column:span 1}
+  .top{position:static}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1 id="shopName">정육마트 장부</h1>
+  <span class="date" id="todayLabel"></span>
+  <span class="sp"></span>
+  <span class="store" id="storeMode">이 기기에 저장</span>
+  <button id="fontBtn" aria-label="글자 크기 바꾸기">글자 크게</button>
+</header>
+<div class="wrap">
+  <nav id="nav" aria-label="메뉴"></nav>
+  <main id="main"></main>
+</div>
+<div id="slip" class="slip"></div>
+
+<script>
+/* ============ 기본 도구 ============ */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{const n=parseFloat(String(v??'').replace(/,/g,''));return isFinite(n)?n:0};
+const won=n=>Math.round(n||0).toLocaleString('ko-KR');
+const kgf=n=>(+n||0).toLocaleString('ko-KR',{minimumFractionDigits:1,maximumFractionDigits:3});
+const pct=n=>isFinite(n)?(n*100).toFixed(1)+'%':'-';
+const f10=n=>Math.floor((n||0)/10)*10; /* 10원 미만 절사 */
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>ymd(new Date());
+const addDays=(s,n)=>{const d=new Date(s+'T00:00:00');d.setDate(d.getDate()+n);return ymd(d)};
+const ym=s=>String(s||'').slice(0,7);
+const WEEK=['일','월','화','수','목','금','토'];
+
+/* ============ 저장소 (claude.ai 공용저장소 → 없으면 이 기기) ============ */
+const COLS=['items','partners','purchases','sales','haccp','staff','payroll','invoices','settings'];
+const S={};COLS.forEach(c=>S[c]=[]);
+let db=null, mode='local';
+const LSKEY='meatshop_v2';
+function loadLocal(){try{const o=JSON.parse(localStorage.getItem(LSKEY)||'{}');COLS.forEach(c=>{if(Array.isArray(o[c]))S[c]=o[c]})}catch(e){}}
+function saveLocal(){try{localStorage.setItem(LSKEY,JSON.stringify(S))}catch(e){}}
+function clean(o){return JSON.parse(JSON.stringify(o))}
+async function put(c,row){
+  row.id=row.id||uid(); row.updatedAt=Date.now();
+  const i=S[c].findIndex(r=>r.id===row.id); if(i>=0)S[c][i]=row; else S[c].push(row);
+  saveLocal(); refresh(); if(mode==='sync')queue(c,row.id,false);
+  if(mode==='cloud'){ try{await db.collection(c).doc(row.id).set(clean(row))}catch(e){ flash('저장소에 올리지 못했습니다. 인터넷 연결을 확인하고 다시 저장해 주세요.',true); throw e } }
+  return row;
+}
+async function del(c,id){
+  S[c]=S[c].filter(r=>r.id!==id); saveLocal(); refresh(); if(mode==='sync')queue(c,id,true);
+  if(mode==='cloud'){ try{await db.collection(c).doc(id).delete()}catch(e){flash('삭제가 저장소에 반영되지 않았습니다. 다시 시도해 주세요.',true)} }
+}
+async function cloudRun(tasks){ /* 동시 3개, 실패 시 대기 후 재시도 */
+  let i=0,fail=0;const worker=async()=>{while(i<tasks.length){const t=tasks[i++];for(let a=1;a<=4;a++){try{await t();break}catch(e){if(a===4){fail++;break}await new Promise(r=>setTimeout(r,900*a))}}}};
+  await Promise.all([worker(),worker(),worker()]);return fail}
+async function bulkPut(c,rows){rows.forEach(r=>{r.id=r.id||uid();r.updatedAt=Date.now();const i=S[c].findIndex(x=>x.id===r.id);if(i>=0)S[c][i]=r;else S[c].push(r)});
+  saveLocal();refresh();if(mode==='sync'){rows.forEach(r=>queue(c,r.id,false,true));schedulePush(300);return 0}if(mode==='cloud')return cloudRun(rows.map(r=>()=>db.collection(c).doc(r.id).set(clean(r))));return 0}
+async function bulkDel(c,ids){S[c]=S[c].filter(r=>!ids.includes(r.id));saveLocal();refresh();if(mode==='sync'){ids.forEach(id=>queue(c,id,true,true));schedulePush(300);return 0}if(mode==='cloud')return cloudRun(ids.map(id=>()=>db.collection(c).doc(id).delete()));return 0}
+/* ---- 휴대폰·매장PC 동기화 (n8n) ---- */
+const API='https://daonpartners.app.n8n.cloud/webhook/';
+let sync=null, outbox={}, until=0, pushing=false, pulling=false, pushT=null, lastOk=0, authBad=false, offline=false;
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function queue(c,id,deleted,quiet){outbox[c+'|'+id]={coll:c,rid:id,deleted:!!deleted,v:Date.now()+Math.random()};lsSet('meatshop_outbox',outbox);showSync();if(!quiet)schedulePush(1200)}
+function schedulePush(ms){clearTimeout(pushT);pushT=setTimeout(pushNow,ms||1200)}
+async function api(path,body){const r=await fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({shop:sync.shop,pin:sync.pin},body))});
+  const j=await r.json().catch(()=>({}));if(r.status===401||j.ok===false){authBad=true;const e=new Error('auth');e.auth=true;throw e}if(!r.ok)throw new Error('http '+r.status);authBad=false;return j}
+async function pushNow(){if(mode!=='sync'||pushing||authBad)return;const keys=Object.keys(outbox).slice(0,300);if(!keys.length)return;pushing=true;showSync();
+  try{const snap=keys.map(k=>Object.assign({k},outbox[k]));
+    const rows=snap.map(o=>{const r=S[o.coll].find(x=>x.id===o.rid);return r&&!o.deleted?{coll:o.coll,rid:o.rid,data:JSON.stringify(r),deleted:false}:{coll:o.coll,rid:o.rid,data:'',deleted:true}});
+    await api('meatshop-push',{rows});snap.forEach(o=>{if(outbox[o.k]&&outbox[o.k].v===o.v)delete outbox[o.k]});lsSet('meatshop_outbox',outbox);lastOk=Date.now();offline=false}
+  catch(e){if(!e.auth)offline=true}finally{pushing=false;showSync()}
+  if(!offline&&!authBad){if(Object.keys(outbox).length)schedulePush(200);else pullNow()}else if(!authBad)schedulePush(15000)}
+async function pullNow(){if(mode!=='sync'||pulling||authBad)return;pulling=true;
+  try{const j=await api('meatshop-pull',{since:until});let n=0;
+    (j.rows||[]).forEach(r=>{if(!S[r.coll]||outbox[r.coll+'|'+r.rid])return;n++;const i=S[r.coll].findIndex(x=>x.id===r.rid);
+      if(r.deleted){if(i>=0)S[r.coll].splice(i,1)}else{let o;try{o=JSON.parse(r.data)}catch(e){return}o.id=r.rid;if(i>=0)S[r.coll][i]=o;else S[r.coll].push(o)}});
+    if(j.until>until){until=j.until;lsSet('meatshop_until',until)}if(n){saveLocal();scheduleRefresh()}lastOk=Date.now();offline=false}
+  catch(e){if(!e.auth)offline=true}finally{pulling=false;showSync()}}
+function showSync(){const el=$('#storeMode');if(!el)return;const n=Object.keys(outbox).length;
+  if(mode!=='sync'){el.textContent=mode==='cloud'?'공용 저장소에 저장':'이 기기에만 저장 (연결 안 됨)';return}
+  el.textContent=authBad?'⚠ 매장코드·비밀번호 확인 필요':offline?`⚠ 인터넷 끊김 · ${n}건 이 기기에 보관 중`:(pushing||n)?`저장 중… ${n}건`:'✓ 휴대폰·PC 연결됨'}
+async function connectSync(shop,pin){const prev={sync,mode};sync={shop:shop.trim(),pin:pin.trim()};authBad=false;
+  try{const j=await api('meatshop-pull',{since:0});
+    const had=COLS.some(c=>S[c].length);const server=(j.rows||[]).filter(r=>!r.deleted);
+    lsSet('meatshop_sync',sync);mode='sync';outbox={};until=0;
+    if(!server.length&&had){COLS.forEach(c=>S[c].forEach(r=>queue(c,r.id,false,true)))}else{COLS.forEach(c=>S[c]=[]);saveLocal()}
+    await pullNow();schedulePush(100);startTimers();refresh();return j.shopName||'매장'}
+  catch(e){sync=prev.sync;mode=prev.mode;throw e}}
+let timers=false;
+function startTimers(){if(timers)return;timers=true;setInterval(()=>{if(!document.hidden){pullNow();if(Object.keys(outbox).length)pushNow()}},20000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)pullNow()});window.addEventListener('online',()=>{offline=false;pushNow();pullNow()})}
+async function initStore(){
+  loadLocal(); sync=lsGet('meatshop_sync',null); outbox=lsGet('meatshop_outbox',{}); until=lsGet('meatshop_until',0);
+  const q=new URLSearchParams(location.search);
+  if(q.get('shop')&&q.get('pin')){try{history.replaceState(null,'',location.pathname)}catch(e){}
+    boot();try{const nm=await connectSync(q.get('shop'),q.get('pin'));alertBanner(nm+' 장부와 연결되었습니다. 이 기기는 다음부터 자동으로 연결됩니다.')}catch(e){alertBanner('연결하지 못했습니다. 매장코드·비밀번호 또는 인터넷을 확인해 주세요.',true)}return}
+  if(sync){mode='sync';boot();showSync();pullNow();pushNow();startTimers();return}
+  boot();
+  try{ if(window.claude&&typeof window.claude.use==='function'){ db=await window.claude.use('db'); } }catch(e){ db=null }
+  if(!db){showSync();return}
+  mode='cloud'; showSync();
+  COLS.forEach(c=>{
+    db.collection(c).onSnapshot(snap=>{
+      S[c]=snap.docs.map(d=>Object.assign({},d.data(),{id:d.id}));
+      saveLocal(); scheduleRefresh();
+    },()=>{ $('#storeMode').textContent='저장소 연결 끊김 — 이 기기에만 저장 중'; mode='local' });
+  });
+}
+function alertBanner(t,bad){const d=document.createElement('div');d.className='msg '+(bad?'bad':'ok');d.style.cssText='margin:10px 18px';d.textContent=t;
+  document.body.insertBefore(d,document.querySelector('.wrap'));setTimeout(()=>d.remove(),10000)}
+let rt=null; function scheduleRefresh(){clearTimeout(rt);rt=setTimeout(refresh,60)}
+
+/* ============ 설정 ============ */
+const DEF_SET={id:'main',shop:'정육마트',bizNo:'',owner:'',
+  fridgeMin:-2,fridgeMax:10,freezerMax:-18,
+  np:4.75,hi:3.595,ltcRatio:0.9448/7.19*100,ei:0.9,npCap:6590000,mealFree:200000};
+function SET(){return Object.assign({},DEF_SET,S.settings.find(s=>s.id==='main')||{})}
+
+/* ============ 계산 로직 ============ */
+function item(id){return S.items.find(i=>i.id===id)||{}}
+function partner(id){return S.partners.find(p=>p.id===id)||{}}
+function unitCostKg(sale){
+  /* 1순위: 같은 이력번호의 매입단가 / 2순위: 같은 품목의 가장 최근 매입단가. 수율로 나눠 정육 1kg 원가로 환산 */
+  const it=item(sale.itemId); const y=(num(it.yieldPct)||100)/100;
+  let p=null;
+  if(sale.trace){ p=S.purchases.filter(x=>x.trace===sale.trace).sort((a,b)=>b.date.localeCompare(a.date))[0] }
+  if(!p){ p=S.purchases.filter(x=>x.itemId===sale.itemId&&x.date<=sale.date).sort((a,b)=>b.date.localeCompare(a.date))[0] }
+  if(!p||!num(p.weight)) return null;
+  return (num(p.amount)/num(p.weight))/y;
+}
+function saleRow(s){
+  const it=item(s.itemId); const uc=unitCostKg(s);
+  const cost=uc==null?null:uc*num(s.weight);
+  const margin=cost==null?null:num(s.amount)-cost;
+  return Object.assign({},s,{itemName:it.name||'(삭제된 품목)',taxType:it.taxType||'면세',
+    partnerName:s.kind==='납품'?(partner(s.partnerId).name||''):'일반 손님',
+    cost,margin,rate:cost==null||!num(s.amount)?NaN:margin/num(s.amount)});
+}
+function purRow(p){const it=item(p.itemId);return Object.assign({},p,{itemName:it.name||'(삭제된 품목)',partnerName:partner(p.partnerId).name||'',taxType:it.taxType||'면세',unit:num(p.weight)?num(p.amount)/num(p.weight):0})}
+function inRange(d,r){return (!r.from||d>=r.from)&&(!r.to||d<=r.to)}
+function traceBook(){
+  const m={};
+  S.purchases.forEach(p=>{ if(!p.trace)return; const t=m[p.trace]||(m[p.trace]={trace:p.trace,itemId:p.itemId,grade:p.grade||'',partnerId:p.partnerId,firstBuy:p.date,lastBuy:p.date,buyKg:0,saleKg:0,lastSale:''});
+    t.buyKg+=num(p.weight); if(p.date<t.firstBuy)t.firstBuy=p.date; if(p.date>t.lastBuy)t.lastBuy=p.date; });
+  S.sales.forEach(s=>{ if(!s.trace)return; const t=m[s.trace]||(m[s.trace]={trace:s.trace,itemId:s.itemId,grade:'',partnerId:'',firstBuy:'',lastBuy:'',buyKg:0,saleKg:0,lastSale:'',noBuy:true});
+    t.saleKg+=num(s.weight); if(s.date>t.lastSale)t.lastSale=s.date; });
+  return Object.values(m).map(t=>{const it=item(t.itemId);const y=(num(it.yieldPct)||100)/100;
+    const left=t.buyKg-t.saleKg/y;
+    return Object.assign(t,{itemName:it.name||'',partnerName:partner(t.partnerId).name||'',left,
+      keepBuy:t.lastBuy?addDays(t.lastBuy,365):'',keepSale:t.lastSale?addDays(t.lastSale,730):'',
+      status:t.noBuy?'매입기록 없음':(left<=0.05?'판매 완료':'판매 중')})});
+}
+function traceCheck(v){v=String(v||'').trim(); if(!v)return ''; if(/^\d{12}$/.test(v))return ''; if(/^L\d{10,}$/i.test(v))return '';
+  return '이력번호는 보통 숫자 12자리, 묶음번호는 L로 시작합니다. 포장지 번호를 다시 확인해 주세요.'}
+function haccpFlags(h){const st=SET();const f=[];
+  [['fridge1','냉장고1'],['fridge2','냉장고2']].forEach(([k,l])=>{if(h[k]!==''&&h[k]!=null){const v=num(h[k]);if(v<st.fridgeMin||v>st.fridgeMax)f.push(l+' '+v+'℃')}});
+  if(h.freezer!==''&&h.freezer!=null&&num(h.freezer)>st.freezerMax)f.push('냉동고 '+num(h.freezer)+'℃');
+  ['clean','tools','worker','trace','pest'].forEach(k=>{if(h[k]==='아니오')f.push(HACCP_Q.find(q=>q[0]===k)[1])});
+  return f}
+function payCalc(p,emp){
+  const st=SET(); emp=emp||{};
+  const taxable=num(p.base)+num(p.ot)+num(p.bonus);
+  const meal=Math.min(num(p.meal),st.mealFree);
+  const mealTaxed=num(p.meal)-meal;
+  const gross=taxable+num(p.meal);
+  const tb=taxable+mealTaxed;
+  const np=emp.np===false?0:f10(Math.min(tb,st.npCap)*st.np/100);
+  const hi=emp.hi===false?0:f10(tb*st.hi/100);
+  const ltc=emp.hi===false?0:f10(hi*st.ltcRatio/100);
+  const ei=emp.ei===false?0:f10(tb*st.ei/100);
+  const it=f10(num(p.incomeTax)); const lt=f10(it*0.1);
+  const ded=np+hi+ltc+ei+it+lt;
+  return {gross,taxable:tb,np,hi,ltc,ei,it,lt,ded,net:gross-ded};
+}
+
+/* ============ 공통 화면 부품 ============ */
+const sortState={}, lastSheet={}, rangeState={};
+function range(key,def){ if(!rangeState[key]){ const t=today(); rangeState[key]=def==='month'?{from:t.slice(0,8)+'01',to:t,p:'이번달',q:''}:{from:t,to:t,p:'오늘',q:''} } return rangeState[key] }
+function setPreset(key,p){const t=today();const d=new Date();let from=t,to=t;
+  if(p==='어제'){from=to=addDays(t,-1)}
+  else if(p==='이번주'){from=addDays(t,-((d.getDay()+6)%7))}
+  else if(p==='이번달'){from=t.slice(0,8)+'01'}
+  else if(p==='지난달'){const x=new Date(d.getFullYear(),d.getMonth()-1,1);from=ymd(x);to=ymd(new Date(d.getFullYear(),d.getMonth(),0))}
+  else if(p==='올해'){from=t.slice(0,4)+'-01-01'}
+  else if(p==='전체'){from='';to=''}
+  Object.assign(rangeState[key],{from,to,p})}
+function rangeBar(key,withSearch){const r=rangeState[key];
+  return `<div class="range noprint" data-range="${key}">${['오늘','어제','이번주','이번달','지난달','올해','전체'].map(p=>`<button data-preset="${p}" aria-pressed="${r.p===p}">${p}</button>`).join('')}
+  <input type="date" data-rfrom value="${r.from}" aria-label="시작일"> ~ <input type="date" data-rto value="${r.to}" aria-label="종료일">
+  ${withSearch?`<input class="srch" data-rq placeholder="찾기 (품목·거래처·이력번호)" value="${esc(r.q)}">`:''}</div>`}
+function fmtCell(c,r){const v=c.get?c.get(r):r[c.k];
+  if(c.t==='money')return v==null||v===''?'-':won(v);
+  if(c.t==='kg')return v==null||v===''?'-':kgf(v);
+  if(c.t==='pct')return pct(v);
+  if(c.t==='date')return v?esc(v)+' ('+WEEK[new Date(v+'T00:00:00').getDay()]+')':'';
+  return esc(v)}
+function sheet(id,title,cols,rows,opt={}){
+  const ss=sortState[id];
+  if(ss){const c=cols.find(x=>x.k===ss.k);if(c){rows=rows.slice().sort((a,b)=>{let x=c.get?c.get(a):a[c.k],y=c.get?c.get(b):b[c.k];
+    if(typeof x==='number'||typeof y==='number'){x=x??-Infinity;y=y??-Infinity;return ss.d*(x-y)}return ss.d*String(x??'').localeCompare(String(y??''),'ko')})}}
+  lastSheet[id]={title,cols,rows};
+  const sums=cols.map(c=>c.sum?rows.reduce((a,r)=>a+(num(c.get?c.get(r):r[c.k])),0):null);
+  if(opt.foot)opt.foot(sums,cols,rows);
+  const head=`<tr><th class="rn"></th>${cols.map(c=>`<th data-sort="${id}|${c.k}" class="${ss&&ss.k===c.k?'sorted'+(ss.d<0?' desc':''):''}" scope="col">${c.l}</th>`).join('')}</tr>`;
+  const body=rows.length?rows.map((r,i)=>`<tr data-row="${id}|${esc(r.id||'')}" class="${opt.sel===r.id?'on':''}"><td class="rn">${i+1}</td>${cols.map(c=>{
+      const v=c.get?c.get(r):r[c.k]; const cls=[c.t&&c.t!=='text'&&c.t!=='date'?'n':'',c.c?'c':'',(c.t==='money'||c.t==='pct')&&num(v)<0?'neg':'',c.flag&&c.flag(r)?'flag':''].join(' ');
+      return `<td class="${cls}">${c.html?c.html(r):fmtCell(c,r)}</td>`}).join('')}</tr>`).join('')
+    :`<tr><td class="empty" colspan="${cols.length+1}">${opt.empty||'아직 입력된 내용이 없습니다.'}</td></tr>`;
+  const foot=rows.length&&sums.some(x=>x!=null)?`<tfoot><tr><td class="rn">합계</td>${cols.map((c,i)=>`<td class="${c.sum||c.footV?'n':''}">${c.footV?c.footV(sums,cols):(sums[i]==null?'':(c.t==='kg'?kgf(sums[i]):won(sums[i])))}</td>`).join('')}</tr></tfoot>`:'';
+  return `<div class="sheetbar"><strong>${title}</strong><span class="cnt">${rows.length}줄</span><span class="sp"></span>
+    <button class="btn sm xl noprint" data-export="${id}">엑셀로 내려받기</button>
+    <button class="btn sm noprint" data-print>인쇄</button></div>
+    <div class="sheetwrap"><table class="sheet"><thead>${head}</thead><tbody>${body}</tbody>${foot}</table></div>`;
+}
+function field(l,inner,o={}){return `<label class="f ${o.wide?'wide':''}"><span>${l}</span>${inner}${o.hint?`<small ${o.hintId?`id="${o.hintId}"`:''}>${o.hint}</small>`:''}</label>`}
+function opts(list,val,blank){return (blank?`<option value="">${blank}</option>`:'')+list.map(o=>{const v=typeof o==='string'?o:o.v,t=typeof o==='string'?o:o.t;return `<option value="${esc(v)}" ${String(v)===String(val??'')?'selected':''}>${esc(t)}</option>`}).join('')}
+function tog(name,list,val){return `<div class="toggle" data-tog="${name}">${list.map((o,i)=>`<button type="button" data-v="${esc(o)}" class="${i===list.length-1&&list.length===2&&o==='아니오'?'bad':''}" aria-pressed="${o===val}">${o}</button>`).join('')}</div>`}
+function togVal(name){const b=document.querySelector(`[data-tog="${name}"] [aria-pressed="true"]`);return b?b.dataset.v:''}
+function val(id){const e=document.getElementById(id);return e?e.value.trim():''}
+function flash(t,bad,el){const m=el||document.getElementById('msg');if(!m)return;m.className='msg '+(bad?'bad':'ok');m.textContent=t;clearTimeout(m._t);m._t=setTimeout(()=>{m.textContent=''},6000)}
+function confirmBox(el,text,onYes){el.innerHTML=`<span class="msg bad">${text}</span> <button class="btn danger solid" id="cy">네, 삭제</button> <button class="btn" id="cn">취소</button>`;
+  $('#cy').onclick=onYes; $('#cn').onclick=()=>{el.innerHTML=''}}
+
+/* ============ 화면 목록 ============ */
+let page='home', editing={};
+const PAGES=[
+ ['home','🏠','오늘 현황'],['sales','🧾','매출 입력·조회'],['purchases','📦','매입 입력·조회'],
+ ['margin','📊','마진 분석'],['trace','🐄','이력번호 대장'],['haccp','🌡️','위생·온도 점검'],
+ ['payroll','👥','직원·급여'],['invoice','📑','계산서 정리'],['master','📋','품목·거래처'],['settings','⚙️','설정·백업']];
+function nav(){ $('#nav').innerHTML=PAGES.map(([k,ic,t])=>`<button data-go="${k}" ${page===k?'aria-current="page"':''}><span class="ic" aria-hidden="true">${ic}</span>${t}</button>`).join('') }
+function go(p){page=p;editing={};nav();render();window.scrollTo(0,0)}
+function render(){ const f=R[page]; $('#main').innerHTML=f.shell(); if(f.bind)f.bind(); refresh() }
+function refresh(){ const st=SET(); $('#shopName').textContent=st.shop||'정육마트 장부';
+  const f=R[page]; if(f&&f.live){ document.querySelectorAll('[data-live]').forEach(el=>{ const fn=f.live[el.dataset.live]; if(fn) el.innerHTML=fn() }) } }
+
+/* ============ 각 화면 ============ */
+const R={};
+
+/* --- 오늘 현황 --- */
+R.home={shell:()=>`<h2>오늘 현황</h2><p class="lead">오늘 해야 할 일과 이번 달 장사 흐름을 한눈에 봅니다.</p>
+  <div data-live="stats"></div><div class="cols2"><div class="panel"><h3>오늘 할 일</h3><div data-live="todo"></div></div>
+  <div class="panel"><h3>최근 7일</h3><div data-live="week"></div></div></div>`,
+ live:{
+  stats:()=>{const t=today(),m=t.slice(0,7);
+    const ts=S.sales.filter(s=>s.date===t).map(saleRow), tp=S.purchases.filter(p=>p.date===t);
+    const ms=S.sales.filter(s=>ym(s.date)===m).map(saleRow), mp=S.purchases.filter(p=>ym(p.date)===m);
+    const sum=(a,k)=>a.reduce((x,r)=>x+num(r[k]),0);
+    const mm=ms.filter(r=>r.margin!=null), mAmt=sum(mm,'amount'), mMar=sum(mm,'margin');
+    const credit=ms.filter(s=>s.pay==='외상');
+    return `<div class="today">
+     <div class="stat hero"><div class="l">오늘 매출</div><div class="v">${won(sum(ts,'amount'))}원</div><div class="s">${ts.length}건 · 판매 ${kgf(sum(ts,'weight'))}kg</div></div>
+     <div class="stat buy"><div class="l">오늘 매입</div><div class="v">${won(sum(tp,'amount'))}원</div><div class="s">${tp.length}건 · ${kgf(sum(tp,'weight'))}kg</div></div>
+     <div class="stat"><div class="l">이번 달 매출</div><div class="v">${won(sum(ms,'amount'))}원</div><div class="s">매입 ${won(sum(mp,'amount'))}원</div></div>
+     <div class="stat"><div class="l">이번 달 마진</div><div class="v">${won(mMar)}원</div><div class="s">마진율 ${pct(mAmt?mMar/mAmt:NaN)}${ms.length>mm.length?` · 원가 모르는 ${ms.length-mm.length}건 제외`:''}</div></div>
+     <div class="stat"><div class="l">이번 달 외상 매출</div><div class="v">${won(sum(credit,'amount'))}원</div><div class="s">${credit.length}건</div></div></div>`},
+  todo:()=>{const t=today(),m=t.slice(0,7),li=[];
+    const h=S.haccp.find(x=>x.date===t);
+    if(!h)li.push(['bad','오늘 위생·온도 점검을 아직 적지 않았습니다.','haccp','지금 적기']);
+    else{const fl=haccpFlags(h);li.push(fl.length?['bad','오늘 점검에서 기준을 벗어난 항목: '+fl.join(', '),'haccp','확인']:['ok','오늘 위생·온도 점검 완료','haccp','보기'])}
+    const noTrace=S.sales.filter(s=>s.date===t&&!s.trace&&/한우|육우|소|돼지/.test(item(s.itemId).kind||'')).length;
+    if(noTrace)li.push(['bad',`오늘 매출 중 이력번호가 비어 있는 소·돼지고기 ${noTrace}건`,'sales','채우기']);
+    const d=new Date();const prev=ymd(new Date(d.getFullYear(),d.getMonth()-1,1)).slice(0,7);
+    const pend=invoiceRows(prev).filter(r=>!r.issued).length;
+    if(pend&&d.getDate()<=10)li.push(['bad',`지난달(${prev}) 계산서 ${pend}건 미발행 · 발급기한 이번 달 10일`,'invoice','정리하기']);
+    const staffNo=S.staff.filter(e=>!e.left&&!S.payroll.find(p=>p.staffId===e.id&&p.month===m)).length;
+    if(staffNo)li.push(['',`이번 달 급여를 아직 계산하지 않은 직원 ${staffNo}명`,'payroll','계산하기']);
+    if(!S.items.length)li.push(['','품목을 먼저 등록하면 매입·매출 입력이 쉬워집니다.','master','품목 등록']);
+    return `<ul class="todo">${li.map(([c,t,p,b])=>`<li class="${c}"><span>${t}</span><span class="sp"></span><button class="btn sm" data-go="${p}">${b}</button></li>`).join('')}</ul>`},
+  week:()=>{const t=today();const rows=[];for(let i=6;i>=0;i--){const d=addDays(t,-i);const ss=S.sales.filter(s=>s.date===d).map(saleRow);
+     const amt=ss.reduce((a,r)=>a+num(r.amount),0),mar=ss.reduce((a,r)=>a+(r.margin||0),0),pur=S.purchases.filter(p=>p.date===d).reduce((a,r)=>a+num(r.amount),0);
+     rows.push({id:d,date:d,amt,pur,mar,rate:amt?mar/amt:NaN})}
+   return sheet('week','일별 합계',[{k:'date',l:'날짜',t:'date'},{k:'amt',l:'매출',t:'money',sum:1},{k:'pur',l:'매입',t:'money',sum:1},{k:'mar',l:'마진',t:'money',sum:1},{k:'rate',l:'마진율',t:'pct'}],rows)}
+ }};
+
+/* --- 매출 --- */
+function itemOpts(v){return opts(S.items.map(i=>({v:i.id,t:i.name+(i.taxType==='과세'?' (과세)':'')})),v,'품목 선택')}
+function partnerOpts(kind,v){return opts(S.partners.filter(p=>p.kind===kind||p.kind==='매입·매출').map(p=>({v:p.id,t:p.name})),v,'거래처 선택')}
+function traceList(itemId){return traceBook().filter(t=>t.itemId===itemId&&t.status==='판매 중').sort((a,b)=>a.firstBuy.localeCompare(b.firstBuy))}
+R.sales={shell:()=>{const e=editing.sales?S.sales.find(s=>s.id===editing.sales):null;const r=range('sales');const x=e||{date:today(),kind:'소매',pay:'카드'};
+ return `<h2>매출 입력·조회</h2><p class="lead">판 것을 한 줄씩 적습니다. 품목을 고르면 단가가 자동으로 들어가고, 무게를 넣으면 금액이 계산됩니다.</p>
+ <div class="panel noprint"><h3>${e?'매출 고치기':'새 매출 적기'}</h3><div class="form">
+  ${field('날짜',`<input type="date" id="s_date" value="${x.date}">`)}
+  ${field('판매 구분',tog('s_kind',['소매','납품'],x.kind))}
+  ${field('납품 거래처',`<select id="s_partner">${partnerOpts('매출처',x.partnerId)}</select>`,{hint:'납품일 때만 고르세요'})}
+  ${field('품목',`<select id="s_item">${itemOpts(x.itemId)}</select>`)}
+  ${field('이력번호',`<input id="s_trace" list="s_tl" inputmode="text" value="${esc(x.trace||'')}" placeholder="포장지의 12자리">`+`<datalist id="s_tl"></datalist>`,{hint:'매입한 번호 중에서 고를 수 있습니다',hintId:'s_th'})}
+  ${field('무게 (kg)',`<input id="s_w" class="num" inputmode="decimal" value="${x.weight??''}" placeholder="예: 0.6">`,{hint:'한 근 = 0.6kg'})}
+  ${field('1kg 단가 (원)',`<input id="s_p" class="num" inputmode="numeric" value="${x.price?won(x.price):''}">`,{hint:'100g 가격 × 10'})}
+  ${field('금액 (원)',`<input id="s_a" class="num" inputmode="numeric" value="${x.amount?won(x.amount):''}">`,{hint:'자동 계산 · 직접 고쳐도 됩니다'})}
+  ${field('결제',tog('s_pay',['카드','현금','계좌','외상'],x.pay))}
+  ${field('메모',`<input id="s_memo" value="${esc(x.memo||'')}">`)}
+ </div><div class="actions"><button class="btn main" id="s_save">${e?'고친 내용 저장':'매출 저장'}</button>
+  ${e?'<button class="btn" id="s_new">새로 적기</button><button class="btn danger" id="s_del">이 줄 삭제</button>':''}<span id="msg" class="msg"></span><span id="cbox"></span></div></div>
+ ${rangeBar('sales',true)}<div data-live="list"></div>`},
+ bind:()=>{let manual=!!editing.sales;
+  const calc=()=>{if(manual)return;const w=num(val('s_w')),p=num(val('s_p'));$('#s_a').value=w&&p?won(w*p):''};
+  const fillTrace=()=>{const id=val('s_item');const it=item(id);if(!editing.sales&&it.price)$('#s_p').value=won(it.price);
+    $('#s_tl').innerHTML=traceList(id).map(t=>`<option value="${t.trace}">${t.firstBuy} 매입 · 남은 약 ${kgf(t.left)}kg</option>`).join('');calc()};
+  $('#s_item').onchange=fillTrace; if(val('s_item'))$('#s_tl').innerHTML=traceList(val('s_item')).map(t=>`<option value="${t.trace}">${t.firstBuy} 매입 · 남은 약 ${kgf(t.left)}kg</option>`).join('');
+  $('#s_w').oninput=calc;$('#s_p').oninput=calc;$('#s_a').oninput=()=>{manual=true};
+  $('#s_trace').oninput=()=>{const w=traceCheck(val('s_trace'));$('#s_th').textContent=w||'매입한 번호 중에서 고를 수 있습니다';$('#s_th').style.color=w?'var(--warn)':''};
+  $('#s_save').onclick=async()=>{const kind=togVal('s_kind');const row=Object.assign({},editing.sales?S.sales.find(s=>s.id===editing.sales):{},
+    {date:val('s_date'),kind,partnerId:kind==='납품'?val('s_partner'):'',itemId:val('s_item'),trace:val('s_trace').toUpperCase(),weight:num(val('s_w')),price:num(val('s_p')),amount:num(val('s_a')),pay:togVal('s_pay'),memo:val('s_memo')});
+    if(!row.date||!row.itemId)return flash('날짜와 품목을 꼭 골라 주세요.',true);
+    if(!row.amount)return flash('금액이 비어 있습니다. 무게와 단가를 넣어 주세요.',true);
+    if(kind==='납품'&&!row.partnerId)return flash('납품이면 거래처를 골라 주세요. 계산서 정리에 필요합니다.',true);
+    const wasEdit=!!editing.sales; await put('sales',row); editing.sales=null; render();
+    flash(wasEdit?'고친 내용을 저장했습니다.':`저장했습니다: ${item(row.itemId).name} ${kgf(row.weight)}kg ${won(row.amount)}원`)};
+  if(editing.sales){$('#s_new').onclick=()=>{editing.sales=null;render()};
+    $('#s_del').onclick=()=>confirmBox($('#cbox'),'이 매출 줄을 지울까요?',async()=>{await del('sales',editing.sales);editing.sales=null;render();flash('삭제했습니다.')})}},
+ live:{list:()=>{const r=rangeState.sales;const q=(r.q||'').trim();
+  const rows=S.sales.filter(s=>inRange(s.date,r)).map(saleRow).filter(s=>!q||[s.itemName,s.partnerName,s.trace,s.memo].join(' ').includes(q)).sort((a,b)=>b.date.localeCompare(a.date)||(b.updatedAt||0)-(a.updatedAt||0));
+  return sheet('sales','매출 목록',[{k:'date',l:'날짜',t:'date'},{k:'kind',l:'구분',c:1},{k:'partnerName',l:'거래처'},{k:'itemName',l:'품목'},{k:'trace',l:'이력번호',flag:r=>!r.trace},
+   {k:'weight',l:'무게(kg)',t:'kg',sum:1},{k:'price',l:'kg단가',t:'money'},{k:'amount',l:'금액',t:'money',sum:1},{k:'cost',l:'원가',t:'money',sum:1},{k:'margin',l:'마진',t:'money',sum:1},
+   {k:'rate',l:'마진율',t:'pct',footV:(s,c)=>{const a=s[c.findIndex(x=>x.k==='amount')],m=s[c.findIndex(x=>x.k==='margin')];return pct(a?m/a:NaN)}},{k:'pay',l:'결제',c:1}],rows,{sel:editing.sales,empty:'이 기간에 매출이 없습니다. 위에서 적거나 기간을 바꿔 보세요.'})}}};
+
+/* --- 매입 --- */
+R.purchases={shell:()=>{const e=editing.purchases?S.purchases.find(s=>s.id===editing.purchases):null;range('purchases','month');const x=e||{date:today(),pay:'외상',proof:'계산서'};
+ return `<h2>매입 입력·조회</h2><p class="lead">들여온 고기를 적습니다. 포장지의 이력번호를 꼭 함께 적어야 이력번호 대장과 원가 계산이 맞습니다.</p>
+ <div class="panel noprint"><h3>${e?'매입 고치기':'새 매입 적기'}</h3><div class="form">
+  ${field('날짜',`<input type="date" id="p_date" value="${x.date}">`)}
+  ${field('매입처',`<select id="p_partner">${partnerOpts('매입처',x.partnerId)}</select>`)}
+  ${field('품목',`<select id="p_item">${itemOpts(x.itemId)}</select>`)}
+  ${field('이력번호 / 묶음번호',`<input id="p_trace" value="${esc(x.trace||'')}" placeholder="12자리 숫자">`,{hint:'포장지·거래명세서에 적힌 번호',hintId:'p_th'})}
+  ${field('등급',`<select id="p_grade">${opts(['','1++','1+','1','2','3','등외','해당없음'],x.grade)}</select>`)}
+  ${field('무게 (kg)',`<input id="p_w" class="num" inputmode="decimal" value="${x.weight??''}">`)}
+  ${field('1kg 단가 (원)',`<input id="p_p" class="num" inputmode="numeric" value="${x.weight&&x.amount?won(x.amount/x.weight):''}">`)}
+  ${field('금액 (원)',`<input id="p_a" class="num" inputmode="numeric" value="${x.amount?won(x.amount):''}">`,{hint:'거래명세서 합계 금액'})}
+  ${field('받은 증빙',tog('p_proof',['계산서','세금계산서','영수증'],x.proof))}
+  ${field('결제',tog('p_pay',['외상','계좌','현금','카드'],x.pay))}
+  ${field('메모',`<input id="p_memo" value="${esc(x.memo||'')}">`,{wide:1})}
+ </div><div class="actions"><button class="btn main" id="p_save">${e?'고친 내용 저장':'매입 저장'}</button>
+ ${e?'<button class="btn" id="p_new">새로 적기</button><button class="btn danger" id="p_del">이 줄 삭제</button>':''}<span id="msg" class="msg"></span><span id="cbox"></span></div></div>
+ ${rangeBar('purchases',true)}<div data-live="list"></div>`},
+ bind:()=>{let manual=!!editing.purchases;
+  const calc=()=>{if(manual)return;const w=num(val('p_w')),p=num(val('p_p'));$('#p_a').value=w&&p?won(w*p):''};
+  $('#p_w').oninput=calc;$('#p_p').oninput=calc;$('#p_a').oninput=()=>{manual=true};
+  $('#p_trace').oninput=()=>{const w=traceCheck(val('p_trace'));$('#p_th').textContent=w||'포장지·거래명세서에 적힌 번호';$('#p_th').style.color=w?'var(--warn)':''};
+  $('#p_save').onclick=async()=>{const row=Object.assign({},editing.purchases?S.purchases.find(s=>s.id===editing.purchases):{},
+    {date:val('p_date'),partnerId:val('p_partner'),itemId:val('p_item'),trace:val('p_trace').toUpperCase(),grade:val('p_grade'),weight:num(val('p_w')),amount:num(val('p_a')),proof:togVal('p_proof'),pay:togVal('p_pay'),memo:val('p_memo')});
+    if(!row.date||!row.itemId||!row.partnerId)return flash('날짜·매입처·품목을 꼭 골라 주세요.',true);
+    if(!row.weight||!row.amount)return flash('무게와 금액을 넣어 주세요.',true);
+    const it=item(row.itemId); if(!row.trace&&/한우|육우|소|돼지/.test(it.kind||''))flash('이력번호 없이 저장합니다. 소·돼지고기는 이력번호 기록이 필요합니다.',true);
+    const wasEdit=!!editing.purchases; await put('purchases',row); editing.purchases=null; render();
+    if(row.trace||!/한우|육우|소|돼지/.test(it.kind||''))flash(wasEdit?'고친 내용을 저장했습니다.':`저장했습니다: ${it.name} ${kgf(row.weight)}kg ${won(row.amount)}원`)};
+  if(editing.purchases){$('#p_new').onclick=()=>{editing.purchases=null;render()};
+    $('#p_del').onclick=()=>confirmBox($('#cbox'),'이 매입 줄을 지울까요?',async()=>{await del('purchases',editing.purchases);editing.purchases=null;render();flash('삭제했습니다.')})}},
+ live:{list:()=>{const r=rangeState.purchases;const q=(r.q||'').trim();
+  const rows=S.purchases.filter(s=>inRange(s.date,r)).map(purRow).filter(s=>!q||[s.itemName,s.partnerName,s.trace,s.memo].join(' ').includes(q)).sort((a,b)=>b.date.localeCompare(a.date));
+  return sheet('purchases','매입 목록',[{k:'date',l:'날짜',t:'date'},{k:'partnerName',l:'매입처'},{k:'itemName',l:'품목'},{k:'trace',l:'이력번호',flag:r=>!r.trace},{k:'grade',l:'등급',c:1},
+   {k:'weight',l:'무게(kg)',t:'kg',sum:1},{k:'unit',l:'kg단가',t:'money'},{k:'amount',l:'금액',t:'money',sum:1},{k:'proof',l:'증빙',c:1},{k:'pay',l:'결제',c:1}],rows,{sel:editing.purchases,empty:'이 기간에 매입이 없습니다.'})}}};
+
+/* --- 마진 분석 --- */
+R.margin={shell:()=>{range('margin','month');return `<h2>마진 분석</h2><p class="lead">품목별로 얼마나 팔고 얼마나 남았는지 봅니다. 원가는 매입단가를 품목의 수율(손질 후 남는 비율)로 나눠 계산합니다.</p>
+ ${rangeBar('margin')}<div data-live="byItem"></div><div style="height:18px"></div><div data-live="byDay"></div>
+ <div class="note">원가를 모르는 매출(같은 이력번호·같은 품목의 매입 기록이 없는 경우)은 원가·마진 칸이 "-"로 표시되고 합계에서 빠집니다. 수율은 [품목·거래처] 화면에서 품목마다 고칠 수 있습니다.</div>`},
+ live:{byItem:()=>{const r=rangeState.margin;const g={};
+   S.sales.filter(s=>inRange(s.date,r)).map(saleRow).forEach(s=>{const x=g[s.itemId]||(g[s.itemId]={id:s.itemId,name:s.itemName,kind:item(s.itemId).kind||'',kg:0,amt:0,cost:0,mar:0,unknown:0,cnt:0});
+     x.cnt++;x.kg+=num(s.weight);x.amt+=num(s.amount);if(s.cost==null)x.unknown++;else{x.cost+=s.cost;x.mar+=s.margin}});
+   const rows=Object.values(g).map(x=>Object.assign(x,{rate:x.amt-0?x.mar/(x.amt):NaN,avg:x.kg?x.amt/x.kg:0}));
+   return sheet('mItem','품목별',[{k:'kind',l:'축종'},{k:'name',l:'품목'},{k:'cnt',l:'건수',t:'money',sum:1},{k:'kg',l:'판매(kg)',t:'kg',sum:1},{k:'avg',l:'평균 kg단가',t:'money'},
+    {k:'amt',l:'매출',t:'money',sum:1},{k:'cost',l:'원가',t:'money',sum:1},{k:'mar',l:'마진',t:'money',sum:1},
+    {k:'rate',l:'마진율',t:'pct',footV:(s,c)=>{const a=s[c.findIndex(x=>x.k==='amt')],m=s[c.findIndex(x=>x.k==='mar')];return pct(a?m/a:NaN)}},{k:'unknown',l:'원가 모름',t:'money',flag:r=>r.unknown>0}],
+    rows.sort((a,b)=>b.mar-a.mar),{empty:'이 기간에 매출이 없습니다.'})},
+  byDay:()=>{const r=rangeState.margin;const g={};
+   S.sales.filter(s=>inRange(s.date,r)).map(saleRow).forEach(s=>{const x=g[s.date]||(g[s.date]={id:s.date,date:s.date,amt:0,cost:0,mar:0});x.amt+=num(s.amount);if(s.cost!=null){x.cost+=s.cost;x.mar+=s.margin}});
+   S.purchases.filter(p=>inRange(p.date,r)).forEach(p=>{const x=g[p.date]||(g[p.date]={id:p.date,date:p.date,amt:0,cost:0,mar:0});x.pur=(x.pur||0)+num(p.amount)});
+   const rows=Object.values(g).map(x=>Object.assign(x,{pur:x.pur||0,rate:x.amt?x.mar/x.amt:NaN})).sort((a,b)=>b.date.localeCompare(a.date));
+   return sheet('mDay','날짜별',[{k:'date',l:'날짜',t:'date'},{k:'amt',l:'매출',t:'money',sum:1},{k:'pur',l:'그날 매입',t:'money',sum:1},{k:'cost',l:'판매분 원가',t:'money',sum:1},{k:'mar',l:'마진',t:'money',sum:1},{k:'rate',l:'마진율',t:'pct'}],rows)}}};
+
+/* --- 이력번호 대장 --- */
+R.trace={shell:()=>{rangeState.trace=rangeState.trace||{from:'',to:'',p:'전체',q:''};return `<h2>이력번호 대장</h2>
+ <p class="lead">매입·매출에 적은 이력번호를 번호별로 모았습니다. 남은 양은 매입 무게에서 판매 무게(수율 반영)를 뺀 추정치입니다.</p>
+ <div class="range noprint" data-range="trace"><input class="srch" data-rq placeholder="이력번호·품목 찾기"> 
+  <button data-tfilter="판매 중" aria-pressed="${(rangeState.trace.f||'')==='판매 중'}">판매 중만</button><button data-tfilter="" aria-pressed="${!rangeState.trace.f}">전체</button></div>
+ <div data-live="list"></div>
+ <div class="note">법정 보관기간(가축 및 축산물 이력관리에 관한 법률): 이력번호를 적은 매입 기록은 매입일부터 1년, 매출 기록은 매출일부터 2년 보관. 판매할 때는 포장육에 표시된 이력번호를 확인해 식육판매표지판 등에 같은 번호를 표시하고, 거래내역서·영수증에도 이력번호를 기록해야 합니다. 이 대장은 장부 보조용이며, 수입 쇠고기·돼지고기의 전산 거래신고(미트와치)는 별도로 해야 합니다.</div>`},
+ live:{list:()=>{const r=rangeState.trace;const q=(r.q||'').trim();
+  const rows=traceBook().map(t=>Object.assign(t,{id:t.trace})).filter(t=>(!r.f||t.status===r.f)&&(!q||[t.trace,t.itemName,t.partnerName].join(' ').includes(q))).sort((a,b)=>(b.lastBuy||b.lastSale).localeCompare(a.lastBuy||a.lastSale));
+  return sheet('trace','이력번호별',[{k:'trace',l:'이력번호'},{k:'itemName',l:'품목'},{k:'grade',l:'등급',c:1},{k:'partnerName',l:'매입처'},{k:'firstBuy',l:'매입일',t:'date'},
+   {k:'buyKg',l:'매입(kg)',t:'kg',sum:1},{k:'saleKg',l:'판매(kg)',t:'kg',sum:1},{k:'left',l:'남은 양(추정)',t:'kg',sum:1},{k:'lastSale',l:'최근 판매일',t:'date'},
+   {k:'status',l:'상태',c:1,flag:r=>r.status==='매입기록 없음'},{k:'keepBuy',l:'매입기록 보관~'},{k:'keepSale',l:'매출기록 보관~'}],rows,{empty:'이력번호가 적힌 매입·매출이 아직 없습니다.'})}}};
+
+/* --- 위생·온도 점검 --- */
+const HACCP_Q=[['clean','작업장·진열대 청소 상태 양호'],['tools','칼·도마·기계 세척·소독 완료'],['worker','작업자 위생복·위생모·손 씻기 확인'],['trace','진열 고기 이력번호 표시 확인'],['pest','방충·방서 이상 없음']];
+R.haccp={shell:()=>{const e=editing.haccp?S.haccp.find(s=>s.id===editing.haccp):S.haccp.find(h=>h.date===today());const x=e||{date:today()};const st=SET();range('haccp','month');
+ return `<h2>위생·온도 점검</h2><p class="lead">하루 한 번 냉장·냉동 온도와 위생 상태를 적습니다. 기준을 벗어나면 빨간색으로 표시되니 조치 내용을 꼭 적어 두세요.</p>
+ <div class="panel noprint"><h3>${e?(x.date+' 점검 기록 고치기'):'오늘 점검 적기'}</h3><div class="form">
+  ${field('날짜',`<input type="date" id="h_date" value="${x.date}">`)}
+  ${field(`냉장고1 온도 (℃)`,`<input id="h_f1" class="num" inputmode="decimal" value="${x.fridge1??''}">`,{hint:`기준 ${st.fridgeMin} ~ ${st.fridgeMax}℃`})}
+  ${field(`냉장고2 온도 (℃)`,`<input id="h_f2" class="num" inputmode="decimal" value="${x.fridge2??''}">`,{hint:'없으면 비워 두세요'})}
+  ${field(`냉동고 온도 (℃)`,`<input id="h_fz" class="num" inputmode="decimal" value="${x.freezer??''}">`,{hint:`기준 ${st.freezerMax}℃ 이하`})}
+  ${HACCP_Q.map(([k,l])=>field(l,tog('h_'+k,['예','아니오'],x[k]||'예'))).join('')}
+  ${field('기준 벗어났을 때 조치',`<input id="h_act" value="${esc(x.action||'')}" placeholder="예: 온도 조절 후 1시간 뒤 재측정 3℃">`,{wide:1})}
+  ${field('점검자',`<input id="h_who" value="${esc(x.who||'')}">`)}
+ </div><div class="actions"><button class="btn main" id="h_save">점검 저장</button>${e?'<button class="btn danger" id="h_del">이 기록 삭제</button>':''}<span id="msg" class="msg"></span><span id="cbox"></span></div></div>
+ ${rangeBar('haccp')}<div data-live="list"></div>
+ <div class="note">온도 기준은 [설정]에서 바꿀 수 있습니다. HACCP 인증 업소는 업소의 HACCP 관리기준서에 적힌 한계기준·점검 주기로 맞춰 쓰시고, 이 기록은 보조 일지로 활용하세요.</div>`},
+ bind:()=>{const e=editing.haccp?S.haccp.find(s=>s.id===editing.haccp):S.haccp.find(h=>h.date===today());
+  $('#h_save').onclick=async()=>{const date=val('h_date');const ex=S.haccp.find(h=>h.date===date);
+   const row=Object.assign({},ex||{},{date,fridge1:val('h_f1'),fridge2:val('h_f2'),freezer:val('h_fz'),action:val('h_act'),who:val('h_who')});
+   HACCP_Q.forEach(([k])=>row[k]=togVal('h_'+k));
+   if(row.fridge1===''&&row.freezer==='')return flash('냉장고1 또는 냉동고 온도를 넣어 주세요.',true);
+   const fl=haccpFlags(row); if(fl.length&&!row.action)return flash('기준을 벗어난 항목이 있습니다('+fl.join(', ')+'). 조치 내용을 적어야 저장됩니다.',true);
+   await put('haccp',row); editing.haccp=null; render(); flash(fl.length?'저장했습니다. 기준 이탈 항목이 기록되었습니다.':'저장했습니다. 모든 항목 기준 이내입니다.')};
+  if(e&&$('#h_del'))$('#h_del').onclick=()=>confirmBox($('#cbox'),'이 날짜 점검 기록을 지울까요?',async()=>{await del('haccp',e.id);editing.haccp=null;render();flash('삭제했습니다.')})},
+ live:{list:()=>{const r=rangeState.haccp;const rows=S.haccp.filter(h=>inRange(h.date,r)).map(h=>Object.assign({},h,{flags:haccpFlags(h).join(', ')})).sort((a,b)=>b.date.localeCompare(a.date));
+  return sheet('haccp','점검 일지',[{k:'date',l:'날짜',t:'date'},{k:'fridge1',l:'냉장1(℃)',c:1},{k:'fridge2',l:'냉장2(℃)',c:1},{k:'freezer',l:'냉동(℃)',c:1},
+   ...HACCP_Q.map(([k,l])=>({k,l:l.slice(0,6),c:1,flag:r=>r[k]==='아니오'})),{k:'flags',l:'기준 이탈',flag:r=>!!r.flags},{k:'action',l:'조치'},{k:'who',l:'점검자'}],rows,{sel:editing.haccp,empty:'이 기간에 점검 기록이 없습니다.'})}}};
+
+/* --- 직원·급여 --- */
+R.payroll={shell:()=>{const m=today().slice(0,7);if(!rangeState.payroll){range('payroll','month');setPreset('payroll','올해')}const st=SET();const pe=editing.payroll?S.payroll.find(p=>p.id===editing.payroll):null;const ee=editing.staff?S.staff.find(s=>s.id===editing.staff):null;
+ const px=pe||{month:m};const ex=ee||{type:'월급',np:true,hi:true,ei:true};
+ return `<h2>직원·급여</h2><p class="lead">직원을 한 번 등록해 두고, 매달 수당과 소득세만 넣으면 4대보험 공제와 실지급액이 계산됩니다.</p>
+ <div class="panel noprint"><h3>급여 계산</h3><div class="form">
+  ${field('지급 월',`<input type="month" id="y_m" value="${px.month}">`)}
+  ${field('직원',`<select id="y_s">${opts(S.staff.filter(s=>!s.left||s.id===px.staffId).map(s=>({v:s.id,t:s.name})),px.staffId,'직원 선택')}</select>`)}
+  ${field('기본급 (원)',`<input id="y_base" class="num" inputmode="numeric" value="${px.base?won(px.base):''}">`,{hint:'직원을 고르면 등록된 금액이 들어갑니다'})}
+  ${field('연장·야간·휴일수당',`<input id="y_ot" class="num" inputmode="numeric" value="${px.ot?won(px.ot):''}">`)}
+  ${field('상여·기타수당',`<input id="y_bonus" class="num" inputmode="numeric" value="${px.bonus?won(px.bonus):''}">`)}
+  ${field('식대',`<input id="y_meal" class="num" inputmode="numeric" value="${px.meal?won(px.meal):''}">`,{hint:`월 ${won(st.mealFree)}원까지 비과세`})}
+  ${field('소득세 (원)',`<input id="y_it" class="num" inputmode="numeric" value="${px.incomeTax?won(px.incomeTax):''}">`,{hint:'국세청 근로소득 간이세액표 금액'})}
+ </div><div id="y_prev" style="margin-top:12px"></div>
+ <div class="actions"><button class="btn main" id="y_save">${pe?'고친 급여 저장':'급여 저장'}</button>${pe?'<button class="btn" id="y_print">급여명세서 인쇄</button><button class="btn" id="y_new">새로 계산</button><button class="btn danger" id="y_del">삭제</button>':''}<span id="msg" class="msg"></span><span id="cbox"></span></div></div>
+ ${rangeBar('payroll')}<div data-live="pay"></div><div style="height:18px"></div>
+ <div class="panel noprint"><h3>${ee?'직원 정보 고치기':'직원 등록'}</h3><div class="form">
+  ${field('이름',`<input id="e_name" value="${esc(ex.name||'')}">`)}
+  ${field('입사일',`<input type="date" id="e_join" value="${ex.join||''}">`)}
+  ${field('담당',`<input id="e_role" value="${esc(ex.role||'')}" placeholder="예: 발골, 판매">`)}
+  ${field('기본급 (원/월)',`<input id="e_base" class="num" inputmode="numeric" value="${ex.base?won(ex.base):''}">`)}
+  ${field('식대 (원/월)',`<input id="e_meal" class="num" inputmode="numeric" value="${ex.meal?won(ex.meal):''}">`)}
+  ${field('국민연금',tog('e_np',['가입','제외'],ex.np===false?'제외':'가입'),{hint:'만 60세 이상은 보통 제외'})}
+  ${field('건강·장기요양',tog('e_hi',['가입','제외'],ex.hi===false?'제외':'가입'))}
+  ${field('고용보험',tog('e_ei',['가입','제외'],ex.ei===false?'제외':'가입'))}
+  ${field('재직',tog('e_left',['재직','퇴사'],ex.left?'퇴사':'재직'))}
+ </div><div class="actions"><button class="btn main" id="e_save">${ee?'직원 정보 저장':'직원 등록'}</button>${ee?'<button class="btn" id="e_new">새 직원</button><button class="btn danger" id="e_del">삭제</button>':''}<span id="msg2" class="msg"></span></div></div>
+ <div data-live="staff"></div>
+ <div class="note">2026년 근로자 부담 요율 기본값: 국민연금 4.75%, 건강보험 3.595%, 장기요양 = 건강보험료 × (0.9448 ÷ 7.19), 고용보험 0.9%. 10원 미만은 버립니다. 공단 고지서와 몇십 원 차이가 나면 고지서 금액이 맞습니다. 요율은 [설정]에서 바꿀 수 있습니다. 임금명세서는 급여 지급 때 서면(전자문서 포함)으로 주어야 합니다.</div>`},
+ bind:()=>{
+  const read=()=>({month:val('y_m'),staffId:val('y_s'),base:num(val('y_base')),ot:num(val('y_ot')),bonus:num(val('y_bonus')),meal:num(val('y_meal')),incomeTax:num(val('y_it'))});
+  const prev=()=>{const p=read();const e=S.staff.find(s=>s.id===p.staffId);if(!e){$('#y_prev').innerHTML='';return}const c=payCalc(p,e);
+   $('#y_prev').innerHTML=`<div class="sheetwrap"><table class="sheet"><thead><tr><th>지급합계</th><th>국민연금</th><th>건강보험</th><th>장기요양</th><th>고용보험</th><th>소득세</th><th>지방소득세</th><th>공제합계</th><th>실지급액</th></tr></thead>
+   <tbody><tr>${[c.gross,c.np,c.hi,c.ltc,c.ei,c.it,c.lt,c.ded].map(v=>`<td class="n">${won(v)}</td>`).join('')}<td class="n" style="font-weight:700">${won(c.net)}</td></tr></tbody></table></div>`};
+  ['y_base','y_ot','y_bonus','y_meal','y_it','y_m'].forEach(i=>$('#'+i).oninput=prev);
+  $('#y_s').onchange=()=>{const e=S.staff.find(s=>s.id===val('y_s'));if(e&&!editing.payroll){$('#y_base').value=e.base?won(e.base):'';$('#y_meal').value=e.meal?won(e.meal):''}prev()};prev();
+  $('#y_save').onclick=async()=>{const p=read();if(!p.month||!p.staffId)return flash('지급 월과 직원을 골라 주세요.',true);
+   const dup=S.payroll.find(x=>x.month===p.month&&x.staffId===p.staffId&&x.id!==editing.payroll);if(dup)return flash('이 직원의 '+p.month+' 급여가 이미 있습니다. 아래 목록에서 눌러 고쳐 주세요.',true);
+   const e=S.staff.find(s=>s.id===p.staffId);const row=Object.assign({},editing.payroll?S.payroll.find(x=>x.id===editing.payroll):{},p,payCalc(p,e));
+   const saved=await put('payroll',row);editing.payroll=saved.id;render();flash('저장했습니다. 급여명세서 인쇄 버튼을 누를 수 있습니다.')};
+  if(editing.payroll){$('#y_new').onclick=()=>{editing.payroll=null;render()};$('#y_print').onclick=()=>printSlip(editing.payroll);
+   $('#y_del').onclick=()=>confirmBox($('#cbox'),'이 급여 기록을 지울까요?',async()=>{await del('payroll',editing.payroll);editing.payroll=null;render();flash('삭제했습니다.')})}
+  $('#e_save').onclick=async()=>{const name=val('e_name');if(!name)return flash('이름을 적어 주세요.',true,$('#msg2'));
+   const row=Object.assign({},editing.staff?S.staff.find(s=>s.id===editing.staff):{},{name,join:val('e_join'),role:val('e_role'),base:num(val('e_base')),meal:num(val('e_meal')),np:togVal('e_np')==='가입',hi:togVal('e_hi')==='가입',ei:togVal('e_ei')==='가입',left:togVal('e_left')==='퇴사'});
+   await put('staff',row);editing.staff=null;render();flash(name+' 님 정보를 저장했습니다.',false,$('#msg2'))};
+  if(editing.staff){$('#e_new').onclick=()=>{editing.staff=null;render()};
+   $('#e_del').onclick=()=>{if(S.payroll.some(p=>p.staffId===editing.staff))return flash('급여 기록이 있는 직원은 지우지 말고 [퇴사]로 바꿔 주세요.',true,$('#msg2'));del('staff',editing.staff);editing.staff=null;render()}}},
+ live:{pay:()=>{const r=rangeState.payroll;const rows=S.payroll.filter(p=>inRange(p.month+'-01',{from:r.from?r.from.slice(0,7)+'-01':'',to:r.to})).map(p=>Object.assign({},p,{name:(S.staff.find(s=>s.id===p.staffId)||{}).name||''})).sort((a,b)=>b.month.localeCompare(a.month));
+   return sheet('payroll','급여 대장',[{k:'month',l:'월',c:1},{k:'name',l:'이름'},{k:'gross',l:'지급합계',t:'money',sum:1},{k:'np',l:'국민연금',t:'money',sum:1},{k:'hi',l:'건강',t:'money',sum:1},{k:'ltc',l:'장기요양',t:'money',sum:1},
+    {k:'ei',l:'고용',t:'money',sum:1},{k:'it',l:'소득세',t:'money',sum:1},{k:'lt',l:'지방소득세',t:'money',sum:1},{k:'ded',l:'공제합계',t:'money',sum:1},{k:'net',l:'실지급액',t:'money',sum:1}],rows,{sel:editing.payroll,empty:'이 기간에 급여 기록이 없습니다.'})},
+  staff:()=>sheet('staff','직원 명단',[{k:'name',l:'이름'},{k:'role',l:'담당'},{k:'join',l:'입사일',t:'date'},{k:'base',l:'기본급',t:'money'},{k:'meal',l:'식대',t:'money'},
+   {k:'ins',l:'4대보험',get:r=>[r.np!==false?'연금':'',r.hi!==false?'건강':'',r.ei!==false?'고용':''].filter(Boolean).join('·')||'미가입'},{k:'st',l:'재직',c:1,get:r=>r.left?'퇴사':'재직'}],S.staff.slice(),{sel:editing.staff,empty:'직원을 먼저 등록하세요.'})}};
+function printSlip(id){const p=S.payroll.find(x=>x.id===id);if(!p)return;const e=S.staff.find(s=>s.id===p.staffId)||{};const st=SET();
+ $('#slip').innerHTML=`<h2>${esc(p.month)} 급여명세서</h2><p>${esc(st.shop)} ${st.bizNo?'('+esc(st.bizNo)+')':''}<br>성명: ${esc(e.name||'')} · 담당: ${esc(e.role||'')} · 입사일: ${esc(e.join||'')}</p>
+ <table><tr><th colspan="2">지급 내역</th><th colspan="2">공제 내역</th></tr>
+ <tr><td>기본급</td><td class="n">${won(p.base)}</td><td>국민연금</td><td class="n">${won(p.np)}</td></tr>
+ <tr><td>연장·야간·휴일수당</td><td class="n">${won(p.ot)}</td><td>건강보험</td><td class="n">${won(p.hi)}</td></tr>
+ <tr><td>상여·기타수당</td><td class="n">${won(p.bonus)}</td><td>장기요양보험</td><td class="n">${won(p.ltc)}</td></tr>
+ <tr><td>식대</td><td class="n">${won(p.meal)}</td><td>고용보험</td><td class="n">${won(p.ei)}</td></tr>
+ <tr><td></td><td></td><td>소득세</td><td class="n">${won(p.it)}</td></tr>
+ <tr><td></td><td></td><td>지방소득세</td><td class="n">${won(p.lt)}</td></tr>
+ <tr><th>지급합계</th><td class="n">${won(p.gross)}</td><th>공제합계</th><td class="n">${won(p.ded)}</td></tr>
+ <tr><th colspan="3">실지급액</th><td class="n"><strong>${won(p.net)}</strong></td></tr></table>
+ <p style="font-size:.85em">계산 방법: 4대보험은 과세 대상 급여 × 요율(10원 미만 절사), 지방소득세는 소득세의 10%. 연장수당은 근로시간 × 통상시급 × 1.5 기준으로 별도 산정한 금액입니다.</p>`;
+ document.body.classList.add('printslip');try{window.print()}catch(e){flash('이 화면에서는 인쇄창을 열 수 없습니다. 파일로 올린 뒤 인쇄해 주세요.',true)}setTimeout(()=>document.body.classList.remove('printslip'),500)}
+
+/* --- 계산서 정리 --- */
+function invoiceRows(month){const g={};
+ S.sales.filter(s=>s.kind==='납품'&&ym(s.date)===month).forEach(s=>{const it=item(s.itemId);const k=(it.taxType==='과세'?'과세':'면세');const key=month+'_'+s.partnerId+'_'+k;
+  const x=g[key]||(g[key]={id:key,month,partnerId:s.partnerId,kind:k,cnt:0,total:0});x.cnt++;x.total+=num(s.amount)});
+ return Object.values(g).map(x=>{const p=partner(x.partnerId);const st=S.invoices.find(i=>i.id===x.id)||{};
+  const supply=x.kind==='과세'?Math.round(x.total/1.1):x.total;
+  return Object.assign(x,{name:p.name||'',bizNo:p.bizNo||'',doc:x.kind==='과세'?'세금계산서':'계산서',supply,vat:x.total-supply,issued:!!st.issued,approval:st.approval||'',issuedDate:st.issuedDate||'',
+   due:ymd(new Date(+month.slice(0,4),+month.slice(5,7),10))})})}
+R.invoice={shell:()=>{rangeState.invoice=rangeState.invoice||{m:(()=>{const d=new Date();return ymd(new Date(d.getFullYear(),d.getMonth()-1,1)).slice(0,7)})()};
+ return `<h2>계산서 정리</h2><p class="lead">한 달 동안 거래처에 납품한 것을 모아, 거래처마다 발행할 계산서 금액을 정리합니다. 줄을 누르면 발행 완료를 표시할 수 있습니다.</p>
+ <div class="range noprint"><span>월 선택</span><input type="month" id="iv_m" value="${rangeState.invoice.m}"></div>
+ <div class="panel noprint" id="iv_edit" style="display:none"></div>
+ <div data-live="list"></div>
+ <div class="note">생고기처럼 가공하지 않은 식육은 부가가치세 면세라서 <strong>계산서</strong>를, 품목 설정에서 [과세]로 둔 품목만 <strong>세금계산서</strong>로 나눴습니다. 과세 품목은 적은 금액을 부가세 포함 금액으로 보고 공급가액과 세액을 나눴습니다. 한 달 치를 모아 발행하는 월합계 발행은 다음 달 10일까지입니다. 실제 전자발행은 홈택스(또는 사용하시는 전자발행 서비스)에서 하고, 발행 후 승인번호를 여기에 적어 두세요. 양념육 등 가공품의 과세 여부는 세무사에게 확인하세요.</div>`},
+ bind:()=>{$('#iv_m').onchange=()=>{rangeState.invoice.m=val('iv_m');refresh()}},
+ live:{list:()=>{const rows=invoiceRows(rangeState.invoice.m);
+  return sheet('invoice',rangeState.invoice.m+' 발행 대상',[{k:'name',l:'거래처'},{k:'bizNo',l:'사업자번호',flag:r=>!r.bizNo},{k:'doc',l:'종류',c:1,html:r=>`<span class="tag ${r.kind==='과세'?'tax':'free'}">${r.doc}</span>`},
+   {k:'cnt',l:'납품 건수',t:'money',sum:1},{k:'supply',l:'공급가액',t:'money',sum:1},{k:'vat',l:'세액',t:'money',sum:1},{k:'total',l:'합계',t:'money',sum:1},
+   {k:'due',l:'발급기한'},{k:'issued',l:'발행',c:1,get:r=>r.issued?'완료':'미발행',flag:r=>!r.issued},{k:'approval',l:'승인번호'}],rows,{empty:'이 달에 거래처 납품 매출이 없습니다. 매출을 적을 때 [납품]과 거래처를 고르면 여기에 모입니다.'})}}};
+function openInvoice(id){const r=invoiceRows(rangeState.invoice.m).find(x=>x.id===id);if(!r)return;const box=$('#iv_edit');box.style.display='block';
+ box.innerHTML=`<h3>${esc(r.name)} · ${r.doc} ${won(r.total)}원</h3><div class="form">
+  ${field('발행 여부',tog('iv_iss',['미발행','완료'],r.issued?'완료':'미발행'))}
+  ${field('발행일',`<input type="date" id="iv_d" value="${r.issuedDate||today()}">`)}
+  ${field('승인번호',`<input id="iv_no" value="${esc(r.approval)}">`,{wide:1})}</div>
+  <div class="actions"><button class="btn main" id="iv_save">저장</button><button class="btn" id="iv_close">닫기</button><span id="msg" class="msg"></span></div>`;
+ $('#iv_save').onclick=async()=>{await put('invoices',{id:r.id,issued:togVal('iv_iss')==='완료',issuedDate:val('iv_d'),approval:val('iv_no')});flash('저장했습니다.')};
+ $('#iv_close').onclick=()=>{box.style.display='none'};box.scrollIntoView({block:'nearest'})}
+
+/* --- 품목·거래처 --- */
+const KINDS=['한우','육우','수입 소','돼지','수입 돼지','닭·오리','기타'];
+R.master={shell:()=>{const ie=editing.items?S.items.find(i=>i.id===editing.items):null;const pe=editing.partners?S.partners.find(p=>p.id===editing.partners):null;
+ const ix=ie||{kind:'한우',taxType:'면세',yieldPct:100};const px=pe||{kind:'매입처'};
+ return `<h2>품목·거래처</h2><p class="lead">자주 파는 품목과 거래처를 한 번만 등록해 두면, 매입·매출을 적을 때 골라서 씁니다.</p>
+ <div class="panel noprint"><h3>${ie?'품목 고치기':'품목 등록'}</h3><div class="form">
+  ${field('품목 이름',`<input id="i_name" value="${esc(ix.name||'')}" placeholder="예: 한우 등심 1++">`)}
+  ${field('축종',`<select id="i_kind">${opts(KINDS,ix.kind)}</select>`)}
+  ${field('부위',`<input id="i_part" value="${esc(ix.part||'')}">`)}
+  ${field('부가세',tog('i_tax',['면세','과세'],ix.taxType),{hint:'생고기는 면세, 양념육 등은 확인 필요'})}
+  ${field('판매 1kg 단가 (원)',`<input id="i_price" class="num" inputmode="numeric" value="${ix.price?won(ix.price):''}">`)}
+  ${field('수율 (%)',`<input id="i_y" class="num" inputmode="decimal" value="${ix.yieldPct??100}">`,{hint:'100kg 들여와 손질 후 팔 수 있는 양. 포장육 그대로 팔면 100'})}
+ </div><div class="actions"><button class="btn main" id="i_save">${ie?'고친 품목 저장':'품목 등록'}</button>${ie?'<button class="btn" id="i_new">새 품목</button><button class="btn danger" id="i_del">삭제</button>':''}<span id="msg" class="msg"></span></div></div>
+ <div data-live="items"></div><div style="height:18px"></div>
+ <div class="panel noprint"><h3>${pe?'거래처 고치기':'거래처 등록'}</h3><div class="form">
+  ${field('거래처 이름',`<input id="c_name" value="${esc(px.name||'')}">`)}
+  ${field('구분',tog('c_kind',['매입처','매출처','매입·매출'],px.kind))}
+  ${field('사업자번호',`<input id="c_biz" value="${esc(px.bizNo||'')}" placeholder="000-00-00000">`,{hint:'계산서 발행에 필요'})}
+  ${field('대표자',`<input id="c_ceo" value="${esc(px.ceo||'')}">`)}
+  ${field('전화',`<input id="c_tel" inputmode="tel" value="${esc(px.tel||'')}">`)}
+  ${field('이메일',`<input id="c_mail" inputmode="email" value="${esc(px.email||'')}">`,{hint:'전자계산서 받는 주소'})}
+ </div><div class="actions"><button class="btn main" id="c_save">${pe?'고친 거래처 저장':'거래처 등록'}</button>${pe?'<button class="btn" id="c_new">새 거래처</button><button class="btn danger" id="c_del">삭제</button>':''}<span id="msg2" class="msg"></span></div></div>
+ <div data-live="partners"></div>`},
+ bind:()=>{
+  $('#i_save').onclick=async()=>{const name=val('i_name');if(!name)return flash('품목 이름을 적어 주세요.',true);
+   const y=num(val('i_y'));if(y<=0||y>100)return flash('수율은 1~100 사이 숫자로 적어 주세요.',true);
+   await put('items',Object.assign({},editing.items?S.items.find(i=>i.id===editing.items):{},{name,kind:val('i_kind'),part:val('i_part'),taxType:togVal('i_tax'),price:num(val('i_price')),yieldPct:y}));editing.items=null;render();flash(name+' 저장했습니다.')};
+  if(editing.items){$('#i_new').onclick=()=>{editing.items=null;render()};$('#i_del').onclick=()=>{const id=editing.items;if(S.sales.some(s=>s.itemId===id)||S.purchases.some(p=>p.itemId===id))return flash('이미 매입·매출에 쓰인 품목은 지울 수 없습니다. 이름만 고쳐 쓰세요.',true);del('items',id);editing.items=null;render()}}
+  $('#c_save').onclick=async()=>{const name=val('c_name');if(!name)return flash('거래처 이름을 적어 주세요.',true,$('#msg2'));
+   await put('partners',Object.assign({},editing.partners?S.partners.find(p=>p.id===editing.partners):{},{name,kind:togVal('c_kind'),bizNo:val('c_biz'),ceo:val('c_ceo'),tel:val('c_tel'),email:val('c_mail')}));editing.partners=null;render();flash(name+' 저장했습니다.',false,$('#msg2'))};
+  if(editing.partners){$('#c_new').onclick=()=>{editing.partners=null;render()};$('#c_del').onclick=()=>{const id=editing.partners;if(S.sales.some(s=>s.partnerId===id)||S.purchases.some(p=>p.partnerId===id))return flash('거래 기록이 있는 거래처는 지울 수 없습니다.',true,$('#msg2'));del('partners',id);editing.partners=null;render()}}},
+ live:{items:()=>sheet('items','품목',[{k:'kind',l:'축종'},{k:'name',l:'품목'},{k:'part',l:'부위'},{k:'taxType',l:'부가세',c:1},{k:'price',l:'판매 kg단가',t:'money'},{k:'p100',l:'100g 가격',t:'money',get:r=>num(r.price)/10},{k:'yieldPct',l:'수율(%)',t:'kg'}],S.items.slice().sort((a,b)=>(a.kind+a.name).localeCompare(b.kind+b.name,'ko')),{sel:editing.items,empty:'품목을 등록하세요.'}),
+  partners:()=>sheet('partners','거래처',[{k:'kind',l:'구분',c:1},{k:'name',l:'거래처'},{k:'bizNo',l:'사업자번호'},{k:'ceo',l:'대표자'},{k:'tel',l:'전화'},{k:'email',l:'이메일'}],S.partners.slice().sort((a,b)=>a.name.localeCompare(b.name,'ko')),{sel:editing.partners,empty:'거래처를 등록하세요.'})}};
+
+/* --- 설정·백업 --- */
+R.settings={shell:()=>{const s=SET();return `<h2>설정·백업</h2><p class="lead">가게 정보, 점검 기준 온도, 4대보험 요율을 바꾸고 자료를 백업합니다.</p>
+ <div class="panel"><h3>휴대폰·매장 PC 연결</h3>
+ ${mode==='sync'?`<p>이 기기는 매장코드 <strong>${esc(sync.shop)}</strong> 장부와 연결되어 있습니다. 여기서 적은 내용은 휴대폰과 매장 PC에 함께 저장됩니다(20초마다, 화면을 다시 열 때마다 새로 받아옵니다).</p>
+  <div class="actions"><button class="btn" id="y_now">지금 새로 받아오기</button><button class="btn danger" id="y_off">이 기기 연결 끊기</button><span id="msg4" class="msg"></span></div>`
+ :`<p>매장코드와 비밀번호를 한 번만 넣으면, 이 기기가 휴대폰·매장 PC 공용 장부와 연결됩니다.</p><div class="form">
+  ${field('매장코드',`<input id="y_shop" autocomplete="off" autocapitalize="off">`)}${field('비밀번호 (숫자 6자리)',`<input id="y_pin" inputmode="numeric" type="password" autocomplete="off">`)}</div>
+  <div class="actions"><button class="btn main" id="y_con">연결하기</button><span id="msg4" class="msg"></span></div>
+  <div class="note">이 기기에 이미 적어 둔 자료가 있고 공용 장부가 비어 있으면, 연결할 때 이 기기 자료를 공용 장부로 올립니다. 공용 장부에 자료가 있으면 공용 장부 자료를 받아옵니다.</div>`}</div>
+ <div class="panel"><h3>가게 정보</h3><div class="form">
+  ${field('상호',`<input id="t_shop" value="${esc(s.shop)}">`)}${field('사업자번호',`<input id="t_biz" value="${esc(s.bizNo)}">`)}${field('대표자',`<input id="t_owner" value="${esc(s.owner)}">`)}</div>
+ <h3 style="margin-top:18px">점검 기준 온도</h3><div class="form">
+  ${field('냉장 최저 (℃)',`<input id="t_fmin" class="num" value="${s.fridgeMin}">`)}${field('냉장 최고 (℃)',`<input id="t_fmax" class="num" value="${s.fridgeMax}">`)}${field('냉동 최고 (℃)',`<input id="t_fz" class="num" value="${s.freezerMax}">`)}</div>
+ <h3 style="margin-top:18px">급여 공제 요율 (근로자 부담, %)</h3><div class="form">
+  ${field('국민연금',`<input id="t_np" class="num" value="${s.np}">`)}${field('건강보험',`<input id="t_hi" class="num" value="${s.hi}">`)}
+  ${field('장기요양 (건강보험료 대비)',`<input id="t_ltc" class="num" value="${(+s.ltcRatio).toFixed(4)}">`)}${field('고용보험',`<input id="t_ei" class="num" value="${s.ei}">`)}
+  ${field('국민연금 상한 소득 (원)',`<input id="t_cap" class="num" value="${won(s.npCap)}">`,{hint:'매년 7월 바뀜 · 공단 공고 확인'})}${field('식대 비과세 한도 (원)',`<input id="t_meal" class="num" value="${won(s.mealFree)}">`)}</div>
+ <div class="actions"><button class="btn main" id="t_save">설정 저장</button><button class="btn" id="t_def">요율·온도 기본값으로</button><span id="msg" class="msg"></span></div></div>
+ <div class="panel"><h3>백업·복원</h3><p>모든 자료를 파일 하나로 내려받아 보관하고, 다른 기기에서 불러올 수 있습니다. 한 달에 한 번은 백업해 두세요.</p>
+ <div class="actions"><button class="btn xl" id="b_down">백업 파일 내려받기</button><label class="btn" style="display:inline-flex;align-items:center">백업 파일 불러오기<input type="file" id="b_up" accept=".json" hidden></label><span id="msg3" class="msg"></span></div></div>
+ <div class="panel"><h3>연습용 자료</h3><p>처음 써 보실 때 예시 품목·거래처·한 달 치 매입매출을 넣어 볼 수 있습니다. 실제 장부를 시작하기 전에 [전체 지우기]로 비우세요.</p>
+ <div class="actions"><button class="btn" id="d_sample">연습용 자료 넣기</button><button class="btn danger" id="d_clear">전체 지우기</button><span id="msg2" class="msg"></span><span id="cbox"></span></div></div>`},
+ bind:()=>{
+  if($('#y_con'))$('#y_con').onclick=async()=>{const sh=val('y_shop'),pn=val('y_pin');if(!sh||!pn)return flash('매장코드와 비밀번호를 넣어 주세요.',true,$('#msg4'));
+    flash('연결하는 중입니다…',false,$('#msg4'));try{const nm=await connectSync(sh,pn);render();flash(nm+' 장부와 연결되었습니다.',false,$('#msg4'))}catch(e){flash(e.auth?'매장코드 또는 비밀번호가 맞지 않습니다.':'인터넷 연결을 확인하고 다시 눌러 주세요.',true,$('#msg4'))}};
+  if($('#y_now'))$('#y_now').onclick=async()=>{await pushNow();await pullNow();flash(offline?'인터넷이 끊겨 있습니다.':'최신 자료로 맞췄습니다.',offline,$('#msg4'))};
+  if($('#y_off'))$('#y_off').onclick=()=>{const n=Object.keys(outbox).length;if(n)return flash(`아직 보내지 못한 ${n}건이 있습니다. 인터넷 연결 후 다시 시도해 주세요.`,true,$('#msg4'));
+    confirmBox($('#msg4'),'이 기기의 연결을 끊을까요? 공용 장부 자료는 그대로 남습니다.',()=>{localStorage.removeItem('meatshop_sync');localStorage.removeItem('meatshop_until');sync=null;mode='local';render();showSync()})};
+  const save=async d=>{await put('settings',Object.assign({},SET(),d,{id:'main'}));render();flash('설정을 저장했습니다.')};
+  $('#t_save').onclick=()=>save({shop:val('t_shop'),bizNo:val('t_biz'),owner:val('t_owner'),fridgeMin:num(val('t_fmin')),fridgeMax:num(val('t_fmax')),freezerMax:num(val('t_fz')),
+   np:num(val('t_np')),hi:num(val('t_hi')),ltcRatio:num(val('t_ltc')),ei:num(val('t_ei')),npCap:num(val('t_cap')),mealFree:num(val('t_meal'))});
+  $('#t_def').onclick=()=>{const d=Object.assign({},DEF_SET);delete d.shop;delete d.bizNo;delete d.owner;save(d)};
+  $('#b_down').onclick=()=>saveFile('정육마트_백업_'+today()+'.json',JSON.stringify(S,null,1),$('#msg3'));
+  $('#b_up').onchange=async ev=>{const f=ev.target.files[0];if(!f)return;try{const o=JSON.parse(await f.text());let n=0,f=0;
+    for(const c of COLS){if(Array.isArray(o[c])&&o[c].length){n+=o[c].length;f+=await bulkPut(c,o[c].map(r=>Object.assign({},r)))}}flash(n+'줄을 불러왔습니다.'+(f?` (${f}줄은 저장소에 올리지 못함 — 다시 불러오기 하세요)`:''),!!f,$('#msg3'))}catch(e){flash('백업 파일을 읽지 못했습니다. 이 프로그램에서 내려받은 .json 파일인지 확인해 주세요.',true,$('#msg3'))}};
+  $('#d_sample').onclick=async()=>{if(mode==='sync'&&S.sales.length)return flash('실제 장부에 자료가 있어 연습용 자료를 넣지 않습니다.',true,$('#msg2'));flash('넣는 중입니다. 잠시 기다려 주세요…',false,$('#msg2'));const f=await sample();flash(f?`일부(${f}줄)를 저장소에 올리지 못했습니다.`:'연습용 자료를 넣었습니다. [오늘 현황]에서 확인해 보세요.',!!f,$('#msg2'))};
+  $('#d_clear').onclick=()=>confirmBox($('#cbox'),'모든 매입·매출·직원·점검 기록을 지웁니다. 되돌릴 수 없습니다.',async()=>{
+    for(const c of COLS){if(c==='settings')continue;await bulkDel(c,S[c].map(r=>r.id))}$('#cbox').innerHTML='';flash('모두 지웠습니다.',false,$('#msg2'))})}};
+
+/* ============ 연습용 자료 ============ */
+async function sample(){
+ const I=[['한우','한우 등심 1++','등심',150000,85],['한우','한우 국거리(양지)','양지',65000,80],['한우','한우 불고기(앞다리)','앞다리',55000,82],['돼지','삼겹살','삼겹',28000,90],
+  ['돼지','목살','목심',26000,92],['돼지','앞다리(찌개용)','앞다리',15000,88],['수입 소','호주산 척아이롤','척',32000,100]].map(([kind,name,part,price,y])=>({id:uid(),kind,name,part,price,yieldPct:y,taxType:'면세'}));
+ I.push({id:uid(),kind:'돼지',name:'양념 돼지불고기',part:'앞다리',price:18000,yieldPct:100,taxType:'과세'});
+ const P=[{id:uid(),name:'○○축산 도매',kind:'매입처',bizNo:'123-45-67890'},{id:uid(),name:'△△육가공',kind:'매입처',bizNo:'234-56-78901'},
+  {id:uid(),name:'행복식당',kind:'매출처',bizNo:'345-67-89012',ceo:'김대표'},{id:uid(),name:'□□요양원',kind:'매출처',bizNo:'456-78-90123'}];
+ const t=today();const rnd=(a,b)=>a+Math.random()*(b-a);const traces={};const PU=[],SA=[],HA=[];
+ for(let d=20;d>=0;d--){const date=addDays(t,-d);
+  if(d%4===0)I.slice(0,7).forEach(it=>{const tr='00'+Math.floor(rnd(1e9,9.99e9));const w=+rnd(20,60).toFixed(1);const unit=it.price*rnd(.5,.62)*it.yieldPct/100;
+    traces[it.id]=tr;PU.push({id:uid(),date,partnerId:it.kind.includes('한우')?P[0].id:P[1].id,itemId:it.id,trace:tr,grade:it.kind==='한우'?'1+':'',weight:w,amount:Math.round(w*unit/10)*10,proof:'계산서',pay:'외상'})});
+  const n=Math.floor(rnd(3,7));for(let k=0;k<n;k++){const it=I[Math.floor(rnd(0,I.length))];const nap=Math.random()<.2;const w=+(rnd(.3,2.4)*(nap?5:1)).toFixed(2);
+    SA.push({id:uid(),date,kind:nap?'납품':'소매',partnerId:nap?P[2+Math.floor(rnd(0,2))].id:'',itemId:it.id,trace:it.taxType==='과세'?'':(traces[it.id]||''),weight:w,price:it.price,amount:Math.round(w*it.price/10)*10,pay:nap?'외상':['카드','카드','현금','계좌'][Math.floor(rnd(0,4))]})}
+  if(d>0)HA.push({id:uid(),date,fridge1:+rnd(1,4).toFixed(1),fridge2:+rnd(1,5).toFixed(1),freezer:+rnd(-22,-18.5).toFixed(1),clean:'예',tools:'예',worker:'예',trace:'예',pest:'예',who:'사장'})}
+ const E=[{id:uid(),name:'박직원',role:'발골',join:'2024-03-02',base:3200000,meal:200000,np:true,hi:true,ei:true},{id:uid(),name:'이직원',role:'판매',join:'2025-06-01',base:2400000,meal:200000,np:false,hi:true,ei:true}];
+ let f=0; f+=await bulkPut('items',I); f+=await bulkPut('partners',P); f+=await bulkPut('purchases',PU); f+=await bulkPut('sales',SA); f+=await bulkPut('haccp',HA); f+=await bulkPut('staff',E);
+ return f;
+}
+
+/* ============ 파일 저장 (엑셀·백업) ============ */
+let dl=null;
+async function saveFile(name,data,msgEl){
+ try{ if(dl===null&&window.claude&&window.claude.use) dl=await window.claude.use('downloads') }catch(e){}
+ const blob=data instanceof Blob?data:new Blob([data]);
+ if(dl){try{await dl.save({filename:name,data:blob});flash('파일을 저장했습니다: '+name,false,msgEl)}catch(e){if(e&&e.code!=='declined')flash('파일을 저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.',true,msgEl)}return}
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000);
+}
+function exportSheet(id){const s=lastSheet[id];if(!s)return;const aoa=[s.cols.map(c=>c.l)];
+ s.rows.forEach(r=>aoa.push(s.cols.map(c=>{const v=c.get?c.get(r):r[c.k];if(c.t==='pct')return isFinite(v)?Math.round(v*1000)/10:'';if(c.t==='money'||c.t==='kg')return v==null||v===''?'':Math.round(num(v)*1000)/1000;return v??''})));
+ const name=(SET().shop||'정육마트')+'_'+s.title.replace(/[\\/:*?"<>|\s]/g,'')+'_'+today();
+ if(window.XLSX){const ws=XLSX.utils.aoa_to_sheet(aoa);ws['!cols']=s.cols.map(c=>({wch:Math.max(8,c.l.length*2+2)}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,s.title.slice(0,30));
+  const buf=XLSX.write(wb,{bookType:'xlsx',type:'array'});saveFile(name+'.xlsx',new Blob([buf]))}
+ else{const csv='\ufeff'+aoa.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');saveFile(name+'.csv',csv)}}
+
+/* ============ 이벤트 ============ */
+document.addEventListener('click',e=>{
+ const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+ const t=e.target.closest('[data-tog] button');if(t){t.parentElement.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b===t));return}
+ const pr=e.target.closest('[data-preset]');if(pr){const k=pr.closest('[data-range]').dataset.range;setPreset(k,pr.dataset.preset);
+   const bar=pr.closest('[data-range]');bar.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',b===pr));bar.querySelector('[data-rfrom]').value=rangeState[k].from;bar.querySelector('[data-rto]').value=rangeState[k].to;refresh();return}
+ const tf=e.target.closest('[data-tfilter]');if(tf){rangeState.trace.f=tf.dataset.tfilter;tf.parentElement.querySelectorAll('[data-tfilter]').forEach(b=>b.setAttribute('aria-pressed',b===tf));refresh();return}
+ const so=e.target.closest('[data-sort]');if(so){const[id,k]=so.dataset.sort.split('|');const s=sortState[id];sortState[id]=s&&s.k===k?{k,d:-s.d}:{k,d:1};refresh();return}
+ const ex=e.target.closest('[data-export]');if(ex){exportSheet(ex.dataset.export);return}
+ if(e.target.closest('[data-print]')){try{window.print()}catch(err){}return}
+ const row=e.target.closest('[data-row]');if(row){const[id,rid]=row.dataset.row.split('|');if(!rid)return;
+   if(['sales','purchases','haccp','payroll','staff','items','partners'].includes(id)){editing[id]=rid;render();window.scrollTo({top:0});return}
+   if(id==='invoice'){openInvoice(rid);return}
+   if(id==='week'){rangeState.sales={from:rid,to:rid,p:'',q:''};go('sales');rangeState.sales={from:rid,to:rid,p:'',q:''};refresh();return}
+   if(id==='trace'){rangeState.sales={from:'',to:'',p:'전체',q:rid};page='sales';editing={};nav();render();return}}
+});
+document.addEventListener('input',e=>{const bar=e.target.closest('[data-range]');if(!bar)return;const k=bar.dataset.range;const r=rangeState[k];
+ if(e.target.matches('[data-rfrom]')){r.from=e.target.value;r.p=''}if(e.target.matches('[data-rto]')){r.to=e.target.value;r.p=''}if(e.target.matches('[data-rq]'))r.q=e.target.value;
+ if(!e.target.matches('[data-rq]'))bar.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed','false'));refresh()});
+/* 숫자칸: 입력 끝나면 천 단위 쉼표 */
+document.addEventListener('focusout',e=>{if(e.target.matches('input.num[inputmode="numeric"]')&&e.target.value){const n=num(e.target.value);if(n)e.target.value=won(n)}});
+
+/* ============ 시작 ============ */
+function boot(){
+ const d=new Date();$('#todayLabel').textContent=`${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${WEEK[d.getDay()]})`;
+ let big=false;try{big=localStorage.getItem('meatshop_big')==='1'}catch(e){}
+ document.documentElement.classList.toggle('big',big);$('#fontBtn').textContent=big?'글자 보통':'글자 크게';
+ $('#fontBtn').onclick=()=>{const b=!document.documentElement.classList.contains('big');document.documentElement.classList.toggle('big',b);$('#fontBtn').textContent=b?'글자 보통':'글자 크게';try{localStorage.setItem('meatshop_big',b?'1':'0')}catch(e){}};
+ nav();render();
+}
+initStore();
+</script>
+</body>
+</html>
