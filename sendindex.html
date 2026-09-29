@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>행사 동의 발송 (설계사용)</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0B1E42">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--navy:#0B1E42;--ink:#16181C;--ink2:#4F5661;--ink3:#8D949D;--line:#E4E7EB;--bg:#F5F6F8;--ok:#1E9E5A;--err:#C4472F}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;font-size:15px;line-height:1.5;word-break:keep-all}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.wrap{max-width:520px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top,0px)) 16px 40px}
+.hide{display:none!important}
+h1{font-size:20px;margin:6px 0 4px}
+.sub{font-size:13px;color:var(--ink3);margin:0 0 12px}
+.card{background:#fff;border-radius:18px;padding:16px;margin-top:10px}
+.card h2{font-size:14px;margin:0 0 10px;color:var(--ink2)}
+.kinds{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kind{border:2px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;font-weight:800;background:#fff}
+.kind small{display:block;font-weight:500;font-size:12px;color:var(--ink3);margin-top:2px}
+.kind.on{border-color:var(--navy);background:var(--navy);color:#fff}
+.kind.on small{color:#AFC0D8}
+.lb{display:block;font-size:12.5px;font-weight:700;color:var(--ink2);margin:10px 0 5px}
+.inp{width:100%;height:50px;border:1.5px solid var(--line);border-radius:12px;padding:0 14px;font-size:17px;outline:none;background:#fff}
+.inp:focus{border-color:var(--navy)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.b{display:flex;align-items:center;justify-content:center;height:52px;border-radius:14px;font-weight:800;font-size:15.5px;background:#EEF2F8;color:var(--navy);text-decoration:none}
+.b.pri{grid-column:1/-1;background:var(--navy);color:#fff;font-size:17px;height:56px}
+.b:disabled,.b.dis{opacity:.4;pointer-events:none}
+.qr{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:12px}
+.qr canvas,.qr img{width:220px!important;height:220px!important}
+.preview{margin-top:10px;background:var(--bg);border-radius:12px;padding:10px 12px;font-size:12.5px;color:var(--ink2);white-space:pre-wrap;word-break:break-all}
+.log{margin:0;padding:0;list-style:none;font-size:13px}
+.log li{display:flex;justify-content:space-between;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)}
+.log li:last-child{border-bottom:0}
+.muted{color:var(--ink3)}
+.toast{position:fixed;left:50%;bottom:30px;transform:translateX(-50%);background:#16181C;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+.chk{font-size:12.5px;color:var(--ink2);background:#FFF8EC;border-radius:12px;padding:10px 12px;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>행사 동의 발송</h1>
+  <p class="sub">설계사용 · 고객에게 간편 동의 링크를 보냅니다. 서면 동의서는 현장에서 따로 받습니다.</p>
+
+  <section class="card">
+    <h2>1. 체험 선택</h2>
+    <div class="kinds">
+      <button type="button" class="kind" data-k="fp">자녀 지문검사<small>보호자 · 만 14세 미만 자녀</small></button>
+      <button type="button" class="kind" data-k="qm">양자공명 건강체험<small>성인 본인</small></button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. 고객 휴대폰 번호</h2>
+    <input class="inp" id="ph" type="tel" inputmode="numeric" maxlength="13" placeholder="010-0000-0000">
+    <div class="btns">
+      <a class="b pri dis" id="sms" href="#">문자로 보내기</a>
+      <button type="button" class="b dis" id="copy">문구 복사 (카톡)</button>
+      <button type="button" class="b dis" id="qrBtn">QR 보여주기</button>
+    </div>
+    <div class="qr hide" id="qrBox"><div id="qr"></div><span class="muted" style="font-size:12.5px">고객이 휴대폰 카메라로 찍으면 바로 열립니다</span></div>
+    <div class="preview hide" id="pv"></div>
+    <div class="chk">☐ 서면 동의서 받기 &nbsp; ☐ 간편 동의 확인 &nbsp; ☐ 메리츠화재 공식 동의 완료 확인 → 체험 진행</div>
+  </section>
+
+  <section class="card">
+    <h2>설정 (이 기기에 저장)</h2>
+    <label class="lb" for="ev">행사명</label><input class="inp" id="ev" maxlength="30" placeholder="예) 아산 펫페어">
+    <div class="row2">
+      <div><label class="lb" for="mc">내 사번</label><input class="inp" id="mc" inputmode="numeric" maxlength="20" placeholder="260320024"></div>
+      <div><label class="lb" for="mz">메리츠 조직코드</label><input class="inp" id="mz" inputmode="numeric" maxlength="12" placeholder="726019086"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>오늘 보낸 기록 <span class="muted" style="font-weight:500">(이 기기에만 저장)</span></h2>
+    <ul class="log" id="log"></ul>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var BASE=location.origin&&location.origin.indexOf('http')===0?location.origin:'https://daon.io.kr';
+  var NAMES={fp:'자녀 지문검사',qm:'양자공명 건강체험'};
+  var K=localStorage, KIND=K.getItem('snd_kind')||'';
+  ['ev','mc','mz'].forEach(function(id){ try{ $(id).value=K.getItem('snd_'+id)||(id==='mz'?'726019086':''); }catch(e){} $(id).addEventListener('input',function(){ try{K.setItem('snd_'+id,this.value.trim());}catch(e){} refresh(); }); });
+  document.querySelectorAll('.kind').forEach(function(b){ b.addEventListener('click',function(){ KIND=b.dataset.k; try{K.setItem('snd_kind',KIND);}catch(e){} refresh(); }); });
+  $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); refresh(); });
+  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), m=$('mc').value.trim(), z=$('mz').value.trim(); if(e) p.set('e',e); if(m) p.set('m',m); if(/^[0-9]{6,12}$/.test(z)) p.set('mz',z); return BASE+'/'+KIND+'/'+(p.toString()?'?'+p.toString():''); }
+  function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 성명·생년월일 입력 후 동의하시고, 이어서 메리츠화재 공식 동의까지 진행해 주세요.\n'+link(); }
+  function phone(){ return $('ph').value.replace(/[^0-9]/g,''); }
+  function refresh(){
+    document.querySelectorAll('.kind').forEach(function(b){ b.classList.toggle('on',b.dataset.k===KIND); });
+    var ok=!!KIND, okPh=ok&&/^01\d{8,9}$/.test(phone());
+    $('sms').classList.toggle('dis',!okPh); $('copy').classList.toggle('dis',!ok); $('qrBtn').classList.toggle('dis',!ok);
+    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else $('pv').classList.add('hide');
+    if(!$('qrBox').classList.contains('hide')) drawQR();
+  }
+  function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('on');},2200); }
+  function logIt(how){
+    var d=new Date(), key='snd_log_'+d.toISOString().slice(0,10), arr=[];
+    try{ arr=JSON.parse(K.getItem(key)||'[]'); }catch(e){}
+    var p=phone(); arr.unshift({t:d.toTimeString().slice(0,5),k:NAMES[KIND],p:p?p.slice(0,3)+'-****-'+p.slice(-4):'-',h:how});
+    try{ K.setItem(key,JSON.stringify(arr.slice(0,100))); }catch(e){}
+    drawLog();
+  }
+  function drawLog(){ var arr=[]; try{ arr=JSON.parse(K.getItem('snd_log_'+new Date().toISOString().slice(0,10))||'[]'); }catch(e){}
+    $('log').innerHTML=arr.length?arr.map(function(x){ return '<li><span>'+x.t+' · '+x.k+'</span><span class="muted">'+x.p+' · '+x.h+'</span></li>'; }).join(''):'<li class="muted">아직 없습니다</li>'; }
+  $('sms').addEventListener('click',function(){ logIt('문자'); });
+  $('copy').addEventListener('click',function(){
+    var t=msg(), ok=false; var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta);
+    if(!ok&&navigator.clipboard) navigator.clipboard.writeText(t);
+    toast('문구를 복사했어요. 카카오톡에 붙여넣으세요'); logIt('복사');
+  });
+  function drawQR(){ $('qr').innerHTML=''; if(window.QRCode) new QRCode($('qr'),{text:link(),width:220,height:220,correctLevel:QRCode.CorrectLevel.M}); else $('qr').textContent=link(); }
+  $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
+  refresh(); drawLog();
+})();
+</script>
+</body>
+</html>
