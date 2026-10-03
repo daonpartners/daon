@@ -187,6 +187,11 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .fee-tbl td.pd{max-width:220px;overflow:hidden;text-overflow:ellipsis}
 .fee-tbl .sub2{display:block;font-size:11px;color:var(--ink3)}
 .awbox{border:1.5px solid #C9D8F5;background:#F6F9FF;border-radius:12px;padding:12px 12px 10px;margin:4px 0 12px}
+.ovr-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.ovr-k{background:#F6F9FF;border:1px solid #DCE6F7;border-radius:10px;padding:10px 12px}
+.ovr-k span{display:block;font-size:12px;color:var(--ink3);font-weight:600}
+.ovr-k b{font-size:18px}
+@media (max-width:860px){ .ovr-sum{grid-template-columns:1fr} }
 .xaw{border:1.5px dashed #F2C9A4;background:#FFFBF6;border-radius:12px;padding:12px 12px 14px;margin:4px 0 12px}
 .xaw-h{font-weight:800;font-size:13.5px;color:#B45A17;margin-bottom:8px}
 .prevbox{margin-top:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -436,6 +441,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
         <div class="stat"><div class="k">향후 15개월 합계</div><div class="v" id="fc15">-</div></div>
         <div class="stat"><div class="k">입력 계약 · 월보험료</div><div class="v" id="fcCnt">-</div></div>
       </div>
+      <div class="card hide" id="ovrBox" style="margin-bottom:16px">
+        <div class="card-h"><h3>오버라이딩 · 하위 조직</h3><span class="muted" style="font-size:12px">하위자 계약 수수료 × (내 테이블 − 바로 아래 테이블) · 시상·시책 제외 · 입금 시점은 하위자 수수료와 같음</span></div>
+        <div class="card-b"><div class="ovr-sum" id="ovrSum"></div><div id="ovrBody"></div></div>
+      </div>
       <div class="card" style="margin-bottom:16px">
         <div class="card-h"><h3>월별 입금 예상</h3><span class="muted" style="font-size:12px">막대를 누르면 그 달 내역이 보입니다 · 원수사 15회차 시상은 유지율에 따라 달라 제외</span></div>
         <div class="card-b"><div class="mbars" id="mBars"></div><div id="mDetail"></div></div>
@@ -460,6 +469,10 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
       <div class="card" style="margin-bottom:16px">
         <div class="card-h"><h3>설계사 목록</h3><span class="muted" style="font-size:12px">적용 테이블 = 기본 70% + 추가</span></div>
         <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tFc"></table></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-h"><h3>조직도 · 오버라이딩</h3><span class="muted" style="font-size:12px">상위자는 하위 계약 수수료에서 (내 테이블 − 바로 아래 테이블) 만큼 받습니다</span></div>
+        <div class="card-b" id="orgBox"><div class="empty">불러오는 중…</div></div>
       </div>
       <div class="card">
         <div class="card-h"><h3>회사별 시상</h3><span class="muted" style="font-size:12px">월보험료 대비 % · 기본원수사시상은 익월, 사업부시상은 15회차 지급</span></div>
@@ -1855,7 +1868,7 @@ function loadFeeList(){
   var tgt=feeTarget();
   $('tFee').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
   return Promise.all([loadAwards(), feeApi('feeList',{fc:tgt.name})]).then(function(res){
-    var r=res[1]; FEE_ITEMS=(r.ok&&r.items)||[]; renderFee();
+    var r=res[1]; FEE_ITEMS=(r.ok&&r.items)||[]; renderFee(); loadOverride();
   }).catch(function(){ $('tFee').innerHTML='<tbody><tr><td class="empty">연결에 실패했습니다.</td></tr></tbody>'; });
 }
 function renderFee(){
@@ -1871,7 +1884,8 @@ function renderFee(){
   nextOnly+=xNext.reduce(function(s,c){ return s+Math.round(Number(c.xAmt)); },0);
   $('fcNextK').textContent=mLabel(next).replace('.','년 ')+'월 익월 예상수수료';
   $('fcNext').textContent=won(nextOnly); $('fcNextS').textContent='이번 달 계약 '+thisM.length+'건의 익월수수료 + 기본시상'+(xNext.length?' + 직접 입력 추가시상 '+xNext.length+'건':'');
-  $('fcNextAll').textContent=won(sum(next));
+  var ovrNext=renderOverride(next);
+  $('fcNextAll').innerHTML=won(sum(next)+ovrNext)+(ovrNext?'<div style="font-size:12px;font-weight:600;color:var(--ink3)">내 수수료 '+wonShort(sum(next))+' + 오버라이딩 '+wonShort(ovrNext)+'</div>':'');
   var s15=0; for(var i=next;i<next+15;i++) s15+=sum(i); $('fc15').textContent=won(s15);
   var prem=FEE_ITEMS.reduce(function(s,c){return s+(Number(c.premium)||0);},0);
   $('fcCnt').innerHTML=FEE_ITEMS.length+'<small>건</small> <span style="font-size:14px;font-weight:600">'+wonShort(prem)+'원</span>';
@@ -2045,10 +2059,105 @@ function loadFee(){ /* 홈 카드용: 본인 기준 */
 var FC_EDIT=null, PROFILES=[];
 var SPECS=['건강보험','암보험','화재보험','자동차보험','펫보험','사업장위험관리','퇴직연금','종신보험'];
 function pfOfFc(f){ if(!f) return null; var hit=PROFILES.find(function(x){return x&&x.fcId===f.id;}); if(hit) return hit; var same=PROFILES.filter(function(x){return x&&!x.fcId&&x.name===f.name;}); return same.length===1?same[0]:null; }
+/* ───────── 조직도 · 오버라이딩 ─────────
+   차등 방식: 상위자 몫 = (상위자 테이블 − 그 아래 체인에서 가장 높은 테이블) × 원수사 수수료.
+   예) 설계사70 → 지점장90 → 지사장97 : 지점장 20%, 지사장 7% / 지사장 직속 설계사70 : 지사장 27% */
+var ORG=[], ORG_ME='', ORG_LOADED=false, RANKS=['설계사','팀장','지점장','사업단장','지사장'];
+function loadOrg(force){
+  if(ORG_LOADED && !force) return Promise.resolve(ORG);
+  return fcApi('orgList').then(function(r){ if(r&&r.ok){ ORG=r.items||[]; ORG_ME=r.myId||''; ORG_LOADED=true; } return ORG; }).catch(function(){ return ORG; });
+}
+function orgById(id){ return ORG.find(function(x){return x.id===id;}); }
+function orgByName(n){ return ORG.find(function(x){return x.name===n;}); }
+function orgTbl(x,kind){ var v=Number(kind==='생보'?x.saengbo:x.sonbo); return isFinite(v)&&v>0?v:BASE_TABLE; }
+function orgKids(id){ return ORG.filter(function(x){ return x.parentId===id; }); }
+function orgDesc(id){ var out=[], q=orgKids(id).slice(); while(q.length){ var x=q.shift(); if(out.indexOf(x)>=0) continue; out.push(x); q=q.concat(orgKids(x.id)); } return out; }
+/* 하위자 s의 계약에서 상위자 top이 받는 차등 % */
+function orgDiff(s, top, kind){
+  var lower=orgTbl(s,kind), cur=s, guard=0;
+  while(cur && cur.parentId && cur.parentId!==top.id && guard<30){ cur=orgById(cur.parentId); if(cur) lower=Math.max(lower,orgTbl(cur,kind)); guard++; }
+  if(!cur || cur.parentId!==top.id) return 0;
+  return Math.max(0, Math.round((orgTbl(top,kind)-lower)*100)/100);
+}
+function renderOrg(){
+  var box=$('orgBox'); if(!box) return;
+  if(!ORG.length){ box.innerHTML='<div class="empty">설계사 정보를 불러오지 못했습니다.</div>'; return; }
+  var roots=ORG.filter(function(x){ return !x.parentId || !orgById(x.parentId); });
+  roots.sort(function(a,b){ return RANKS.indexOf(b.rank)-RANKS.indexOf(a.rank); });
+  var rows=[];
+  (function walk(list,depth){ list.forEach(function(x){ rows.push([x,depth]); walk(orgKids(x.id).sort(function(a,b){return RANKS.indexOf(b.rank)-RANKS.indexOf(a.rank)||a.name.localeCompare(b.name,'ko');}),depth+1); }); })(roots,0);
+  box.innerHTML='<div class="tbl-wrap" style="max-height:none"><table class="tbl"><thead><tr><th>조직</th><th>직급</th><th>상위자</th><th class="num">손보 테이블</th><th class="num">생보 테이블</th><th class="num">상위자 몫 (손/생)</th><th></th></tr></thead><tbody>'
+    +rows.map(function(r){
+      var x=r[0], d=r[1], par=orgById(x.parentId);
+      var share=par?(Math.max(0,orgTbl(par,'손보')-orgTbl(x,'손보'))+'% / '+Math.max(0,orgTbl(par,'생보')-orgTbl(x,'생보'))+'%'):'-';
+      return '<tr><td class="nm" style="padding-left:'+(10+d*22)+'px">'+(d?'<span class="muted">└ </span>':'')+esc(x.name)+(x.active?'':' <span class="tag">비활성</span>')+'</td>'
+        +'<td><select class="sel" style="height:30px;width:auto" id="org-r-'+x.id+'">'+RANKS.map(function(k){return '<option'+(k===x.rank?' selected':'')+'>'+k+'</option>';}).join('')+'</select></td>'
+        +'<td><select class="sel" style="height:30px;width:auto;min-width:120px" id="org-p-'+x.id+'"><option value="">(최상위)</option>'+ORG.filter(function(y){return y.id!==x.id;}).map(function(y){return '<option value="'+y.id+'"'+(y.id===x.parentId?' selected':'')+'>'+esc(y.name)+' · '+y.rank+'</option>';}).join('')+'</select></td>'
+        +'<td class="num">'+orgTbl(x,'손보')+'%</td><td class="num">'+orgTbl(x,'생보')+'%</td><td class="num muted">'+share+'</td>'
+        +'<td><button class="btn sm" onclick="saveOrg(\''+x.id+'\')">저장</button></td></tr>';
+    }).join('')+'</tbody></table></div>'
+    +'<div class="muted" style="font-size:12px;margin-top:8px">테이블 %는 위 설계사 목록의 [수정]에서 바꿉니다. 상위자가 하위자보다 테이블이 낮으면 상위자 몫은 0으로 계산됩니다.</div>';
+}
+function saveOrg(id){
+  var rank=$('org-r-'+id).value, pid=$('org-p-'+id).value;
+  fcApi('orgSave',{fcId:id, rank:rank, parentId:pid}).then(function(r){
+    if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
+    toast('조직도를 저장했어요'); loadOrg(true).then(renderOrg);
+  }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+/* 예상수수료 화면: 하위 조직 오버라이딩 */
+var OVR_ROWS=[], OVR_SEQ=0;
+function overrideOf(c, diff){
+  var p=Number(c.premium)||0, d=diff/100;
+  var next=Math.round(p*(c.m0||0)/100*d), y1=Math.round(p*(c.y1||0)/100*d), y2=Math.round(p*(c.y2||0)/100*d);
+  return {next:next, per712:Math.round(Math.max(0,y1-next)/6), per2:Math.round(y2/3), y1:y1, y2:y2};
+}
+function loadOverride(){
+  var seq=++OVR_SEQ, box=$('ovrBox'); if(!box) return;
+  var tgtName=feeTarget().name;
+  loadOrg().then(function(){
+    if(seq!==OVR_SEQ) return;
+    var top=orgByName(tgtName); var desc=top?orgDesc(top.id):[];
+    if(!top||!desc.length){ box.classList.add('hide'); OVR_ROWS=[]; renderFee(); return; }
+    box.classList.remove('hide'); $('ovrBody').innerHTML='<div class="empty">하위 '+desc.length+'명 계약 불러오는 중…</div>';
+    var idx=0, res={};
+    function worker(){ if(idx>=desc.length) return Promise.resolve(); var x=desc[idx++];
+      return feeApi('feeList',{fc:x.name}).then(function(r){ res[x.id]=(r.ok&&r.items)||[]; },function(){ res[x.id]=[]; }).then(worker); }
+    Promise.all([worker(),worker(),worker()]).then(function(){
+      if(seq!==OVR_SEQ) return;
+      OVR_ROWS=[];
+      desc.forEach(function(x){ (res[x.id]||[]).forEach(function(c){ if(!c.contractDate) return; var diff=orgDiff(x,top,c.kind||'손보'); if(diff>0) OVR_ROWS.push({fc:x, c:c, diff:diff, o:overrideOf(c,diff)}); }); });
+      OVR_ROWS.top=top; OVR_ROWS.desc=desc;
+      renderFee();
+    });
+  });
+}
+function overrideSchedule(){
+  var out=[];
+  OVR_ROWS.forEach(function(r){ var M=mIdx(r.c.contractDate), o=r.o;
+    if(o.next) out.push({m:M+1, amt:o.next, r:r, t:'익월'});
+    for(var n=7;n<=12;n++) if(o.per712) out.push({m:M+n, amt:o.per712, r:r, t:n+'회차'});
+    for(var k=13;k<=15;k++) if(o.per2) out.push({m:M+k, amt:o.per2, r:r, t:k+'회차'});
+  });
+  return out;
+}
+function renderOverride(next){
+  var box=$('ovrBox'); if(!box||box.classList.contains('hide')||!OVR_ROWS.top) return 0;
+  var sch=overrideSchedule(), sumM=function(m){ return sch.filter(function(x){return x.m===m;}).reduce(function(s,x){return s+x.amt;},0); };
+  var n1=sumM(next), s15=0; for(var i=next;i<next+15;i++) s15+=sumM(i);
+  var by={}; OVR_ROWS.forEach(function(r){ var k=r.fc.id; by[k]=by[k]||{fc:r.fc,cnt:0,next:0,tot:0,dS:null,dL:null}; var b=by[k]; b.cnt++; if(mIdx(r.c.contractDate)+1===next) b.next+=r.o.next; b.tot+=r.o.y1+r.o.y2; if((r.c.kind||'손보')==='생보') b.dL=r.diff; else b.dS=r.diff; });
+  sch.filter(function(x){return x.m===next&&x.t!=='익월';}).forEach(function(x){ by[x.r.fc.id].next+=x.amt; });
+  var list=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){return b.next-a.next||b.tot-a.tot;});
+  $('ovrSum').innerHTML='<div class="ovr-k"><span>다음 달 오버라이딩</span><b>'+won(n1)+'</b></div><div class="ovr-k"><span>향후 15개월 합계</span><b>'+won(s15)+'</b></div><div class="ovr-k"><span>하위 조직</span><b>'+OVR_ROWS.desc.length+'명 · 계약 '+OVR_ROWS.length+'건</b></div>';
+  $('ovrBody').innerHTML=list.length?'<div class="tbl-wrap" style="max-height:none"><table class="tbl"><thead><tr><th>하위자</th><th>직급</th><th class="num">내 몫 (손/생)</th><th class="num">계약</th><th class="num">다음 달 오버라이딩</th><th class="num">계약 전체 오버라이딩</th></tr></thead><tbody>'
+    +list.map(function(b){ return '<tr><td class="nm">'+esc(b.fc.name)+'</td><td>'+esc(b.fc.rank)+'</td><td class="num">'+(b.dS!=null?b.dS+'%':'-')+' / '+(b.dL!=null?b.dL+'%':'-')+'</td><td class="num">'+b.cnt+'건</td><td class="num"><b>'+won(b.next)+'</b></td><td class="num">'+won(b.tot)+'</td></tr>'; }).join('')
+    +'</tbody></table></div>':'<div class="empty">하위 조직에 입력된 계약이 없습니다.</div>';
+  return n1;
+}
 function loadFeeSet(){
   if(!isAdmin()) return;
   $('tFc').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
-  Promise.all([loadFcs(), loadAwards(), fcApi('profileList').then(function(r){ PROFILES=(r.ok&&r.items)||[]; })]).then(function(){ renderFcTable(); renderAwardTable(); })
+  Promise.all([loadFcs(), loadAwards(), fcApi('profileList').then(function(r){ PROFILES=(r.ok&&r.items)||[]; }), loadOrg(true)]).then(function(){ renderFcTable(); renderAwardTable(); renderOrg(); })
     .catch(function(){ toast('불러오지 못했습니다',true); });
 }
 function addOf(v){ v=Number(v); if(!isFinite(v)||!v) return ''; return Math.round((v-BASE_TABLE)*100)/100; }
