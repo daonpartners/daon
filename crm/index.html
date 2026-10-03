@@ -2109,21 +2109,50 @@ var SPECS=['건강보험','암보험','화재보험','자동차보험','펫보�
 function pfOfFc(f){ if(!f) return null; var hit=PROFILES.find(function(x){return x&&x.fcId===f.id;}); if(hit) return hit; var same=PROFILES.filter(function(x){return x&&!x.fcId&&x.name===f.name;}); return same.length===1?same[0]:null; }
 /* ───────── 지사 대시보드 (지사장) ───────── */
 var DASH_STAGES=['신규','접촉','상담예정','상담완료','제안','계약검토','계약완료','보류','실패'];
+var DASH_PROS={}, DASH_ROWS=null, DASH_SEQ=0;
+/* 지사 실적: 각 설계사의 예상수수료 계약을 모아 선택한 달(계약일)로 집계 */
+function dashPerf(ym){
+  var seq=++DASH_SEQ; DASH_ROWS=null;
+  loadOrg().then(function(){
+    var fcs=ORG.filter(function(x){ return x.active!==false; });
+    if(!fcs.length) fcs=[{name:ME.name, rank:'지사장', sonbo:null, saengbo:null}];
+    var res=[], idx=0;
+    function worker(){ if(idx>=fcs.length) return Promise.resolve(); var x=fcs[idx++];
+      return feeApi('feeList',{fc:x.name}).then(function(r){ ((r&&r.ok&&r.items)||[]).forEach(function(c){ res.push({fc:x,c:c}); }); },function(){}).then(worker); }
+    return Promise.all([worker(),worker(),worker()]).then(function(){
+      if(seq!==DASH_SEQ) return;
+      var rows=res.filter(function(o){ return String(o.c.contractDate||'').slice(0,7)===ym; });
+      DASH_ROWS={ym:ym, rows:rows, fcs:fcs};
+      var cnt=rows.length, prem=0, comm=0, dup=0, seen={};
+      rows.forEach(function(o){ var c=o.c, f=calcFee(c,{sonboRatio:o.fc.sonbo, saengboRatio:o.fc.saengbo}); prem+=Number(c.premium)||0; comm+=f.next+f.baseAward;
+        var k=[o.fc.name,c.holder,c.company,c.product,c.premium,c.contractDate].join('|'); if(seen[k]) dup++; seen[k]=1; });
+      $('dashTotal').innerHTML='<div class="kv"><span>계약 건수</span><b>'+cnt+'건</b></div><div class="kv"><span>월보험료 합계</span><b>'+won(prem)+'</b></div><div class="kv"><span>익월 예상수수료 (설계사 몫 + 익월 시상)</span><b>'+won(comm)+'</b></div>'
+        +'<div class="kv"><span>손보 / 생보</span><b>'+rows.filter(function(o){return (o.c.kind||'손보')==='손보';}).length+'건 / '+rows.filter(function(o){return o.c.kind==='생보';}).length+'건</b></div>'
+;
+      dashTeamDraw();
+    });
+  });
+}
+function dashTeamDraw(){
+  if(!DASH_ROWS){ return; }
+  var by={}; DASH_ROWS.fcs.forEach(function(x){ by[x.name]={fc:x, cnt:0, prem:0, comm:0}; });
+  DASH_ROWS.rows.forEach(function(o){ var b=by[o.fc.name]; var f=calcFee(o.c,{sonboRatio:o.fc.sonbo, saengboRatio:o.fc.saengbo}); b.cnt++; b.prem+=Number(o.c.premium)||0; b.comm+=f.next+f.baseAward; });
+  var list=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){ return b.prem-a.prem || b.cnt-a.cnt; });
+  $('dashTeam').innerHTML=list.length?list.map(function(b){ var t=DASH_PROS[b.fc.name]||{};
+    return '<div class="kv"><span><b>'+esc(b.fc.name)+'</b> <small>'+esc(b.fc.rank||'')+'</small><br><small>가망 '+(t.prospect||0)+'명 · 보류 '+(t.hold||0)+'명</small></span><b style="text-align:right">'+b.cnt+'건 · '+won(b.prem)+'<br><small>익월 예상 '+won(b.comm)+'</small></b></div>'; }).join(''):'<div class="empty">데이터가 없습니다.</div>';
+}
 function dashMove(n){ var v=$('dashMonth').value||today().slice(0,7); var y=+v.slice(0,4), m=+v.slice(5,7)-1+n; y+=Math.floor(m/12); m=((m%12)+12)%12; $('dashMonth').value=y+'-'+String(m+1).padStart(2,'0'); loadDash(); }
 function loadDash(){
   if(!isOwner()) return;
   if(!$('dashMonth').value) $('dashMonth').value=today().slice(0,7);
   var ym=$('dashMonth').value, lab=ym.replace('-','년 ')+'월';
   $('dashTotH').textContent=lab+' 지사 실적'; $('dashTeamH').textContent=lab+' 설계사별 실적';
-  var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>'; $('dashTeam').innerHTML='';
+  var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>'; $('dashTeam').innerHTML='<div class="empty">불러오는 중…</div>';
+  dashPerf(ym);
   api('adminDash',{branch:ME.branch, ym:ym}).then(function(r){
-    if(r && r.ym && r.ym!==ym){ tot.innerHTML='<div class="empty">'+esc(lab)+' 자료를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>'; return; }
-    if(!r.ok){ tot.innerHTML='<div class="empty">'+esc(r.error||'불러오지 못했습니다.')+'</div>'; return; }
-    $('dashYm').textContent=lab+' 실적 · 계약일 기준 · 관리 알림과 가망 단계는 오늘 기준';
-    var m=r.monthTotal||{};
-    tot.innerHTML='<div class="kv"><span>계약 건수</span><b>'+(m.count||0)+'건</b></div><div class="kv"><span>환산실적</span><b>'+won(m.conv||0)+'</b></div><div class="kv"><span>월납보험료</span><b>'+won(m.premium||0)+'</b></div><div class="kv"><span>예상수수료</span><b>'+won(m.comm||0)+'</b></div>';
-    var team=r.team||[];
-    $('dashTeam').innerHTML=team.length?team.map(function(t){ return '<div class="kv"><span><b>'+esc(t.fc||'(미지정)')+'</b> <small>'+esc(t.rank||'')+'</small><br><small>가망 '+(t.prospect||0)+'명 · 보류 '+(t.hold||0)+'명</small></span><b style="text-align:right">'+(t.count||0)+'건<br><small>'+won(t.conv||0)+'</small></b></div>'; }).join(''):'<div class="empty">데이터가 없습니다.</div>';
+    if(!r.ok){ $('dashAlert').innerHTML='<div class="empty">'+esc(r.error||'관리 현황을 불러오지 못했습니다.')+'</div>'; return; }
+    $('dashYm').textContent=lab+' 실적 · 예상수수료에 입력한 계약의 계약일 기준 · 관리 알림과 가망 단계는 오늘 기준';
+    DASH_PROS={}; (r.team||[]).forEach(function(t){ DASH_PROS[t.fc]=t; }); dashTeamDraw();
     var f=r.funnel||{};
     $('dashFunnel').innerHTML=DASH_STAGES.map(function(k){ return '<div class="kv"><span>'+k+'</span><b>'+(f[k]||0)+'명</b></div>'; }).join('');
     var od=r.overdue||[], rn=r.renewSoon||[], rv=r.reviewSoon||[], h='';
