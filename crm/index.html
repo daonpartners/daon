@@ -234,7 +234,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .cal-cell.sun .cal-d{color:var(--red)}
 .cal-cell.today .cal-d span{background:var(--acc);color:#fff;border-radius:50%;display:inline-flex;width:22px;height:22px;align-items:center;justify-content:center}
 .ev{font-size:11.5px;line-height:1.35;padding:1px 5px;border-radius:4px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ev.sch{background:#EDE9FE;color:#5B21B6} .ev.grow{background:#F3E8FF;color:#7E22CE} .ev.exp{background:var(--red-lt);color:var(--red)} .ev.bd{background:var(--yel-lt);color:var(--yel)} .ev.nt{background:var(--blue-lt);color:var(--blue)}
+.ev.sch,.ev.grow{background:#EEF1F5;color:#334155} .ev.edu{background:#EDE9FE;color:#5B21B6} .ev.evt{background:#DCFCE7;color:#15803D} .ev.exp{background:var(--red-lt);color:var(--red)} .ev.bd{background:var(--yel-lt);color:var(--yel)} .ev.nt{background:var(--blue-lt);color:var(--blue)}
 .ev-more{font-size:11px;color:var(--ink3);padding-left:4px}
 .daylist .it{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line2)}
 .daylist .it:last-child{border-bottom:0}
@@ -510,7 +510,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
       <div class="cal-g">
         <div class="card">
           <div class="card-h"><div class="cal-head"><button class="btn sm" onclick="calMove(-1)">‹</button><h3 id="calTitle"></h3><button class="btn sm" onclick="calMove(1)">›</button><button class="btn sm" onclick="calMove(0)">오늘</button></div>
-            <div class="chips"><span class="tag" style="background:#EDE9FE;color:#5B21B6">일정</span><span class="tag r">만기</span><span class="tag y">생일</span><span class="tag b">연락</span></div></div>
+            <div class="chips"><span class="tag" style="background:#EDE9FE;color:#5B21B6">교육</span><span class="tag" style="background:#DCFCE7;color:#15803D">행사</span><span class="tag" style="background:#EEF1F5;color:#334155">일정</span><span class="tag r">만기</span><span class="tag y">생일</span><span class="tag b">연락</span></div></div>
           <div class="cal-wd"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
           <div class="cal-grid" id="calGrid"></div>
         </div>
@@ -2468,9 +2468,10 @@ function eventsOf(y,m,withHidden){
   var ev=eventsAll(y,m); if(withHidden) return ev;
   var h=hiddenSet(); return ev.filter(function(e){ return !h[evKey(e)]; });
 }
+function schKind(s){ var c=String(s.category||''), t=String(s.title||''); if(/교육|edu/i.test(c)) return 'edu'; if(/행사|event/i.test(c)) return 'evt'; if(!c||/기타|GROW/i.test(c)){ if(/교육/.test(t)) return 'edu'; if(/행사/.test(t)) return 'evt'; } return ''; }
 function eventsAll(y,m){
   var ym=ymOf(y,m), ev=[];
-  SCHEDULES.forEach(function(s){ if(s.date&&s.date.slice(0,7)===ym) ev.push({date:s.date,cls:s.source==='grow'?'grow':'sch',t:s.title,s:[s.category,s.time,s.place].filter(Boolean).join(' · '),sch:s}); });
+  SCHEDULES.forEach(function(s){ if(s.date&&s.date.slice(0,7)===ym) ev.push({date:s.date,cls:s.source==='grow'?'grow':'sch',k:schKind(s),t:s.title,s:[s.category,s.time,s.place].filter(Boolean).join(' · '),sch:s}); });
   CONTRACTS.forEach(function(ct){ if(ct.expireDate&&ct.expireDate.slice(0,7)===ym) ev.push({date:ct.expireDate,cls:'exp',t:(ct.custName||'')+' '+(ct.category||'')+' 만기',s:ct.company+' · '+ct.product,ctr:ct.id}); });
   CUSTOMERS.forEach(function(c){
     if(c.custType!=='가망고객' && c.birth && +c.birth.slice(5,7)===m+1) ev.push({date:ym+'-'+c.birth.slice(8,10),cls:'bd',t:c.name+'님 생일',s:'보유고객',cust:c.id});
@@ -2496,7 +2497,7 @@ function renderCal(){
     var ds=ymOf(CAL.y,CAL.m)+'-'+String(d).padStart(2,'0'), list=by[ds]||[], wd=(first+d-1)%7;
     var hol=HOL[ds.slice(5)]||(HOL_Y[CAL.y]||{})[ds.slice(5)]||'';
     h+='<div class="cal-cell'+(wd===0||hol?' sun':'')+(ds===t?' today':'')+(ds===CAL_SEL?' sel':'')+'" onclick="selDay(\''+ds+'\')"><div class="cal-d"><span>'+d+'</span>'+(hol?' <small style="font-weight:500">'+hol+'</small>':'')+'</div>'
-      +list.slice(0,max).map(function(e){ return '<div class="ev '+e.cls+'">'+esc(e.t)+'</div>'; }).join('')+(list.length>max?'<div class="ev-more">+'+(list.length-max)+'건</div>':'')+'</div>';
+      +list.slice(0,max).map(function(e){ return '<div class="ev '+e.cls+(e.k?' '+e.k:'')+'">'+esc(e.t)+'</div>'; }).join('')+(list.length>max?'<div class="ev-more">+'+(list.length-max)+'건</div>':'')+'</div>';
   }
   var rest=(7-(first+days)%7)%7; for(var j=0;j<rest;j++) h+='<div class="cal-cell off"></div>';
   $('calGrid').innerHTML=h;
@@ -2506,7 +2507,7 @@ function renderCal(){
 function selDay(ds){ CAL_SEL=ds; renderCal(); }
 function drawDay(ds){
   var d=new Date(ds); $('dayTitle').textContent=(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')';
-  var col={sch:'#7C3AED',grow:'#A855F7',exp:'#D6453D',bd:'#B7791F',nt:'#2F6FEB'};
+  var col={sch:'#64748B',grow:'#64748B',edu:'#7C3AED',evt:'#16A34A',exp:'#D6453D',bd:'#B7791F',nt:'#2F6FEB'};
   var list=eventsOf(CAL.y,CAL.m).filter(function(e){return e.date===ds;});
   $('dayList').innerHTML=list.length?list.map(function(e,i){
     var act='';
@@ -2516,7 +2517,7 @@ function drawDay(ds){
     else if(e.ctr) act='<button class="btn sm" onclick="openCtrForm(\''+e.ctr+'\')">계약 보기</button>';
     else if(e.cust) act='<button class="btn sm" onclick="openCust(\''+e.cust+'\')">고객 보기</button>';
     act+=own?'<button class="btn sm danger" onclick="delSch(\''+e.sch.id+'\')">삭제</button>':'<button class="btn sm danger" title="내 화면에서만 삭제됩니다" onclick="hideEv('+i+')">삭제</button>';
-    return '<div class="it"><span class="dot" style="background:'+col[e.cls]+'"></span><div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(e.t)+(e.cls==='grow'?' <span class="tag">GROW ON</span>':e.sch?(e.sch.scope==='개인'?' <span class="tag b">내 일정</span>':' <span class="tag o">지사</span>'):'')+'</div><div class="muted" style="font-size:12px">'+esc(e.s)+'</div></div><div style="display:flex;gap:4px">'+act+'</div></div>';
+    return '<div class="it"><span class="dot" style="background:'+col[e.k||e.cls]+'"></span><div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(e.t)+(e.cls==='grow'?' <span class="tag">GROW ON</span>':e.sch?(e.sch.scope==='개인'?' <span class="tag b">내 일정</span>':' <span class="tag o">지사</span>'):'')+'</div><div class="muted" style="font-size:12px">'+esc(e.s)+'</div></div><div style="display:flex;gap:4px">'+act+'</div></div>';
   }).join(''):'<div class="empty" style="padding:14px">이 날은 일정이 없습니다.</div>';
   var hid=eventsOf(CAL.y,CAL.m,true).filter(function(e){ return e.date===ds; }).length-list.length;
   if(hid>0) $('dayList').innerHTML+='<div class="muted" style="font-size:12px;padding:8px 0 0">내 화면에서 삭제한 일정 '+hid+'건 · <button class="btn sm" style="height:24px" onclick="unhideDay(\''+ds+'\')">다시 보기</button></div>';
