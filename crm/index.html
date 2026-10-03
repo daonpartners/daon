@@ -701,7 +701,6 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 <script>
 /* ───────── 설정 ───────── */
 var API = 'https://daonpartners.app.n8n.cloud/webhook/grow-crm-v2';
-var SONBO_FEE_URL = './sonbo-fee.json';
 var ME = null, CUSTOMERS = [], CONTRACTS = [], TODOS = [], TPLS = [], SCHEDULES = [], SONBO_FEE = null;
 var OWNER_COMP = '', PROS_SUB = '';
 var VIEW = 'home', OWNER_VIEW = 'cust', OWNER_CAT = '전체', PROS_CAT = '전체', TODO_F = 'open';
@@ -724,6 +723,8 @@ var ICON = {
 };
 var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['feeset','설계사·수수료 설정']];
 function isAdmin(){ return !!(ME && /지사장|관리자|대표|본부장|사업단장/.test(ME.role||'')); }
+/* 설계사·수수료 설정, 다른 설계사 수수료 보기: 지사장만 */
+function isOwner(){ return !!(ME && ME.role==='지사장'); }
 
 /* ───────── 공통 ───────── */
 function $(id){ return document.getElementById(id); }
@@ -779,18 +780,18 @@ function boot(){
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
   loadAll(); loadTodos(); loadFee(); loadTpl();
-  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && (h!=='feeset'||isAdmin());})) go(h);
+  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && (h!=='feeset'||isOwner());})) go(h);
 }
 function drawNav(){
   var cnt={owner:'stO',prospect:'stP'};
-  var NV=NAV.filter(function(n){ return n[0]!=='feeset' || isAdmin(); });
+  var NV=NAV.filter(function(n){ return n[0]!=='feeset' || isOwner(); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
-  }).join('')+'<hr><button onclick="location.href=\'./classic.html\'" title="엑셀 가져오기, 지사관리, 리쿠르팅 등">'+ICON.old+'기존 화면</button>'
-    +'<button onclick="location.href=\'https://daon.io.kr/\'" title="daon.io.kr 홈페이지">'+ICON.web+'홈페이지로 가기</button>';
-  $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'./classic.html\'">기존 화면</button><button onclick="location.href=\'https://daon.io.kr/\'">홈페이지</button>';
+  }).join('')+'<hr><button onclick="location.href=\'https://daon.io.kr/\'" title="daon.io.kr 홈페이지">'+ICON.web+'홈페이지로 가기</button>';
+  $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'https://daon.io.kr/\'">홈페이지</button>';
 }
 function go(v){
+  if(v==='feeset' && !isOwner()) v='home';
   VIEW=v;
   document.querySelectorAll('.view').forEach(function(s){ s.classList.toggle('hide', s.id!=='v-'+v); });
   document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===v); });
@@ -2038,7 +2039,7 @@ function delFee(){
   }).catch(function(){ toast('연결에 실패했습니다',true); });
 }
 function initFeeFcPicker(){
-  if(!isAdmin()) return;
+  if(!isOwner()) return;
   loadFcs().then(function(){
     var sel=$('feeFc'); sel.classList.remove('hide');
     sel.innerHTML='<option value="">내 계약 ('+esc(ME.name)+')</option>'+FCS.filter(function(f){return f.name!==ME.name;}).map(function(f){ return '<option value="'+esc(f.id)+'">'+esc(f.name)+(f.active?'':' (비활성)')+'</option>'; }).join('');
@@ -2155,7 +2156,7 @@ function renderOverride(next){
   return n1;
 }
 function loadFeeSet(){
-  if(!isAdmin()) return;
+  if(!isOwner()) return;
   $('tFc').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
   Promise.all([loadFcs(), loadAwards(), fcApi('profileList').then(function(r){ PROFILES=(r.ok&&r.items)||[]; }), loadOrg(true)]).then(function(){ renderFcTable(); renderAwardTable(); renderOrg(); })
     .catch(function(){ toast('불러오지 못했습니다',true); });
