@@ -482,9 +482,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
         <div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="dashMove(-1)" aria-label="이전 달">‹</button><input class="inp" type="month" id="dashMonth" style="width:150px" onchange="loadDash()"><button class="btn" onclick="dashMove(1)" aria-label="다음 달">›</button><button class="btn" onclick="$('dashMonth').value=today().slice(0,7);loadDash()">이번 달</button></div></div>
       <div class="dash-g">
         <div class="card"><div class="card-h"><h3 id="dashTotH">이번 달 지사 실적</h3></div><div class="card-b" id="dashTotal"></div></div>
-        <div class="card"><div class="card-h"><h3>관리 알림</h3><span class="muted" style="font-size:12px">오늘 기준</span></div><div class="card-b" id="dashAlert"></div></div>
         <div class="card"><div class="card-h"><h3 id="dashTeamH">설계사별 실적</h3></div><div class="card-b" id="dashTeam"></div></div>
-        <div class="card"><div class="card-h"><h3>가망고객 단계</h3><span class="muted" style="font-size:12px">오늘 기준</span></div><div class="card-b" id="dashFunnel"></div></div>
       </div>
     </section>
 
@@ -525,6 +523,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
               <div class="g2"><div class="fld"><select class="sel" id="schCat"><option>회의</option><option>교육</option><option>행사</option><option>시상</option><option>LIVE</option><option>상담</option><option>방문</option><option>기타</option></select></div>
                 <div class="fld"><input class="inp" id="schTime" placeholder="시간 (예: 14:00)"></div></div>
               <div class="fld"><input class="inp" id="schPlace" placeholder="장소 (선택)"></div>
+              <div class="fld hide" id="schScopeBox"><select class="sel" id="schScope"><option value="개인">내 일정 (나만 보기)</option><option value="지사">지사 일정 (설계사 전원 공유)</option></select></div>
               <div style="display:flex;gap:8px"><button class="btn hide" id="schCancel" onclick="resetSchForm()">취소</button><button class="btn pri" style="flex:1" onclick="saveSch()">저장</button></div>
             </div>
           </div>
@@ -2138,8 +2137,8 @@ function dashTeamDraw(){
   var by={}; DASH_ROWS.fcs.forEach(function(x){ by[x.name]={fc:x, cnt:0, prem:0, comm:0}; });
   DASH_ROWS.rows.forEach(function(o){ var b=by[o.fc.name]; var f=calcFee(o.c,{sonboRatio:o.fc.sonbo, saengboRatio:o.fc.saengbo}); b.cnt++; b.prem+=Number(o.c.premium)||0; b.comm+=f.next+f.baseAward; });
   var list=Object.keys(by).map(function(k){return by[k];}).sort(function(a,b){ return b.prem-a.prem || b.cnt-a.cnt; });
-  $('dashTeam').innerHTML=list.length?list.map(function(b){ var t=DASH_PROS[b.fc.name]||{};
-    return '<div class="kv"><span><b>'+esc(b.fc.name)+'</b> <small>'+esc(b.fc.rank||'')+'</small><br><small>가망 '+(t.prospect||0)+'명 · 보류 '+(t.hold||0)+'명</small></span><b style="text-align:right">'+b.cnt+'건 · '+won(b.prem)+'<br><small>익월 예상 '+won(b.comm)+'</small></b></div>'; }).join(''):'<div class="empty">데이터가 없습니다.</div>';
+  $('dashTeam').innerHTML=list.length?list.map(function(b){
+    return '<div class="kv"><span><b>'+esc(b.fc.name)+'</b> <small>'+esc(b.fc.rank||'')+'</small></span><b style="text-align:right">'+b.cnt+'건 · '+won(b.prem)+'<br><small>익월 예상 '+won(b.comm)+'</small></b></div>'; }).join(''):'<div class="empty">데이터가 없습니다.</div>';
 }
 function dashMove(n){ var v=$('dashMonth').value||today().slice(0,7); var y=+v.slice(0,4), m=+v.slice(5,7)-1+n; y+=Math.floor(m/12); m=((m%12)+12)%12; $('dashMonth').value=y+'-'+String(m+1).padStart(2,'0'); loadDash(); }
 function loadDash(){
@@ -2149,19 +2148,7 @@ function loadDash(){
   $('dashTotH').textContent=lab+' 지사 실적'; $('dashTeamH').textContent=lab+' 설계사별 실적';
   var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>'; $('dashTeam').innerHTML='<div class="empty">불러오는 중…</div>';
   dashPerf(ym);
-  api('adminDash',{branch:ME.branch, ym:ym}).then(function(r){
-    if(!r.ok){ $('dashAlert').innerHTML='<div class="empty">'+esc(r.error||'관리 현황을 불러오지 못했습니다.')+'</div>'; return; }
-    $('dashYm').textContent=lab+' 실적 · 예상수수료에 입력한 계약의 계약일 기준 · 관리 알림과 가망 단계는 오늘 기준';
-    DASH_PROS={}; (r.team||[]).forEach(function(t){ DASH_PROS[t.fc]=t; }); dashTeamDraw();
-    var f=r.funnel||{};
-    $('dashFunnel').innerHTML=DASH_STAGES.map(function(k){ return '<div class="kv"><span>'+k+'</span><b>'+(f[k]||0)+'명</b></div>'; }).join('');
-    var od=r.overdue||[], rn=r.renewSoon||[], rv=r.reviewSoon||[], h='';
-    h+='<div class="kv"><span>관리일이 지난 고객</span><b style="color:var(--red)">'+(r.overdueCount||0)+'명</b></div><div class="kv"><span>30일 내 갱신 예정</span><b>'+rn.length+'명</b></div><div class="kv"><span>30일 내 보장점검</span><b>'+rv.length+'명</b></div>';
-    if(od.length) h+='<div class="kv-h">가장 오래 밀린 고객</div>'+od.slice(0,10).map(function(c){ return '<div class="kv"><span>'+esc(c.name)+' <small>'+esc(c.fc||'')+'</small></span><small>'+esc(c.date)+'</small></div>'; }).join('');
-    var rc=r.recruit||{}, rk=Object.keys(rc);
-    if(rk.length) h+='<div class="kv-h">리쿠르팅 단계</div>'+rk.map(function(k){ return '<div class="kv"><span>'+esc(k)+'</span><b>'+rc[k]+'명</b></div>'; }).join('');
-    $('dashAlert').innerHTML=h;
-  }).catch(function(){ tot.innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
+  $('dashYm').textContent=lab+' 실적 · 예상수수료에 입력한 계약의 계약일 기준';
 }
 /* ───────── 리쿠르팅 (지점장·사업단장·지사장) ───────── */
 var RECS=[], REC_ID=null, REC_STAGE='전체', REC_STAGES=['신규후보','접촉','면접예정','면접완료','교육','위촉','보류','탈락'];
@@ -2524,26 +2511,33 @@ function drawDay(ds){
   $('dayList').innerHTML=list.length?list.map(function(e,i){
     var act='';
     EV_TMP[i]=e;
-    if(e.sch && e.cls==='sch') act='<button class="btn sm" onclick="editSch(\''+e.sch.id+'\')">수정</button>'+(isAdmin()?'<button class="btn sm" title="지사 전체에서 삭제" onclick="delSch(\''+e.sch.id+'\')">전체 삭제</button>':'');
+    var own=e.sch&&schMine(e.sch);
+    if(e.sch && schCanEdit(e.sch)) act='<button class="btn sm" onclick="editSch(\''+e.sch.id+'\')">수정</button>'+(own?'':'<button class="btn sm" title="모든 설계사 화면에서 삭제" onclick="delSch(\''+e.sch.id+'\')">전체 삭제</button>');
     else if(e.ctr) act='<button class="btn sm" onclick="openCtrForm(\''+e.ctr+'\')">계약 보기</button>';
     else if(e.cust) act='<button class="btn sm" onclick="openCust(\''+e.cust+'\')">고객 보기</button>';
-    act+='<button class="btn sm danger" title="내 화면에서만 삭제됩니다" onclick="hideEv('+i+')">삭제</button>';
-    return '<div class="it"><span class="dot" style="background:'+col[e.cls]+'"></span><div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(e.t)+(e.cls==='grow'?' <span class="tag">GROW ON</span>':'')+'</div><div class="muted" style="font-size:12px">'+esc(e.s)+'</div></div><div style="display:flex;gap:4px">'+act+'</div></div>';
+    act+=own?'<button class="btn sm danger" onclick="delSch(\''+e.sch.id+'\')">삭제</button>':'<button class="btn sm danger" title="내 화면에서만 삭제됩니다" onclick="hideEv('+i+')">삭제</button>';
+    return '<div class="it"><span class="dot" style="background:'+col[e.cls]+'"></span><div style="flex:1;min-width:0"><div style="font-weight:600">'+esc(e.t)+(e.cls==='grow'?' <span class="tag">GROW ON</span>':e.sch?(e.sch.scope==='개인'?' <span class="tag b">내 일정</span>':' <span class="tag o">지사</span>'):'')+'</div><div class="muted" style="font-size:12px">'+esc(e.s)+'</div></div><div style="display:flex;gap:4px">'+act+'</div></div>';
   }).join(''):'<div class="empty" style="padding:14px">이 날은 일정이 없습니다.</div>';
   var hid=eventsOf(CAL.y,CAL.m,true).filter(function(e){ return e.date===ds; }).length-list.length;
   if(hid>0) $('dayList').innerHTML+='<div class="muted" style="font-size:12px;padding:8px 0 0">내 화면에서 삭제한 일정 '+hid+'건 · <button class="btn sm" style="height:24px" onclick="unhideDay(\''+ds+'\')">다시 보기</button></div>';
   $('schForm').classList.remove('hide'); if(!SCH_EDIT) resetSchForm(true);
 }
-function resetSchForm(keepOpen){ SCH_EDIT=null; $('schFormT').textContent='일정 추가'; $('schTitle').value=''; $('schTime').value=''; $('schPlace').value=''; $('schCat').value='상담'; $('schCancel').classList.add('hide'); }
-function editSch(id){ var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s) return; SCH_EDIT=s; $('schFormT').textContent='일정 수정'; $('schTitle').value=s.title||''; $('schTime').value=s.time||''; $('schPlace').value=s.place||''; $('schCat').value=s.category||'기타'; $('schCancel').classList.remove('hide'); $('schTitle').focus(); }
+/* 일정 권한: GROW·지사 일정 = 전원 공유, 등록·수정·삭제는 지사장만 / 내 일정 = 작성자만 보고 고침 */
+function schMine(s){ return s && s.source==='daon' && s.scope==='개인' && s.fc===ME.name; }
+function schCanEdit(s){ return isOwner() || schMine(s); }
+function resetSchForm(keepOpen){ SCH_EDIT=null; $('schScopeBox').classList.toggle('hide',!isOwner()); $('schScope').value='개인'; $('schFormT').textContent='일정 추가'; $('schTitle').value=''; $('schTime').value=''; $('schPlace').value=''; $('schCat').value='상담'; $('schCancel').classList.add('hide'); }
+function editSch(id){ var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s) return; if(!schCanEdit(s)){ toast('지사·GROW 일정은 지사장만 고칠 수 있습니다',true); return; } SCH_EDIT=s; $('schFormT').textContent='일정 수정'; $('schTitle').value=s.title||''; $('schTime').value=s.time||''; $('schPlace').value=s.place||''; $('schCat').value=s.category||'기타'; $('schScope').value=s.scope==='개인'?'개인':'지사'; $('schScopeBox').classList.toggle('hide',!isOwner()||s.source==='grow'); $('schCancel').classList.remove('hide'); $('schTitle').focus(); }
 function saveSch(){
   var title=$('schTitle').value.trim(); if(!title){ toast('일정명을 입력하세요',true); return; } if(!CAL_SEL) return;
-  api('scheduleSave',{pageId:SCH_EDIT?SCH_EDIT.id:'',source:SCH_EDIT?(SCH_EDIT.source||'daon'):'daon',title:title,date:SCH_EDIT?SCH_EDIT.date:CAL_SEL,fc:ME.name,category:$('schCat').value,time:$('schTime').value.trim(),place:$('schPlace').value.trim()})
+  if(SCH_EDIT && !schCanEdit(SCH_EDIT)){ toast('지사·GROW 일정은 지사장만 고칠 수 있습니다',true); return; }
+  var scope=isOwner()?$('schScope').value:'개인';
+  api('scheduleSave',{pageId:SCH_EDIT?SCH_EDIT.id:'',source:SCH_EDIT?(SCH_EDIT.source||'daon'):'daon',title:title,date:SCH_EDIT?SCH_EDIT.date:CAL_SEL,fc:SCH_EDIT&&SCH_EDIT.fc?SCH_EDIT.fc:ME.name,scope:scope,category:$('schCat').value,time:$('schTime').value.trim(),place:$('schPlace').value.trim()})
     .then(function(r){ if(r.ok){ toast(SCH_EDIT?'수정했어요':'추가했어요'); SCH_EDIT=null; loadSchedules(); } else toast(r.error||'저장에 실패했습니다',true); })
     .catch(function(){ toast('연결에 실패했습니다',true); });
 }
 function delSch(id){
-  var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s||!confirm('이 일정을 지사 전체에서 삭제할까요?\n다른 설계사 화면에서도 사라집니다. 내 화면에서만 지우려면 [삭제]를 누르세요.')) return;
+  var s=SCHEDULES.find(function(x){return x.id===id;}); if(!s||!schCanEdit(s)) return;
+  if(!confirm(schMine(s)?'이 일정을 삭제할까요?':'이 일정을 지사 전체에서 삭제할까요?\n모든 설계사 화면에서 사라집니다.')) return;
   api('scheduleDelete',{pageId:id,source:s.source||'daon',fc:ME.name}).then(function(r){ if(r.ok){ toast('삭제했어요'); SCH_EDIT=null; loadSchedules(); } else toast(r.error||'삭제에 실패했습니다',true); });
 }
 function renderAgenda(){
