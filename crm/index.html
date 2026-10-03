@@ -478,21 +478,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 
     <!-- 지사 대시보드 (지사장) -->
     <section class="page view hide" id="v-dash">
-      <div class="ph"><div><h2>지사 대시보드</h2><div class="sub" id="dashYm">지사 전체 실적과 관리 현황</div></div><button class="btn" onclick="loadDash()">새로고침</button></div>
+      <div class="ph"><div><h2>지사 대시보드</h2><div class="sub" id="dashYm">지사 전체 실적과 관리 현황</div></div>
+        <div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="dashMove(-1)" aria-label="이전 달">‹</button><input class="inp" type="month" id="dashMonth" style="width:150px" onchange="loadDash()"><button class="btn" onclick="dashMove(1)" aria-label="다음 달">›</button><button class="btn" onclick="$('dashMonth').value=today().slice(0,7);loadDash()">이번 달</button></div></div>
       <div class="dash-g">
-        <div class="card"><div class="card-h"><h3>이번 달 지사 실적</h3></div><div class="card-b" id="dashTotal"></div></div>
-        <div class="card"><div class="card-h"><h3>관리 알림</h3></div><div class="card-b" id="dashAlert"></div></div>
-        <div class="card"><div class="card-h"><h3>설계사별 실적</h3></div><div class="card-b" id="dashTeam"></div></div>
-        <div class="card"><div class="card-h"><h3>가망고객 단계</h3></div><div class="card-b" id="dashFunnel"></div></div>
-      </div>
-    </section>
-
-    <!-- 유지율 (지사장) -->
-    <section class="page view hide" id="v-keep">
-      <div class="ph"><div><h2>유지율</h2><div class="sub">지사 전체 계약 기준 · <span id="keepDay"></span></div></div><button class="btn" onclick="loadKeep()">새로고침</button></div>
-      <div class="dash-g">
-        <div class="card"><div class="card-h"><h3>유지율 요약</h3></div><div class="card-b" id="keepSummary"></div></div>
-        <div class="card"><div class="card-h"><h3>챙길 계약</h3><span class="muted" style="font-size:12px">실효·해지·미납 위험</span></div><div class="card-b" id="keepAlerts"></div></div>
+        <div class="card"><div class="card-h"><h3 id="dashTotH">이번 달 지사 실적</h3></div><div class="card-b" id="dashTotal"></div></div>
+        <div class="card"><div class="card-h"><h3>관리 알림</h3><span class="muted" style="font-size:12px">오늘 기준</span></div><div class="card-b" id="dashAlert"></div></div>
+        <div class="card"><div class="card-h"><h3 id="dashTeamH">설계사별 실적</h3></div><div class="card-b" id="dashTeam"></div></div>
+        <div class="card"><div class="card-h"><h3>가망고객 단계</h3><span class="muted" style="font-size:12px">오늘 기준</span></div><div class="card-b" id="dashFunnel"></div></div>
       </div>
     </section>
 
@@ -768,15 +760,14 @@ var ICON = {
   feeset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
   recruit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.4"/><path d="M17 13v8M13 17h8"/></svg>',
   dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
-  keep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['keep','유지율'],['feeset','설계사·수수료 설정']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
 /* 메뉴별 권한: 지사장 전용 / 관리자(지점장·사업단장·지사장) */
 var MY_RANK='';
 function isManager(){ return isOwner() || ['지점장','사업단장','지사장'].indexOf(MY_RANK)>=0; }
-function canView(v){ if(v==='feeset'||v==='dash'||v==='keep') return isOwner(); if(v==='recruit') return isManager(); return true; }
+function canView(v){ if(v==='feeset'||v==='dash') return isOwner(); if(v==='recruit') return isManager(); return true; }
 function isAdmin(){ return !!(ME && /지사장|관리자|대표|본부장|사업단장/.test(ME.role||'')); }
 /* 설계사·수수료 설정, 다른 설계사 수수료 보기: 지사장만 */
 function isOwner(){ return !!(ME && ME.role==='지사장'); }
@@ -854,7 +845,7 @@ function go(v){
   history.replaceState(null,'','#'+v);
   if(v==='owner') renderOwner(); if(v==='prospect') renderPros(); if(v==='cal') renderCal(); if(v==='todo') renderTodos(); if(v==='sms') renderRcpts();
   if(v==='fee') loadFeeList();
-  if(v==='feeset') loadFeeSet(); if(v==='dash') loadDash(); if(v==='keep') loadKeep(); if(v==='recruit') loadRec();
+  if(v==='feeset') loadFeeSet(); if(v==='dash') loadDash(); if(v==='recruit') loadRec();
   if(v==='me') loadMyProfile();
   window.scrollTo(0,0);
 }
@@ -2118,12 +2109,17 @@ var SPECS=['건강보험','암보험','화재보험','자동차보험','펫보�
 function pfOfFc(f){ if(!f) return null; var hit=PROFILES.find(function(x){return x&&x.fcId===f.id;}); if(hit) return hit; var same=PROFILES.filter(function(x){return x&&!x.fcId&&x.name===f.name;}); return same.length===1?same[0]:null; }
 /* ───────── 지사 대시보드 (지사장) ───────── */
 var DASH_STAGES=['신규','접촉','상담예정','상담완료','제안','계약검토','계약완료','보류','실패'];
+function dashMove(n){ var v=$('dashMonth').value||today().slice(0,7); var y=+v.slice(0,4), m=+v.slice(5,7)-1+n; y+=Math.floor(m/12); m=((m%12)+12)%12; $('dashMonth').value=y+'-'+String(m+1).padStart(2,'0'); loadDash(); }
 function loadDash(){
   if(!isOwner()) return;
-  var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>';
-  api('adminDash',{branch:ME.branch}).then(function(r){
+  if(!$('dashMonth').value) $('dashMonth').value=today().slice(0,7);
+  var ym=$('dashMonth').value, lab=ym.replace('-','년 ')+'월';
+  $('dashTotH').textContent=lab+' 지사 실적'; $('dashTeamH').textContent=lab+' 설계사별 실적';
+  var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>'; $('dashTeam').innerHTML='';
+  api('adminDash',{branch:ME.branch, ym:ym}).then(function(r){
+    if(r && r.ym && r.ym!==ym){ tot.innerHTML='<div class="empty">'+esc(lab)+' 자료를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.</div>'; return; }
     if(!r.ok){ tot.innerHTML='<div class="empty">'+esc(r.error||'불러오지 못했습니다.')+'</div>'; return; }
-    $('dashYm').textContent=(r.ym||'')+' · 지사 전체 실적과 관리 현황';
+    $('dashYm').textContent=lab+' 실적 · 계약일 기준 · 관리 알림과 가망 단계는 오늘 기준';
     var m=r.monthTotal||{};
     tot.innerHTML='<div class="kv"><span>계약 건수</span><b>'+(m.count||0)+'건</b></div><div class="kv"><span>환산실적</span><b>'+won(m.conv||0)+'</b></div><div class="kv"><span>월납보험료</span><b>'+won(m.premium||0)+'</b></div><div class="kv"><span>예상수수료</span><b>'+won(m.comm||0)+'</b></div>';
     var team=r.team||[];
@@ -2137,23 +2133,6 @@ function loadDash(){
     if(rk.length) h+='<div class="kv-h">리쿠르팅 단계</div>'+rk.map(function(k){ return '<div class="kv"><span>'+esc(k)+'</span><b>'+rc[k]+'명</b></div>'; }).join('');
     $('dashAlert').innerHTML=h;
   }).catch(function(){ tot.innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
-}
-/* ───────── 유지율 (지사장) ───────── */
-function loadKeep(){
-  if(!isOwner()) return;
-  $('keepDay').textContent=today();
-  var box=$('keepSummary'), al=$('keepAlerts'); box.innerHTML='<div class="empty">불러오는 중…</div>'; al.innerHTML='';
-  api('persistency',{branch:ME.branch, fc:''}).then(function(r){
-    if(!r.ok){ box.innerHTML='<div class="empty">'+esc(r.error||'불러오지 못했습니다.')+'</div>'; return; }
-    var su=r.summary||{}, pct=function(v){ return (v===null||v===undefined)?'집계 없음':v+'%'; };
-    box.innerHTML='<div class="kv"><span>전체 계약</span><b>'+(su.total||0)+'건</b></div><div class="kv"><span>유효 계약</span><b>'+(su.alive||0)+'건</b></div>'
-      +'<div class="kv"><span>13회차 유지율</span><b>'+pct(su.rate13)+' <small>('+(su.keep13||0)+'/'+(su.base13||0)+')</small></b></div>'
-      +'<div class="kv"><span>25회차 유지율</span><b>'+pct(su.rate25)+' <small>('+(su.keep25||0)+'/'+(su.base25||0)+')</small></b></div>'
-      +'<div class="kv"><span>실효</span><b style="color:var(--red)">'+(su.lapse||0)+'건</b></div><div class="kv"><span>해지</span><b style="color:var(--red)">'+(su.cancel||0)+'건</b></div><div class="kv"><span>환수</span><b>'+(su.clawback||0)+'건</b></div>'
-      +((r.byFc||[]).length?'<div class="kv-h">설계사별 13회차 유지율</div>'+r.byFc.map(function(f){ return '<div class="kv"><span>'+esc(f.fc||'(미지정)')+'</span><b>'+(f.rate13===null||f.rate13===undefined?'-':f.rate13+'%')+' <small>'+(f.total||0)+'건</small></b></div>'; }).join(''):'');
-    var a=r.alerts||[];
-    al.innerHTML=a.length?a.map(function(x){ return '<div class="kv"><span>'+esc(x.customer||x.name||'')+' <small>'+esc(x.fc||'')+'</small></span><small style="color:var(--red)">'+esc(x.reason)+'</small></div>'; }).join(''):'<div class="empty">지금은 챙길 계약이 없습니다.</div>';
-  }).catch(function(){ box.innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
 }
 /* ───────── 리쿠르팅 (지점장·사업단장·지사장) ───────── */
 var RECS=[], REC_ID=null, REC_STAGE='전체', REC_STAGES=['신규후보','접촉','면접예정','면접완료','교육','위촉','보류','탈락'];
