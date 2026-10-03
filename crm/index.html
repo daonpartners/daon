@@ -192,6 +192,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .ovr-k span{display:block;font-size:12px;color:var(--ink3);font-weight:600}
 .ovr-k b{font-size:18px}
 @media (max-width:860px){ .ovr-sum{grid-template-columns:1fr} }
+.dash-g{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:1100px){ .dash-g{grid-template-columns:1fr} }
+.kv{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line2);font-size:13.5px}
+.kv:last-child{border-bottom:0}
+.kv small{color:var(--ink3);font-size:12px}
+.kv-h{font-weight:700;font-size:12.5px;color:var(--ink2);padding:12px 0 4px}
 .xaw{border:1.5px dashed #F2C9A4;background:#FFFBF6;border-radius:12px;padding:12px 12px 14px;margin:4px 0 12px}
 .xaw-h{font-weight:800;font-size:13.5px;color:#B45A17;margin-bottom:8px}
 .prevbox{margin-top:6px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -462,6 +468,34 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
       <div class="card" style="max-width:760px"><div class="card-b" id="myBox"><div class="empty">불러오는 중…</div></div></div>
     </section>
 
+    <!-- 리쿠르팅 (지점장·사업단장·지사장) -->
+    <section class="page view hide" id="v-recruit">
+      <div class="ph"><div><h2>리쿠르팅 관리</h2><div class="sub">설계사 후보를 단계별로 관리합니다 · 지점장·사업단장·지사장 전용</div></div>
+        <button class="btn pri" onclick="openRec('')">+ 후보 등록</button></div>
+      <div class="card"><div class="toolbar"><div class="chips" id="recStages"></div><div class="spacer"></div><span class="muted" id="recCount"></span></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tRec"></table></div></div>
+    </section>
+
+    <!-- 지사 대시보드 (지사장) -->
+    <section class="page view hide" id="v-dash">
+      <div class="ph"><div><h2>지사 대시보드</h2><div class="sub" id="dashYm">지사 전체 실적과 관리 현황</div></div><button class="btn" onclick="loadDash()">새로고침</button></div>
+      <div class="dash-g">
+        <div class="card"><div class="card-h"><h3>이번 달 지사 실적</h3></div><div class="card-b" id="dashTotal"></div></div>
+        <div class="card"><div class="card-h"><h3>관리 알림</h3></div><div class="card-b" id="dashAlert"></div></div>
+        <div class="card"><div class="card-h"><h3>설계사별 실적</h3></div><div class="card-b" id="dashTeam"></div></div>
+        <div class="card"><div class="card-h"><h3>가망고객 단계</h3></div><div class="card-b" id="dashFunnel"></div></div>
+      </div>
+    </section>
+
+    <!-- 유지율 (지사장) -->
+    <section class="page view hide" id="v-keep">
+      <div class="ph"><div><h2>유지율</h2><div class="sub">지사 전체 계약 기준 · <span id="keepDay"></span></div></div><button class="btn" onclick="loadKeep()">새로고침</button></div>
+      <div class="dash-g">
+        <div class="card"><div class="card-h"><h3>유지율 요약</h3></div><div class="card-b" id="keepSummary"></div></div>
+        <div class="card"><div class="card-h"><h3>챙길 계약</h3><span class="muted" style="font-size:12px">실효·해지·미납 위험</span></div><div class="card-b" id="keepAlerts"></div></div>
+      </div>
+    </section>
+
     <!-- 수수료 설정 (관리자) -->
     <section class="page view hide" id="v-feeset">
       <div class="ph"><div><h2>설계사 · 수수료 설정</h2><div class="sub">설계사 접속코드와 추가 수수료, 회사별 시상을 관리합니다. 기본 테이블은 70%입니다.</div></div>
@@ -545,6 +579,20 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="cfDel" onclick="delCtr()">삭제</button><div class="spacer"></div><button class="btn" onclick="closeCtrForm()">취소</button><button class="btn pri" id="cfSave" onclick="saveCtr()">저장</button></div>
 </div>
 <datalist id="custNames"></datalist>
+
+<!-- 리쿠르팅 후보 입력 창 -->
+<div class="dim modal-dim hide" id="recDim" onclick="closeRec()"></div>
+<div class="modal hide" id="recModal">
+  <div class="drawer-h"><h3 id="recTitle">후보 등록</h3><button class="x" onclick="closeRec()">×</button></div>
+  <div class="drawer-b">
+    <div class="g2"><div class="fld"><label class="lbl">이름 *</label><input class="inp" id="rcName"></div><div class="fld"><label class="lbl">연락처</label><input class="inp" id="rcPhone" inputmode="tel" oninput="this.value=fmtPhone(this.value)"></div></div>
+    <div class="g2"><div class="fld"><label class="lbl">단계</label><select class="sel" id="rcStage"></select></div><div class="fld"><label class="lbl">유입경로</label><input class="inp" id="rcSource" placeholder="예) 지인 소개, join1 모집페이지"></div></div>
+    <div class="g2"><div class="fld"><label class="lbl">현재 직업</label><input class="inp" id="rcJob"></div><div class="fld"><label class="lbl">다음 연락일</label><input class="inp" type="date" id="rcNext"></div></div>
+    <div class="g2"><div class="fld"><label class="lbl">면접 예정일</label><input class="inp" type="date" id="rcItv"></div><div></div></div>
+    <div class="fld"><label class="lbl">메모</label><textarea class="ta" id="rcMemo" rows="3"></textarea></div>
+  </div>
+  <div class="drawer-f"><button class="btn danger hide" id="rcDelBtn" onclick="delRec()">삭제</button><div class="spacer"></div><button class="btn" onclick="closeRec()">취소</button><button class="btn pri" onclick="saveRec()">저장</button></div>
+</div>
 
 <!-- 예상수수료 계약 입력 창 -->
 <div class="dim modal-dim hide" id="ffDim" onclick="closeFeeForm()"></div>
@@ -718,10 +766,17 @@ var ICON = {
   todo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>',
   me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2.5"/><path d="M5.5 17c.6-1.9 2-3 3.5-3s2.9 1.1 3.5 3M15 10h4M15 13h3"/></svg>',
   feeset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  recruit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.4"/><path d="M17 13v8M13 17h8"/></svg>',
+  dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+  keep:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['feeset','설계사·수수료 설정']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['keep','유지율'],['feeset','설계사·수수료 설정']];
+/* 메뉴별 권한: 지사장 전용 / 관리자(지점장·사업단장·지사장) */
+var MY_RANK='';
+function isManager(){ return isOwner() || ['지점장','사업단장','지사장'].indexOf(MY_RANK)>=0; }
+function canView(v){ if(v==='feeset'||v==='dash'||v==='keep') return isOwner(); if(v==='recruit') return isManager(); return true; }
 function isAdmin(){ return !!(ME && /지사장|관리자|대표|본부장|사업단장/.test(ME.role||'')); }
 /* 설계사·수수료 설정, 다른 설계사 수수료 보기: 지사장만 */
 function isOwner(){ return !!(ME && ME.role==='지사장'); }
@@ -780,25 +835,26 @@ function boot(){
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
   loadAll(); loadTodos(); loadFee(); loadTpl();
-  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && (h!=='feeset'||isOwner());})) go(h);
+  loadOrg().then(function(){ var me=ORG.find(function(x){return x.name===ME.name;}); MY_RANK=me?me.rank:''; drawNav(); document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===VIEW); }); var hh=(location.hash||'').slice(1); if(hh==='recruit'&&canView('recruit')&&VIEW!=='recruit') go('recruit'); });
+  var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && canView(h);})) go(h);
 }
 function drawNav(){
   var cnt={owner:'stO',prospect:'stP'};
-  var NV=NAV.filter(function(n){ return n[0]!=='feeset' || isOwner(); });
+  var NV=NAV.filter(function(n){ return canView(n[0]); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
   }).join('')+'<hr><button onclick="location.href=\'https://daon.io.kr/\'" title="daon.io.kr 홈페이지">'+ICON.web+'홈페이지로 가기</button>';
   $('mnav').innerHTML=NV.map(function(n){ return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+n[1]+'</button>'; }).join('')+'<button onclick="location.href=\'https://daon.io.kr/\'">홈페이지</button>';
 }
 function go(v){
-  if(v==='feeset' && !isOwner()) v='home';
+  if(!canView(v)) v='home';
   VIEW=v;
   document.querySelectorAll('.view').forEach(function(s){ s.classList.toggle('hide', s.id!=='v-'+v); });
   document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===v); });
   history.replaceState(null,'','#'+v);
   if(v==='owner') renderOwner(); if(v==='prospect') renderPros(); if(v==='cal') renderCal(); if(v==='todo') renderTodos(); if(v==='sms') renderRcpts();
   if(v==='fee') loadFeeList();
-  if(v==='feeset') loadFeeSet();
+  if(v==='feeset') loadFeeSet(); if(v==='dash') loadDash(); if(v==='keep') loadKeep(); if(v==='recruit') loadRec();
   if(v==='me') loadMyProfile();
   window.scrollTo(0,0);
 }
@@ -1260,7 +1316,7 @@ function drawSelBar(scope){
   if(BULK_DEL && BULK_DEL.scope===scope){ el0.classList.remove('hide'); el0.innerHTML=delProgHtml(); return; }
   var n=Object.keys(PICK[scope]).length, el=el0;
   el.classList.toggle('hide',!n);
-  el.innerHTML=n+'명 선택됨 <div class="spacer"></div>'+(scope==='prospect'?'<button class="btn sm" onclick="openDbBulk()">DB 구분 변경</button>':'')+'<button class="btn sm" onclick="bulkMove(\''+scope+'\')">'+(scope==='owner'?'가망고객으로 이동':'보유고객으로 전환')+'</button><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
+  el.innerHTML=n+'명 선택됨 <div class="spacer"></div>'+(scope==='prospect'?'<button class="btn sm" onclick="openDbBulk()">DB 구분 변경</button>':'')+'<button class="btn sm" onclick="bulkMove(\''+scope+'\')">'+(scope==='owner'?'가망고객으로 이동':'보유고객으로 전환')+'</button><button class="btn sm" onclick="openConsent(\''+scope+'\')">광고 수신 동의 등록</button><button class="btn sm" onclick="excelOut(\''+scope+'\')">선택 '+n+'명 엑셀</button><button class="btn sm pri" onclick="smsFromSel(\''+scope+'\')">선택한 '+n+'명에게 문자</button><button class="btn sm" onclick="PICK.'+scope+'={};'+(scope==='prospect'?'renderPros()':'renderOwner()')+'">선택 해제</button><button class="btn sm danger" onclick="bulkDelete(\''+scope+'\')">선택 삭제</button>';
 }
 function selectedOrFiltered(scope){
   var ids=Object.keys(PICK[scope]);
@@ -2060,6 +2116,85 @@ function loadFee(){ /* 홈 카드용: 본인 기준 */
 var FC_EDIT=null, PROFILES=[];
 var SPECS=['건강보험','암보험','화재보험','자동차보험','펫보험','사업장위험관리','퇴직연금','종신보험'];
 function pfOfFc(f){ if(!f) return null; var hit=PROFILES.find(function(x){return x&&x.fcId===f.id;}); if(hit) return hit; var same=PROFILES.filter(function(x){return x&&!x.fcId&&x.name===f.name;}); return same.length===1?same[0]:null; }
+/* ───────── 지사 대시보드 (지사장) ───────── */
+var DASH_STAGES=['신규','접촉','상담예정','상담완료','제안','계약검토','계약완료','보류','실패'];
+function loadDash(){
+  if(!isOwner()) return;
+  var tot=$('dashTotal'); tot.innerHTML='<div class="empty">불러오는 중…</div>';
+  api('adminDash',{branch:ME.branch}).then(function(r){
+    if(!r.ok){ tot.innerHTML='<div class="empty">'+esc(r.error||'불러오지 못했습니다.')+'</div>'; return; }
+    $('dashYm').textContent=(r.ym||'')+' · 지사 전체 실적과 관리 현황';
+    var m=r.monthTotal||{};
+    tot.innerHTML='<div class="kv"><span>계약 건수</span><b>'+(m.count||0)+'건</b></div><div class="kv"><span>환산실적</span><b>'+won(m.conv||0)+'</b></div><div class="kv"><span>월납보험료</span><b>'+won(m.premium||0)+'</b></div><div class="kv"><span>예상수수료</span><b>'+won(m.comm||0)+'</b></div>';
+    var team=r.team||[];
+    $('dashTeam').innerHTML=team.length?team.map(function(t){ return '<div class="kv"><span><b>'+esc(t.fc||'(미지정)')+'</b> <small>'+esc(t.rank||'')+'</small><br><small>가망 '+(t.prospect||0)+'명 · 보류 '+(t.hold||0)+'명</small></span><b style="text-align:right">'+(t.count||0)+'건<br><small>'+won(t.conv||0)+'</small></b></div>'; }).join(''):'<div class="empty">데이터가 없습니다.</div>';
+    var f=r.funnel||{};
+    $('dashFunnel').innerHTML=DASH_STAGES.map(function(k){ return '<div class="kv"><span>'+k+'</span><b>'+(f[k]||0)+'명</b></div>'; }).join('');
+    var od=r.overdue||[], rn=r.renewSoon||[], rv=r.reviewSoon||[], h='';
+    h+='<div class="kv"><span>관리일이 지난 고객</span><b style="color:var(--red)">'+(r.overdueCount||0)+'명</b></div><div class="kv"><span>30일 내 갱신 예정</span><b>'+rn.length+'명</b></div><div class="kv"><span>30일 내 보장점검</span><b>'+rv.length+'명</b></div>';
+    if(od.length) h+='<div class="kv-h">가장 오래 밀린 고객</div>'+od.slice(0,10).map(function(c){ return '<div class="kv"><span>'+esc(c.name)+' <small>'+esc(c.fc||'')+'</small></span><small>'+esc(c.date)+'</small></div>'; }).join('');
+    var rc=r.recruit||{}, rk=Object.keys(rc);
+    if(rk.length) h+='<div class="kv-h">리쿠르팅 단계</div>'+rk.map(function(k){ return '<div class="kv"><span>'+esc(k)+'</span><b>'+rc[k]+'명</b></div>'; }).join('');
+    $('dashAlert').innerHTML=h;
+  }).catch(function(){ tot.innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
+}
+/* ───────── 유지율 (지사장) ───────── */
+function loadKeep(){
+  if(!isOwner()) return;
+  $('keepDay').textContent=today();
+  var box=$('keepSummary'), al=$('keepAlerts'); box.innerHTML='<div class="empty">불러오는 중…</div>'; al.innerHTML='';
+  api('persistency',{branch:ME.branch, fc:''}).then(function(r){
+    if(!r.ok){ box.innerHTML='<div class="empty">'+esc(r.error||'불러오지 못했습니다.')+'</div>'; return; }
+    var su=r.summary||{}, pct=function(v){ return (v===null||v===undefined)?'집계 없음':v+'%'; };
+    box.innerHTML='<div class="kv"><span>전체 계약</span><b>'+(su.total||0)+'건</b></div><div class="kv"><span>유효 계약</span><b>'+(su.alive||0)+'건</b></div>'
+      +'<div class="kv"><span>13회차 유지율</span><b>'+pct(su.rate13)+' <small>('+(su.keep13||0)+'/'+(su.base13||0)+')</small></b></div>'
+      +'<div class="kv"><span>25회차 유지율</span><b>'+pct(su.rate25)+' <small>('+(su.keep25||0)+'/'+(su.base25||0)+')</small></b></div>'
+      +'<div class="kv"><span>실효</span><b style="color:var(--red)">'+(su.lapse||0)+'건</b></div><div class="kv"><span>해지</span><b style="color:var(--red)">'+(su.cancel||0)+'건</b></div><div class="kv"><span>환수</span><b>'+(su.clawback||0)+'건</b></div>'
+      +((r.byFc||[]).length?'<div class="kv-h">설계사별 13회차 유지율</div>'+r.byFc.map(function(f){ return '<div class="kv"><span>'+esc(f.fc||'(미지정)')+'</span><b>'+(f.rate13===null||f.rate13===undefined?'-':f.rate13+'%')+' <small>'+(f.total||0)+'건</small></b></div>'; }).join(''):'');
+    var a=r.alerts||[];
+    al.innerHTML=a.length?a.map(function(x){ return '<div class="kv"><span>'+esc(x.customer||x.name||'')+' <small>'+esc(x.fc||'')+'</small></span><small style="color:var(--red)">'+esc(x.reason)+'</small></div>'; }).join(''):'<div class="empty">지금은 챙길 계약이 없습니다.</div>';
+  }).catch(function(){ box.innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
+}
+/* ───────── 리쿠르팅 (지점장·사업단장·지사장) ───────── */
+var RECS=[], REC_ID=null, REC_STAGE='전체', REC_STAGES=['신규후보','접촉','면접예정','면접완료','교육','위촉','보류','탈락'];
+function loadRec(){
+  if(!isManager()) return;
+  $('tRec').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
+  api('recruitList',{branch:ME.branch}).then(function(r){ RECS=(r.ok&&r.items)||[]; renderRec(); }).catch(function(){ $('tRec').innerHTML='<tbody><tr><td class="empty">연결에 실패했습니다.</td></tr></tbody>'; });
+}
+function renderRec(){
+  var stages=REC_STAGES.slice(); RECS.forEach(function(c){ if(c.stage && stages.indexOf(c.stage)<0) stages.push(c.stage); });
+  var cnt={}; RECS.forEach(function(c){ var k=c.stage||'신규후보'; cnt[k]=(cnt[k]||0)+1; });
+  $('recStages').innerHTML=['전체'].concat(stages.filter(function(k){return cnt[k];})).map(function(k){ return '<button class="chip'+(k===REC_STAGE?' on':'')+'" onclick="REC_STAGE=\''+k+'\';renderRec()">'+esc(k)+(k!=='전체'?' <span style="opacity:.6">'+cnt[k]+'</span>':'')+'</button>'; }).join('');
+  var list=RECS.filter(function(c){ return REC_STAGE==='전체' || (c.stage||'신규후보')===REC_STAGE; }).sort(function(a,b){ return String(a.nextContact||'9999')<String(b.nextContact||'9999')?-1:1; });
+  $('recCount').textContent='후보 '+list.length+'명';
+  $('tRec').innerHTML='<thead><tr><th>이름</th><th>단계</th><th>연락처</th><th>유입경로</th><th>현재 직업</th><th>다음 연락</th><th>면접</th><th>메모</th></tr></thead><tbody>'
+    +(list.length?list.map(function(c){ var dd=c.nextContact?dday(c.nextContact):null;
+      return '<tr class="row" onclick="openRec(\''+c.id+'\')"><td class="nm">'+esc(c.name)+'</td><td><span class="tag o">'+esc(c.stage||'신규후보')+'</span></td><td class="nw">'+esc(c.phone||'')+'</td><td>'+esc(c.source||'')+'</td><td>'+esc(c.job||'')+'</td>'
+        +'<td class="nw">'+esc(c.nextContact||'-')+(dd!==null&&dd<=0?' <span class="tag r">'+(dd===0?'오늘':'지남')+'</span>':'')+'</td><td class="nw">'+esc(c.interviewDate||'-')+'</td><td class="addr">'+esc(c.memo||'')+'</td></tr>'; }).join('')
+    :'<tr><td colspan="8" class="empty">등록된 후보가 없습니다.</td></tr>')+'</tbody>';
+}
+function openRec(id){
+  REC_ID=id||null; var c=id?RECS.find(function(x){return x.id===id;}):null;
+  $('recTitle').textContent=c?'후보 수정':'후보 등록';
+  var st=REC_STAGES.slice(); if(c&&c.stage&&st.indexOf(c.stage)<0) st.push(c.stage);
+  $('rcStage').innerHTML=st.map(function(k){return '<option>'+esc(k)+'</option>';}).join('');
+  $('rcName').value=c?c.name:''; $('rcPhone').value=c?(c.phone||''):''; $('rcStage').value=c?(c.stage||'신규후보'):'신규후보';
+  $('rcSource').value=c?(c.source||''):''; $('rcJob').value=c?(c.job||''):''; $('rcNext').value=c?(c.nextContact||''):''; $('rcItv').value=c?(c.interviewDate||''):''; $('rcMemo').value=c?(c.memo||''):'';
+  $('rcDelBtn').classList.toggle('hide',!c); $('recDim').classList.remove('hide'); $('recModal').classList.remove('hide');
+}
+function closeRec(){ $('recDim').classList.add('hide'); $('recModal').classList.add('hide'); }
+function saveRec(){
+  var name=$('rcName').value.trim(); if(!name){ toast('이름을 입력하세요',true); return; }
+  var p={branch:ME.branch, fc:ME.name, name:name, phone:$('rcPhone').value, stage:$('rcStage').value, source:$('rcSource').value, job:$('rcJob').value, nextContact:$('rcNext').value, interviewDate:$('rcItv').value, memo:$('rcMemo').value};
+  if(REC_ID) p.pageId=REC_ID;
+  api('recruitSave',p).then(function(r){ if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; } toast('저장했어요'); closeRec(); loadRec(); }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+function delRec(){
+  if(!REC_ID||!confirm('이 후보를 삭제할까요?')) return;
+  api('recruitDelete',{pageId:REC_ID}).then(function(r){ if(!r.ok){ toast(r.error||'삭제에 실패했습니다',true); return; } toast('삭제했어요'); closeRec(); loadRec(); }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+
 /* ───────── 조직도 · 오버라이딩 ─────────
    차등 방식: 상위자 몫 = (상위자 테이블 − 그 아래 체인에서 가장 높은 테이블) × 원수사 수수료.
    예) 설계사70 → 지점장90 → 지사장97 : 지점장 20%, 지사장 7% / 지사장 직속 설계사70 : 지사장 27% */
