@@ -585,6 +585,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="rcDelBtn" onclick="delRec()">삭제</button><div class="spacer"></div><button class="btn" onclick="closeRec()">취소</button><button class="btn pri" onclick="saveRec()">저장</button></div>
 </div>
 
+<!-- 예상수수료 계약 → 고객 연결 창 -->
+<div class="dim modal-dim hide" id="lnkDim"></div>
+<div class="modal hide" id="lnkModal" style="max-width:480px">
+  <div class="drawer-h"><h3 id="lnkTitle">고객 연결</h3><button class="x" onclick="closeLink()">×</button></div>
+  <div class="drawer-b" id="lnkBody"></div>
+  <div class="drawer-f" id="lnkFoot"></div>
+</div>
+
 <!-- 예상수수료 계약 입력 창 -->
 <div class="dim modal-dim hide" id="ffDim" onclick="closeFeeForm()"></div>
 <div class="modal hide" id="ffModal" style="width:min(640px,96vw)">
@@ -2074,8 +2082,60 @@ function saveFee(){
   feeApi('feeSave',Object.assign({pageId:FEE_EDIT, fc:feeTarget().name, branch:ME.branch, tableVer:(FEE_TABLE&&FEE_TABLE.version)||'', memo:$('fMemo').value.trim()},c)).then(function(r){
     b.disabled=false;
     if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
-    toast(FEE_EDIT?'수정했어요':'계약을 입력했어요'); closeFeeForm(); loadFeeList();
+    var wasNew=!FEE_EDIT; toast(FEE_EDIT?'수정했어요':'계약을 입력했어요'); closeFeeForm(); loadFeeList();
+    if(wasNew) feeLinkCustomer(c);
   }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
+}
+/* 예상수수료에 새 계약을 넣으면 고객 목록과 연결:
+   보유고객 → 그 고객 계약 목록에 추가 / 가망고객 → 보유고객으로 전환 + 계약 추가 / 없음 → 보유고객 등록 + 계약 추가 */
+var LNK=null;
+function feeCtrCat(c){ if(c.kind==='생보') return '장기'; var t=String(c.product||''); if(/자동차/.test(t)) return '자동차'; if(/화재|주택|재물/.test(t)) return '화재'; if(/배상|단체|일반/.test(t)) return '일반'; return '장기'; }
+function closeLink(){ $('lnkDim').classList.add('hide'); $('lnkModal').classList.add('hide'); LNK=null; }
+function feeLinkCustomer(c){
+  if(feeTarget().name!==ME.name) return;           /* 다른 설계사 계약은 그 설계사 고객이라 연결하지 않음 */
+  var hits=CUSTOMERS.filter(function(x){ return x.name===c.holder; });
+  LNK={c:c, hits:hits};
+  var body='', foot='<button class="btn" onclick="closeLink()">나중에</button>';
+  var info='<div class="muted" style="font-size:13px;margin-bottom:10px">'+esc(c.company)+' · '+esc(String(c.product||'').slice(0,30))+' · 월 '+won(c.premium)+' · '+esc(c.contractDate)+'</div>';
+  if(!hits.length){
+    $('lnkTitle').textContent='고객 목록에 없는 계약자입니다';
+    body=info+'<p style="margin:0">'+esc(c.holder)+' 님이 보유고객·가망고객에 없습니다.<br><b>보유고객으로 등록</b>하고 이 계약을 고객 계약 목록에도 넣을까요?</p><p class="muted" style="font-size:12.5px">연락처·주소 등은 등록 후 보유고객에서 입력하시면 됩니다.</p>';
+    foot+='<button class="btn pri" onclick="lnkDo(\'new\')">보유고객 등록 + 계약 추가</button>';
+  } else {
+    $('lnkTitle').textContent=hits.length>1?'같은 이름의 고객이 '+hits.length+'명 있습니다':'고객 계약 목록에도 넣을까요?';
+    body=info+(hits.length>1?'<p style="margin:0 0 8px">어느 고객의 계약인지 골라주세요.</p>':'')
+      +hits.map(function(x,i){ var pros=x.custType==='가망고객';
+        return '<label class="ag" style="display:flex;gap:10px;align-items:center;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer"><input type="radio" name="lnkPick" value="'+i+'"'+(i===0?' checked':'')+'><span><b>'+esc(x.name)+'</b> <span class="tag'+(pros?' o':'')+'">'+(pros?'가망고객':'보유고객')+'</span><br><small class="muted">'+esc(x.phone||'연락처 없음')+(x.birth?' · '+esc(x.birth):'')+'</small>'
+          +(pros?'<br><small style="color:var(--brand)">계약이 되었으니 보유고객으로 전환됩니다</small>':'')+'</span></label>'; }).join('');
+    foot+='<button class="btn pri" onclick="lnkDo(\'pick\')">계약 추가</button>';
+  }
+  $('lnkBody').innerHTML=body; $('lnkFoot').innerHTML='<div class="spacer"></div>'+foot;
+  $('lnkDim').classList.remove('hide'); $('lnkModal').classList.remove('hide');
+}
+function lnkAddCtr(cust, c){
+  return api('contractAdd',{fc:ME.name, branch:ME.branch, pageId:'', customerName:cust.name, customerId:cust.id, custName:cust.name,
+    category:feeCtrCat(c), company:c.company, product:c.product, contractDate:c.contractDate, expireDate:'', premium:Number(c.premium)||0,
+    policyNo:'', status:'정상', payMethod:'월납', term:'', debitDay:'', deathBenef:'', maturityBenef:'', survivalBenef:'', mailAddr:''});
+}
+function lnkDo(mode){
+  if(!LNK) return; var c=LNK.c, btns=$('lnkFoot').querySelectorAll('button'); btns.forEach(function(b){b.disabled=true;});
+  var done=function(msg){ closeLink(); toast(msg); loadAll(); };
+  var fail=function(m){ btns.forEach(function(b){b.disabled=false;}); toast(m||'연결에 실패했습니다',true); };
+  if(mode==='new'){
+    var p={fc:ME.name, branch:ME.branch, custType:'보유고객'}; CUST_KEEP.forEach(function(k){ if(k!=='visit') p[k]=''; });
+    p.name=c.holder; p.status='계약완료'; p.memo='예상수수료 계약 입력으로 등록 ('+c.contractDate+')';
+    api('customerSave',p).then(function(r){
+      if(!r.ok||!r.id) return fail(r.error||'고객 등록에 실패했습니다');
+      return lnkAddCtr({id:r.id,name:c.holder},c).then(function(x){ if(!x.ok) return fail(x.error||'계약 추가에 실패했습니다'); done(c.holder+' 님을 보유고객으로 등록하고 계약을 추가했어요'); });
+    }).catch(function(){ fail(); });
+    return;
+  }
+  var el=document.querySelector('input[name=lnkPick]:checked'); var cust=el?LNK.hits[+el.value]:null; if(!cust) return fail('고객을 골라주세요');
+  var step=cust.custType==='가망고객'?custQuickSave(cust,{custType:'보유고객', status:'계약완료'}):Promise.resolve({ok:true});
+  step.then(function(r){
+    if(!r.ok) return fail(r.error||'보유고객 전환에 실패했습니다');
+    return lnkAddCtr(cust,c).then(function(x){ if(!x.ok) return fail(x.error||'계약 추가에 실패했습니다'); done(cust.custType==='가망고객'?cust.name+' 님을 보유고객으로 전환하고 계약을 추가했어요':cust.name+' 님 계약 목록에 추가했어요'); });
+  }).catch(function(){ fail(); });
 }
 function delFee(){
   if(!FEE_EDIT||!confirm('해지된 계약으로 삭제할까요?\n이 계약의 앞으로 받을 예상수수료가 모두 빠집니다.')) return;
