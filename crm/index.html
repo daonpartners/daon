@@ -2056,7 +2056,7 @@ function feeProdList(){
 }
 function feeRows(){ var comp=$('fComp').value, prod=$('fProd').value; return (ftKind(FEE_KIND)[comp]||[]).filter(function(r){return r.p===prod;}); }
 function feeOptList(){
-  if(!AW_SRC_EDIT && FEE_KIND==='생보') setTimeout(awFill,0);
+  if(!AW_SRC_EDIT && FEE_KIND==='생보') setTimeout(function(){ if(!AW_SRC_EDIT) awFill(); },0);
   var rows=feeRows();
   $('fOpt').innerHTML=rows.length?rows.map(function(r,i){ if(FEE_KIND==='자동차'||FEE_KIND==='일반') return '<option value="'+i+'">'+esc(r.o)+' → 지사 '+AG_PCT+'% 적용 · 익월 1회</option>'; return '<option value="'+i+'">'+esc(r.o||'기본')+' · 익월 '+r.m0.toFixed(1)+'% / 1차년 '+r.y1.toFixed(1)+'% / 2차년 '+r.y2.toFixed(1)+'%</option>'; }).join(''):'<option value="">상품을 먼저 선택</option>';
   feePreview();
