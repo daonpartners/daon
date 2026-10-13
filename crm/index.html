@@ -322,7 +322,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:40</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:50</div></div>
   </aside>
 
   <div class="main">
@@ -1981,6 +1981,7 @@ function scheduleOf(c, fc){
   return out;
 }
 /* ── 급여명세서 (선택한 입금월 기준) ── */
+function pct1(a,b){ return b?(Math.round(a/b*1000)/10)+'%':'-'; }
 function slipCat(c){ if(c.kind==='생보') return '생보'; if(isAG(c)) return /^(자동차|이륜차)/.test(c.product)?'자동차':'일반'; return '손보'; }
 function closeSlip(){ $('slipDim').classList.add('hide'); $('slipModal').classList.add('hide'); }
 function openSlip(){
@@ -1994,7 +1995,7 @@ function openSlip(){
     var g=G[slipCat(c)]; if(!g.ids[c.id]){ g.ids[c.id]=1; g.prem+=Number(c.premium)||0; if(e.nw) g.nw++; }
     g.fee+=e.fee||0; g.aw+=e.aw||0;
     var sg=g.st[e.st]=g.st[e.st]||{ids:{},prem:0,fee:0,aw:0}; if(!sg.ids[c.id]){ sg.ids[c.id]=1; sg.prem+=Number(c.premium)||0; } sg.fee+=e.fee||0; sg.aw+=e.aw||0;
-    det.push({c:c,cat:slipCat(c),t:e.t,fee:e.fee||0,aw:e.aw||0});
+    det.push({c:c,cat:slipCat(c),t:e.t+(isAG(c)?' · 실지급 '+pct1(e.fee||0,Number(c.premium)||0):''),fee:e.fee||0,aw:e.aw||0});
   }); });
   var ov={n:0,prem:0,amt:0,ids:{},st:{}}, mg={n:0,prem:0,amt:0}, hasOrg=!!(OVR_ROWS&&OVR_ROWS.top)&&!$('ovrBox').classList.contains('hide');
   if(hasOrg){
@@ -2005,11 +2006,12 @@ function openSlip(){
   var tot={fee:0,aw:0}, body='';
   var lbl={'손보':'손해보험 (장기)','자동차':'자동차·이륜차보험','일반':'일반보험','생보':'생명보험'};
   order.forEach(function(k){ var g=G[k], n=Object.keys(g.ids).length; if(!n) return; tot.fee+=g.fee; tot.aw+=g.aw;
-    body+=row('<b>'+lbl[k]+'</b>', n, '', g.prem, g.fee, g.aw).replace('<tr>','<tr class="slip-cat">');
+    var AGc=(k==='자동차'||k==='일반');
+    body+=row('<b>'+lbl[k]+'</b>'+(AGc?'<span class="sub2">실지급 수수료율 '+pct1(g.fee,g.prem)+'</span>':''), n, '', g.prem, g.fee, g.aw).replace('<tr>','<tr class="slip-cat">');
     var prevM=mLabel(S-1).replace('.','년 ')+'월';
     Object.keys(g.st).map(Number).sort(function(a,b){return a-b;}).forEach(function(stg){ var q=g.st[stg], qn=Object.keys(q.ids).length;
       var nm=stg===0?'신계약 ('+prevM+' 계약) · 익월분':(stg+'회차'+(stg>=13?' (2차년)':' (1차년)'));
-      body+=row('<span class="slip-ind">└ '+nm+'</span>', qn, '', q.prem, q.fee, q.aw); }); });
+      body+=row('<span class="slip-ind">└ '+nm+'</span>'+(AGc?'<span class="sub2" style="padding-left:14px">실지급 '+pct1(q.fee,q.prem)+'</span>':''), qn, '', q.prem, q.fee, q.aw); }); });
   if(X.n){ tot.aw+=X.amt; body+=row('추가시책 (직접 입력)', X.n, '', null, 0, X.amt); }
   var mine=tot.fee+tot.aw;
   body+='<tr class="slip-sub"><td colspan="5">내 계약 소계</td><td class="num"><b>'+won(mine)+'</b></td></tr>';
@@ -2022,7 +2024,7 @@ function openSlip(){
   }
   var total=mine+org, tax=Math.floor(total*0.03/10)*10, ltax=Math.floor(tax*0.1/10)*10;
   var html='<div class="slip-head"><div><div class="muted" style="font-size:12px">'+esc(ME.branch==='daon'?'미래에셋금융서비스 다온지사':(ME.branch||''))+'</div><div style="font-size:18px;font-weight:800">'+esc(fc.name)+' · '+SL+' 입금 예상</div>'
-    +'<div class="muted" style="font-size:12px">손보 테이블 '+tableOf(fc,'손보')+'% · 생보 테이블 '+tableOf(fc,'생보')+'% · 자동차·일반 '+Math.min(tableOf(fc,'손보'),AG_PCT)+'%</div></div>'
+    +'<div class="muted" style="font-size:12px">손보 테이블 '+tableOf(fc,'손보')+'% · 생보 테이블 '+tableOf(fc,'생보')+'%</div></div>'
     +'<div style="text-align:right"><div class="muted" style="font-size:12px">총 지급 예상 (세전)</div><div style="font-size:26px;font-weight:800;color:var(--acc)">'+won(total)+'</div></div></div>'
     +'<table class="tbl slip-tbl"><thead><tr><th>구분</th><th class="num">건수</th><th class="num">계약금액<span class="sub2">보험료 합계</span></th><th class="num">수수료</th><th class="num">시상·시책</th><th class="num">합계</th></tr></thead><tbody>'
     +(body||'<tr><td colspan="6" class="empty">이 달에 들어올 예상 금액이 없습니다.</td></tr>')
@@ -2139,7 +2141,7 @@ function feeRows(){ var comp=$('fComp').value, prod=$('fProd').value; return (ft
 function feeOptList(){
   if(!AW_SRC_EDIT && FEE_KIND==='생보') setTimeout(function(){ if(!AW_SRC_EDIT) awFill(); },0);
   var rows=feeRows();
-  $('fOpt').innerHTML=rows.length?rows.map(function(r,i){ if(FEE_KIND==='자동차'||FEE_KIND==='일반') return '<option value="'+i+'">'+esc(r.o)+' → 지사 '+AG_PCT+'% 적용 · 익월 1회</option>'; return '<option value="'+i+'">'+esc(r.o||'기본')+' · 익월 '+r.m0.toFixed(1)+'% / 1차년 '+r.y1.toFixed(1)+'% / 2차년 '+r.y2.toFixed(1)+'%</option>'; }).join(''):'<option value="">상품을 먼저 선택</option>';
+  $('fOpt').innerHTML=rows.length?rows.map(function(r,i){ if(FEE_KIND==='자동차'||FEE_KIND==='일반') var eff=Math.round(r.m0*Math.min(tableOf(feeTarget(),'손보'),AG_PCT))/100; return '<option value="'+i+'">'+esc(r.o)+' → 실지급 '+eff+'% · 익월 1회</option>'; return '<option value="'+i+'">'+esc(r.o||'기본')+' · 익월 '+r.m0.toFixed(1)+'% / 1차년 '+r.y1.toFixed(1)+'% / 2차년 '+r.y2.toFixed(1)+'%</option>'; }).join(''):'<option value="">상품을 먼저 선택</option>';
   feePreview();
 }
 var AW_ROWS=[];
@@ -2227,17 +2229,17 @@ function feePreview(){
   var f=calcFee(c,feeTarget()), M=c.contractDate?mIdx(c.contractDate):null;
   var ml=function(n){ return M===null?'':' ('+mLabel(M+n).replace('.','년 ')+'월)'; };
   $('fPrev').innerHTML='<div class="prevbox">'
-    +'<div><span>기본수수료 ('+BASE_TABLE+'%)</span><b>'+won(f.base)+'</b></div>'
-    +'<div><span>추가수수료 ('+Math.max(0,f.table-BASE_TABLE)+'%)</span><b>'+won(f.add)+'</b></div>'
+    +(isAG(c)?'':'<div><span>기본수수료 ('+BASE_TABLE+'%)</span><b>'+won(f.base)+'</b></div>'
+    +'<div><span>추가수수료 ('+Math.max(0,f.table-BASE_TABLE)+'%)</span><b>'+won(f.add)+'</b></div>')
     +'<div class="hl"><span>익월수수료'+ml(1)+'</span><span>'+won(f.next)+'</span></div>'
     +(f.baseAward?'<div><span>'+(c.kind==='생보'?'익월 시책':'기본원수사시상')+ml(1)+'</span><b>'+won(f.baseAward)+'</b></div><div class="hl"><span>익월 합계 (수수료 + 시책)</span><span>'+won(f.next+f.baseAward)+'</span></div>':'<div><span>익월 시상·시책</span><span class="muted">'+(isSelfCtr(c,feeTarget())?'없음 (자기계약은 수수료만)':'없음')+'</span></div>')
-    +(isAG(c)?'<div><span>'+String(c.product).replace(/ .*/,'')+' · 표 '+c.m0+'% × 지사 '+AG_PCT+'%</span><b>익월 1회 지급</b></div>':'<div><span>7~12회차'+ml(7)+' ~ </span><b>매월 '+won(f.per712)+' × 6</b></div>'
+    +(isAG(c)?'<div><span>'+String(c.product).replace(/ .*/,'')+' · 실지급 수수료율</span><b>'+(Math.round(c.m0*f.table)/100)+'% · 익월 1회 지급</b></div>':'<div><span>7~12회차'+ml(7)+' ~ </span><b>매월 '+won(f.per712)+' × 6</b></div>'
     +'<div><span>2차년 13~15회차'+ml(13)+' ~ </span><b>매월 '+won(f.per2)+' × 3</b></div>')
     +(f.bizAward?'<div><span>'+(c.kind==='생보'?'2차년 시책 ':'사업부시상 ')+(c.kind==='생보'?'13':'15')+'회차'+ml(c.kind==='생보'?13:15)+'</span><b>'+won(f.bizAward)+'</b></div>':'')
     +(isAG(c)?'':'<div><span>원수사 15회차 시상</span><span class="muted">유지율에 따라 별도</span></div>')
     +(c.xAmt>0?'<div class="hl"><span>추가시책 직접 입력'+($('fXMode').value==='pct'?' · 월보험료 '+$('fXVal').value+'%':'')+' · '+X_WHEN[$('fXWhen').value]+(c.xMonth?' ('+c.xMonth.replace('-','년 ')+'월)':' (지급월 미입력)')+'</span><span>'+won(c.xAmt)+'</span></div>':'')
     +'<div><span>합계 (원수사 15회차 시상 제외)</span><b>'+won(f.y1+f.y2+f.baseAward+f.bizAward+(c.xAmt>0?c.xAmt:0))+'</b></div></div>'
-    +'<div class="muted" style="font-size:12px;margin-top:6px">'+esc(feeTarget().name)+(isAG(c)?' · 자동차·일반 수수료표(본사 100%) × '+f.table+'% 적용'+(f.table<AG_PCT?' (설계사 손보 테이블이 '+AG_PCT+'%보다 낮아 그 값 적용)':''):' 테이블 '+f.table+'% 적용 · 수수료표 '+esc((FEE_TABLE&&FEE_TABLE.version)||''))+'</div>';
+    +'<div class="muted" style="font-size:12px;margin-top:6px">'+esc(feeTarget().name)+(isAG(c)?' · 실지급 '+(Math.round(c.m0*f.table)/100)+'% (본사 100% 기준 '+c.m0+'% × '+f.table+'%)':' 테이블 '+f.table+'% 적용 · 수수료표 '+esc((FEE_TABLE&&FEE_TABLE.version)||''))+'</div>';
 }
 function saveFee(){
   var c=feeCur();
