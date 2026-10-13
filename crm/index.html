@@ -1907,14 +1907,14 @@ function agTable(k){
   var out={}, src=AG_RATES[k]||{};
   Object.keys(src).forEach(function(co){
     if(k==='자동차'){ var a=src[co][0], b=src[co][1], t=Math.round((a+b)*10)/10;
-      out[co]=[{p:'자동차보험',o:'비례+성과 '+t+'% (비례 '+a+' + 성과 '+b+' · 실적 1억 기준)',m0:t,y1:t,y2:0},{p:'자동차보험',o:'비례수수료만 '+a+'%',m0:a,y1:a,y2:0}]; }
+      out[co]=[{p:'자동차보험',o:'비례+성과 '+t+'% (비례 '+a+' + 성과 '+b+' · 실적 1억 기준)',m0:t,y1:t,y2:0},{p:'자동차보험',o:'비례수수료만 '+a+'%',m0:a,y1:a,y2:0},{p:'이륜차보험',o:'수수료 없음 (0%)',m0:0,y1:0,y2:0}]; }
     else { var r=src[co]; out[co]=['화재·재물','배상책임','기타'].map(function(g){ return {p:'일반보험 ('+g+')',o:'예시 수수료율 '+r+'% (공장 화재보험 기준)',m0:r,y1:r,y2:0}; }); }
   });
   return out;
 }
 function ftKind(k){ return (k==='자동차'||k==='일반')?agTable(k):((FEE_TABLE&&FEE_TABLE[k])||{}); }
-function isAG(c){ return (c.kind||'손보')==='손보' && /^(자동차보험|일반보험)/.test(String(c.product||'')); }
-function uiKind(c){ return isAG(c)?(/^자동차/.test(c.product)?'자동차':'일반'):(c.kind||'손보'); }
+function isAG(c){ return (c.kind||'손보')==='손보' && /^(자동차보험|이륜차보험|일반보험)/.test(String(c.product||'')); }
+function uiKind(c){ return isAG(c)?(/^(자동차|이륜차)/.test(c.product)?'자동차':'일반'):(c.kind||'손보'); }
 function tableOf(fc,kind){ var v=Number(kind==='생보'?fc.saengboRatio:fc.sonboRatio); return isFinite(v)&&v>0?v:100; }
 function calcFee(c, fc){
   var ag=isAG(c), t=(ag?Math.min(tableOf(fc,'손보'),AG_PCT):tableOf(fc,c.kind))/100, p=Number(c.premium)||0, aw=AWARDS[c.company]||{};
@@ -2139,7 +2139,7 @@ function feePreview(){
     +'<div><span>추가수수료 ('+Math.max(0,f.table-BASE_TABLE)+'%)</span><b>'+won(f.add)+'</b></div>'
     +'<div class="hl"><span>익월수수료'+ml(1)+'</span><span>'+won(f.next)+'</span></div>'
     +(f.baseAward?'<div><span>'+(c.kind==='생보'?'익월 시책':'기본원수사시상')+ml(1)+'</span><b>'+won(f.baseAward)+'</b></div><div class="hl"><span>익월 합계 (수수료 + 시책)</span><span>'+won(f.next+f.baseAward)+'</span></div>':'<div><span>익월 시상·시책</span><span class="muted">'+(isSelfCtr(c,feeTarget())?'없음 (자기계약은 수수료만)':'없음')+'</span></div>')
-    +(isAG(c)?'<div><span>'+(/^자동차/.test(c.product)?'자동차':'일반')+'보험 · 표 '+c.m0+'% × 지사 '+AG_PCT+'%</span><b>익월 1회 지급</b></div>':'<div><span>7~12회차'+ml(7)+' ~ </span><b>매월 '+won(f.per712)+' × 6</b></div>'
+    +(isAG(c)?'<div><span>'+String(c.product).replace(/ .*/,'')+' · 표 '+c.m0+'% × 지사 '+AG_PCT+'%</span><b>익월 1회 지급</b></div>':'<div><span>7~12회차'+ml(7)+' ~ </span><b>매월 '+won(f.per712)+' × 6</b></div>'
     +'<div><span>2차년 13~15회차'+ml(13)+' ~ </span><b>매월 '+won(f.per2)+' × 3</b></div>')
     +(f.bizAward?'<div><span>'+(c.kind==='생보'?'2차년 시책 ':'사업부시상 ')+(c.kind==='생보'?'13':'15')+'회차'+ml(c.kind==='생보'?13:15)+'</span><b>'+won(f.bizAward)+'</b></div>':'')
     +(isAG(c)?'':'<div><span>원수사 15회차 시상</span><span class="muted">유지율에 따라 별도</span></div>')
@@ -2165,7 +2165,7 @@ function saveFee(){
 /* 예상수수료에 새 계약을 넣으면 고객 목록과 연결:
    보유고객 → 그 고객 계약 목록에 추가 / 가망고객 → 보유고객으로 전환 + 계약 추가 / 없음 → 보유고객 등록 + 계약 추가 */
 var LNK=null;
-function feeCtrCat(c){ if(c.kind==='생보') return '장기'; var t=String(c.product||''); if(/자동차/.test(t)) return '자동차'; if(/화재|주택|재물/.test(t)) return '화재'; if(/배상|단체|일반/.test(t)) return '일반'; return '장기'; }
+function feeCtrCat(c){ if(c.kind==='생보') return '장기'; var t=String(c.product||''); if(/자동차|이륜차/.test(t)) return '자동차'; if(/화재|주택|재물/.test(t)) return '화재'; if(/배상|단체|일반/.test(t)) return '일반'; return '장기'; }
 function closeLink(){ $('lnkDim').classList.add('hide'); $('lnkModal').classList.add('hide'); LNK=null; }
 function feeLinkCustomer(c){
   if(feeTarget().name!==ME.name) return;           /* 다른 설계사 계약은 그 설계사 고객이라 연결하지 않음 */
@@ -2380,7 +2380,7 @@ var OVR_ROWS=[], OVR_SEQ=0, MGMT_ROWS=[];
 function mgmtTarget(c){
   if((c.kind||'손보')!=='손보') return false;
   var t=String(c.product||'').replace(/(흥국|삼성|메리츠|롯데|한화|현대|MG|AIG|DB|KB)\s*화재(해상)?/g,'');
-  if(/자동차/.test(t)) return false;
+  if(/자동차|이륜차/.test(t)) return false;
   if(/화재|재물|주택/.test(t)) return false;
   if(/배상|책임보험|일반보험|단체보험|단체상해/.test(t)) return false;
   return true;
