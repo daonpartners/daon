@@ -316,7 +316,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 17:45</div></div>
   </aside>
 
   <div class="main">
@@ -607,7 +607,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     <div class="fld"><label class="lbl">상품 *</label><select class="sel" id="fProd" onchange="feeOptList()" size="1"></select></div>
     <div class="fld"><label class="lbl">옵션 (구분·납기 등) *</label><select class="sel" id="fOpt" onchange="feePreview()"></select></div>
     <div class="g2">
-      <div class="fld"><label class="lbl">계약자 *</label><input class="inp" id="fHolder" list="custNames" onchange="AW_SRC_EDIT=false;awFill()"></div>
+      <div class="fld"><label class="lbl">계약자 *</label><input class="inp" id="fHolder" list="custNames" onchange="holderChg()"></div>
       <div class="fld"><label class="lbl">피보험자</label><input class="inp" id="fInsured" list="custNames"></div>
     </div>
     <div class="g2">
@@ -2031,7 +2031,8 @@ function openFeeForm(id){
     var selfC=c&&isSelfCtr(c,feeTarget());
     if(c && !selfC && c.awBase!=null && c.awSrc!=='시책 없음'){ awFillAuto(); $('fAwB').value=c.awBase; $('fAwY').value=c.awY2==null?'':c.awY2; AW_SRC=String(c.awSrc||'').replace(/ \(.*\)$/,''); AW_SRC_EDIT=true; awUi(true); }
     else awFill();
-    if(c && selfC && awManual(c)){ $('fAwB').value=c.awBase||''; $('fAwY').value=c.awY2||''; AW_SRC=String(c.awSrc||'').replace(/ \(.*\)$/,''); AW_SRC_EDIT=true; awUi(true); }
+    if(c && selfC && awManual(c)){ $('fAwB').value=c.awBase||''; $('fAwY').value=c.awY2||''; AW_SRC=String(c.awSrc||'').replace(/ \(.*\)$/,''); AW_SRC_EDIT=true; awShowSaved(c); awUi(true); }
+    LAST_SELF=awSelf();
     feePreview();
   }).catch(function(){ $('fPrev').innerHTML='<div class="err">수수료표(fee-table.json)를 불러오지 못했습니다.</div>'; });
 }
@@ -2069,6 +2070,16 @@ function awUi(keep){
   $('fAwPickBox').classList.toggle('hide',!L||!AW_ROWS.length);
   $('fAwSrcTxt').textContent=AW_SRC?'· '+AW_SRC:'';
 }
+var LAST_SELF=null;
+/* 저장된 시책을 고르기 목록에도 표시 (목록이 '시책 0'으로 보여 헷갈리지 않게) */
+function awShowSaved(c){
+  var sel=$('fAwPick'); if(!sel||!sel.options.length) return;
+  var src=String(c.awSrc||''), hit=-1;
+  AW_ROWS.forEach(function(r,i){ if(hit<0 && src.indexOf(r.p.slice(0,40))>=0) hit=i; });
+  if(hit>=0){ sel.value=String(hit); return; }
+  var o=document.createElement('option'); o.value='saved'; o.textContent='저장된 시책 · 익월 '+(Number(c.awBase)||0)+'% / 2차년 '+(Number(c.awY2)||0)+'%'; sel.insertBefore(o,sel.options[1]||null); sel.value='saved';
+}
+function holderChg(){ var me=awSelf(); if(me===LAST_SELF) { feePreview(); return; } LAST_SELF=me; AW_SRC_EDIT=false; awFill(); }
 function awSelf(){ var n=String(feeTarget().name||'').trim(); return !!n && $('fHolder').value.trim()===n; }
 function awFill(){
   if(!FEE_TABLE) return;
@@ -2114,6 +2125,7 @@ function awFillAuto(){
 }
 function awPickChg(auto){
   var v=$('fAwPick').value, ym=($('fDate').value||today()).slice(0,7), mon=awardMonth(ym,'생보');
+  if(v==='saved') return;
   if(v===''){ $('fAwB').value=''; $('fAwY').value=''; AW_SRC=''; AW_NOTE=''; }
   else if(v==='none'){ $('fAwB').value=0; $('fAwY').value=0; AW_SRC=(mon?mon.ym:'')+' 생보시책 · 없음'; AW_NOTE=''; }
   else { var r=AW_ROWS[+v]; if(!r) return; $('fAwB').value=r.m; $('fAwY').value=r.y2==null?0:r.y2; AW_SRC=(awSelf()?'직접 선택 · ':'')+(mon?mon.ym:'')+' 생보시책 · '+r.p.slice(0,40)+(r.c?' · '+r.c:''); AW_NOTE=r.n||''; }
