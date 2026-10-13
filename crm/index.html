@@ -316,7 +316,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 17:45</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:05</div></div>
   </aside>
 
   <div class="main">
@@ -606,6 +606,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
     </div>
     <div class="fld"><label class="lbl">상품 *</label><select class="sel" id="fProd" onchange="feeOptList()" size="1"></select></div>
     <div class="fld"><label class="lbl">옵션 (구분·납기 등) *</label><select class="sel" id="fOpt" onchange="feePreview()"></select></div>
+    <div class="fld hide" id="fCarBox"><label class="lbl">차량번호</label><input class="inp" id="fCarNo" maxlength="30" placeholder="예) 12가3456"></div>
     <div class="g2">
       <div class="fld"><label class="lbl">계약자 *</label><input class="inp" id="fHolder" list="custNames" onchange="holderChg()"></div>
       <div class="fld"><label class="lbl">피보험자</label><input class="inp" id="fInsured" list="custNames"></div>
@@ -2001,13 +2002,13 @@ function renderFee(){
   $('mBars').innerHTML=cols.map(function(c){ return '<div class="mbar'+(c[0]===next?' next':'')+(c[0]===S?' sel':'')+'" onclick="FEE_SEL_M='+c[0]+';renderFee()"><b>'+(c[1]?wonShort(c[1]):'')+'</b><i style="height:'+Math.max(2,Math.round(c[1]/max*130))+'px"></i><span>'+mLabel(c[0]).slice(2)+'</span></div>'; }).join('');
   var det=selItems.slice().sort(function(a,b){return b.amt-a.amt;});
   $('mDetail').innerHTML='<div style="margin-top:14px;font-weight:700">'+SL+' 입금 예상 '+won(sum(S))+'</div>'
-    +(det.length?'<table class="tbl" style="margin-top:6px"><tbody>'+det.map(function(x){ return '<tr><td class="nm">'+esc(x.c.holder)+'</td><td class="muted">'+esc(x.c.company)+' · '+esc(x.c.product)+'</td><td>'+esc(x.t)+'</td><td class="num">'+won(x.amt)+'</td></tr>'; }).join('')+'</tbody></table>':'<div class="empty" style="padding:12px">이 달에 들어올 예상 금액이 없습니다.</div>');
+    +(det.length?'<table class="tbl" style="margin-top:6px"><tbody>'+det.map(function(x){ return '<tr><td class="nm">'+esc(x.c.holder)+'</td><td class="muted">'+esc(x.c.company)+' · '+esc(x.c.product)+(x.c.carNo?' · '+esc(x.c.carNo):'')+'</td><td>'+esc(x.t)+'</td><td class="num">'+won(x.amt)+'</td></tr>'; }).join('')+'</tbody></table>':'<div class="empty" style="padding:12px">이 달에 들어올 예상 금액이 없습니다.</div>');
   /* 계약 표 */
   var head='<thead><tr><th>계약자</th><th>피보험자</th><th>보험사</th><th>상품</th><th class="num">월보험료</th><th class="num">기본수수료<span class="sub2">'+BASE_TABLE+'%</span></th><th class="num">추가수수료</th><th class="num">익월수수료</th><th class="num">7~12회차<span class="sub2">매월 × 6</span></th><th class="num">2차년<span class="sub2">13~15회차 매월 × 3</span></th><th class="num">익월 시상·시책<span class="sub2">자기계약 제외</span></th><th class="num">2차년 시상·시책<span class="sub2">손보 15회차 · 생보 13회차</span></th><th>원수사 15회차 시상</th><th class="num">추가시상<span class="sub2">직접 입력</span></th><th>계약일</th></tr></thead>';
   $('tFee').innerHTML=head+'<tbody>'+(FEE_ITEMS.length?FEE_ITEMS.map(function(c){
     var f=calcFee(c,fc);
     return '<tr class="row" onclick="openFeeForm(\''+c.id+'\')"><td class="nm">'+esc(c.holder)+'</td><td>'+esc(c.insured||'-')+'</td><td>'+catKind(c.kind,c)+' '+esc(c.company)+'</td>'
-      +'<td class="pd" title="'+esc(c.product+' · '+c.option)+'">'+esc(c.product)+'<span class="sub2">'+esc(c.option)+'</span></td>'
+      +'<td class="pd" title="'+esc(c.product+' · '+c.option)+'">'+esc(c.product)+'<span class="sub2">'+(c.carNo?'🚗 '+esc(c.carNo)+' · ':'')+esc(c.option)+'</span></td>'
       +'<td class="num">'+won(c.premium)+'</td><td class="num">'+won(f.base)+'</td><td class="num">'+won(f.add)+'</td><td class="num"><b>'+won(f.next)+'</b></td>'
       +'<td class="num">'+won(f.per712)+'</td><td class="num">'+won(f.per2)+'</td><td class="num">'+(f.baseAward?won(f.baseAward):'-')+'</td><td class="num">'+(f.bizAward?won(f.bizAward):'-')+'</td>'
       +'<td class="muted">'+(isAG(c)?'-':'유지율에 따라 별도')+'</td>'
@@ -2024,7 +2025,7 @@ function openFeeForm(id){
   $('fPrev').innerHTML='<div class="muted" style="font-size:13px">수수료표 불러오는 중…</div>';
   Promise.all([loadFeeTable(), loadAwardFile()]).then(function(){
     feeKind(c?uiKind(c):'손보', true);
-    $('fHolder').value=c?c.holder:''; $('fInsured').value=c?(c.insured||''):''; $('fPrem').value=c?c.premium:''; $('fDate').value=c?c.contractDate:today(); $('fMemo').value=c?(c.memo||''):''; var xp=c?xParse(c):{mode:'amt',val:0,when:'15',memo:''}; if(c&&!(Number(c.xAmt)>0)) xp.when='15'; $('fXMode').value=xp.mode; xModeChg(); $('fXVal').value=xp.val>0?xp.val:''; $('fXWhen').value=xp.when; $('fXMonth').value=c?(c.xMonth||''):''; $('fXMonth').disabled=xp.when!=='m'; $('fXMemo').value=xp.memo||'';
+    $('fHolder').value=c?c.holder:''; $('fInsured').value=c?(c.insured||''):''; $('fPrem').value=c?c.premium:''; $('fDate').value=c?c.contractDate:today(); $('fMemo').value=c?(c.memo||''):''; $('fCarNo').value=c?(c.carNo||''):''; var xp=c?xParse(c):{mode:'amt',val:0,when:'15',memo:''}; if(c&&!(Number(c.xAmt)>0)) xp.when='15'; $('fXMode').value=xp.mode; xModeChg(); $('fXVal').value=xp.val>0?xp.val:''; $('fXWhen').value=xp.when; $('fXMonth').value=c?(c.xMonth||''):''; $('fXMonth').disabled=xp.when!=='m'; $('fXMemo').value=xp.memo||'';
     $('fProdQ').value='';
     AW_SRC_EDIT=false; AW_SRC=''; $('fAwB').value=''; $('fAwY').value='';
     if(c){ $('fComp').value=c.company; feeCompChg(); $('fProd').value=c.product; feeOptList(); var opts=feeRows(); var oi=opts.findIndex(function(r){return r.o===c.option;}); if(oi>=0) $('fOpt').value=oi; }
@@ -2043,7 +2044,7 @@ function feeKind(k, keep){
   var AGk=(k==='자동차'||k==='일반');
   $('fkA').classList.toggle('on',k==='자동차'); $('fkG').classList.toggle('on',k==='일반');
   $('fPremL').textContent=AGk?'보험료 (연납·일시납) *':'월 보험료 *';
-  $('fAwBox').classList.toggle('hide',AGk); $('fProdQ').disabled=AGk;
+  $('fAwBox').classList.toggle('hide',AGk); $('fCarBox').classList.toggle('hide',k!=='자동차'); $('fProdQ').disabled=AGk;
   $('fComp').innerHTML='<option value="">보험사 선택</option>'+comps.map(function(c){return '<option>'+esc(c)+'</option>';}).join('');
   $('fProd').innerHTML=''; $('fOpt').innerHTML=''; if(!keep) feePreview();
 }
@@ -2136,7 +2137,7 @@ function feeCur(){
   var rows=feeRows(), r=rows[$('fOpt').value];
   if(!r) return null;
   var XC=xCalc();
-  return {kind:(FEE_KIND==='자동차'||FEE_KIND==='일반')?'손보':FEE_KIND, company:$('fComp').value, product:r.p, option:r.o, m0:r.m0, y1:r.y1, y2:r.y2, y3:r.y3||0,
+  return {carNo:FEE_KIND==='자동차'?$('fCarNo').value.trim():'', kind:(FEE_KIND==='자동차'||FEE_KIND==='일반')?'손보':FEE_KIND, company:$('fComp').value, product:r.p, option:r.o, m0:r.m0, y1:r.y1, y2:r.y2, y3:r.y3||0,
     premium:Number($('fPrem').value||0), contractDate:$('fDate').value, holder:$('fHolder').value.trim(), insured:$('fInsured').value.trim(),
     xAmt:XC.amt, xMonth:XC.amt>0?XC.mon:'', xMemo:XC.amt>0?(XC.tag+$('fXMemo').value.trim()).trim():$('fXMemo').value.trim(),
     awBase:Number($('fAwB').value||0), awY2:Number($('fAwY').value||0), awSrc:(Number($('fAwB').value||0)>0||Number($('fAwY').value||0)>0)?((AW_SRC||'직접 입력')+(AW_NOTE?' ('+AW_NOTE+')':'')):(AW_SRC||'시책 없음')};
@@ -2202,8 +2203,8 @@ function feeLinkCustomer(c){
 }
 function lnkAddCtr(cust, c){
   return api('contractAdd',{fc:ME.name, branch:ME.branch, pageId:'', customerName:cust.name, customerId:cust.id, custName:cust.name,
-    category:feeCtrCat(c), company:c.company, product:c.product, contractDate:c.contractDate, expireDate:'', premium:Number(c.premium)||0,
-    policyNo:'', status:'정상', payMethod:'월납', term:'', debitDay:'', deathBenef:'', maturityBenef:'', survivalBenef:'', mailAddr:''});
+    category:feeCtrCat(c), company:c.company, product:c.product+(c.carNo?' ('+c.carNo+')':''), contractDate:c.contractDate, expireDate:'', premium:Number(c.premium)||0,
+    policyNo:'', status:'정상', payMethod:isAG(c)?'연납·일시납':'월납', term:'', debitDay:'', deathBenef:'', maturityBenef:'', survivalBenef:'', mailAddr:''});
 }
 function lnkDo(mode){
   if(!LNK) return; var c=LNK.c, btns=$('lnkFoot').querySelectorAll('button'); btns.forEach(function(b){b.disabled=true;});
