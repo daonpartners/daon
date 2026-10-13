@@ -261,6 +261,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 /* 출력 */
 #printArea{display:none}
 .slip-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.slip-tbl .slip-cat td{background:#F2F5FA;border-top:2px solid #D9E0EA}
+.slip-tbl .slip-ind{padding-left:14px;color:var(--ink2);font-weight:500}
 .slip-tbl .sub2{display:block;font-size:11px;font-weight:500;color:var(--ink3)}
 .slip-tbl .slip-sub td{background:#F7F8FA;font-weight:600}
 .slip-tbl .slip-tot td{background:#FFF1E6;font-weight:800;font-size:15px}
@@ -320,7 +322,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:30</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:40</div></div>
   </aside>
 
   <div class="main">
@@ -1971,10 +1973,10 @@ function mIdx(d){ return (+d.slice(0,4))*12+(+d.slice(5,7))-1; }
 function mLabel(i){ return Math.floor(i/12)+'.'+String(i%12+1).padStart(2,'0'); }
 function scheduleOf(c, fc){
   var f=calcFee(c,fc), M=mIdx(c.contractDate), out=[];
-  out.push({m:M+1, fee:f.next, aw:f.baseAward, nw:1, amt:f.next+f.baseAward, t:'익월수수료'+(f.baseAward?(c.kind==='생보'?' + 익월시책':' + 기본시상'):''), c:c});
-  for(var n=7;n<=12;n++) if(f.per712) out.push({m:M+n, fee:f.per712, aw:0, amt:f.per712, t:n+'회차', c:c});
+  out.push({m:M+1, st:0, fee:f.next, aw:f.baseAward, nw:1, amt:f.next+f.baseAward, t:'익월수수료'+(f.baseAward?(c.kind==='생보'?' + 익월시책':' + 기본시상'):''), c:c});
+  for(var n=7;n<=12;n++) if(f.per712) out.push({m:M+n, st:n, fee:f.per712, aw:0, amt:f.per712, t:n+'회차', c:c});
   var awK=c.kind==='생보'?13:15, awL=c.kind==='생보'?'2차년 시책':'사업부시상';
-  for(var k=13;k<=15;k++) if(f.per2||(k===awK&&f.bizAward)) out.push({m:M+k, fee:f.per2, aw:(k===awK?f.bizAward:0), amt:f.per2+(k===awK?f.bizAward:0), t:k+'회차 (2차년)'+(k===awK&&f.bizAward?' + '+awL:''), c:c});
+  for(var k=13;k<=15;k++) if(f.per2||(k===awK&&f.bizAward)) out.push({m:M+k, st:k, fee:f.per2, aw:(k===awK?f.bizAward:0), amt:f.per2+(k===awK?f.bizAward:0), t:k+'회차 (2차년)'+(k===awK&&f.bizAward?' + '+awL:''), c:c});
   if(Number(c.xAmt)>0 && /^\d{4}-\d{2}$/.test(c.xMonth||'')) out.push({m:mIdx(c.xMonth+'-01'), fee:0, aw:0, x:Math.round(Number(c.xAmt)), amt:Math.round(Number(c.xAmt)), t:'추가시책 ('+(xParse(c).whenL||'직접 입력')+')'+(xParse(c).memo?' · '+xParse(c).memo:''), c:c});
   return out;
 }
@@ -1984,31 +1986,38 @@ function closeSlip(){ $('slipDim').classList.add('hide'); $('slipModal').classLi
 function openSlip(){
   var fc=feeTarget(), S=FEE_SEL_M, SL=mLabel(S).replace('.','년 ')+'월';
   var G={}, order=['손보','자동차','일반','생보'], det=[];
-  order.forEach(function(k){ G[k]={ids:{},nw:0,prem:0,fee:0,aw:0}; });
+  order.forEach(function(k){ G[k]={ids:{},nw:0,prem:0,fee:0,aw:0,st:{}}; });
   var X={n:0,amt:0};
   FEE_ITEMS.forEach(function(c){ if(!c.contractDate) return; scheduleOf(c,fc).forEach(function(e){
     if(e.m!==S) return;
     if(e.x){ X.n++; X.amt+=e.x; det.push({c:c,cat:'추가시책',t:e.t,fee:0,aw:e.x}); return; }
     var g=G[slipCat(c)]; if(!g.ids[c.id]){ g.ids[c.id]=1; g.prem+=Number(c.premium)||0; if(e.nw) g.nw++; }
-    g.fee+=e.fee||0; g.aw+=e.aw||0; det.push({c:c,cat:slipCat(c),t:e.t,fee:e.fee||0,aw:e.aw||0});
+    g.fee+=e.fee||0; g.aw+=e.aw||0;
+    var sg=g.st[e.st]=g.st[e.st]||{ids:{},prem:0,fee:0,aw:0}; if(!sg.ids[c.id]){ sg.ids[c.id]=1; sg.prem+=Number(c.premium)||0; } sg.fee+=e.fee||0; sg.aw+=e.aw||0;
+    det.push({c:c,cat:slipCat(c),t:e.t,fee:e.fee||0,aw:e.aw||0});
   }); });
-  var ov={n:0,prem:0,amt:0,ids:{}}, mg={n:0,prem:0,amt:0}, hasOrg=!!(OVR_ROWS&&OVR_ROWS.top)&&!$('ovrBox').classList.contains('hide');
+  var ov={n:0,prem:0,amt:0,ids:{},st:{}}, mg={n:0,prem:0,amt:0}, hasOrg=!!(OVR_ROWS&&OVR_ROWS.top)&&!$('ovrBox').classList.contains('hide');
   if(hasOrg){
-    overrideSchedule().forEach(function(x){ if(x.m!==S) return; var k=x.r.c.id||x.r.c.holder+x.r.c.contractDate; if(!ov.ids[k]){ ov.ids[k]=1; ov.n++; ov.prem+=Number(x.r.c.premium)||0; } ov.amt+=x.amt; });
+    overrideSchedule().forEach(function(x){ if(x.m!==S) return; var k=x.r.c.id||x.r.c.holder+x.r.c.contractDate; if(!ov.ids[k]){ ov.ids[k]=1; ov.n++; ov.prem+=Number(x.r.c.premium)||0; } ov.amt+=x.amt; var stg=x.t==='익월'?0:parseInt(x.t,10); var q=ov.st[stg]=ov.st[stg]||{n:0,prem:0,amt:0}; q.n++; q.prem+=Number(x.r.c.premium)||0; q.amt+=x.amt; });
     MGMT_ROWS.forEach(function(r){ if(mIdx(r.c.contractDate)+1!==S) return; mg.n++; mg.prem+=Number(r.c.premium)||0; mg.amt+=r.amt; });
   }
   var row=function(name,n,sub,prem,fee,aw){ var t=fee+aw; return '<tr><td class="nm">'+name+'</td><td class="num">'+n+'건'+(sub?'<span class="sub2">'+sub+'</span>':'')+'</td><td class="num">'+(prem===null?'-':won(prem))+'</td><td class="num">'+won(fee)+'</td><td class="num">'+(aw?won(aw):'-')+'</td><td class="num"><b>'+won(t)+'</b></td></tr>'; };
   var tot={fee:0,aw:0}, body='';
   var lbl={'손보':'손해보험 (장기)','자동차':'자동차·이륜차보험','일반':'일반보험','생보':'생명보험'};
   order.forEach(function(k){ var g=G[k], n=Object.keys(g.ids).length; if(!n) return; tot.fee+=g.fee; tot.aw+=g.aw;
-    body+=row(lbl[k], n, '신규 '+g.nw+' · 회차분 '+(n-g.nw), g.prem, g.fee, g.aw); });
+    body+=row('<b>'+lbl[k]+'</b>', n, '', g.prem, g.fee, g.aw).replace('<tr>','<tr class="slip-cat">');
+    var prevM=mLabel(S-1).replace('.','년 ')+'월';
+    Object.keys(g.st).map(Number).sort(function(a,b){return a-b;}).forEach(function(stg){ var q=g.st[stg], qn=Object.keys(q.ids).length;
+      var nm=stg===0?'신계약 ('+prevM+' 계약) · 익월분':(stg+'회차'+(stg>=13?' (2차년)':' (1차년)'));
+      body+=row('<span class="slip-ind">└ '+nm+'</span>', qn, '', q.prem, q.fee, q.aw); }); });
   if(X.n){ tot.aw+=X.amt; body+=row('추가시책 (직접 입력)', X.n, '', null, 0, X.amt); }
   var mine=tot.fee+tot.aw;
   body+='<tr class="slip-sub"><td colspan="5">내 계약 소계</td><td class="num"><b>'+won(mine)+'</b></td></tr>';
   var org=0;
   if(hasOrg){
-    body+=row('오버라이딩 (하위 조직)', ov.n, '', ov.prem, ov.amt, 0); org+=ov.amt;
-    body+=row('지사관리수수료 (법인시책)'+(orgMg(OVR_ROWS.top)?' · '+orgMg(OVR_ROWS.top)+'%':''), mg.n, '', mg.prem, mg.amt, 0); org+=mg.amt;
+    body+=row('<b>오버라이딩 (하위 조직)</b>', ov.n, '', ov.prem, ov.amt, 0).replace('<tr>','<tr class="slip-cat">'); org+=ov.amt;
+    Object.keys(ov.st).map(Number).sort(function(a,b){return a-b;}).forEach(function(stg){ var q=ov.st[stg]; body+=row('<span class="slip-ind">└ '+(stg===0?'신계약 ('+mLabel(S-1).replace('.','년 ')+'월 계약) · 익월분':stg+'회차'+(stg>=13?' (2차년)':' (1차년)'))+'</span>', q.n, '', q.prem, q.amt, 0); });
+    body+=row('<b>지사관리수수료 (법인시책)</b>'+(orgMg(OVR_ROWS.top)?' · '+orgMg(OVR_ROWS.top)+'%':'')+'<span class="sub2">'+mLabel(S-1).replace('.','년 ')+'월 손보 장기 신계약분</span>', mg.n, '', mg.prem, mg.amt, 0).replace('<tr>','<tr class="slip-cat">'); org+=mg.amt;
     body+='<tr class="slip-sub"><td colspan="5">조직 소계</td><td class="num"><b>'+won(org)+'</b></td></tr>';
   }
   var total=mine+org, tax=Math.floor(total*0.03/10)*10, ltax=Math.floor(tax*0.1/10)*10;
@@ -2033,7 +2042,7 @@ function openSlip(){
 function printSlip(){
   var w=window.open('','_blank'); if(!w){ toast('팝업이 차단되었습니다',true); return; }
   var b=$('slipBody').cloneNode(true); b.querySelectorAll('details').forEach(function(d){ d.setAttribute('open',''); });
-  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc($('slipTitle').textContent)+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;padding:24px;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{border:1px solid #bbb;padding:6px}th{background:#f1f1f1}.num{text-align:right}.sub2{display:block;font-size:10px;color:#666}.muted{color:#666}.slip-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}.slip-sub td{background:#fafafa}.slip-tot td{font-weight:800;background:#FFF1E6}summary{font-weight:700;margin-top:10px}</style></head><body><h2 style="margin:0 0 10px">'+esc($('slipTitle').textContent)+'</h2>'+b.innerHTML+'<p class="muted" style="font-size:11px">원수사 수수료 예시표 기준 추정치이며 실제 지급액과 다를 수 있습니다.</p></body></html>');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc($('slipTitle').textContent)+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;padding:24px;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{border:1px solid #bbb;padding:6px}th{background:#f1f1f1}.num{text-align:right}.sub2{display:block;font-size:10px;color:#666}.muted{color:#666}.slip-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}.slip-sub td{background:#fafafa}.slip-tot td{font-weight:800;background:#FFF1E6}.slip-cat td{background:#F2F5FA}.slip-ind{padding-left:14px;color:#444}summary{font-weight:700;margin-top:10px}</style></head><body><h2 style="margin:0 0 10px">'+esc($('slipTitle').textContent)+'</h2>'+b.innerHTML+'<p class="muted" style="font-size:11px">원수사 수수료 예시표 기준 추정치이며 실제 지급액과 다를 수 있습니다.</p></body></html>');
   w.document.close(); w.focus(); setTimeout(function(){ w.print(); },300);
 }
 function loadFeeList(){
