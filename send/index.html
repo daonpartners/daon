@@ -75,13 +75,16 @@ h1{font-size:20px;margin:6px 0 4px}
 
   <section class="card">
     <h2>설정 (이 기기에 저장)</h2>
-    <p class="muted" style="font-size:12.5px;margin:-4px 0 4px">행사명·날짜·사번·조직코드를 넣어야 링크가 열립니다. 고객 동의 내역은 이 사번의 지사장에게 쌓이고 텔레그램으로 알려드립니다.</p>
+    <p class="muted" style="font-size:12.5px;margin:-4px 0 4px">행사명·날짜·지사를 선택하면 링크가 열립니다. 고객 동의 내역은 선택한 지사의 지사장에게 쌓이고 텔레그램으로 알려드립니다.</p>
     <label class="lb" for="ev">행사명</label><input class="inp" id="ev" maxlength="30" placeholder="예) 아산 펫페어">
     <label class="lb" for="dt">행사 날짜</label><input class="inp" id="dt" type="date">
-    <div class="row2">
-      <div><label class="lb" for="mc">지사장 사번</label><input class="inp" id="mc" inputmode="numeric" maxlength="20" placeholder="본인 사번"></div>
-      <div><label class="lb" for="mz">지사장 메리츠 조직코드</label><input class="inp" id="mz" inputmode="numeric" maxlength="12" placeholder="본인 조직코드"></div>
-    </div>
+    <label class="lb" for="br">지사 선택</label>
+    <select class="inp" id="br">
+      <option value="">지사를 선택하세요</option>
+      <option value="광명">광명</option><option value="다온">다온</option><option value="도약">도약</option>
+      <option value="동행">동행</option><option value="혁신">혁신</option><option value="리치로드맵">리치로드맵</option>
+    </select>
+    <p class="muted" id="brNote" style="font-size:12.5px;margin:6px 0 0"></p>
   </section>
 
   <section class="card">
@@ -102,19 +105,19 @@ h1{font-size:20px;margin:6px 0 4px}
   var NAMES={fp:'자녀 지문검사',qm:'양자공명 건강체험',pet:'펫행사'}, DIR={fp:'fp',qm:'qm',pet:'pet-event'};
   function today(){ var d=new Date(Date.now()+9*3600*1000); return d.toISOString().slice(0,10); }
   var K=localStorage, KIND=K.getItem('snd_kind')||'';
-  ['ev','dt','mc','mz'].forEach(function(id){ try{ $(id).value=K.getItem('snd_'+id)||''; }catch(e){} $(id).addEventListener(id==='dt'?'change':'input',function(){ try{K.setItem('snd_'+id,this.value.trim());}catch(e){} refresh(); }); });
+  ['ev','dt','br'].forEach(function(id){ try{ $(id).value=K.getItem('snd_'+id)||''; }catch(e){} $(id).addEventListener((id==='dt'||id==='br')?'change':'input',function(){ try{K.setItem('snd_'+id,this.value.trim());}catch(e){} refresh(); }); });
   $('dt').value=today();
   document.querySelectorAll('.kind').forEach(function(b){ b.addEventListener('click',function(){ KIND=b.dataset.k; try{K.setItem('snd_kind',KIND);}catch(e){} refresh(); }); });
   $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); refresh(); });
-  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), d=$('dt').value, m=$('mc').value.trim(), z=$('mz').value.trim(); if(e) p.set('e',e); if(d) p.set('d',d); if(m) p.set('m',m); if(/^[0-9]{6,12}$/.test(z)) p.set('mz',z); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
+  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), d=$('dt').value, b=$('br').value; if(e) p.set('e',e); if(d) p.set('d',d); if(b) p.set('b',b); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
   function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 성명·생년월일 입력 후 동의하시고, 이어서 메리츠화재 공식 동의까지 진행해 주세요.\n'+link(); }
   function phone(){ return $('ph').value.replace(/[^0-9]/g,''); }
   function refresh(){
     document.querySelectorAll('.kind').forEach(function(b){ b.classList.toggle('on',b.dataset.k===KIND); });
-    var ready=!!$('ev').value.trim()&&!!$('dt').value&&/^[0-9]{4,20}$/.test($('mc').value.trim())&&/^[0-9]{6,12}$/.test($('mz').value.trim());
+    var ready=!!$('ev').value.trim()&&!!$('dt').value&&!!$('br').value&&!!MZOK[$('br').value];
     var ok=!!KIND&&ready, okPh=ok&&/^01\d{8,9}$/.test(phone());
     $('sms').classList.toggle('dis',!okPh); $('copy').classList.toggle('dis',!ok); $('qrBtn').classList.toggle('dis',!ok);
-    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pv').textContent=KIND?'행사명·날짜·지사장 사번·조직코드를 모두 입력하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
+    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pv').textContent=KIND?'행사명·날짜를 입력하고 조직코드가 등록된 지사를 선택하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
     if(!$('qrBox').classList.contains('hide')) drawQR();
   }
   function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('on');},2200); }
@@ -135,6 +138,10 @@ h1{font-size:20px;margin:6px 0 4px}
   });
   function drawQR(){ $('qr').innerHTML=''; if(window.QRCode) new QRCode($('qr'),{text:link(),width:220,height:220,correctLevel:QRCode.CorrectLevel.M}); else $('qr').textContent=link(); }
   $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
+  var MZOK={};
+  function note(){ var b=$('br').value; $('brNote').textContent=(b&&!MZOK[b])?'이 지사는 메리츠 조직코드가 아직 등록되지 않아 링크를 만들 수 없습니다. 대표님께 등록을 요청하세요.':''; }
+  $('br').addEventListener('change',function(){ note(); });
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ (r.heads||[]).forEach(function(h){ MZOK[h.branch]=h.mzCode; }); [].forEach.call($('br').options,function(o){ if(o.value&&!MZOK[o.value]) o.text=o.value+' (조직코드 미등록)'; }); note(); refresh(); }).catch(function(){ $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
   refresh(); drawLog();
 })();
 </script>
