@@ -84,13 +84,14 @@ button{cursor:pointer;border:0;background:none}
 </div>
 <script>
 (function(){
-  var API='https://daonpartners.app.n8n.cloud/webhook/daon-health-lead';
+  var API='https://daonpartners.app.n8n.cloud/webhook/daon-event-lead';
   var $=function(i){return document.getElementById(i);};
   var q=new URLSearchParams(location.search);
   var EV=(q.get('e')||'').slice(0,30), CODE=(q.get('m')||'').slice(0,20);
+  var DT=/^\d{4}-\d{2}-\d{2}$/.test(q.get('d')||'')?q.get('d'):'';
   var MZ=/^[0-9]{6,12}$/.test(q.get('mz')||'')?q.get('mz'):'726019086';
   $('mz').href='https://msea.meritzfire.com/mblCusReg.do?orgCd='+MZ;
-  if(EV) $('evName').textContent=' · '+EV;
+  if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
   var cs=document.querySelectorAll('.c');
   $('all').addEventListener('change',function(){ var on=this.checked; cs.forEach(function(c){c.checked=on;}); });
   cs.forEach(function(c){ c.addEventListener('change',function(){ $('all').checked=[].every.call(cs,function(x){return x.checked;}); }); });
@@ -107,9 +108,8 @@ button{cursor:pointer;border:0;background:none}
     if(a<19) return fail('성인(만 19세 이상)만 체험할 수 있습니다',$('bd'));
     if(!$('a1').checked||!$('a2').checked) return fail('필수 항목 2개에 모두 동의해 주세요');
     var now=new Date();
-    var memo=['[보장분석 신청 · 양자공명 건강체험 · 모바일 간편 동의]','행사: '+(EV||'-'),'신청자: '+nm+' / 생년월일 '+bd,'','[동의 기록] '+now.toLocaleString('ko-KR'),'· (필수) 보장분석 신청·개인정보(성명·생년월일) 수집이용: 동의','· (필수) 양자공명 건강체험 참여: 동의','· 연락처·주소·상세 내용: 현장 서면 동의서로 수집','· 주민등록번호: 수집하지 않음 (메리츠화재 공식 화면에서 본인인증·동의)'].join('\n');
     busy=true; var b=$('go'); b.disabled=true; b.textContent='저장 중…';
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,phone:'',interests:['보장분석'],interestEtc:'보장분석 신청 · 양자공명 건강체험',callTime:'행사 현장',memo:memo,origin:'양자공명행사',manager:CODE,consentRequired:true,utm_source:'event',utm_medium:'sms',utm_campaign:EV||'양자공명행사',submittedAt:now.toISOString()})})
+    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({kind:'qm',eventName:EV,eventDate:DT||'',sabun:CODE,mzCode:MZ,personName:nm,personBirth:bd,childName:'',childBirth:'',note:'주민등록번호 미수집'})})
       .then(function(r){ if(!r.ok) throw 0; })
       .then(function(){ $('formCard').classList.add('hide'); $('doneCard').classList.remove('hide'); $('st1').classList.remove('on'); $('st2').classList.add('on'); $('doneTxt').textContent=nm+'님, 이제 보험사 공식 동의만 남았습니다.'; window.scrollTo({top:0}); })
       .catch(function(){ busy=false; b.disabled=false; b.textContent='동의하고 다음 단계로'; fail('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러주세요.'); });
