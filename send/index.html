@@ -69,7 +69,12 @@ h1{font-size:20px;margin:6px 0 4px}
       <button type="button" class="b dis" id="qrBtn">QR 보여주기</button>
     </div>
     <div class="qr hide" id="qrBox"><div id="qr"></div><span class="muted" style="font-size:12.5px">고객이 휴대폰 카메라로 찍으면 바로 열립니다</span></div>
+    <div class="muted hide" id="pvLb" style="font-size:12.5px;font-weight:700;margin-top:12px">▼ 고객에게 가는 문자 내용 (PC에서도 확인)</div>
     <div class="preview hide" id="pv"></div>
+    <div class="btns hide" id="pvBtns">
+      <button type="button" class="b" id="lnkCopy">링크만 복사</button>
+      <a class="b" id="lnkOpen" href="#" target="_blank" rel="noopener">고객 화면 미리보기</a>
+    </div>
     <div class="chk">☐ 서면 동의서 받기 &nbsp; ☐ 간편 동의 확인 &nbsp; ☐ 메리츠화재 공식 동의 완료 확인 → 체험 진행</div>
   </section>
 
@@ -117,7 +122,7 @@ h1{font-size:20px;margin:6px 0 4px}
     var ready=!!$('ev').value.trim()&&!!$('dt').value&&!!$('br').value&&!!MZOK[$('br').value];
     var ok=!!KIND&&ready, okPh=ok&&/^01\d{8,9}$/.test(phone());
     $('sms').classList.toggle('dis',!okPh); $('copy').classList.toggle('dis',!ok); $('qrBtn').classList.toggle('dis',!ok);
-    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pv').textContent=KIND?'행사명·날짜를 입력하고 조직코드가 등록된 지사를 선택하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
+    if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('pvLb').classList.remove('hide'); $('pvBtns').classList.remove('hide'); $('lnkOpen').href=link(); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pvLb').classList.add('hide'); $('pvBtns').classList.add('hide'); $('pv').textContent=KIND?'행사명·날짜를 입력하고 조직코드가 등록된 지사를 선택하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
     if(!$('qrBox').classList.contains('hide')) drawQR();
   }
   function toast(t){ var e=$('toast'); e.textContent=t; e.classList.add('on'); clearTimeout(e._t); e._t=setTimeout(function(){e.classList.remove('on');},2200); }
@@ -130,7 +135,11 @@ h1{font-size:20px;margin:6px 0 4px}
   }
   function drawLog(){ var arr=[]; try{ arr=JSON.parse(K.getItem('snd_log_'+new Date().toISOString().slice(0,10))||'[]'); }catch(e){}
     $('log').innerHTML=arr.length?arr.map(function(x){ return '<li><span>'+x.t+' · '+x.k+'</span><span class="muted">'+x.p+' · '+x.h+'</span></li>'; }).join(''):'<li class="muted">아직 없습니다</li>'; }
-  $('sms').addEventListener('click',function(){ logIt('문자'); });
+  $('sms').addEventListener('click',function(ev){
+    if(!/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent)){ ev.preventDefault(); copyText(msg()); toast('PC에서는 문자 앱이 열리지 않아 문구를 복사했어요. 휴대폰·카톡에 붙여넣으세요'); logIt('복사'); return; }
+    logIt('문자'); });
+  $('lnkCopy').addEventListener('click',function(){ copyText(link()); toast('링크를 복사했어요'); });
+  function copyText(t){ var ok=false; var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); if(!ok&&navigator.clipboard) navigator.clipboard.writeText(t); }
   $('copy').addEventListener('click',function(){
     var t=msg(), ok=false; var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{ ok=document.execCommand('copy'); }catch(e){} document.body.removeChild(ta);
     if(!ok&&navigator.clipboard) navigator.clipboard.writeText(t);
