@@ -68,7 +68,7 @@ h1{font-size:20px;margin:6px 0 4px}
       <button type="button" class="b dis" id="copy">문구 복사 (카톡)</button>
       <button type="button" class="b dis" id="qrBtn">QR 보여주기</button>
     </div>
-    <div class="qr hide" id="qrBox"><div id="qr"></div><span class="muted" style="font-size:12.5px">고객이 휴대폰 카메라로 찍으면 바로 열립니다</span></div>
+    <div class="qr hide" id="qrBox"><div id="qr"></div><span class="muted" style="font-size:12.5px">고객이 휴대폰 카메라로 찍으면 바로 열립니다</span><button type="button" class="b" id="qrSave" style="width:100%">인쇄용 QR 이미지 저장 (PNG)</button></div>
     <div class="muted hide" id="pvLb" style="font-size:12.5px;font-weight:700;margin-top:12px">▼ 고객에게 가는 문자 내용 (PC에서도 확인)</div>
     <div class="preview hide" id="pv"></div>
     <div class="btns hide" id="pvBtns">
@@ -146,6 +146,21 @@ h1{font-size:20px;margin:6px 0 4px}
     toast('문구를 복사했어요. 카카오톡에 붙여넣으세요'); logIt('복사');
   });
   function drawQR(){ $('qr').innerHTML=''; if(window.QRCode) new QRCode($('qr'),{text:link(),width:220,height:220,correctLevel:QRCode.CorrectLevel.M}); else $('qr').textContent=link(); }
+  $('qrSave').addEventListener('click',function(){
+    if(!window.QRCode){ alert('QR 라이브러리를 불러오지 못했습니다. 새로고침해 주세요.'); return; }
+    var tmp=document.createElement('div'); tmp.style.cssText='position:fixed;left:-9999px;top:0';
+    document.body.appendChild(tmp);
+    new QRCode(tmp,{text:link(),width:1000,height:1000,correctLevel:QRCode.CorrectLevel.M});
+    setTimeout(function(){
+      var src=tmp.querySelector('canvas'); if(!src){ document.body.removeChild(tmp); alert('QR 생성에 실패했습니다.'); return; }
+      var M=100, W=1000+M*2, H=W+160, c=document.createElement('canvas'); c.width=W; c.height=H;
+      var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,W,H); x.drawImage(src,M,M,1000,1000);
+      var br=$('br').value, ev=$('ev').value.trim(); x.fillStyle='#111'; x.textAlign='center'; x.font='bold 44px sans-serif';
+      x.fillText((br||'')+(ev?' · '+ev:''),W/2,W+20); x.font='32px sans-serif'; x.fillStyle='#555'; x.fillText('휴대폰 카메라로 찍어 주세요',W/2,W+80);
+      var a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='QR_'+(br||'지사')+(ev?'_'+ev.replace(/[\\/:*?"<>|\s]+/g,'_'):'')+'.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(tmp); logIt('QR저장');
+    },150);
+  });
   $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
   var MZOK={};
   function note(){ var b=$('br').value; $('brNote').textContent=(b&&!MZOK[b])?'이 지사는 메리츠 조직코드가 아직 등록되지 않아 링크를 만들 수 없습니다. 대표님께 등록을 요청하세요.':''; }
