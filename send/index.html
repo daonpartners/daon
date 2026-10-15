@@ -83,9 +83,9 @@ h1{font-size:20px;margin:6px 0 4px}
     <p class="muted" style="font-size:12.5px;margin:-4px 0 4px">행사명·날짜·지사를 선택하면 링크가 열립니다. 고객 동의 내역은 선택한 지사의 지사장에게 쌓이고 텔레그램으로 알려드립니다.</p>
     <label class="lb" for="ev">행사명</label><input class="inp" id="ev" maxlength="30" placeholder="예) 아산 펫페어">
     <label class="lb" for="dt">행사 날짜</label><input class="inp" id="dt" type="date">
-    <label class="lb" for="br">지사 선택</label>
+    <label class="lb" for="br">지사·지점 선택</label>
     <select class="inp" id="br">
-      <option value="">지사를 선택하세요</option>
+      <option value="">지사/지점을 선택하세요</option>
       <option value="광명">광명</option><option value="다온">다온</option><option value="도약">도약</option>
       <option value="동행">동행</option><option value="혁신">혁신</option><option value="리치로드맵">리치로드맵</option>
     </select>
@@ -150,7 +150,12 @@ h1{font-size:20px;margin:6px 0 4px}
   var MZOK={};
   function note(){ var b=$('br').value; $('brNote').textContent=(b&&!MZOK[b])?'이 지사는 메리츠 조직코드가 아직 등록되지 않아 링크를 만들 수 없습니다. 대표님께 등록을 요청하세요.':''; }
   $('br').addEventListener('change',function(){ note(); });
-  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ (r.heads||[]).forEach(function(h){ MZOK[h.branch]=h.mzCode; }); [].forEach.call($('br').options,function(o){ if(o.value&&!MZOK[o.value]) o.text=o.value+' (조직코드 미등록)'; }); note(); refresh(); }).catch(function(){ $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var hs=(r.heads||[]), cur=$('br').value, ord=[], pos={};
+    hs.forEach(function(h){ MZOK[h.branch]=h.mzCode; });
+    hs.filter(function(h){return !h.parent;}).forEach(function(h){ ord.push(h); hs.filter(function(c){return c.parent===h.branch;}).forEach(function(c){ ord.push(c); }); });
+    hs.forEach(function(h){ if(h.parent && ord.indexOf(h)<0) ord.push(h); });
+    if(ord.length){ var sel=$('br'); sel.innerHTML='<option value="">지사/지점을 선택하세요</option>'; ord.forEach(function(h){ var o=document.createElement('option'); o.value=h.branch; o.text=(h.parent?'\u00a0\u00a0└ ':'')+h.branch+(h.mzCode?'':' (조직코드 미등록)'); sel.appendChild(o); }); sel.value=cur; }
+    note(); refresh(); }).catch(function(){ $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
   refresh(); drawLog();
 })();
 </script>
