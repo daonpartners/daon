@@ -89,11 +89,12 @@ button{cursor:pointer;border:0;background:none}
   var q=new URLSearchParams(location.search);
   var EV=(q.get('e')||'').slice(0,30), CODE=(q.get('m')||'').slice(0,20);
   var DT=/^\d{4}-\d{2}-\d{2}$/.test(q.get('d')||'')?q.get('d'):'';
-  var MZ=/^[0-9]{6,12}$/.test(q.get('mz')||'')?q.get('mz'):'726019086';
+  var MZ=/^[0-9]{6,12}$/.test(q.get('mz')||'')?q.get('mz'):'';
   var BR=(q.get('b')||'').slice(0,10);
-  function setMz(){ $('mz').href='https://msea.meritzfire.com/mblCusReg.do?orgCd='+MZ; }
+  function setMz(){ var a=$('mz'); if(MZ){ a.href='https://msea.meritzfire.com/mblCusReg.do?orgCd='+MZ; a.style.opacity=''; a.style.pointerEvents=''; } else { a.href='#'; a.style.opacity='.5'; a.style.pointerEvents='none'; } }
   setMz();
-  if(BR){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===BR;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; setMz(); } }).catch(function(){}); }
+  var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
+  if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
   if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
   var cs=document.querySelectorAll('.c');
   $('all').addEventListener('change',function(){ var on=this.checked; cs.forEach(function(c){c.checked=on;}); });
