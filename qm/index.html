@@ -108,16 +108,18 @@ button{cursor:pointer;border:0;background:none}
   if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
   if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
   var N1='성명·생년월일·연락처·주민등록번호를 이 화면에서 받습니다. 주민등록번호는 입력 즉시 암호화됩니다. 다음 단계의 <b>메리츠화재 공식 화면</b>에서 고객님이 직접 휴대폰 본인인증 후 동의합니다.', N2='인증번호는 메리츠화재 화면에만 입력하세요. 설계사가 대신 입력하지 않습니다.', FT='개인정보 처리자: 미래에셋금융서비스 그로우사업부 · 운영 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다. 메리츠화재 화면에서 입력하는 정보는 메리츠화재 개인정보처리방침에 따라 처리됩니다.';
-  /* ── 주민등록번호 수집: 국내 저장서버·암호화 열쇠 확정 후 PUBKEY 입력 + RRN_LIVE=true ── */
-  var RRN_LIVE=false, PUBKEY='';
-  var RRN=RRN_LIVE||q.get('rrn')==='1', PREVIEW=RRN&&!(RRN_LIVE&&PUBKEY);
-  if(RRN){
+  /* ── 주민등록번호 수집: 관리자센터에서 열쇠를 만들면 자동으로 켜짐 (?rrn=1 은 저장 안 되는 검토용) ── */
+  var PUBKEY='', RRN=false, PREVIEW=false;
+  function rrnOn(preview){
+    if(RRN) return; RRN=true; PREVIEW=preview;
     document.querySelectorAll('.rrn').forEach(function(x){x.classList.remove('hide');});
     document.querySelectorAll('.norrn').forEach(function(x){x.classList.add('hide');});
-    $('a3').classList.add('c');
+    $('a3').classList.add('c'); $('all').checked=false;
     if(PREVIEW) $('pv').classList.remove('hide');
     $('n1').innerHTML=N1; $('n2').innerHTML=N2; $('ft').innerHTML=FT;
   }
+  if(q.get('rrn')==='1') rrnOn(true);
+  else fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'pubkey'})}).then(function(r){return r.json();}).then(function(r){ if(r&&/^[A-Za-z0-9+\/=]{300,800}$/.test(r.pubkey||'')){ PUBKEY=r.pubkey; rrnOn(false); } }).catch(function(){});
   function yymmdd(b){ return /^\d{4}-\d{2}-\d{2}$/.test(b)?b.slice(2,4)+b.slice(5,7)+b.slice(8,10):''; }
   function rrnOk(b,back){ var y=+b.slice(0,4), g=back.charAt(0); if(!/^\d{7}$/.test(back)) return false; return y<2000?/[1256]/.test(g):/[3478]/.test(g); }
   function enc(obj){
@@ -126,9 +128,9 @@ button{cursor:pointer;border:0;background:none}
       .then(function(k){ return crypto.subtle.encrypt({name:'RSA-OAEP'},k,new TextEncoder().encode(JSON.stringify(obj))); })
       .then(function(c){ return btoa(String.fromCharCode.apply(null,new Uint8Array(c))); });
   }
-  var cs=document.querySelectorAll('.c');
-  $('all').addEventListener('change',function(){ var on=this.checked; cs.forEach(function(c){c.checked=on;}); });
-  cs.forEach(function(c){ c.addEventListener('change',function(){ $('all').checked=[].every.call(cs,function(x){return x.checked;}); }); });
+  function CS(){ return document.querySelectorAll('.c'); }
+  $('all').addEventListener('change',function(){ var on=this.checked; CS().forEach(function(c){c.checked=on;}); });
+  document.querySelectorAll('.ag input').forEach(function(c){ c.addEventListener('change',function(){ $('all').checked=[].every.call(CS(),function(x){return x.checked;}); }); });
   $('bd').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,8); this.value=n.length>6?n.slice(0,4)+'-'+n.slice(4,6)+'-'+n.slice(6):(n.length>4?n.slice(0,4)+'-'+n.slice(4):n); this.classList.remove('bad'); });
   $('bd').addEventListener('input',function(){ $('prf').value=yymmdd(this.value); });
   document.querySelectorAll('[id$="rb"]').forEach(function(x){ x.addEventListener('input',function(){ this.value=this.value.replace(/[^0-9]/g,'').slice(0,7); this.classList.remove('bad'); }); });
