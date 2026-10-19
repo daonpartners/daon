@@ -75,7 +75,7 @@ h1{font-size:20px;margin:6px 0 4px}
       <button type="button" class="b" id="lnkCopy">링크만 복사</button>
       <a class="b" id="lnkOpen" href="#" target="_blank" rel="noopener">고객 화면 미리보기</a>
     </div>
-    <div class="chk">☐ 서면 동의서 받기 &nbsp; ☐ 간편 동의 확인 &nbsp; ☐ 메리츠화재 공식 동의 완료 확인 → 체험 진행</div>
+    <div class="chk">☐ 서면 동의서 받기 &nbsp; ☐ 고객 휴대폰의 신청 완료 화면 확인 → 체험 진행</div>
   </section>
 
   <section class="card">
@@ -115,11 +115,11 @@ h1{font-size:20px;margin:6px 0 4px}
   document.querySelectorAll('.kind').forEach(function(b){ b.addEventListener('click',function(){ KIND=b.dataset.k; try{K.setItem('snd_kind',KIND);}catch(e){} refresh(); }); });
   $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); refresh(); });
   function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), d=$('dt').value, b=$('br').value; if(e) p.set('e',e); if(d) p.set('d',d); if(b) p.set('b',b); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
-  function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 성명·생년월일 입력 후 동의하시고, 이어서 메리츠화재 공식 동의까지 진행해 주세요.\n'+link(); }
+  function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 정보를 입력하고 동의하시면 신청이 완료됩니다.\n'+link(); }
   function phone(){ return $('ph').value.replace(/[^0-9]/g,''); }
   function refresh(){
     document.querySelectorAll('.kind').forEach(function(b){ b.classList.toggle('on',b.dataset.k===KIND); });
-    var ready=!!$('ev').value.trim()&&!!$('dt').value&&!!$('br').value&&!!MZOK[$('br').value];
+    var ready=!!$('ev').value.trim()&&!!$('dt').value&&!!$('br').value;
     var ok=!!KIND&&ready, okPh=ok&&/^01\d{8,9}$/.test(phone());
     $('sms').classList.toggle('dis',!okPh); $('copy').classList.toggle('dis',!ok); $('qrBtn').classList.toggle('dis',!ok);
     if(ok){ $('pv').textContent=msg(); $('pv').classList.remove('hide'); $('pvLb').classList.remove('hide'); $('pvBtns').classList.remove('hide'); $('lnkOpen').href=link(); $('sms').href='sms:'+phone()+'?&body='+encodeURIComponent(msg()); } else { $('pvLb').classList.add('hide'); $('pvBtns').classList.add('hide'); $('pv').textContent=KIND?'행사명·날짜를 입력하고 조직코드가 등록된 지사를 선택하면 문구가 나옵니다.':''; $('pv').classList.toggle('hide',!KIND); }
@@ -163,7 +163,7 @@ h1{font-size:20px;margin:6px 0 4px}
   });
   $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
   var MZOK={};
-  function note(){ var b=$('br').value; $('brNote').textContent=(b&&!MZOK[b])?'이 지사는 메리츠 조직코드가 아직 등록되지 않아 링크를 만들 수 없습니다. 대표님께 등록을 요청하세요.':''; }
+  function note(){ var b=$('br').value; $('brNote').textContent=''; }
   $('br').addEventListener('change',function(){ note(); });
   fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var hs=(r.heads||[]), cur=$('br').value, ord=[], pos={};
     hs.forEach(function(h){ MZOK[h.branch]=h.mzCode; });
