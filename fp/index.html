@@ -65,8 +65,8 @@ button{cursor:pointer;border:0;background:none}
   <div class="brand">미래에셋금융서비스 그로우사업부<span id="evName" style="color:var(--ink3);font-weight:500"></span></div>
   <section class="hero">
     <h1>보장분석 신청하고<br>자녀 지문검사 받으세요</h1>
-    <p>보험사 공식 동의를 마치신 보호자의 자녀(만 14세 미만)에게 지문검사를 무료로 제공합니다.</p>
-    <div class="steps"><span class="on" id="st1">① 간편 동의</span><span id="st2">② 보험사 공식 동의</span><span>③ 자녀 지문검사</span></div>
+    <p>보장분석 신청에 동의하신 보호자의 자녀(만 14세 미만)에게 지문검사를 무료로 제공합니다.</p>
+    <div class="steps"><span class="on" id="st1">① 동의·신청</span><span id="st2">② 자녀 지문검사</span></div>
   </section>
 
   <section class="card" id="formCard">
@@ -87,19 +87,19 @@ button{cursor:pointer;border:0;background:none}
     <label class="ag rrn hide"><input type="checkbox" id="a3"><span><b><em>필수</em>주민등록번호 수집·이용 및 제공 (보장분석·보험상담)</b><small>처리자: 미래에셋금융서비스(그로우사업부 주최). 수집 항목: 보호자·자녀 주민등록번호. 이용 목적: 보장분석, 보험상담. 제공받는 자: 고객님께 배정된 그로우사업부 소속 담당 설계사 1명. 보유기간: 청약 완료 시 또는 수집일부터 90일 중 빠른 날 파기. 입력 즉시 이 휴대폰에서 암호화되어 전송되며, 행사 담당 지사장과 담당 설계사 외에는 열람할 수 없습니다. 동의하지 않으면 행사 참여가 어렵습니다.</small></span></label>
     <p class="err" id="err"></p>
     <button type="button" class="go" id="go">동의하고 다음 단계로</button>
-    <div class="note" id="n1">보호자 성명·생년월일·연락처·주소와 자녀 성명·생년월일만 이 화면에서 한 번에 받습니다. 주민등록번호는 받지 않으며, 다음 단계의 <b>메리츠화재 공식 화면</b>에서 고객님이 직접 휴대폰 본인인증 후 동의합니다.</div>
+    <div class="note" id="n1">보호자 성명·생년월일·연락처·주소와 자녀 성명·생년월일만 이 화면에서 한 번에 받습니다. 주민등록번호는 받지 않으며,</div>
   </section>
 
   <section class="card done hide" id="doneCard">
     <div class="ok"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
-    <h2>간편 동의 완료</h2>
+    <h2>신청 완료</h2>
     <p id="doneTxt"></p>
-    <ol><li>아래 버튼을 눌러 <b>메리츠화재 공식 화면</b>으로 이동합니다.</li><li>보호자 본인의 휴대폰으로 <b>본인인증 후 동의</b>합니다.</li><li>메리츠 화면에서 자녀 정보 입력 칸이 나오면, 바로 아래 <b>자녀 정보 안내</b>를 보고 <b>한 번만</b> 입력하세요.</li><li>완료 화면을 담당 설계사에게 보여주세요.</li></ol>
-    <a class="go mz" id="mz" href="#" target="_blank" rel="noopener">메리츠화재 보장분석 동의하기</a>
-    <div class="note" id="n2"><b>자녀 정보 안내</b><br>방금 입력하신 자녀 성명·생년월일은 이미 접수되었습니다. 메리츠화재 화면에서 자녀의 주민등록번호를 묻는 경우에만 그 화면에 직접 입력하세요. 이 사이트와 설계사는 자녀의 주민등록번호를 받지 않으며, 설계사가 대신 입력하지 않습니다.</div>
+    <ol><li>보장분석 신청과 동의가 모두 접수되었습니다.</li><li>이 완료 화면을 현장 담당 설계사에게 보여주세요.</li><li>보장분석 결과는 담당 설계사가 연락드려 안내합니다.</li></ol>
+    <a class="go mz hide" id="mz" href="#" target="_blank" rel="noopener">메리츠화재 보장분석 동의하기</a>
+    <div class="note hide" id="n2"></div>
   </section>
 
-  <p class="foot" id="ft">개인정보 처리자: 미래에셋금융서비스 그로우사업부 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다. 메리츠화재 화면에서 입력하는 정보는 메리츠화재 개인정보처리방침에 따라 처리되며, 이 화면의 정보를 메리츠화재에 전달하지 않습니다.</p>
+  <p class="foot" id="ft">개인정보 처리자: 미래에셋금융서비스 그로우사업부 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다.</p>
 </div>
 <script>
 (function(){
@@ -115,7 +115,7 @@ button{cursor:pointer;border:0;background:none}
   var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
   if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
   if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
-  var N1='보호자·자녀 성명·생년월일·보호자 연락처·주소·주민등록번호를 이 화면에서 받습니다. 주민등록번호는 입력 즉시 암호화됩니다. 다음 단계의 <b>메리츠화재 공식 화면</b>에서 고객님이 직접 휴대폰 본인인증 후 동의합니다.', N2='<b>자녀 정보 안내</b><br>방금 입력하신 자녀 정보는 이미 접수되었습니다. 메리츠화재 화면에서 자녀의 주민등록번호를 묻는 경우 그 화면에도 직접 입력하세요. 설계사가 대신 입력하지 않습니다.', FT='개인정보 처리자: 미래에셋금융서비스 그로우사업부 · 운영 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다. 메리츠화재 화면에서 입력하는 정보는 메리츠화재 개인정보처리방침에 따라 처리됩니다.';
+  var N1='보호자·자녀 성명·생년월일·보호자 연락처·주소·주민등록번호를 이 화면에서 받습니다. 주민등록번호는 입력 즉시 암호화됩니다.', N2='', FT='개인정보 처리자: 미래에셋금융서비스 그로우사업부 · 운영 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다.';
   /* ── 주민등록번호 수집: 관리자센터에서 열쇠를 만들면 자동으로 켜짐 (?rrn=1 은 저장 안 되는 검토용) ── */
   var KEYS=[], RRN=false, PREVIEW=false;
   function rrnOn(preview){
@@ -188,7 +188,7 @@ button{cursor:pointer;border:0;background:none}
     R=null; document.querySelectorAll('[id$="rb"]').forEach(function(x){x.value='';});
     send.then(function(){ return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); })
       .then(function(r){ if(!r.ok) throw 0; })
-      .then(function(){ $('formCard').classList.add('hide'); $('doneCard').classList.remove('hide'); $('st1').classList.remove('on'); $('st2').classList.add('on'); $('doneTxt').textContent=nm+'님, 이제 보험사 공식 동의만 남았습니다.'; window.scrollTo({top:0}); })
+      .then(function(){ $('formCard').classList.add('hide'); $('doneCard').classList.remove('hide'); $('st1').classList.remove('on'); $('st2').classList.add('on'); $('doneTxt').textContent=nm+'님, 신청해 주셔서 감사합니다.'; window.scrollTo({top:0}); })
       .catch(function(){ busy=false; b.disabled=false; b.textContent='동의하고 다음 단계로'; fail('저장하지 못했습니다. 인터넷 연결을 확인하고 다시 눌러주세요.'); });
   });
 })();
