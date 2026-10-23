@@ -156,10 +156,10 @@ h1{font-size:20px;margin:6px 0 4px}
     new QRCode(tmp,{text:link(),width:1000,height:1000,correctLevel:QRCode.CorrectLevel.M});
     setTimeout(function(){
       var src=tmp.querySelector('canvas'); if(!src){ document.body.removeChild(tmp); alert('QR 생성에 실패했습니다.'); return; }
-      var M=100, W=1000+M*2, H=W+160, c=document.createElement('canvas'); c.width=W; c.height=H;
+      var M=100, W=1000+M*2, H=W+130, c=document.createElement('canvas'); c.width=W; c.height=H;
       var x=c.getContext('2d'); x.fillStyle='#fff'; x.fillRect(0,0,W,H); x.drawImage(src,M,M,1000,1000);
       var br=$('br').value, ev=$('ev').value.trim(); x.fillStyle='#111'; x.textAlign='center'; x.font='bold 44px sans-serif';
-      x.fillText((br||'')+(ev?' · '+ev:''),W/2,W+20); x.font='32px sans-serif'; x.fillStyle='#555'; x.fillText('휴대폰 카메라로 찍어 주세요',W/2,W+80);
+      x.textBaseline='middle'; x.fillText('미래에셋금융서비스 그로우사업부',W/2,W+10);
       var a=document.createElement('a'); a.href=c.toDataURL('image/png'); var KN={fp:'자녀지문',qm:'양자분석',pet:'펫행사'}[KIND]||''; a.download=(((br||'')+(ev||'')+KN).replace(/[\\/:*?"<>|\s]+/g,'')||'QR')+'.png';
       document.body.appendChild(a); a.click(); document.body.removeChild(a); document.body.removeChild(tmp); logIt('QR저장');
     },150);
