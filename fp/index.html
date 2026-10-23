@@ -109,7 +109,7 @@ button{cursor:pointer;border:0;background:none}
   var EV=(q.get('e')||'').slice(0,30), CODE=(q.get('m')||'').slice(0,20);
   var DT=/^\d{4}-\d{2}-\d{2}$/.test(q.get('d')||'')?q.get('d'):'';
   var MZ=/^[0-9]{6,12}$/.test(q.get('mz')||'')?q.get('mz'):'';
-  var BR=(q.get('b')||'').slice(0,10);
+  var BR=(q.get('b')||'').slice(0,10), NT=(q.get('n')||'').split(',').map(function(x){return x.trim().slice(0,10);}).filter(Boolean).slice(0,5).join(',');
   function setMz(){ var a=$('mz'); if(MZ){ a.href='https://msea.meritzfire.com/mblCusReg.do?orgCd='+MZ; a.style.opacity=''; a.style.pointerEvents=''; } else { a.href='#'; a.style.opacity='.5'; a.style.pointerEvents='none'; } }
   setMz();
   var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
@@ -183,7 +183,7 @@ button{cursor:pointer;border:0;background:none}
     var hasR=!PREVIEW&&!!(R.p||R.c);
     var now=new Date();
     busy=true; var b=$('go'); b.disabled=true; b.textContent='저장 중…';
-    var body={kind:'fp',eventName:EV,eventDate:DT||'',branch:BR,sabun:CODE,mzCode:MZ,personName:nm,personBirth:bd,phone:ph,address:ad,childName:cn,childBirth:cb,note:(hasR?'주민등록번호 수집 동의(암호화). ':'')+'법정대리인 동의(보호자+자녀 성명·생년월일). '+(hasR?'':'주민등록번호 미수집')};
+    var body={kind:'fp',eventName:EV,eventDate:DT||'',branch:BR,notify:NT,sabun:CODE,mzCode:MZ,personName:nm,personBirth:bd,phone:ph,address:ad,childName:cn,childBirth:cb,note:(hasR?'주민등록번호 수집 동의(암호화). ':'')+'법정대리인 동의(보호자+자녀 성명·생년월일). '+(hasR?'':'주민등록번호 미수집')};
     var send=(hasR&&!PREVIEW)?enc(R).then(function(x){ body.rrnEnc=x; }):Promise.resolve();
     R=null; document.querySelectorAll('[id$="rb"]').forEach(function(x){x.value='';});
     send.then(function(){ return fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}); })

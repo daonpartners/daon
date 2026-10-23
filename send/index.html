@@ -90,6 +90,9 @@ h1{font-size:20px;margin:6px 0 4px}
       <option value="동행">동행</option><option value="혁신">혁신</option><option value="리치로드맵">리치로드맵</option>
     </select>
     <p class="muted" id="brNote" style="font-size:12.5px;margin:6px 0 0"></p>
+    <label class="lb">함께 알림 받을 지사장 <span class="muted" style="font-weight:500">(공동 행사일 때 체크)</span></label>
+    <div id="ccBox" style="display:flex;flex-wrap:wrap;gap:8px 14px;font-size:14px"><span class="muted" style="font-size:12.5px">지사 목록을 불러오는 중…</span></div>
+    <p class="muted" style="font-size:12px;margin:6px 0 0">체크한 지사장에게는 접수 때마다 "행사명·체험·누적 건수"만 알려드립니다(고객 이름·연락처는 담당 지사에만 전달). DB는 위에서 선택한 담당 지사로 쌓입니다.</p>
   </section>
 
   <section class="card">
@@ -114,7 +117,7 @@ h1{font-size:20px;margin:6px 0 4px}
   $('dt').value=today();
   document.querySelectorAll('.kind').forEach(function(b){ b.addEventListener('click',function(){ KIND=b.dataset.k; try{K.setItem('snd_kind',KIND);}catch(e){} refresh(); }); });
   $('ph').addEventListener('input',function(){ var n=this.value.replace(/[^0-9]/g,'').slice(0,11); this.value=n.length>=8?n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3'):(n.length>=4?n.replace(/(\d{3})(\d{1,4})/,'$1-$2'):n); refresh(); });
-  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), d=$('dt').value, b=$('br').value; if(e) p.set('e',e); if(d) p.set('d',d); if(b) p.set('b',b); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
+  function link(){ var p=new URLSearchParams(); var e=$('ev').value.trim(), d=$('dt').value, b=$('br').value; if(e) p.set('e',e); if(d) p.set('d',d); if(b) p.set('b',b); var cc=ccList(); if(cc.length) p.set('n',cc.join(',')); return BASE+'/'+DIR[KIND]+'/'+(p.toString()?'?'+p.toString():''); }
   function msg(){ var e=$('ev').value.trim(); return '[미래에셋금융서비스 그로우사업부]\n'+(e?e+' ':'')+NAMES[KIND]+' 참여 안내입니다.\n아래 링크에서 정보를 입력하고 동의하시면 신청이 완료됩니다.\n'+link(); }
   function phone(){ return $('ph').value.replace(/[^0-9]/g,''); }
   function refresh(){
@@ -162,6 +165,9 @@ h1{font-size:20px;margin:6px 0 4px}
     },150);
   });
   $('qrBtn').addEventListener('click',function(){ var box=$('qrBox'); box.classList.toggle('hide'); if(!box.classList.contains('hide')){ drawQR(); logIt('QR'); } });
+  var CC={}; try{ CC=JSON.parse(K.getItem('snd_cc')||'{}')||{}; }catch(e){ CC={}; }
+  function ccList(){ var b=$('br').value; return Object.keys(CC).filter(function(k){ return CC[k]&&k!==b; }).slice(0,5); }
+  function ccDraw(hs){ var box=$('ccBox'); if(!hs){ return; } box.innerHTML=''; hs.forEach(function(h){ var l=document.createElement('label'); l.style.cssText='display:inline-flex;align-items:center;gap:5px;cursor:pointer'; var c=document.createElement('input'); c.type='checkbox'; c.checked=!!CC[h.branch]; c.dataset.b=h.branch; c.addEventListener('change',function(){ if(c.checked) CC[h.branch]=1; else delete CC[h.branch]; try{K.setItem('snd_cc',JSON.stringify(CC));}catch(e){} refresh(); }); l.appendChild(c); l.appendChild(document.createTextNode(h.branch)); box.appendChild(l); }); }
   var MZOK={};
   function note(){ var b=$('br').value; $('brNote').textContent=''; }
   $('br').addEventListener('change',function(){ note(); });
@@ -170,7 +176,7 @@ h1{font-size:20px;margin:6px 0 4px}
     hs.filter(function(h){return !h.parent;}).forEach(function(h){ ord.push(h); hs.filter(function(c){return c.parent===h.branch;}).forEach(function(c){ ord.push(c); }); });
     hs.forEach(function(h){ if(h.parent && ord.indexOf(h)<0) ord.push(h); });
     if(ord.length){ var sel=$('br'); sel.innerHTML='<option value="">지사/지점을 선택하세요</option>'; ord.forEach(function(h){ var o=document.createElement('option'); o.value=h.branch; o.text=(h.parent?'\u00a0\u00a0└ ':'')+h.branch+(h.mzCode?'':' (조직코드 미등록)'); sel.appendChild(o); }); sel.value=cur; }
-    note(); refresh(); }).catch(function(){ $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
+    ccDraw(hs); note(); refresh(); }).catch(function(){ $('ccBox').innerHTML=''; $('brNote').textContent='지사 정보를 불러오지 못했습니다. 새로고침해 주세요.'; });
   refresh(); drawLog();
 })();
 </script>
