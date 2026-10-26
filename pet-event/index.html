@@ -119,7 +119,7 @@ button{cursor:pointer;border:0;background:none}
   setMz();
   var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
   if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
-  if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
+  if(EV) $('evName').textContent=' · '+EV;
   var cs=document.querySelectorAll('.c');
   $('all').addEventListener('change',function(){ var on=this.checked; cs.forEach(function(c){c.checked=on;}); });
   cs.forEach(function(c){ c.addEventListener('change',function(){ $('all').checked=[].every.call(cs,function(x){return x.checked;}); }); });

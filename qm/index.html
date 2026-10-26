@@ -107,7 +107,7 @@ button{cursor:pointer;border:0;background:none}
   setMz();
   var LK=BR||(MZ?'':'다온'), FBMZ='726069444';
   if(BR||!MZ){ fetch('https://daonpartners.app.n8n.cloud/webhook/daon-event-admin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'heads'})}).then(function(r){return r.json();}).then(function(r){ var h=(r.heads||[]).filter(function(x){return x.branch===LK;})[0]; if(h&&/^[0-9]{6,12}$/.test(h.mzCode)){ MZ=h.mzCode; } else if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }).catch(function(){ if(!MZ && LK==='다온'){ MZ=FBMZ; } setMz(); }); }
-  if(EV||DT) $('evName').textContent=' · '+(EV||'')+(DT?(EV?' ':'')+DT:'');
+  if(EV) $('evName').textContent=' · '+EV;
   var N1='성명·생년월일·연락처·주소·주민등록번호를 이 화면에서 받습니다. 주민등록번호는 입력 즉시 암호화됩니다.', N2='', FT='개인정보 처리자: 미래에셋금융서비스 그로우사업부 · 운영 다온지사 · 문의 010-4007-7901. 동의 철회·열람·정정·삭제는 위 연락처로 요청하실 수 있습니다.';
   /* ── 주민등록번호 수집: 관리자센터에서 열쇠를 만들면 자동으로 켜짐 (?rrn=1 은 저장 안 되는 검토용) ── */
   var KEYS=[], RRN=false, PREVIEW=false;
