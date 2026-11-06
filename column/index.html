@@ -41,7 +41,8 @@ a{color:inherit}
 .cats button[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:#fff}
 .cats button[aria-pressed="true"] em{color:#F6DDE1}
 .cats button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
-.tag{align-self:flex-start;font-size:12px;font-weight:800;color:var(--deep);background:var(--tint);padding:4px 10px;border-radius:6px;margin-bottom:10px}
+.tag.t2{color:#3A4048;background:#EEF1F6}
+.tag{display:inline-block;align-self:flex-start;font-size:12px;font-weight:800;color:var(--deep);background:var(--tint);padding:4px 10px;border-radius:6px;margin-bottom:10px}
 .who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
 .who button{font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);padding:8px 14px;border-radius:999px;cursor:pointer}
 .who button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
@@ -106,7 +107,7 @@ a{color:inherit}
   function img(u){ u=String(u||''); return /^https?:\/\//.test(u)?u:'/assets/favicon-daon.png'; }
   function lines(t){ return String(t||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean); }
   function by(c){ return '<div class="by"><img src="'+esc(img(c.photo))+'" alt=""><span><b>'+esc(c.name)+'</b> · '+esc(c.job||'보험설계사')+'<br>'+esc(c.date)+'</span></div>'; }
-  function card(c){ var l=lines(c.body).filter(function(x){return x.charAt(0)!=='(';}); return '<a class="card" href="/column/?id='+c.id+'"><span class="tag">'+esc(c.cat||'기타')+'</span><h2>'+esc(c.title)+'</h2><p class="ex">'+esc(l.join(' '))+'</p>'+by(c)+'</a>'; }
+  function card(c){ var l=lines(c.body).filter(function(x){return x.charAt(0)!=='('&&x.indexOf('##')!==0;}); return '<a class="card" href="/column/p/'+c.id+'.html"><span><span class="tag">'+esc(c.cat||'기타')+'</span> <span class="tag t2">'+esc(c.type||'정보')+'</span></span><h2>'+esc(c.title)+'</h2><p class="ex">'+esc(c.summary||l.join(' '))+'</p>'+by(c)+'</a>'; }
   function list(all){
     var names=[]; all.forEach(function(c){ if(!names.some(function(n){return n.code===c.code;})) names.push({code:c.code,name:c.name}); });
     var cur=a, cat=cq;
@@ -129,14 +130,14 @@ a{color:inherit}
     document.getElementById('hd').hidden=true;
     document.title=c.title+' | '+c.name+' 설계사 칼럼 · 다온파트너스';
     var md=document.querySelector('meta[name="description"]'); if(md) md.setAttribute('content',lines(c.body).slice(0,2).join(' ').slice(0,150));
-    var cn=document.querySelector('link[rel="canonical"]'); if(cn) cn.setAttribute('href','https://daon.io.kr/column/?id='+c.id);
+    var cn=document.querySelector('link[rel="canonical"]'); if(cn) cn.setAttribute('href','https://daon.io.kr/column/p/'+c.id+'.html');
     var code=encodeURIComponent(c.code);
     var others=all.filter(function(x){return x.code===c.code&&x.id!==c.id;}).slice(0,5);
     main.innerHTML='<article class="art"><a class="back" href="/column/">‹ 칼럼 목록</a> <a class="back" style="margin-left:10px" href="/column/?c='+encodeURIComponent(c.cat||'기타')+'">'+esc(c.cat||'기타')+' 칼럼 더 보기</a><h1>'+esc(c.title)+'</h1>'+by(c)
       +'<div class="body">'+lines(c.body).map(function(x){return '<p'+(x.charAt(0)==='('?' class="note"':'')+'>'+esc(x)+'</p>';}).join('')+'</div>'
       +'<div class="author"><div class="row"><img src="'+esc(img(c.photo))+'" alt="'+esc(c.name)+' 설계사"><div><b>'+esc(c.name)+'</b><br><span style="font-size:14px;color:#3A4048">'+esc(c.job||'보험설계사')+'</span></div></div>'
       +'<div class="act"><a class="a1" href="/expert/?a='+code+'">이 설계사에게 상담받기</a><a class="a2" href="/claim/app/?m='+code+'">보험금 청구 맡기기</a></div></div>'
-      +(others.length?'<div class="more"><h3>'+esc(c.name)+' 설계사의 다른 칼럼</h3>'+others.map(function(x){return '<a href="/column/?id='+x.id+'">'+esc(x.title)+'</a>';}).join('')+'</div>':'')
+      +(others.length?'<div class="more"><h3>'+esc(c.name)+' 설계사의 다른 칼럼</h3>'+others.map(function(x){return '<a href="/column/p/'+x.id+'.html">'+esc(x.title)+'</a>';}).join('')+'</div>':'')
       +'</article>';
   }
   fetch(API+'?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){

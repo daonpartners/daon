@@ -2728,10 +2728,16 @@ function renderMyProfile(){
     +'<div id="colMine" style="margin:12px 0 18px"><div class="empty">불러오는 중…</div></div>'
     +'<div id="colEd" style="background:#F5F7FB;border-radius:12px;padding:14px">'
     +'<div style="font-weight:800;margin-bottom:10px" id="colEdH">새 칼럼 쓰기</div><input type="hidden" id="colId">'
-    +'<div class="fld"><label class="lbl">AI로 초안 쓰기</label><div style="display:flex;gap:8px"><input class="inp" id="myColTopic" maxlength="200" placeholder="주제 예: 간병인 보장 확인법, 자동차보험 자손·자상 차이"><button type="button" class="btn" id="myColAi" onclick="aiColumn()">초안 쓰기</button></div><div class="muted" style="font-size:12px;margin-top:6px">초안은 아래 칸에 들어갑니다. 약관과 맞는지 직접 확인하고 고친 뒤 저장하세요.</div></div>'
-    +'<div class="fld"><label class="lbl">분야 (고객이 관심분야로 골라 봅니다)</label><select class="inp" id="colCat">'+COL_CATS.map(function(c){return '<option>'+c+'</option>';}).join('')+'</select></div>'
-    +'<div class="fld"><label class="lbl">제목</label><input class="inp" id="myColT" maxlength="100"></div>'
-    +'<div class="fld"><label class="lbl">내용 (1,900자까지)</label><textarea class="ta" id="myColB" rows="10" maxlength="1900"></textarea></div>'
+    +'<div class="fld"><label class="lbl">① 고객이 검색할 키워드</label><input class="inp" id="colKw" maxlength="60" placeholder="예: 실비보험 청구 서류, 간병인보험 필요할까, 자동차상해 자기신체사고 차이"></div>'
+    +'<div class="g2"><div class="fld"><label class="lbl">② 글 종류</label><select class="inp" id="colType" onchange="colTypeChg()">'+COL_TYPES.map(function(c){return '<option>'+c+'</option>';}).join('')+'</select></div>'
+    +'<div class="fld"><label class="lbl">분야 (고객이 골라 보는 메뉴)</label><select class="inp" id="colCat">'+COL_CATS.map(function(c){return '<option>'+c+'</option>';}).join('')+'</select></div></div>'
+    +'<div id="colCaseBox" class="hide" style="background:#FFF7E8;border-radius:10px;padding:12px;margin-bottom:12px"><div class="fld"><label class="lbl">실제 사례 메모 (AI는 이 메모에 있는 사실만 씁니다)</label><textarea class="ta" id="colMemo" rows="5" maxlength="1500" placeholder="예: 50대 여성, 무릎 수술 후 20일 입원. 간병인사용일당 가입돼 있었는데 고객이 모르고 있었음. 간병업체 영수증·사용확인서로 청구해 일당 받음. (이름·병원명·주민번호는 적지 마세요)"></textarea></div>'
+    +'<label style="display:flex;gap:6px;align-items:flex-start;font-size:13px"><input type="checkbox" id="colConsent" style="margin-top:3px"> 고객에게 동의를 받은 실제 사례이며, 이름·병원명 등 개인을 알아볼 수 있는 내용은 넣지 않았습니다.</label></div>'
+    +'<div class="fld"><button type="button" class="btn" id="myColAi" onclick="aiColumn()" style="width:100%">③ AI로 검색용 초안 쓰기 (제목·핵심답변·본문·자주 묻는 질문)</button><div class="muted" style="font-size:12px;margin-top:6px">초안은 아래 칸에 들어갑니다. 약관과 맞는지 직접 확인하고 고친 뒤 저장하세요. 저장하면 검색엔진이 읽는 글 페이지가 자동으로 만들어집니다.</div></div>'
+    +'<div class="fld"><label class="lbl">제목 (키워드를 넣어 40자 이내)</label><input class="inp" id="myColT" maxlength="100"></div>'
+    +'<div class="fld"><label class="lbl">핵심 답변 (검색·AI가 그대로 인용하는 2~3문장)</label><textarea class="ta" id="colSum" rows="3" maxlength="400"></textarea></div>'
+    +'<div class="fld"><label class="lbl">본문 (1,500자 안팎 · 소제목은 줄 앞에 ## )</label><textarea class="ta" id="myColB" rows="12" maxlength="1900"></textarea></div>'
+    +'<div class="fld"><label class="lbl">자주 묻는 질문 (Q: 질문 / A: 답 을 한 줄씩)</label><textarea class="ta" id="colFaq" rows="6" maxlength="1400" placeholder="Q: 실손보험으로 간병비도 받을 수 있나요?&#10;A: ..."></textarea></div>'
     +'<label style="display:flex;gap:6px;align-items:center;font-size:14px;margin-bottom:12px"><input type="checkbox" id="colPub" checked> 홈페이지에 공개</label>'
     +'<button type="button" class="btn pri" id="colSave" onclick="colSave()">칼럼 저장</button></div>';
   loadMyExtra(); colLoad();
@@ -2742,32 +2748,38 @@ function colLoad(){
   colApi({action:'mine'}).then(function(r){
     if(!r||!r.ok){ $('colMine').innerHTML='<div class="empty">'+esc((r&&r.error)||'불러오지 못했습니다')+'</div>'; return; }
     MY_COLS=r.items||[];
-    $('colMine').innerHTML=MY_COLS.length?MY_COLS.map(function(c,i){ return '<div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F4"><div style="flex:1;min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.title)+'</div><div class="muted" style="font-size:12px">'+esc(c.cat||'기타')+' · '+esc(c.date)+' · '+(c.publish?'공개':'비공개')+'</div></div><button type="button" class="btn sm" onclick="colEdit('+i+')">고치기</button><button type="button" class="btn sm" onclick="colDel('+i+')">지우기</button></div>'; }).join(''):'<div class="empty">아직 쓴 칼럼이 없습니다.</div>';
+    $('colMine').innerHTML=MY_COLS.length?MY_COLS.map(function(c,i){ return '<div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F4"><div style="flex:1;min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.title)+'</div><div class="muted" style="font-size:12px">'+esc(c.type||'정보')+' · '+esc(c.cat||'기타')+' · '+esc(c.date)+' · '+(c.publish?'<a href="'+esc(c.url)+'" target="_blank" rel="noopener">공개 페이지 ›</a>':'비공개')+'</div></div><button type="button" class="btn sm" onclick="colEdit('+i+')">고치기</button><button type="button" class="btn sm" onclick="colDel('+i+')">지우기</button></div>'; }).join(''):'<div class="empty">아직 쓴 칼럼이 없습니다.</div>';
   }).catch(function(){ $('colMine').innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
 }
-function colNew(){ $('colCat').value='기타'; $('colId').value=''; $('myColT').value=''; $('myColB').value=''; $('colPub').checked=true; $('colEdH').textContent='새 칼럼 쓰기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
-function colEdit(i){ var c=MY_COLS[i]; if(!c) return; $('colId').value=c.id; $('myColT').value=c.title; $('myColB').value=c.body; $('colPub').checked=!!c.publish; $('colCat').value=c.cat||'기타'; $('colEdH').textContent='칼럼 고치기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
+function colTypeChg(){ var t=$('colType').value; $('colCaseBox').classList.toggle('hide', t!=='보상사례'&&t!=='가입사례'); }
+function colNew(){ $('colCat').value='기타'; $('colType').value='질문답변'; $('colKw').value=''; $('colSum').value=''; $('colFaq').value=''; $('colMemo').value=''; $('colConsent').checked=false; colTypeChg(); $('colId').value=''; $('myColT').value=''; $('myColB').value=''; $('colPub').checked=true; $('colEdH').textContent='새 칼럼 쓰기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
+function colEdit(i){ var c=MY_COLS[i]; if(!c) return; $('colId').value=c.id; $('myColT').value=c.title; $('myColB').value=c.body; $('colPub').checked=!!c.publish; $('colCat').value=c.cat||'기타'; $('colType').value=c.type||'정보'; $('colKw').value=c.kw||''; $('colSum').value=c.summary||''; $('colFaq').value=c.faq||''; colTypeChg(); $('colEdH').textContent='칼럼 고치기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
 function colDel(i){ var c=MY_COLS[i]; if(!c||!confirm('"'+c.title+'" 칼럼을 지울까요?')) return;
   colApi({action:'delete',id:c.id}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'지우지 못했습니다',true); return; } toast('지웠어요'); if($('colId').value===c.id) colNew(); colLoad(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
 function colSave(){
   var t=$('myColT').value.trim(), bd=$('myColB').value.trim(); if(t.length<2||bd.length<20){ toast('제목과 내용을 적어 주세요',true); return; }
   var b=$('colSave'); b.disabled=true;
-  colApi({action:'save',id:$('colId').value||'',title:t,body:bd,cat:$('colCat').value,publish:$('colPub').checked}).then(function(r){ b.disabled=false;
+  colApi({action:'save',id:$('colId').value||'',title:t,body:bd,cat:$('colCat').value,type:$('colType').value,kw:$('colKw').value.trim(),summary:$('colSum').value.trim(),faq:$('colFaq').value.trim(),publish:$('colPub').checked}).then(function(r){ b.disabled=false;
     if(!r||!r.ok){ toast((r&&r.error)||'저장하지 못했습니다',true); return; }
-    toast($('colId').value?'칼럼을 고쳤어요':'칼럼을 저장했어요'); colNew(); colLoad();
+    toast(($('colId').value?'칼럼을 고쳤어요':'칼럼을 저장했어요')+($('colPub').checked?' · 1~2분 뒤 검색용 페이지에 반영됩니다':'')); colNew(); colLoad();
   }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
 }
 var PFX_API='https://daonpartners.app.n8n.cloud/webhook/daon-fc-pfx';
+var COL_TYPES=['질문답변','정보','보상사례','가입사례'];
 var COL_CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
 function aiColumn(){
-  var t=$('myColTopic').value.trim(); if(t.length<2){ toast('칼럼 주제를 적어 주세요',true); return; }
-  if(($('myColB').value.trim()||$('myColT').value.trim()) && !confirm('지금 칸에 있는 칼럼을 새 초안으로 바꿀까요?')) return;
-  var b=$('myColAi'); b.disabled=true; b.textContent='쓰는 중…';
-  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-column-ai',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({by:ME.code||'',topic:t})}).then(function(r){return r.json();}).then(function(r){
-    b.disabled=false; b.textContent='초안 쓰기';
+  var kw=$('colKw').value.trim(), ty=$('colType').value, isCase=(ty==='보상사례'||ty==='가입사례');
+  if(kw.length<2){ toast('고객이 검색할 키워드를 적어 주세요',true); $('colKw').focus(); return; }
+  if(isCase && $('colMemo').value.trim().length<30){ toast('사례 글은 실제 상담 내용을 메모에 30자 이상 적어 주세요',true); $('colMemo').focus(); return; }
+  if(isCase && !$('colConsent').checked){ toast('고객 동의를 받은 실제 사례인지 체크해 주세요',true); return; }
+  if(($('myColB').value.trim()||$('myColT').value.trim()) && !confirm('지금 칸에 있는 내용을 새 초안으로 바꿀까요?')) return;
+  var b=$('myColAi'), lb=b.textContent; b.disabled=true; b.textContent='쓰는 중… (10~20초)';
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-column-ai',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({by:ME.code||'',kw:kw,type:ty,memo:isCase?$('colMemo').value:'',consent:isCase?$('colConsent').checked:false})}).then(function(r){return r.json();}).then(function(r){
+    b.disabled=false; b.textContent=lb;
     if(!r||!r.ok){ toast((r&&r.error)||'초안을 만들지 못했습니다',true); return; }
-    $('myColT').value=r.title; $('myColB').value=r.body; toast('초안을 넣었어요. 확인·수정 후 저장하세요');
-  }).catch(function(){ b.disabled=false; b.textContent='초안 쓰기'; toast('연결에 실패했습니다',true); });
+    $('myColT').value=r.title; $('colSum').value=r.summary||''; $('myColB').value=r.body; $('colFaq').value=r.faq||''; if(r.cat) $('colCat').value=r.cat;
+    toast('초안을 넣었어요. 약관과 맞는지 확인·수정 후 저장하세요');
+  }).catch(function(){ b.disabled=false; b.textContent=lb; toast('연결에 실패했습니다',true); });
 }
 function pfxApi(p){ return fetch(PFX_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
 function loadMyExtra(){

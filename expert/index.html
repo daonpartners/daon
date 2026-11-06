@@ -345,7 +345,7 @@ if (code) {
       const arr = Array.isArray(d) ? d : ((d && d.items) || []); if (!arr.length) return;
       const esc = s => String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
       document.getElementById("p-colSec").style.display = "block";
-      document.getElementById("p-cols").innerHTML = arr.map(c => '<a href="/column/?id=' + encodeURIComponent(c.id) + '"><b>' + esc(c.title) + '</b><span>' + esc(c.date) + '</span></a>').join("") + '<a class="all" href="/column/?a=' + encodeURIComponent(code) + '">칼럼 전체 보기 ›</a>';
+      document.getElementById("p-cols").innerHTML = arr.map(c => '<a href="/column/p/' + encodeURIComponent(c.id) + '.html"><b>' + esc(c.title) + '</b><span>' + esc(c.date) + '</span></a>').join("") + '<a class="all" href="/column/?a=' + encodeURIComponent(code) + '">칼럼 전체 보기 ›</a>';
     }).catch(() => {});
 }
 

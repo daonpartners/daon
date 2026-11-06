@@ -5,3 +5,4 @@ Disallow: /partners/
 Disallow: /send/
 
 Sitemap: https://daon.io.kr/sitemap.xml
+Sitemap: https://daon.io.kr/column-sitemap.xml

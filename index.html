@@ -435,7 +435,7 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       var CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
       document.getElementById('colCats').innerHTML=CATS.map(function(k){ var n=all.filter(function(c){return (c.cat||'기타')===k;}).length; return n?'<a href="/column/?c='+encodeURIComponent(k)+'">'+esc(k)+' <em>'+n+'</em></a>':''; }).join('');
       document.getElementById('colList').innerHTML=cs.map(function(c){
-        return '<a class="cc" href="/column/?id='+encodeURIComponent(c.id)+'"><img src="'+esc(safeUrl(c.photo)||'/assets/favicon-daon.png')+'" alt=""><span><small>'+esc(c.cat||'기타')+'</small><b>'+esc(c.title)+'</b><i>'+esc(c.name)+' · '+esc(c.job||'보험설계사')+' · '+esc(c.date)+'</i></span></a>';
+        return '<a class="cc" href="/column/p/'+encodeURIComponent(c.id)+'.html"><img src="'+esc(safeUrl(c.photo)||'/assets/favicon-daon.png')+'" alt=""><span><small>'+esc(c.cat||'기타')+'</small><b>'+esc(c.title)+'</b><i>'+esc(c.name)+' · '+esc(c.job||'보험설계사')+' · '+esc(c.date)+'</i></span></a>';
       }).join('')+'<a class="cc__all" href="/column/">칼럼 전체 보기 ›</a>';
     }).catch(function(){});
   }
