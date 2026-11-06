@@ -519,6 +519,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
       </div>
     </section>
 
+    <!-- 고객 질문 (daon.io.kr/qna) -->
+    <section class="page view hide" id="v-qna">
+      <div class="ph"><div><h2>고객 질문</h2><div class="sub">홈페이지 질문게시판에 들어온 질문입니다. AI가 1차 안내를 했고, 설계사가 답을 다듬어 저장하면 고객 화면에 바로 보입니다. '게시판에 공개'를 켜면 이름을 가린 채 질문게시판에 올라갑니다.</div></div>
+        <a class="btn" href="https://daon.io.kr/qna/" target="_blank" rel="noopener">질문게시판 보기</a></div>
+      <div class="card"><div class="toolbar"><div class="chips" id="qnaFilter"></div><div class="spacer"></div><span class="muted" id="qnaCount"></span></div>
+        <div class="card-b" id="qnaList"><div class="empty">불러오는 중…</div></div></div>
+    </section>
+
     <!-- 부속약정서 -->
     <section class="page view hide" id="v-agree">
       <div class="ph"><div><h2>부속약정서</h2><div class="sub" id="agSub">지사장이 발행·서명하면 대상 설계사가 로그인해서 확인·서명합니다. 체결된 약정서는 양쪽 모두 열람·인쇄할 수 있습니다.</div></div>
@@ -838,10 +846,11 @@ var ICON = {
   recruit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.4"/><path d="M17 13v8M13 17h8"/></svg>',
   dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
+  qna:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11h-7l-5 4v-4H4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9M12 13.5v.1"/></svg>',
   agree:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h4M14 18c1-1.5 2-1.5 3 0"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['agree','부속약정서'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['qna','고객 질문'],['agree','부속약정서'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
 /* 메뉴별 권한: 지사장 전용 / 관리자(지점장·사업단장·지사장) */
 var MY_RANK='';
 function isManager(){ return isOwner() || ['지점장','사업단장','지사장'].indexOf(MY_RANK)>=0; }
@@ -903,12 +912,12 @@ function boot(){
   var d=new Date(today()); $('todayStr').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')';
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
-  loadAll(); loadTodos(); loadFee(); loadTpl(); agBadge();
+  loadAll(); loadTodos(); loadFee(); loadTpl(); agBadge(); loadQna(true);
   loadOrg().then(function(){ var me=ORG.find(function(x){return x.name===ME.name;}); MY_RANK=me?me.rank:''; drawNav(); document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===VIEW); }); var hh=(location.hash||'').slice(1); if(hh==='recruit'&&canView('recruit')&&VIEW!=='recruit') go('recruit'); });
   var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && canView(h);})) go(h);
 }
 function drawNav(){
-  var cnt={owner:'stO',prospect:'stP',agree:'stAg'};
+  var cnt={owner:'stO',prospect:'stP',agree:'stAg',qna:'stQ'};
   var NV=NAV.filter(function(n){ return canView(n[0]); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
@@ -926,6 +935,7 @@ function go(v){
   if(v==='feeset') loadFeeSet(); if(v==='dash') loadDash(); if(v==='recruit') loadRec();
   if(v==='me') loadMyProfile();
   if(v==='agree') loadAgree();
+  if(v==='qna') loadQna();
   window.scrollTo(0,0);
 }
 
@@ -2741,6 +2751,7 @@ function renderMyProfile(){
     +'<label style="display:flex;gap:6px;align-items:center;font-size:14px;margin-bottom:12px"><input type="checkbox" id="colPub" checked> 홈페이지에 공개</label>'
     +'<button type="button" class="btn pri" id="colSave" onclick="colSave()">칼럼 저장</button></div>';
   loadMyExtra(); colLoad();
+  if(PENDING_COL){ var pc=PENDING_COL; PENDING_COL=null; colNew(); $('colType').value='질문답변'; $('colCat').value=pc.cat||'기타'; $('myColT').value=pc.title; $('myColB').value=pc.body; $('colKw').value=pc.kw||''; colTypeChg(); $('colEdH').textContent='고객 질문으로 칼럼 쓰기'; setTimeout(function(){ $('colEd').scrollIntoView({behavior:'smooth'}); },200); toast('고객 질문을 칼럼 칸에 넣었어요. 다듬어서 저장하세요'); }
 }
 var COL_API='https://daonpartners.app.n8n.cloud/webhook/daon-column', MY_COLS=[];
 function colApi(p){ return fetch(COL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
@@ -2764,6 +2775,44 @@ function colSave(){
     toast(($('colId').value?'칼럼을 고쳤어요':'칼럼을 저장했어요')+($('colPub').checked?' · 1~2분 뒤 검색용 페이지에 반영됩니다':'')); colNew(); colLoad();
   }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
 }
+
+/* ───────── 고객 질문 (daon.io.kr/qna) ───────── */
+var QNA_API='https://daonpartners.app.n8n.cloud/webhook/daon-qna-admin', QNA=[], QNA_F='wait', PENDING_COL=null;
+function qnaApi(p){ return fetch(QNA_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
+function qnaBadge(){ var n=QNA.filter(function(x){ return x.edit && (x.status==='AI안내' || (x.call && x.status!=='보류' && !x.ans)); }).length; var el=$('stQ'); if(el) el.textContent=n?n:''; }
+function loadQna(quiet){
+  if(!ME||!ME.code) return;
+  if(!quiet && $('qnaList')) $('qnaList').innerHTML='<div class="empty">불러오는 중…</div>';
+  qnaApi({action:'list'}).then(function(r){
+    if(!r||!r.ok){ if(!quiet) $('qnaList').innerHTML='<div class="empty">'+esc((r&&r.error)||'불러오지 못했습니다')+'</div>'; return; }
+    QNA=r.items||[]; qnaBadge(); if(!quiet || VIEW==='qna') drawQna();
+  }).catch(function(){ if(!quiet) $('qnaList').innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
+}
+function qnaHit(x){ if(QNA_F==='wait') return x.status==='AI안내'; if(QNA_F==='call') return x.call && x.status!=='보류'; if(QNA_F==='done') return x.status==='설계사답변'; if(QNA_F==='hold') return x.status==='보류'; return true; }
+function drawQna(){
+  var F=[['wait','답변 대기'],['call','상담 요청'],['done','답변 완료'],['hold','보류'],['all','전체']];
+  $('qnaFilter').innerHTML=F.map(function(f){ var n=QNA.filter(function(x){ var o=QNA_F; QNA_F=f[0]; var h=qnaHit(x); QNA_F=o; return h; }).length; return '<button type="button" class="chip'+(QNA_F===f[0]?' on':'')+'" onclick="QNA_F=\''+f[0]+'\';drawQna()">'+f[1]+' '+n+'</button>'; }).join('');
+  var arr=QNA.filter(qnaHit);
+  $('qnaCount').textContent='전체 '+QNA.length+'건';
+  $('qnaList').innerHTML=arr.length?arr.map(function(x){ var i=QNA.indexOf(x), ph=String(x.phone||''), tel=/^\d{10,11}$/.test(ph);
+    return '<div style="border-bottom:1px solid #EEF0F4;padding:14px 0">'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span class="tag">'+esc(x.cat)+'</span>'+(x.call?'<span class="tag" style="background:#FFF3EA;color:#C65F1A">상담 요청'+(x.how?' · '+esc(x.how):'')+'</span>':'')+(x.toMe?'<span class="tag" style="background:#E8F0FF;color:#1F4FA8">나를 지정</span>':'')+(x.toOther?'<span class="tag">다른 설계사 지정</span>':'')+(x.pub?'<span class="tag" style="background:#E7F6EC;color:#1C7C3A">게시판 공개</span>':'')+'<span class="muted" style="font-size:12px;margin-left:auto">'+esc(x.date)+'</span></div>'
+      +'<div style="font-weight:800;font-size:15.5px;margin-top:8px">'+esc(x.title)+'</div>'
+      +'<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap">'+esc(x.q)+'</div>'
+      +'<div class="muted" style="font-size:12.5px;margin-top:6px">'+esc(x.nick||'')+' · '+(tel?'<a href="tel:'+esc(ph)+'">'+esc(ph.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'))+'</a>':esc(ph))+(x.by?' · 답변 '+esc(x.by):'')+'</div>'
+      +'<details style="margin-top:8px"><summary class="muted" style="font-size:12.5px;cursor:pointer">AI 1차 안내 보기</summary><div style="font-size:13px;white-space:pre-wrap;background:#F6F7F9;border-radius:8px;padding:10px;margin-top:6px">'+esc(x.ai)+'</div></details>'
+      +(x.edit?'<div class="fld" style="margin-top:10px"><label class="lbl">설계사 답변 (고객 화면에 보입니다 · 약관과 맞는지 확인 후 저장)</label><textarea class="ta" rows="6" id="qa_'+i+'">'+esc(x.ans||x.ai)+'</textarea></div>'
+        +'<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><label style="font-size:13px;display:flex;gap:6px;align-items:center"><input type="checkbox" id="qp_'+i+'"'+(x.pub?' checked':'')+'> 게시판에 공개 (이름 가림)</label><span style="flex:1"></span>'
+        +'<button type="button" class="btn sm" onclick="qnaHide('+i+')">보류</button><button type="button" class="btn sm" onclick="qnaToCol('+i+')">칼럼으로 만들기</button><button type="button" class="btn sm pri" onclick="qnaSave('+i+')">답변 저장</button></div>'
+        :'<div style="font-size:13px;white-space:pre-wrap;margin-top:8px">'+esc(x.ans||'')+'</div>')
+      +'</div>'; }).join(''):'<div class="empty">해당하는 질문이 없습니다.</div>';
+}
+function qnaSave(i){ var x=QNA[i]; if(!x) return; var a=$('qa_'+i).value.trim(); if(a.length<20){ toast('답변을 20자 이상 적어 주세요',true); return; }
+  qnaApi({action:'answer',id:x.id,answer:a,publish:$('qp_'+i).checked}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'저장하지 못했습니다',true); return; } toast('답변을 저장했어요. 고객 화면에 바로 보입니다'); loadQna(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function qnaHide(i){ var x=QNA[i]; if(!x||!confirm('이 질문을 보류할까요? 게시판에 공개되지 않습니다.')) return;
+  qnaApi({action:'hide',id:x.id}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'처리하지 못했습니다',true); return; } toast('보류했어요'); loadQna(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function qnaToCol(i){ var x=QNA[i]; if(!x) return; var a=($('qa_'+i)&&$('qa_'+i).value.trim())||x.ans||x.ai;
+  PENDING_COL={title:x.title, body:a, cat:x.cat, kw:x.title.replace(/[?？]/g,'').slice(0,40)}; go('me'); }
 var PFX_API='https://daonpartners.app.n8n.cloud/webhook/daon-fc-pfx';
 var COL_TYPES=['질문답변','정보','보상사례','가입사례'];
 var COL_CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];

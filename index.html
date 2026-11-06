@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>보험 궁금증, 설계사가 답합니다 | 다온 보험설계사 마켓</title>
-<meta name="description" content="경력·전문분야·활동지역을 보고 내 보험을 맡길 설계사를 직접 고르세요. 보험금 청구는 서류 사진만 올리면 됩니다. 다온파트너스 보험설계사 마켓.">
+<title>보험물어봄 by 다온 | 보험 궁금증, 묻고 바로 답 받으세요</title>
+<meta name="description" content="실비 청구 서류, 간병·자동차보험처럼 궁금한 보험 질문을 남기면 AI가 약관·법령 자료로 바로 1차 안내를 하고, 다온 보험설계사가 이어서 확인해 드립니다. 설계사 칼럼과 보험금 청구 대행도 한곳에서.">
 <meta name="robots" content="index, follow">
 
 <meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
@@ -229,6 +229,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .qh__search i{font-style:normal;font-size:22px;color:var(--navy);width:44px;height:44px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center}
 .qh__search:focus-within{outline:3px solid var(--orange);outline-offset:3px}
 .qh__sub{margin-top:16px;font-size:14px;color:#C9D3E1}
+.qh__kick span{font-weight:600;color:#C9D3E1;font-size:12.5px}
+.qh__ask{display:inline-flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:4px 10px;margin-top:14px;padding:11px 20px;border-radius:999px;border:1.5px solid rgba(227,155,165,.7);color:#fff;text-decoration:none;font-weight:700;font-size:14.5px;transition:background .18s}
+.qh__ask b{color:var(--orange);font-size:13px}
+.qh__ask:hover,.qh__ask:focus-visible{background:rgba(227,155,165,.16);outline:none}
 .qa{padding:34px 0 30px}
 .qa__types{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin-bottom:14px;scrollbar-width:none}
 .qa__types button{font:inherit;font-size:15px;font-weight:800;background:none;border:0;border-bottom:3px solid transparent;color:var(--steel);padding:10px 12px;cursor:pointer;white-space:nowrap}
@@ -295,9 +299,10 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <header class="topbar">
   <a href="/"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="90" height="26" decoding="async" style="height:26px;width:auto;display:block"></a>
   <div class="topbar__links">
+    <a class="about-link" href="/qna/">질문하기</a>
     <a class="grow-link" href="/column/">칼럼</a>
     <a class="grow-link" href="/ask/?m=daon">상담 신청</a>
-    <a class="about-link" href="/about">다온지사 소개</a>
+    <a class="grow-link" href="/about">다온지사 소개</a>
   </div>
 </header>
 </div>
@@ -305,11 +310,12 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <!-- ① 질문부터 -->
 <section class="qh">
   <div class="qh__in">
-    <p class="qh__kick">다온 보험설계사 마켓</p>
+    <p class="qh__kick">보험물어봄 <span>by 다온</span></p>
     <h1>보험, 궁금한 것부터<br>찾아보세요</h1>
     <div class="qh__tick" aria-live="off"><span class="qh__q" id="tick">실비 청구할 때 서류는 뭐가 필요할까?</span></div>
     <label class="qh__search"><span class="sr">칼럼 검색</span><input id="q" type="search" placeholder="예: 간병인, 실비 청구, 자동차 사고" autocomplete="off"><i aria-hidden="true">⌕</i></label>
-    <p class="qh__sub">현장 설계사가 직접 답한 글을 읽고, 마음에 드는 설계사에게 바로 상담받으세요.</p>
+    <a class="qh__ask" href="/qna/" id="askBtn">찾는 답이 없으면 바로 물어보세요 <b>AI가 바로 1차 안내</b></a>
+    <p class="qh__sub">설계사가 직접 쓴 글을 읽고, 질문을 남기고, 마음에 드는 설계사에게 상담받으세요.</p>
   </div>
 </section>
 
@@ -431,13 +437,13 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
     $('qaCats').innerHTML=have.length>1?['<button type="button" data-c="" aria-pressed="'+(!cat)+'">모든 분야</button>'].concat(have.map(function(k){return '<button type="button" data-c="'+esc(k)+'" aria-pressed="'+(k===cat)+'">'+esc(k)+'</button>';})).join(''):'';
     var arr=COLS.filter(hit);
     $('qaList').innerHTML=arr.length?arr.slice(0,shown).map(colCard).join('')+(arr.length>shown?'<button type="button" class="qa__more" id="qaMore">글 더 보기 ('+(arr.length-shown)+')</button>':'')
-      :'<p class="fp__state">'+(q?'"'+esc(q)+'"에 맞는 글이 아직 없습니다. 아래 설계사에게 직접 물어보세요.':'이 조건의 글은 아직 없습니다.')+'</p>';
+      :'<p class="fp__state">'+(q?'"'+esc(q)+'"에 맞는 글이 아직 없습니다. ':'이 조건의 글은 아직 없습니다. ')+'<a href="/qna/'+(q?'?q='+encodeURIComponent(q):'')+(cat?(q?'&':'?')+'c='+encodeURIComponent(cat):'')+'" style="color:var(--deep);font-weight:800">질문을 남기면 AI가 바로 답해 드립니다 ›</a></p>';
   }
   $('qaTypes').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; ty=b.dataset.t; shown=6; drawCols(); });
   $('qaCats').addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; cat=b.dataset.c; shown=6; drawCols(); });
   $('qaList').addEventListener('click',function(e){ if(e.target.id==='qaMore'){ shown+=6; drawCols(); } });
-  var tmr; $('q').addEventListener('input',function(){ clearTimeout(tmr); var v=this.value; tmr=setTimeout(function(){ q=v.trim().toLowerCase(); shown=6; drawCols(); },180); });
-  $('q').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('qa').scrollIntoView({behavior:still?'auto':'smooth'}); } });
+  var tmr; $('q').addEventListener('input',function(){ clearTimeout(tmr); var v=this.value; tmr=setTimeout(function(){ q=v.trim().toLowerCase(); shown=6; drawCols(); $('askBtn').href='/qna/'+(v.trim()?'?q='+encodeURIComponent(v.trim()):''); },180); });
+  $('q').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); var v=this.value.trim(); q=v.toLowerCase(); shown=6; drawCols(); if(v && !COLS.some(hit)){ location.href='/qna/?q='+encodeURIComponent(v); return; } $('qa').scrollIntoView({behavior:still?'auto':'smooth'}); } });
   /* 질문 글귀 돌리기 */
   function ticker(){
     var qs=COLS.map(function(c){return c.title;}); if(qs.length<2||still) { if(qs[0]) $('tick').textContent=qs[0]; return; }
