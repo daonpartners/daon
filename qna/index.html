@@ -118,7 +118,8 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .foot{background:var(--navy2);color:#8FA0B3;font-size:11.5px;line-height:1.8;text-align:center;padding:26px 20px 34px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html,body{max-width:100%;overflow-x:clip}
-.appbar{display:flex;align-items:center;gap:10px;background:#CF2E38;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;justify-content:center}.appbar img{width:22px;height:22px;border-radius:5px}.appbar a{background:#fff;color:#CF2E38;font-weight:800;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
+.appbar{position:sticky;top:0;z-index:40;height:44px;box-sizing:border-box;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;background:#CF2E38;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;justify-content:center}.appbar img{width:22px;height:22px;border-radius:5px}.appbar a{background:#fff;color:#CF2E38;font-weight:800;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
+html:not(.is-app) .top{top:44px}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -299,7 +300,7 @@ html,body{max-width:100%;overflow-x:clip}
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
   var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
   var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(standalone){ btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
+  if(standalone){ document.documentElement.classList.add('is-app'); btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
   window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
   btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
     if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
