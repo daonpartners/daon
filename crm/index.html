@@ -2119,21 +2119,7 @@ function openSlip(){
 function printSlip(){
   var w=window.open('','_blank'); if(!w){ toast('팝업이 차단되었습니다',true); return; }
   var b=$('slipBody').cloneNode(true); b.querySelectorAll('details').forEach(function(d){ d.setAttribute('open',''); });
-  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc($('slipTitle').textContent)+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;padding:24px;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{border:1px solid #bbb;padding:6px}th{background:#f1f1f1}.num{text-align:right}.sub2{display:block;font-size:10px;color:#666}.muted{color:#666}.slip-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}.slip-sub td{background:#fafafa}.slip-tot td{font-weight:800;background:#FFF1E6}.slip-cat td{background:#F2F5FA}.slip-ind{padding-left:14px;color:#444}summary{font-weight:700;margin-top:10px}</style></head><body><h2 style="margin:0 0 10px">'+esc($('slipTitle').textContent)+'</h2>'+b.innerHTML+'<p class="muted" style="font-size:11px">원수사 수수료 예시표 기준 추정치이며 실제 지급액과 다를 수 있습니다.</p><script>
-(function(){
-  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
-  var dp=null, btn=document.getElementById('appInstall'); if(!btn) return;
-  var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(standalone){ btn.style.display='none'; return; }
-  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
-  btn.addEventListener('click',function(ev){ ev.preventDefault();
-    if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
-    var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
-    alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
-  });
-})();
-</script>
-</body></html>');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc($('slipTitle').textContent)+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;padding:24px;color:#111}table{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}th,td{border:1px solid #bbb;padding:6px}th{background:#f1f1f1}.num{text-align:right}.sub2{display:block;font-size:10px;color:#666}.muted{color:#666}.slip-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}.slip-sub td{background:#fafafa}.slip-tot td{font-weight:800;background:#FFF1E6}.slip-cat td{background:#F2F5FA}.slip-ind{padding-left:14px;color:#444}summary{font-weight:700;margin-top:10px}</style></head><body><h2 style="margin:0 0 10px">'+esc($('slipTitle').textContent)+'</h2>'+b.innerHTML+'<p class="muted" style="font-size:11px">원수사 수수료 예시표 기준 추정치이며 실제 지급액과 다를 수 있습니다.</p></body></html>');
   w.document.close(); w.focus(); setTimeout(function(){ w.print(); },300);
 }
 function loadFeeList(){
@@ -3364,5 +3350,19 @@ function printAgId(aid){ var w=agPrintWin(); if(!w) return; agApi('get',{aid:aid
 function printAgDraft(){ var w=agPrintWin(); if(!w) return; var doc; if(AG_MODE==='issue') doc=agBuildDoc(); else { var d=agCollect(); doc={title:'미래에셋금융서비스 그로우사업부 다온지사 부속 약정서', feeHead:d.feeHead, fees:d.fees, feeNotes:d.feeNotes, sections:d.sections, closing:d.closing, date:'', target:{name:'', rank:'설계사'}, owner:{name:ME.name, title:'지사장', org:'미래에셋금융서비스 그로우사업부 다온지사'}}; } agPrintTo(w,{doc:doc}); }
 </script>
 <script src="/assets/datefix.js"></script>
+<script>
+(function(){
+  if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
+  var dp=null, btn=document.getElementById('appInstall'); if(!btn) return;
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+  if(standalone){ btn.style.display='none'; return; }
+  window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
+  btn.addEventListener('click',function(ev){ ev.preventDefault();
+    if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
+    var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
+  });
+})();
+</script>
 </body>
 </html>
