@@ -2720,12 +2720,23 @@ function renderMyProfile(){
     +'<div class="muted" style="font-size:12px;margin-bottom:12px">이메일·링크는 새 값으로 바꿀 수 있지만, 칸을 비워서 지우는 것은 지원되지 않습니다. 이름·연락처·직함·사번은 지사장이 관리합니다. 명함은 프로필 페이지에서 자동으로 만들어지며 [명함 이미지 다운로드]로 받을 수 있습니다.</div>'
     +'<div class="fld"><label class="lbl">활동지역 (고객 화면에 표시)</label><input class="inp" id="myRegion" maxlength="100" placeholder="예: 충남 아산·천안, 전국 비대면"></div>'
     +'<div class="fld"><label class="lbl">경력 (한 줄에 하나씩)</label><textarea class="ta" id="myCareer" rows="4" maxlength="1000" placeholder="예: 보험 경력 12년&#10;손해보험 상품·보상 실무&#10;소상공인 사업장보험 컨설팅"></textarea></div>'
+    +'<div class="fld" style="background:#F5F7FB;border-radius:10px;padding:12px"><label class="lbl">AI로 칼럼 초안 쓰기</label><div style="display:flex;gap:8px"><input class="inp" id="myColTopic" maxlength="200" placeholder="주제 예: 간병인 보장 확인법, 자동차보험 자손·자상 차이"><button type="button" class="btn" id="myColAi" onclick="aiColumn()">초안 쓰기</button></div><div class="muted" style="font-size:12px;margin-top:6px">초안이 아래 칸에 들어갑니다. 약관과 맞는지 직접 확인하고 고친 뒤 [저장]을 눌러야 홈에 올라갑니다.</div></div>'
     +'<div class="fld"><label class="lbl">내 칼럼 제목</label><input class="inp" id="myColT" maxlength="100" placeholder="예: 실손보험, 이것만 알면 청구가 쉬워집니다"></div>'
     +'<div class="fld"><label class="lbl">내 칼럼 내용 (1,900자까지 · 홈 칼럼란과 내 프로필에 표시)</label><textarea class="ta" id="myColB" rows="8" maxlength="1900" placeholder="고객에게 도움이 되는 보험 이야기를 직접 써 주세요. 약관·법령과 다른 내용은 쓰지 않습니다."></textarea></div>'
     +'<button class="btn pri" id="mySave" onclick="saveMyProfile()">저장</button>';
   loadMyExtra();
 }
 var PFX_API='https://daonpartners.app.n8n.cloud/webhook/daon-fc-pfx';
+function aiColumn(){
+  var t=$('myColTopic').value.trim(); if(t.length<2){ toast('칼럼 주제를 적어 주세요',true); return; }
+  if(($('myColB').value.trim()||$('myColT').value.trim()) && !confirm('지금 칸에 있는 칼럼을 새 초안으로 바꿀까요?')) return;
+  var b=$('myColAi'); b.disabled=true; b.textContent='쓰는 중…';
+  fetch('https://daonpartners.app.n8n.cloud/webhook/daon-column-ai',{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify({by:ME.code||'',topic:t})}).then(function(r){return r.json();}).then(function(r){
+    b.disabled=false; b.textContent='초안 쓰기';
+    if(!r||!r.ok){ toast((r&&r.error)||'초안을 만들지 못했습니다',true); return; }
+    $('myColT').value=r.title; $('myColB').value=r.body; toast('초안을 넣었어요. 확인·수정 후 저장하세요');
+  }).catch(function(){ b.disabled=false; b.textContent='초안 쓰기'; toast('연결에 실패했습니다',true); });
+}
 function pfxApi(p){ return fetch(PFX_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
 function loadMyExtra(){
   if(!ME.code) return;
