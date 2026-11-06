@@ -286,6 +286,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .ag-paper table{width:100%;border-collapse:collapse;margin:6px 0 8px;font-size:13px}
 .ag-paper th,.ag-paper td{border:1px solid #9AA1AC;padding:6px 8px;text-align:center}
 .ag-paper th{background:#F1F3F6;font-weight:700}
+.ag-paper table.mini{font-size:11.5px}
+.ag-paper table.mini th,.ag-paper table.mini td{padding:3px 4px;white-space:nowrap}
+.ag-paper table.mini td:first-child,.ag-paper table.mini th:first-child{background:#F1F3F6;font-weight:700}
 .ag-paper .date{text-align:center;margin:26px 0 18px;font-weight:600}
 .ag-sig{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .ag-sig .box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-height:120px}
@@ -345,7 +348,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 16:50</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 17:00</div></div>
   </aside>
 
   <div class="main">
@@ -2927,7 +2930,7 @@ function agDefaultTpl(){
     feeNotes:'',
     sections:[
       {t:'모든 타입 공통 사항', b:'(1) 생명보험, 손해보험 장기보험, 일반보험 수수료 지급률표에 따라 지급\n(2) 수수료 지급률은 정산 기준 신계약 보험료에 따라 익월 반영하고 매월 달리하여 지급\n(3) 수수료 타입은 위촉 월 기준 연 1회 변경 가능\n(4) 장기보험 직전 6개월 신계약 합산 실적이 30만원 미만이고 신계약 체결 2건 미만인 경우 장기 비가동자로 분류하며 수수료율 70%로 변경\n(5) 장기 비가동자는 당월 신계약 30만원 이상 또는 당월 2건 이상 체결 시 정상 부활\n(6) 장기보험 1년 이상 미가동자 강제 해촉 가능\n(7) 개인 시상은 미래에셋금융서비스 그로우사업부 다온지사 시상안에 따라서 지급\n(8) 해촉 후 잔여수수료 미지급, 계약 이관은 불가\n(9) 이외 수수료 관련 내용은 미래에셋금융서비스 영업제규정에 따른다'},
-      {t:'자동차보험, 일반보험 수수료 기준', b:'1) 자동차보험 제휴사별 수수료 예시\n| 보험사 | 비례수수료 | 성과수수료 | 합산 |\n| DB손보 | 6.5% | 5.8% | 12.3% |\n| KB손보 | 6.5% | 6.0% | 12.5% |\n| 롯데손보 | 6.5% | 7.0% | 13.5% |\n| 메리츠화재 | 6.0% | 6.0% | 12.0% |\n| 삼성화재 | 6.5% | 5.8% | 12.3% |\n| 한화손보 | 6.0% | 6.5% | 12.5% |\n| 현대해상 | 6.0% | 6.0% | 12.0% |\n| 흥국화재 | 6.0% | 7.0% | 13.0% |\n※ 자동차보험 실적 1억 기준 ▶ 성과수수료는 실적별 구간 적용\n\n2) 일반보험 제휴사별 수수료 예시 (본사 100% 기준)\n| 보험사 | 예시 수수료율 |\n| DB손보 | 22.0% |\n| KB손보 | 22.0% |\n| NH농협손보 | 19.2% |\n| 라이나손보 | 23.0% |\n| 롯데손보 | 19.0% |\n| 메리츠화재 | 22.0% |\n| 삼성화재 | 22.0% |\n| 한화손보 | 22.0% |\n| 현대해상 | 22.0% |\n| 흥국화재 | 22.0% |\n※ 수수료율 : 공장 화재보험 기준 / 기본수수료 기준\n※ 사업부 93% / 지사 90% 기준\n\n* 상기 수수료는 예시이며, 수수료 테이블, 지급기준, 가입담보에 따라 달라질 수 있음'},
+      {t:'자동차보험, 일반보험 수수료 기준', b:'1) 자동차보험 제휴사별 수수료 예시\n| 구분 | DB손보 | KB손보 | 롯데손보 | 메리츠화재 | 삼성화재 | 한화손보 | 현대해상 | 흥국화재 |\n| 비례수수료 | 6.5% | 6.5% | 6.5% | 6.0% | 6.5% | 6.0% | 6.0% | 6.0% |\n| 성과수수료 | 5.8% | 6.0% | 7.0% | 6.0% | 5.8% | 6.5% | 6.0% | 7.0% |\n| 합산 | 12.3% | 12.5% | 13.5% | 12.0% | 12.3% | 12.5% | 12.0% | 13.0% |\n※ 자동차보험 실적 1억 기준 ▶ 성과수수료는 실적별 구간 적용\n\n2) 일반보험 제휴사별 수수료 예시 (본사 100% 기준)\n| 보험사 | DB손보 | KB손보 | NH농협손보 | 라이나손보 | 롯데손보 | 메리츠화재 | 삼성화재 | 한화손보 | 현대해상 | 흥국화재 |\n| 예시 수수료율 | 22.0% | 22.0% | 19.2% | 23.0% | 19.0% | 22.0% | 22.0% | 22.0% | 22.0% | 22.0% |\n※ 수수료율 : 공장 화재보험 기준 / 기본수수료 기준\n※ 사업부 93% / 지사 90% 기준\n\n* 상기 수수료는 예시이며, 수수료 테이블, 지급기준, 가입담보에 따라 달라질 수 있음'},
       {t:'도입 관련 수당', b:'1) 오버라이딩 제도 적용\n2) 피유치자 신계약수수료의 2% 오버라이딩 지급 (연금, 실손, 자동차, 일반보험 제외)\n3) 도입 인원 5명 이상 + 조직 월보험료 500만원 이상 시 별도 조직으로 묶어서 지점 단위로 승격 가능\n4) 세부 지급 기준은 미래에셋금융서비스 영업제규정에 따른다'},
       {t:'보증보험', b:'1) 기본 1,000만원\n2) 이행보증 또는 부족분 기타 채권 가능 (예금질권, 근저당설정 등)\n3) 채권 추가 기준은 미래에셋금융서비스 영업제규정에 따름\n4) 지점 단위 승격 시 지점장 기준에 따른다'},
       {t:'분급 규정 및 방법 (SGI 보증한도가 없는 경우)', b:'설계사의 SGI(서울보증보험) 보증한도가 없는 경우 아래 분급 규정을 적용한다.\n- 규정 : 위촉 전 100만원 예치 및 확인서 작성\n- 방법 :\n1) 해당 설계사 수수료의 1/12\n2) 시책 (분급 없음)\n3) 1번과 2번을 합한 금액의 30%를 매달 적립함\n4) 3번의 적립한 금액이 1,000만원이 되면 (예치금액 100만원 포함) 선지급\n예) 익월 수수료가 1,200만원, 시책이 1,000만원 발생하였다면 (수수료의 1/12) + 시책, 곧 100만원 + 1,000만원 = 1,100만원, 1,100만원의 30% = 330만원을 적립하며, 이 설계사의 익월 수수료는 1,100만원 - 330만원인 770만원임'},
@@ -2999,7 +3002,7 @@ function agBodyHtml(t){
   var out='', txt=[], tb=[];
   function flushT(){ if(txt.length){ out+='<div class="body">'+esc(txt.join('\n'))+'</div>'; txt=[]; } }
   function flushB(){ if(tb.length){ var rows=tb.map(function(l){ return l.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(function(c){return c.trim();}); });
-    out+='<table><thead><tr>'+rows[0].map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'+rows.slice(1).map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>'; tb=[]; } }
+    out+='<table class="mini"><thead><tr>'+rows[0].map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'+rows.slice(1).map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>'; tb=[]; } }
   String(t||'').split('\n').forEach(function(l){ if(/^\s*\|/.test(l)){ flushT(); tb.push(l); } else { flushB(); txt.push(l); } });
   flushT(); flushB(); return out;
 }
@@ -3160,7 +3163,7 @@ function agPrintWin(){ var w=window.open('','_blank'); if(!w){ toast('팝업이 
 function agPrintTo(w,a){
   if(!w) return; var d=(a&&a.doc)||{};
   w.document.open();
-  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(d.title||'부속 약정서')+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;color:#111;font-size:12px;line-height:1.6;margin:0;padding:16mm 15mm}h1{text-align:center;font-size:18px;margin:0 0 16px}h3{font-size:13px;margin:12px 0 4px;page-break-after:avoid}.body{white-space:pre-wrap}table{width:100%;border-collapse:collapse;margin:4px 0 6px;page-break-inside:avoid}th,td{border:1px solid #777;padding:4px 6px;text-align:center}th{background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}.date{text-align:center;margin:20px 0 12px;font-weight:600}.ag-sig{display:grid;grid-template-columns:1fr 1fr;gap:14px;page-break-inside:avoid}.box{border:1px solid #999;border-radius:6px;padding:10px 12px;min-height:110px}.box b{display:block;margin-bottom:4px}.row{font-size:12px}img{height:60px;display:block;margin-top:4px}.none{visibility:hidden;margin-top:30px}@page{size:A4;margin:0}</style></head><body>'+agHtml(d,a)+'</body></html>');
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc(d.title||'부속 약정서')+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;color:#111;font-size:12px;line-height:1.6;margin:0;padding:16mm 15mm}h1{text-align:center;font-size:18px;margin:0 0 16px}h3{font-size:13px;margin:12px 0 4px;page-break-after:avoid}.body{white-space:pre-wrap}table{width:100%;border-collapse:collapse;margin:4px 0 6px;page-break-inside:avoid}th,td{border:1px solid #777;padding:4px 6px;text-align:center}th{background:#eee;-webkit-print-color-adjust:exact;print-color-adjust:exact}table.mini{font-size:10px}table.mini th,table.mini td{padding:2px 3px;white-space:nowrap}table.mini td:first-child{background:#eee;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact}.date{text-align:center;margin:20px 0 12px;font-weight:600}.ag-sig{display:grid;grid-template-columns:1fr 1fr;gap:14px;page-break-inside:avoid}.box{border:1px solid #999;border-radius:6px;padding:10px 12px;min-height:110px}.box b{display:block;margin-bottom:4px}.row{font-size:12px}img{height:60px;display:block;margin-top:4px}.none{visibility:hidden;margin-top:30px}@page{size:A4;margin:0}</style></head><body>'+agHtml(d,a)+'</body></html>');
   w.document.close(); setTimeout(function(){ w.focus(); w.print(); },500);
 }
 function printAg(){ var w=agPrintWin(); agPrintTo(w, AG_CUR||{}); }
