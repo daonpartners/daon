@@ -1,0 +1,25 @@
+{
+ "name": "보험물어봄 by 다온",
+ "short_name": "보험물어봄",
+ "description": "보험 질문·설계사 상담·보험금 청구",
+ "start_url": "/?src=app",
+ "scope": "/",
+ "display": "standalone",
+ "background_color": "#0B1E42",
+ "theme_color": "#0B1E42",
+ "lang": "ko",
+ "icons": [
+  {
+   "src": "/assets/app-icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "/assets/app-icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  }
+ ]
+}
