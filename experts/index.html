@@ -65,13 +65,13 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 </div>
 
 <script>
-const API = "https://daonpartners.app.n8n.cloud/webhook/daon-expert-list";
+const API = "https://daonpartners.app.n8n.cloud/webhook/daon-expert-list-v2";
 const listEl = document.getElementById("list");
 
 fetch(API + "?t=" + Date.now(), { cache: "no-store" })
   .then(r => r.json())
   .then(data => {
-    const arr = Array.isArray(data) ? data : [data];
+    const arr = Array.isArray(data) ? data : ((data && data.items) || []);
     if (!arr.length || !arr[0].name) {
       listEl.innerHTML = '<div class="state">아직 등록된 전문가가 없습니다.</div>';
       return;
@@ -81,7 +81,7 @@ fetch(API + "?t=" + Date.now(), { cache: "no-store" })
         <img class="photo" src="${p.photo || '/assets/logo.png'}" alt="${p.name}">
         <div class="body">
           <h3>${p.name}</h3>
-          <p>${p.title || ''}</p>
+          <p>${p.title || ''}${p.region ? ' · ' + p.region : ''}</p>
           <div class="tags">${(p.specialties || []).map(s => `<span class="tag">${s}</span>`).join('')}</div>
         </div>
       </a>
