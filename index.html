@@ -262,6 +262,11 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .cc img{width:46px;height:46px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0}
 .cc b{display:block;font-family:var(--display);font-size:17px;color:var(--navy);line-height:1.45}
 .cc i{font-style:normal;font-size:12.5px;color:var(--steel)}
+.col2__cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.col2__cats a{text-decoration:none;font-weight:700;font-size:14px;color:var(--navy);background:#fff;border:1.5px solid var(--line);padding:8px 13px;border-radius:999px}
+.col2__cats a em{font-style:normal;font-size:12px;color:var(--steel)}
+.col2__cats a:hover{border-color:var(--deep)}
+.cc small{display:inline-block;font-size:11.5px;font-weight:800;color:var(--deep);background:var(--tint);padding:2px 8px;border-radius:5px;margin-bottom:4px}
 .cc__all{display:inline-block;margin-top:6px;font-weight:800;color:var(--deep)}
 .cl{background:var(--tint);padding:44px 0}
 .cl__in{display:grid;gap:20px;align-items:center}
@@ -318,7 +323,8 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <section class="col2" id="colSec" hidden>
   <div class="wrap2">
     <h2>설계사 칼럼</h2>
-    <p class="col2__sub">다온 설계사가 직접 쓴 보험 이야기입니다. 상품·회사마다 내용이 다를 수 있으니 가입 전 약관을 꼭 확인하세요.</p>
+    <p class="col2__sub">궁금한 분야를 골라 보세요. 다온 설계사가 직접 쓴 보험 이야기입니다. 상품·회사마다 내용이 다를 수 있으니 가입 전 약관을 꼭 확인하세요.</p>
+    <div class="col2__cats" id="colCats"></div>
     <div class="col2__list" id="colList"></div>
   </div>
 </section>
@@ -424,10 +430,12 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   filt.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; sel=b.dataset.v; drawFilter(); draw(); });
   function drawCols(){
     fetch('https://daonpartners.app.n8n.cloud/webhook/daon-column-list?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
-      var cs=(Array.isArray(d)?d:(d&&d.items)||[]).slice(0,6); if(!cs.length) return;
+      var all=(Array.isArray(d)?d:(d&&d.items)||[]), cs=all.slice(0,6); if(!cs.length) return;
       document.getElementById('colSec').hidden=false;
+      var CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
+      document.getElementById('colCats').innerHTML=CATS.map(function(k){ var n=all.filter(function(c){return (c.cat||'기타')===k;}).length; return n?'<a href="/column/?c='+encodeURIComponent(k)+'">'+esc(k)+' <em>'+n+'</em></a>':''; }).join('');
       document.getElementById('colList').innerHTML=cs.map(function(c){
-        return '<a class="cc" href="/column/?id='+encodeURIComponent(c.id)+'"><img src="'+esc(safeUrl(c.photo)||'/assets/favicon-daon.png')+'" alt=""><span><b>'+esc(c.title)+'</b><i>'+esc(c.name)+' · '+esc(c.job||'보험설계사')+' · '+esc(c.date)+'</i></span></a>';
+        return '<a class="cc" href="/column/?id='+encodeURIComponent(c.id)+'"><img src="'+esc(safeUrl(c.photo)||'/assets/favicon-daon.png')+'" alt=""><span><small>'+esc(c.cat||'기타')+'</small><b>'+esc(c.title)+'</b><i>'+esc(c.name)+' · '+esc(c.job||'보험설계사')+' · '+esc(c.date)+'</i></span></a>';
       }).join('')+'<a class="cc__all" href="/column/">칼럼 전체 보기 ›</a>';
     }).catch(function(){});
   }

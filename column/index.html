@@ -33,7 +33,16 @@ a{color:inherit}
 .hd h1{font-family:var(--display);font-weight:900;font-size:clamp(28px,7vw,44px);letter-spacing:-.02em;line-height:1.25;margin-top:6px}
 .hd .sub{color:#C9D3E1;margin-top:10px;font-size:15px;max-width:34em}
 .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 60px}
-.who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.lbl{font-size:13px;font-weight:800;color:var(--steel);margin-bottom:8px}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.cats button{font:inherit;font-size:14.5px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--navy);padding:9px 14px;border-radius:999px;cursor:pointer}
+.cats button em{font-style:normal;font-size:12px;color:var(--steel);margin-left:2px}
+.cats button.zero{color:#A8AFB8}
+.cats button[aria-pressed="true"]{background:var(--deep);border-color:var(--deep);color:#fff}
+.cats button[aria-pressed="true"] em{color:#F6DDE1}
+.cats button:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.tag{align-self:flex-start;font-size:12px;font-weight:800;color:var(--deep);background:var(--tint);padding:4px 10px;border-radius:6px;margin-bottom:10px}
+.who{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:22px}
 .who button{font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-2);padding:8px 14px;border-radius:999px;cursor:pointer}
 .who button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
 .who button:focus-visible,.card:focus-visible,.act a:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
@@ -90,22 +99,30 @@ a{color:inherit}
 <script>
 (function(){
   var API='https://daonpartners.app.n8n.cloud/webhook/daon-column-list';
-  var q=new URLSearchParams(location.search), id=q.get('id')||'', a=q.get('a')||'';
+  var q=new URLSearchParams(location.search), id=q.get('id')||'', a=q.get('a')||'', cq=q.get('c')||'';
+  var CATS=['실손·보험금청구','간병·치매','암·뇌·심장','건강·수술','어린이','자동차·운전자','화재·배상책임','사업장·소상공인','펫','연금·종신','기타'];
   var main=document.getElementById('main');
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
   function img(u){ u=String(u||''); return /^https?:\/\//.test(u)?u:'/assets/favicon-daon.png'; }
   function lines(t){ return String(t||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean); }
   function by(c){ return '<div class="by"><img src="'+esc(img(c.photo))+'" alt=""><span><b>'+esc(c.name)+'</b> · '+esc(c.job||'보험설계사')+'<br>'+esc(c.date)+'</span></div>'; }
-  function card(c){ var l=lines(c.body).filter(function(x){return x.charAt(0)!=='(';}); return '<a class="card" href="/column/?id='+c.id+'"><h2>'+esc(c.title)+'</h2><p class="ex">'+esc(l.join(' '))+'</p>'+by(c)+'</a>'; }
+  function card(c){ var l=lines(c.body).filter(function(x){return x.charAt(0)!=='(';}); return '<a class="card" href="/column/?id='+c.id+'"><span class="tag">'+esc(c.cat||'기타')+'</span><h2>'+esc(c.title)+'</h2><p class="ex">'+esc(l.join(' '))+'</p>'+by(c)+'</a>'; }
   function list(all){
     var names=[]; all.forEach(function(c){ if(!names.some(function(n){return n.code===c.code;})) names.push({code:c.code,name:c.name}); });
-    var cur=a;
+    var cur=a, cat=cq;
+    function cnt(k){ return all.filter(function(c){ return (c.cat||'기타')===k && (!cur||c.code===cur); }).length; }
     function draw(){
-      var arr=all.filter(function(c){ return !cur||c.code===cur; });
-      main.innerHTML=(names.length>1?'<div class="who">'+[{code:'',name:'전체'}].concat(names).map(function(n){return '<button type="button" data-c="'+esc(n.code)+'" aria-pressed="'+(n.code===cur)+'">'+esc(n.name)+'</button>';}).join('')+'</div>':'')
-        +(arr.length?'<div class="list">'+arr.map(card).join('')+'</div>':'<p class="state">아직 올라온 칼럼이 없습니다.</p>');
+      var arr=all.filter(function(c){ return (!cur||c.code===cur) && (!cat||(c.cat||'기타')===cat); });
+      var total=all.filter(function(c){return !cur||c.code===cur;}).length;
+      main.innerHTML='<p class="lbl">관심 분야</p><div class="cats">'+['<button type="button" data-k="" aria-pressed="'+(!cat)+'">전체 <em>'+total+'</em></button>'].concat(CATS.map(function(k){ var n=cnt(k); return '<button type="button" data-k="'+esc(k)+'" aria-pressed="'+(k===cat)+'"'+(n?'':' class="zero"')+'>'+esc(k)+' <em>'+n+'</em></button>'; })).join('')+'</div>'
+        +(names.length>1?'<p class="lbl">설계사</p><div class="who">'+[{code:'',name:'전체'}].concat(names).map(function(n){return '<button type="button" data-c="'+esc(n.code)+'" aria-pressed="'+(n.code===cur)+'">'+esc(n.name)+'</button>';}).join('')+'</div>':'')
+        +(arr.length?'<div class="list">'+arr.map(card).join('')+'</div>':'<p class="state">이 분야 칼럼은 아직 없습니다. 다른 분야를 골라 보세요.</p>');
     }
-    main.addEventListener('click',function(e){ var b=e.target.closest('.who button'); if(!b) return; cur=b.dataset.c; history.replaceState(null,'',cur?'?a='+encodeURIComponent(cur):'/column/'); draw(); });
+    function url(){ var u=[]; if(cat) u.push('c='+encodeURIComponent(cat)); if(cur) u.push('a='+encodeURIComponent(cur)); history.replaceState(null,'',u.length?'?'+u.join('&'):'/column/'); }
+    main.addEventListener('click',function(e){
+      var k=e.target.closest('.cats button'); if(k){ cat=k.dataset.k; url(); draw(); return; }
+      var b=e.target.closest('.who button'); if(b){ cur=b.dataset.c; url(); draw(); }
+    });
     draw();
   }
   function detail(c,all){
@@ -115,7 +132,7 @@ a{color:inherit}
     var cn=document.querySelector('link[rel="canonical"]'); if(cn) cn.setAttribute('href','https://daon.io.kr/column/?id='+c.id);
     var code=encodeURIComponent(c.code);
     var others=all.filter(function(x){return x.code===c.code&&x.id!==c.id;}).slice(0,5);
-    main.innerHTML='<article class="art"><a class="back" href="/column/">‹ 칼럼 목록</a><h1>'+esc(c.title)+'</h1>'+by(c)
+    main.innerHTML='<article class="art"><a class="back" href="/column/">‹ 칼럼 목록</a> <a class="back" style="margin-left:10px" href="/column/?c='+encodeURIComponent(c.cat||'기타')+'">'+esc(c.cat||'기타')+' 칼럼 더 보기</a><h1>'+esc(c.title)+'</h1>'+by(c)
       +'<div class="body">'+lines(c.body).map(function(x){return '<p'+(x.charAt(0)==='('?' class="note"':'')+'>'+esc(x)+'</p>';}).join('')+'</div>'
       +'<div class="author"><div class="row"><img src="'+esc(img(c.photo))+'" alt="'+esc(c.name)+' 설계사"><div><b>'+esc(c.name)+'</b><br><span style="font-size:14px;color:#3A4048">'+esc(c.job||'보험설계사')+'</span></div></div>'
       +'<div class="act"><a class="a1" href="/expert/?a='+code+'">이 설계사에게 상담받기</a><a class="a2" href="/claim/app/?m='+code+'">보험금 청구 맡기기</a></div></div>'
