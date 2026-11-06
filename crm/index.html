@@ -353,12 +353,12 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button> <button id="appInstall">앱 설치</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 19:05</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button> <button class="js-app">앱 설치</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 19:05</div></div>
   </aside>
 
   <div class="main">
     <div class="topbar">
-      <div class="r1"><b>다온 <i>영업관리</i> <a href="https://daon.io.kr/" style="color:#A9B4C8;font-size:12px;font-weight:500;text-decoration:none;margin-left:6px">홈페이지 ↗</a></b><button onclick="logout()"><span id="meName2"></span> · 로그아웃</button></div>
+      <div class="r1"><b>다온 <i>영업관리</i> <a href="https://daon.io.kr/" style="color:#A9B4C8;font-size:12px;font-weight:500;text-decoration:none;margin-left:6px">홈페이지 ↗</a></b><span><button class="js-app" style="margin-right:6px">앱 설치</button><button onclick="logout()"><span id="meName2"></span> · 로그아웃</button></span></div>
       <div class="mnav" id="mnav"></div>
     </div>
 
@@ -3353,15 +3353,15 @@ function printAgDraft(){ var w=agPrintWin(); if(!w) return; var doc; if(AG_MODE=
 <script>
 (function(){
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
-  var dp=null, btn=document.getElementById('appInstall'); if(!btn) return;
+  var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
   var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(standalone){ btn.style.display='none'; return; }
+  if(standalone){ btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
   window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
-  btn.addEventListener('click',function(ev){ ev.preventDefault();
+  btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
     if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
     var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
     alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
-  });
+  }); });
 })();
 </script>
 </body>

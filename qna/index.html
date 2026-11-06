@@ -118,6 +118,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .foot{background:var(--navy2);color:#8FA0B3;font-size:11.5px;line-height:1.8;text-align:center;padding:26px 20px 34px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html,body{max-width:100%;overflow-x:clip}
+.appbar{display:flex;align-items:center;gap:10px;background:#0B1E42;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;justify-content:center}.appbar img{width:22px;height:22px;border-radius:5px}.appbar a{background:#E39BA5;color:#0B1E42;font-weight:800;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-180.png">
@@ -126,6 +127,8 @@ html,body{max-width:100%;overflow-x:clip}
 <meta name="apple-mobile-web-app-title" content="보험물어봄">
 </head>
 <body>
+<div class="appbar"><img src="/assets/app-icon-192.png" alt=""><span>휴대폰 홈 화면에 앱으로 설치하세요</span><a href="#" class="js-app">앱 설치</a></div>
+
 <header class="top"><div class="top__in">
   <a href="/"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스 홈"></a>
   <nav><a href="/column/">칼럼</a><a href="/#fp">설계사 고르기</a></nav>
@@ -184,7 +187,7 @@ html,body{max-width:100%;overflow-x:clip}
 </div></section>
 
 <footer class="foot">
-  <a href="#" id="appInstall" style="display:inline-block;margin-bottom:12px;color:#fff;font-weight:800;font-size:13px">휴대폰에 앱 설치</a><br>
+  <a href="#" class="js-app" style="display:inline-block;margin-bottom:12px;color:#fff;font-weight:800;font-size:13px">휴대폰에 앱 설치</a><br>
   보험물어봄은 다온파트너스(미래에셋금융서비스 다온지사)가 운영합니다.<br>
   보험대리점 등록번호 2014048012 · 전화 041-534-1124 · 개인정보 보호책임자 다온파트너스 041-534-1124<br>
   AI 안내와 설계사 답변은 일반적인 정보이며, 보장 여부와 지급 금액은 가입하신 상품의 약관과 보험회사 심사로 정해집니다.<br>
@@ -294,15 +297,15 @@ html,body{max-width:100%;overflow-x:clip}
 <script>
 (function(){
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
-  var dp=null, btn=document.getElementById('appInstall'); if(!btn) return;
+  var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
   var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(standalone){ btn.style.display='none'; return; }
+  if(standalone){ btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
   window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
-  btn.addEventListener('click',function(ev){ ev.preventDefault();
+  btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
     if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
     var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
     alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
-  });
+  }); });
 })();
 </script>
 </body>

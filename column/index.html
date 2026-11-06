@@ -156,15 +156,15 @@ html,body{max-width:100%;overflow-x:clip}
 <script>
 (function(){
   if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(function(){});
-  var dp=null, btn=document.getElementById('appInstall'); if(!btn) return;
+  var dp=null, btns=[].slice.call(document.querySelectorAll('.js-app')); if(!btns.length) return;
   var standalone=window.matchMedia('(display-mode: standalone)').matches||navigator.standalone;
-  if(standalone){ btn.style.display='none'; return; }
+  if(standalone){ btns.forEach(function(b){ (b.closest('.appbar')||b).style.display='none'; }); return; }
   window.addEventListener('beforeinstallprompt',function(e){ e.preventDefault(); dp=e; });
-  btn.addEventListener('click',function(ev){ ev.preventDefault();
+  btns.forEach(function(btn){ btn.addEventListener('click',function(ev){ ev.preventDefault();
     if(dp){ dp.prompt(); dp.userChoice.finally(function(){ dp=null; }); return; }
     var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
     alert(ios?'아이폰: 사파리 아래쪽 [공유] 버튼 → [홈 화면에 추가]를 누르세요.':'브라우저 메뉴(⋮ 또는 ≡) → [홈 화면에 추가] 또는 [앱 설치]를 누르세요.');
-  });
+  }); });
 })();
 </script>
 </body>
