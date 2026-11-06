@@ -345,7 +345,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 14:10</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 15:50</div></div>
   </aside>
 
   <div class="main">
@@ -2919,19 +2919,19 @@ document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeCtrF
 var AG_API='https://daonpartners.app.n8n.cloud/webhook/daon-agree';
 var AG_LIST=[], AG_OWNER=false, AG_F='전체', AG_TPL=null, AG_TPL_SIGN='', AG_TPL_SAVED=false, AG_DRAFT=null, AG_MODE='issue', AG_CUR=null, AG_PADS={};
 function agApi(action,p){ if(!ME||!ME.code) return Promise.resolve({ok:false,error:'보안을 위해 로그아웃 후 다시 로그인해 주세요.'}); return fetch(AG_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({action:action,by:ME.code,ua:navigator.userAgent},p||{}))}).then(function(r){return r.json();}); }
-/* 기본 양식: 첨부 원플러스지사 지점장(TFA) 부속 약정서 구성 기준. 회사명만 미래에셋금융서비스·그로우사업부로 바꿈 — 수치는 지사장이 확인 후 [기본 양식 수정]에서 저장 */
+/* 기본 양식: 원플러스지사 약정서 구성 + 2026-11-06 지사장 지시 반영(소속 명칭, 자동차·일반보험 수수료 예시표, 보증보험 1,000만원, 영업제규정) */
 function agDefaultTpl(){
   return {
     feeHead:['구분','구간','수수료율'],
     fees:[['장기','상관없이','']],
     feeNotes:'',
     sections:[
-      {t:'모든 타입 공통 사항', b:'(1) 생명보험, 손해보험 장기보험, 일반보험 수수료 지급률표에 따라 지급\n(2) 수수료 지급률은 정산 기준 신계약 보험료에 따라 익월 반영하고 매월 달리하여 지급\n(3) 손해보험 수금수수료 : 그로우사업부 지급률 대비 50% 지급\n(4) 수수료 타입은 위촉 월 기준 연 1회 변경 가능\n(5) 장기보험 직전 6개월 신계약 합산 실적이 30만원 미만이고 신계약 체결 2건 미만인 경우 장기 비가동자로 분류하며 수수료율 70%로 변경\n(6) 장기 비가동자는 당월 신계약 30만원 이상 또는 당월 2건 이상 체결 시 정상 부활\n(7) 장기보험 1년 이상 미가동자 강제 해촉 가능\n(8) 개인 시상은 그로우사업부 시상안에 따라서 지급\n(9) 해촉 후 잔여수수료 미지급, 계약 이관은 불가\n(10) 이외 수수료 관련 내용은 미래에셋금융서비스 규정에 따른다'},
-      {t:'자동차, 일반보험 지급률 기준', b:'1) 자동차보험\n  - 삼성, 현대, DB, KB, 메리츠, 한화, 하나 : 12%\n  - 흥국, MG : 6%\n  - 롯데 : 0%\n  * 상기 수수료는 그로우사업부 수수료율에 따라 변동될 수 있음\n  * 사업용 및 기타물건은 그로우사업부 자동차보험 지급률에 따라 달라짐\n2) 일반보험 : 상품별 수수료율에 따라 모집자에게 지급'},
+      {t:'모든 타입 공통 사항', b:'(1) 생명보험, 손해보험 장기보험, 일반보험 수수료 지급률표에 따라 지급\n(2) 수수료 지급률은 정산 기준 신계약 보험료에 따라 익월 반영하고 매월 달리하여 지급\n(3) 손해보험 수금수수료 : 미래에셋금융서비스 그로우사업부 다온지사 지급률 대비 50% 지급\n(4) 수수료 타입은 위촉 월 기준 연 1회 변경 가능\n(5) 장기보험 직전 6개월 신계약 합산 실적이 30만원 미만이고 신계약 체결 2건 미만인 경우 장기 비가동자로 분류하며 수수료율 70%로 변경\n(6) 장기 비가동자는 당월 신계약 30만원 이상 또는 당월 2건 이상 체결 시 정상 부활\n(7) 장기보험 1년 이상 미가동자 강제 해촉 가능\n(8) 개인 시상은 미래에셋금융서비스 그로우사업부 다온지사 시상안에 따라서 지급\n(9) 해촉 후 잔여수수료 미지급, 계약 이관은 불가\n(10) 이외 수수료 관련 내용은 미래에셋금융서비스 영업제규정에 따른다'},
+      {t:'자동차보험, 일반보험 수수료 기준', b:'1) 자동차보험 제휴사별 수수료 예시\n| 보험사 | 비례수수료 | 성과수수료 | 합산 |\n| DB손보 | 6.5% | 5.8% | 12.3% |\n| KB손보 | 6.5% | 6.0% | 12.5% |\n| 롯데손보 | 6.5% | 7.0% | 13.5% |\n| 메리츠화재 | 6.0% | 6.0% | 12.0% |\n| 삼성화재 | 6.5% | 5.8% | 12.3% |\n| 한화손보 | 6.0% | 6.5% | 12.5% |\n| 현대해상 | 6.0% | 6.0% | 12.0% |\n| 흥국화재 | 6.0% | 7.0% | 13.0% |\n※ 자동차보험 실적 1억 기준 ▶ 성과수수료는 실적별 구간 적용\n\n2) 일반보험 제휴사별 수수료 예시 (본사 100% 기준)\n| 보험사 | 예시 수수료율 |\n| DB손보 | 22.0% |\n| KB손보 | 22.0% |\n| NH농협손보 | 19.2% |\n| 라이나손보 | 23.0% |\n| 롯데손보 | 19.0% |\n| 메리츠화재 | 22.0% |\n| 삼성화재 | 22.0% |\n| 한화손보 | 22.0% |\n| 현대해상 | 22.0% |\n| 흥국화재 | 22.0% |\n※ 수수료율 : 공장 화재보험 기준 / 기본수수료 기준\n※ 사업부 93% / 지사 90% 기준\n\n* 상기 수수료는 예시이며, 수수료 테이블, 지급기준, 가입담보에 따라 달라질 수 있음'},
       {t:'평생증원 수수료', b:'직도입 인원 1인당 10만원\n1) 피도입자 장기보험 신계약 업적 30만원 이상 시 지급\n2) 계약의 실효, 철회, 해지 발생으로 업적 기준 미달 시 환수\n3) 5명 이상 도입 시 별도 조직으로 묶어서 지점 단위로 승격 가능'},
-      {t:'보증보험', b:'1) 기본 2,000만원\n2) 이행보증 또는 부족분 기타 채권 가능 (예금질권, 근저당설정 등)\n3) 채권 추가 기준은 회사 규정에 따름\n4) 지점 단위 승격 시 지점장 기준에 따른다'}
+      {t:'보증보험', b:'1) 기본 1,000만원\n2) 이행보증 또는 부족분 기타 채권 가능 (예금질권, 근저당설정 등)\n3) 채권 추가 기준은 미래에셋금융서비스 영업제규정에 따름\n4) 지점 단위 승격 시 지점장 기준에 따른다'}
     ],
-    closing:'이외 모든 사항은 미래에셋금융서비스 규정에 따른다.'
+    closing:'이외 모든 사항은 미래에셋금융서비스 영업제규정에 따른다.'
   };
 }
 function agClone(o){ return JSON.parse(JSON.stringify(o)); }
@@ -2991,6 +2991,15 @@ function sigImg(id){
 }
 function sigBox(id,label){ return '<div class="fld"><div class="sec-t" style="margin:0 0 6px"><h4>'+label+'</h4><button type="button" class="btn sm" onclick="sigClear(\''+id+'\')">지우기</button></div><canvas class="sigpad" id="'+id+'"></canvas><div class="muted" style="font-size:12px;margin-top:4px">손가락이나 마우스로 서명하세요.</div></div>'; }
 
+/* 조항 본문: 줄 맨 앞이 | 인 줄들은 표로 그림 (첫 줄 = 머리글) */
+function agBodyHtml(t){
+  var out='', txt=[], tb=[];
+  function flushT(){ if(txt.length){ out+='<div class="body">'+esc(txt.join('\n'))+'</div>'; txt=[]; } }
+  function flushB(){ if(tb.length){ var rows=tb.map(function(l){ return l.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|').map(function(c){return c.trim();}); });
+    out+='<table><thead><tr>'+rows[0].map(function(c){return '<th>'+esc(c)+'</th>';}).join('')+'</tr></thead><tbody>'+rows.slice(1).map(function(r){ return '<tr>'+r.map(function(c){return '<td>'+esc(c)+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>'; tb=[]; } }
+  String(t||'').split('\n').forEach(function(l){ if(/^\s*\|/.test(l)){ flushT(); tb.push(l); } else { flushB(); txt.push(l); } });
+  flushT(); flushB(); return out;
+}
 /* 약정서 본문 그리기 (화면·인쇄 공용) */
 function agHtml(d, a){
   a=a||{}; var n=1, h='<h1>'+esc(d.title||'부속 약정서')+'</h1>';
@@ -2998,7 +3007,7 @@ function agHtml(d, a){
   var fh=d.feeHead||['구분','구간','수수료율'], fr=(d.fees||[]).filter(function(r){ return r.some(function(v){return String(v||'').trim();}); });
   if(fr.length) h+='<table><thead><tr>'+fh.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+fr.map(function(r){ return '<tr>'+fh.map(function(_,i){return '<td>'+esc(r[i]||'')+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>';
   if(d.feeNotes) h+='<div class="body">'+esc(d.feeNotes)+'</div>';
-  (d.sections||[]).forEach(function(s){ if(!String(s.t||'').trim() && !String(s.b||'').trim()) return; h+='<h3>'+(n++)+'. '+esc(s.t||'')+'</h3><div class="body">'+esc(s.b||'')+'</div>'; });
+  (d.sections||[]).forEach(function(s){ if(!String(s.t||'').trim() && !String(s.b||'').trim()) return; h+='<h3>'+(n++)+'. '+esc(s.t||'')+'</h3>'+agBodyHtml(s.b); });
   var sp=(d.specials||[]).filter(function(x){return String(x||'').trim();});
   if(sp.length) h+='<h3>'+(n++)+'. 세부 특약</h3><div class="body">'+sp.map(function(x,i){ return (i+1)+') '+esc(x); }).join('\n')+'</div>';
   if(d.closing) h+='<h3>'+(n++)+'. 기타</h3><div class="body">'+esc(d.closing)+'</div>';
@@ -3040,13 +3049,13 @@ function drawAgForm(keep){
   var d=AG_DRAFT, iss=AG_MODE==='issue', st=$('agBody').scrollTop, keepSig=($('agOwnerPad')&&sigImg('agOwnerPad'))||'';
   $('agT').textContent=iss?'부속약정서 발행':'부속약정서 기본 양식';
   var h='';
-  if(!AG_TPL_SAVED) h+='<div class="warn" style="margin:0 0 14px">아직 저장된 기본 양식이 없어 <b>첨부하신 원플러스지사 약정서 문구</b>를 바탕으로 한 초안이 들어 있습니다. 회사명은 미래에셋금융서비스·그로우사업부로 바꿨고, 수치(수금수수료 50%, 비가동 기준, 자동차 지급률, 증원수수료, 보증보험 금액 등)는 원플러스 기준 그대로입니다. 다온지사 기준으로 확인 후 [기본 양식 수정]에서 저장하세요.</div>';
+  if(!AG_TPL_SAVED) h+='<div class="warn" style="margin:0 0 14px">기본 양식이 아직 저장되지 않아 초안이 들어 있습니다. 내용을 확인한 뒤 [기본 양식 수정] → [기본 양식 저장]을 누르면 다음 발행부터 그대로 쓰입니다. 조항 안에서 줄 맨 앞을 | 로 시작하면 표로 표시됩니다 (예: | 보험사 | 수수료율 |).</div>';
   if(iss){
     var tg=ORG.filter(function(x){ return x.id!==ORG_ME && x.active!==false; }).sort(function(a,b){ return RANKS.indexOf(b.rank)-RANKS.indexOf(a.rank)||a.name.localeCompare(b.name,'ko'); });
-    h+='<div class="ag-step">① 대상자</div><div class="g2"><div class="fld"><label class="lbl">대상 설계사·관리자 *</label><select class="sel" id="agTarget" onchange="agEdit(function(d){ var x=orgById(d.targetId); if(x&&!d._titleEdited) d.title=\'다온지사 \'+(x.rank||\'설계사\')+\' 부속 약정서\'; })"><option value="">선택하세요</option>'
+    h+='<div class="ag-step">① 대상자</div><div class="g2"><div class="fld"><label class="lbl">대상 설계사·관리자 *</label><select class="sel" id="agTarget" onchange="agEdit(function(d){ var x=orgById(d.targetId); if(x&&!d._titleEdited) d.title=\'미래에셋금융서비스 그로우사업부 다온지사 \'+(x.rank||\'설계사\')+\' 부속 약정서\'; })"><option value="">선택하세요</option>'
       +tg.map(function(x){ return '<option value="'+x.id+'"'+(d.targetId===x.id?' selected':'')+'>'+esc(x.name)+' ('+esc(x.rank||'설계사')+')</option>'; }).join('')+'</select></div>'
       +'<div class="fld"><label class="lbl">약정일</label><input class="inp" type="date" id="agDate" value="'+esc(d.date||'')+'"></div></div>'
-      +'<div class="fld"><label class="lbl">약정서 제목</label><input class="inp" id="agTitle" value="'+esc(d.title||'')+'" placeholder="예) 다온지사 지점장 부속 약정서" oninput="AG_DRAFT._titleEdited=true"></div>';
+      +'<div class="fld"><label class="lbl">약정서 제목</label><input class="inp" id="agTitle" value="'+esc(d.title||'')+'" placeholder="예) 미래에셋금융서비스 그로우사업부 다온지사 지점장 부속 약정서" oninput="AG_DRAFT._titleEdited=true"></div>';
   }
   h+='<div class="ag-step">'+(iss?'② ':'')+'수수료</div>';
   if(iss) h+='<div class="fld"><label class="lbl">수수료 타입 이름</label><input class="inp" id="agFtype" value="'+esc(d.ftype||'')+'" placeholder="예) A타입(1인GA타입)"></div>';
@@ -3071,7 +3080,7 @@ function drawAgForm(keep){
   $('agBody').innerHTML=h;
   $('agFoot').innerHTML=iss
     ?'<button class="btn" onclick="agPreview()">미리보기</button><div class="spacer"></div><button class="btn" onclick="closeAg()">취소</button><button class="btn pri" id="agGo" onclick="issueAg()">서명하고 발행</button>'
-    :'<button class="btn danger" onclick="if(confirm(\'첨부 약정서 기준 초안으로 되돌릴까요? (저장 전까지는 바뀌지 않습니다)\')){AG_DRAFT=agDefaultTpl();drawAgForm(true);}">초안으로 되돌리기</button><div class="spacer"></div><button class="btn" onclick="closeAg()">취소</button><button class="btn pri" id="agGo" onclick="saveAgTpl()">기본 양식 저장</button>';
+    :'<button class="btn danger" onclick="if(confirm(\'기본 초안으로 되돌릴까요? (저장 전까지는 바뀌지 않습니다)\')){AG_DRAFT=agDefaultTpl();drawAgForm(true);}">초안으로 되돌리기</button><div class="spacer"></div><button class="btn" onclick="closeAg()">취소</button><button class="btn pri" id="agGo" onclick="saveAgTpl()">기본 양식 저장</button>';
   $('agDim').classList.remove('hide'); $('agModal').classList.remove('hide');
   if(keep) $('agBody').scrollTop=st; else $('agBody').scrollTop=0;
   if($('agOwnerPad')) setTimeout(function(){ sigPad('agOwnerPad'); if(keepSig){ var im=new Image(); im.onload=function(){ var p=AG_PADS.agOwnerPad, c=p.c, r=c.getBoundingClientRect(); c.getContext('2d').drawImage(im,0,0,r.width,r.height); p.used=true; }; im.src=keepSig; } },30);
@@ -3086,7 +3095,7 @@ function saveAgTpl(){
 }
 function agBuildDoc(){
   var d=agCollect(), x=orgById(d.targetId);
-  return {title:d.title||('다온지사 '+((x&&x.rank)||'설계사')+' 부속 약정서'), ftype:d.ftype, feeHead:d.feeHead, fees:d.fees, feeNotes:d.feeNotes, sections:d.sections, specials:d.specials, closing:d.closing, date:d.date,
+  return {title:d.title||('미래에셋금융서비스 그로우사업부 다온지사 '+((x&&x.rank)||'설계사')+' 부속 약정서'), ftype:d.ftype, feeHead:d.feeHead, fees:d.fees, feeNotes:d.feeNotes, sections:d.sections, specials:d.specials, closing:d.closing, date:d.date,
     target:{id:d.targetId, name:x?x.name:'', rank:(x&&x.rank)||'설계사'}, owner:d.owner};
 }
 function agOwnerSignNow(){ var d=AG_DRAFT; if(AG_TPL_SIGN && d._useSaved!==false) return AG_TPL_SIGN; return sigImg('agOwnerPad'); }
