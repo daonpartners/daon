@@ -401,14 +401,14 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   function safeUrl(u){ u=String(u||''); return /^https?:\/\//.test(u)?u:''; }
   function lines(t){ return String(t||'').split(/\n+/).map(function(x){return x.trim();}).filter(Boolean); }
   function card(p){
-    var ph=safeUrl(p.photo)||'/assets/favicon-daon.png', c=encodeURIComponent(p.code), cr=lines(p.career);
+    var ph=safeUrl(p.photo)||'/assets/favicon-daon.png', c=encodeURIComponent(p.code), cr=lines(p.career).slice(0,3); if(p.regNo) cr.unshift('보험설계사 등록번호 '+p.regNo);
     return '<article class="ec">'
       +'<a class="ec__ph" href="/expert/?a='+c+'"><img src="'+esc(ph)+'" alt="'+esc(p.name)+' 설계사" loading="lazy"></a>'
       +'<div class="ec__b">'
       +'<h3><a href="/expert/?a='+c+'">'+esc(p.name)+'</a></h3>'
       +'<p class="ec__t">'+esc(p.title||'보험설계사')+(p.region?' <span>· '+esc(p.region)+'</span>':'')+'</p>'
       +(p.specialties&&p.specialties.length?'<p class="ec__sp">'+p.specialties.map(function(x){return '<span>'+esc(x)+'</span>';}).join('')+'</p>':'')
-      +(cr.length?'<ul class="ec__cr">'+cr.slice(0,3).map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':(p.intro?'<p class="ec__in">'+esc(p.intro)+'</p>':''))
+      +(cr.length?'<ul class="ec__cr">'+cr.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>':(p.intro?'<p class="ec__in">'+esc(p.intro)+'</p>':''))
       +'<div class="ec__act"><a class="a1" href="/expert/?a='+c+'">프로필·상담</a><a class="a2" href="/claim/app/?m='+c+'">보험금 청구 맡기기</a></div>'
       +'</div></article>';
   }

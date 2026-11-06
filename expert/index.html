@@ -327,10 +327,11 @@ if (code) {
       const x = arr.find(p => p.code === code); if (!x) return;
       const esc = s => String(s || "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
       const ln = t => String(t || "").split(/\n+/).map(v => v.trim()).filter(Boolean);
-      if (x.region || ln(x.career).length) {
+      const crs = ln(x.career); if (x.regNo) crs.unshift("보험설계사 등록번호 " + x.regNo);
+      if (x.region || crs.length) {
         document.getElementById("p-careerSec").style.display = "block";
         document.getElementById("p-region").textContent = x.region ? "활동지역 · " + x.region : "";
-        document.getElementById("p-career").innerHTML = ln(x.career).map(v => "<li>" + esc(v) + "</li>").join("");
+        document.getElementById("p-career").innerHTML = crs.map(v => "<li>" + esc(v) + "</li>").join("");
       }
 
     }).catch(() => {});
