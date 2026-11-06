@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>다온파트너스 | 좋은 일이 다 온다</title>
-<meta name="description" content="개인의 보장부터 사업장의 위험관리, 소상공인 비즈니스와 보험 전문가의 성장까지. 다온파트너스가 함께합니다.">
+<meta name="description" content="보험금 청구 무료대행, 내 보장 3분 점검, 사업장 필요 보험·중대재해 자가진단까지. 다온파트너스가 무료로 먼저 확인해 드립니다.">
 <meta name="robots" content="index, follow">
 
 <meta name="naver-site-verification" content="[네이버 서치어드바이저 발급값]">
@@ -208,6 +208,11 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
   .wrap:has(.twocol){max-width:960px}
   .twocol{grid-template-columns:1fr 1fr;align-items:start}
 }
+/* 설계사 전용 줄 */
+.staff{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.staff a{display:block;text-align:center;background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 6px;font-size:13px;font-weight:700;color:var(--ink);text-decoration:none}
+.staff a:hover{border-color:var(--orange)}
+.hero__cta button{font-family:var(--body)}
 </style>
 </head>
 <body>
@@ -216,51 +221,68 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 <header class="topbar">
   <a href="/"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="90" height="26" decoding="async" style="height:26px;width:auto;display:block"></a>
   <div class="topbar__links">
-    <a class="grow-link" href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a>
+    <a class="grow-link" href="/ask/?m=daon">상담 신청</a>
     <a class="about-link" href="/about">다온지사 소개</a>
   </div>
 </header>
 </div>
 
-<!-- ③ SERVICE (2컬럼) + ④ RECRUITING -->
-<section class="sec sec--navygray" style="padding-top:22px">
+<!-- ① HERO : 고객이 가장 먼저 할 일 -->
+<section class="hero">
   <div class="wrap">
-    <div class="sec__title">사람과 보험, 사업을 잇는<br>다온파트너스</div>
+    <div class="hero__mean">DAON · 좋은 일이 다 온다</div>
+    <h1>보험금 청구부터 사업장 위험까지<br><em>무료로 먼저</em> 확인하세요</h1>
+    <p class="hero__sub">서류 사진만 보내면 청구를 대신 접수하고, 내 보장과 우리 사업장에 필요한 보험을 3분 안에 점검해 드립니다.</p>
+    <div class="hero__cta"><button type="button" onclick="location.href='/claim/app/?m=daon'">보험금 무료 청구하기</button></div>
+    <a class="hero__sublink" href="/consult">내 보장 3분 점검하기 ›</a>
+  </div>
+</section>
 
+<!-- ② 고객 · 사장님 -->
+<section class="sec sec--navygray">
+  <div class="wrap">
     <div class="twocol">
 
-      <!-- 좌측 : 다온지사 전용 -->
+      <!-- 개인 고객 -->
       <div class="col">
-        <div class="col__label">다온지사</div>
+        <div class="col__label">개인 고객</div>
         <div class="gate">
-          <a href="/experts">
+          <a href="/claim/app/?m=daon">
             <div class="gate-card">
-              <div class="gate-ico">🔍</div>
+              <div class="gate-ico">📋</div>
               <div class="gate-body">
-                <h3>전문가 찾기</h3>
-                <p>다온파트너스 소속 보험 전문가를 만나보세요</p>
+                <h3>보험금 청구 무료대행</h3>
+                <p>서류 사진만 보내면 담당 설계사가 보험사에 접수</p>
               </div>
               <div class="gate-arrow">›</div>
             </div>
           </a>
-
-          <a href="/crm/index.html">
+          <a href="/consult">
             <div class="gate-card">
-              <div class="gate-ico">📊</div>
+              <div class="gate-ico">☂️</div>
               <div class="gate-body">
-                <h3>다온 CRM</h3>
-                <p>보유·가망고객 관리부터 문자·활동·수수료까지</p>
+                <h3>내 보장 3분 점검</h3>
+                <p>5개 질문으로 부족한 보장 확인</p>
               </div>
               <div class="gate-arrow">›</div>
             </div>
           </a>
-
-          <a href="/biz-insurance/">
+          <a href="/ask/?m=daon">
             <div class="gate-card">
-              <div class="gate-ico">🏪</div>
+              <div class="gate-ico">🛡️</div>
               <div class="gate-body">
-                <h3>사업장보험</h3>
-                <p>사업장보험 자료 게시판 · 이미지 다운로드</p>
+                <h3>보험 상담 신청</h3>
+                <p>건강·암·간병·자동차·펫·화재 한 번에</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+          <a href="https://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">
+            <div class="gate-card">
+              <div class="gate-ico">💬</div>
+              <div class="gate-body">
+                <h3>카카오톡 바로 문의</h3>
+                <p>궁금한 것을 바로 물어보세요</p>
               </div>
               <div class="gate-arrow">›</div>
             </div>
@@ -268,36 +290,36 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
         </div>
       </div>
 
-      <!-- 우측 : 고객 전용 -->
+      <!-- 사장님 -->
       <div class="col">
-        <div class="col__label">고객 전용</div>
+        <div class="col__label">사장님</div>
         <div class="gate">
-          <a href="/ask/?m=daon" id="insTrigger" style="display:block;text-decoration:none;color:inherit"><div class="gate-card">
-            <div class="gate-ico">🛡️</div>
-            <div class="gate-body">
-              <h3>개인 보험 상담문의</h3>
-              <p>건강·암·자동차·펫·화재 한 번에 상담 신청</p>
-            </div>
-            <div class="gate-arrow">›</div>
-          </div></a>
-
-          <a href="/claim/app/?m=daon">
-            <div class="gate-card">
-              <div class="gate-ico">📋</div>
-              <div class="gate-body">
-                <h3>보험금 청구</h3>
-                <p>서류 사진만 보내면 설계사가 접수 · 무료</p>
-              </div>
-              <div class="gate-arrow">›</div>
-            </div>
-          </a>
-
           <a href="/biz-d/?m=daon">
             <div class="gate-card">
               <div class="gate-ico">🏢</div>
               <div class="gate-body">
-                <h3>사업장 보험 상담문의</h3>
-                <p>우리 사업장에 필요한 보험 확인 · 무료 상담</p>
+                <h3>우리 사업장 필요한 보험 확인</h3>
+                <p>업종·상황을 고르면 확인할 보험을 바로 안내</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+          <a href="/business">
+            <div class="gate-card">
+              <div class="gate-ico">🦺</div>
+              <div class="gate-body">
+                <h3>중대재해 3분 자가진단</h3>
+                <p>직원 5명 이상 사업장 점검 항목 확인</p>
+              </div>
+              <div class="gate-arrow">›</div>
+            </div>
+          </a>
+          <a href="/safety-consult">
+            <div class="gate-card">
+              <div class="gate-ico">🏪</div>
+              <div class="gate-body">
+                <h3>사장님안심보험센터</h3>
+                <p>화재·배상책임·의무보험 상담 신청</p>
               </div>
               <div class="gate-arrow">›</div>
             </div>
@@ -306,6 +328,17 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- ③ 전문가 · 소식 -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__label">DAON EXPERTS · NEWS</div>
+    <div class="news">
+      <a href="/experts"><div class="news-card"><div class="news-ico">🔍</div><div class="news-body"><h3>전문가 찾기</h3><p>다온파트너스 소속 보험 전문가를 직접 골라 상담하세요</p></div><div class="news-arrow">›</div></div></a>
+      <a href="/news/top5/"><div class="news-card"><div class="news-ico">📰</div><div class="news-body"><h3>다온뉴스 TOP5</h3><p>꼭 알아야 할 보험·생활 소식</p></div><div class="news-arrow">›</div></div></a>
+    </div>
 
     <!-- ④ RECRUITING -->
     <div class="recruit">
@@ -313,6 +346,18 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
       <h3>전국 지역행사 · 온라인 영업팀 모집</h3>
       <p>신입 · 경력팀장 · 관리자 모집 | 현장과 온라인, 두 가지 영업 시장을 함께 엽니다</p>
       <a class="recruit-btn" href="/join1">모집 안내 보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- ⑤ 설계사 전용 -->
+<section class="sec sec--navygray" style="padding:30px 0">
+  <div class="wrap">
+    <div class="col__label">다온지사 설계사 전용</div>
+    <div class="staff">
+      <a href="/crm/index.html">📊 다온 CRM</a>
+      <a href="/biz-insurance/">🗂️ 사업장보험 자료실</a>
+      <a href="https://grow.ai.kr" target="_blank" rel="noopener">🌱 그로우사업부</a>
     </div>
   </div>
 </section>
