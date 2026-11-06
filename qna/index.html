@@ -118,8 +118,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .foot{background:var(--navy2);color:#8FA0B3;font-size:11.5px;line-height:1.8;text-align:center;padding:26px 20px 34px}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html,body{max-width:100%;overflow-x:clip}
-.appbar{position:sticky;top:0;z-index:40;height:44px;box-sizing:border-box;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;background:#CF2E38;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;justify-content:center}.appbar img{width:22px;height:22px;border-radius:5px}.appbar a{background:#fff;color:#CF2E38;font-weight:800;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
-html:not(.is-app) .top{top:44px}
+@media (max-width:420px){.top nav .sm-hide{display:none}}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -128,11 +127,10 @@ html:not(.is-app) .top{top:44px}
 <meta name="apple-mobile-web-app-title" content="보험물어봄">
 </head>
 <body>
-<div class="appbar"><img src="/assets/app-icon-red-192.png" alt=""><span>휴대폰 홈 화면에 앱으로 설치하세요</span><a href="#" class="js-app">앱 설치</a></div>
 
 <header class="top"><div class="top__in">
   <a href="/"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스 홈"></a>
-  <nav><a href="/column/">칼럼</a><a href="/#fp">설계사 고르기</a></nav>
+  <nav><a href="#" class="js-app" style="background:#CF2E38;color:#fff">앱 설치</a><a href="/column/">칼럼</a><a class="sm-hide" href="/#fp">설계사</a></nav>
 </div></header>
 
 <section class="hd"><div class="hd__in">

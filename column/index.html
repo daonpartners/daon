@@ -76,6 +76,7 @@ a{color:inherit}
 .more a{display:block;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;font-weight:700}
 .foot{background:var(--navy2);color:#8FA0B3;font-size:11.5px;line-height:1.8;text-align:center;padding:26px 20px 34px}
 html,body{max-width:100%;overflow-x:clip}
+@media (max-width:520px){.top nav .sm-hide{display:none}}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -86,7 +87,7 @@ html,body{max-width:100%;overflow-x:clip}
 <body>
 <header class="top"><div class="top__in">
   <a href="/"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스"></a>
-  <nav><a class="pk" href="/qna/">질문하기</a><a href="/#fp">설계사 고르기</a><a href="/claim/app/?m=daon">보험금 청구</a></nav>
+  <nav><a href="#" class="js-app" style="background:#CF2E38;color:#fff">앱 설치</a><a class="pk" href="/qna/">질문하기</a><a class="sm-hide" href="/#fp">설계사 고르기</a><a class="sm-hide" href="/claim/app/?m=daon">보험금 청구</a></nav>
 </div></header>
 
 <section class="hd" id="hd"><div class="hd__in">

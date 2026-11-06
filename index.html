@@ -60,7 +60,6 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .topbar a.grow-link{font-size:12.5px;color:#fff;text-decoration:none;font-weight:700;white-space:nowrap;background:var(--navy);padding:8px 14px;border-radius:999px;box-shadow:0 2px 0 var(--navy2);transition:transform .12s,box-shadow .12s}
 .topbar a.grow-link:hover{transform:translateY(1px);box-shadow:0 1px 0 var(--navy2)}
 .brand-mark{height:20px;width:auto;flex-shrink:0}
-@media (max-width:440px){.topbar__links{flex-wrap:wrap;flex-shrink:1;gap:5px}.topbar a.grow-link,.topbar a.about-link{padding:7px 11px;font-size:12px}.topbar__links .hide-sm{display:none}}
 
 /* ══ 브랜드 컬러 대비 보정 ══ */
 .topbar a.about-link{background:var(--orange);color:var(--navy);box-shadow:0 2px 0 var(--deep)}
@@ -315,8 +314,18 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .staffbar span{color:var(--steel);font-weight:600}
 .staffbar a{color:var(--navy);font-weight:700;text-decoration:none}
 html,body{max-width:100%;overflow-x:clip}
-.appbar{position:sticky;top:0;z-index:40;height:44px;box-sizing:border-box;box-shadow:0 2px 8px rgba(0,0,0,.12);display:flex;align-items:center;gap:10px;background:#CF2E38;color:#fff;font-size:13px;font-weight:700;padding:8px 16px;justify-content:center}.appbar img{width:22px;height:22px;border-radius:5px}.appbar a{background:#fff;color:#CF2E38;font-weight:800;text-decoration:none;padding:5px 12px;border-radius:999px;font-size:12.5px;white-space:nowrap}
-html:not(.is-app) .topbar-outer{top:44px}
+.topbar{position:relative}
+.topbar__m{display:none}
+.tb-app{background:#CF2E38;color:#fff;font-weight:800;font-size:13px;padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap;box-shadow:0 2px 0 #9E1F28}
+.tb-menu{font:inherit;font-weight:800;font-size:13px;background:var(--gray);color:var(--navy);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.tb-menu[aria-expanded="true"]{background:var(--navy);color:#fff}
+@media (max-width:640px){
+ .topbar{flex-wrap:nowrap;padding:10px var(--pad)}
+ .topbar__m{display:flex;gap:6px;align-items:center}
+ .topbar__links{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;flex-direction:column;gap:8px;padding:12px var(--pad) 16px;border-bottom:1px solid var(--line);box-shadow:0 14px 24px rgba(11,30,66,.12)}
+ .topbar__links.open{display:flex}
+ .topbar__links a{text-align:center;padding:13px!important;font-size:15px!important}
+}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -325,13 +334,13 @@ html:not(.is-app) .topbar-outer{top:44px}
 <meta name="apple-mobile-web-app-title" content="보험물어봄">
 </head>
 <body>
-<div class="appbar"><img src="/assets/app-icon-red-192.png" alt=""><span>휴대폰 홈 화면에 앱으로 설치하세요</span><a href="#" class="js-app">앱 설치</a></div>
 
 
 <div class="topbar-outer">
 <header class="topbar">
   <a href="/"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="90" height="26" decoding="async" style="height:26px;width:auto;display:block"></a>
-  <div class="topbar__links">
+  <div class="topbar__m"><a href="#" class="js-app tb-app">앱 설치</a><button type="button" class="tb-menu" id="tbMenu" aria-expanded="false" aria-controls="topLinks">메뉴</button></div>
+  <div class="topbar__links" id="topLinks">
     <a class="about-link" href="/qna/">질문하기</a>
     <a class="grow-link" href="/column/">칼럼</a>
     <a class="grow-link" href="/ask/?m=daon">상담 신청</a>
@@ -501,6 +510,7 @@ html:not(.is-app) .topbar-outer{top:44px}
     show(0,true); setInterval(function(){ T.forEach(clearTimeout); T=[]; k=(k+1)%DEMO.length; show(k,true); },7000);
   }
   chatDemo();
+  var tbm=$('tbMenu'); if(tbm) tbm.addEventListener('click',function(){ var o=$('topLinks').classList.toggle('open'); tbm.setAttribute('aria-expanded',o); tbm.textContent=o?'닫기':'메뉴'; });
   function ticker(){}
   /* 설계사 (작게) */
   function exCard(p){
