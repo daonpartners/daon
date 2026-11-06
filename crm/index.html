@@ -278,6 +278,29 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   @page{size:A4 landscape;margin:12mm}
 }
 
+/* 부속약정서 */
+.ag-paper{background:#fff;border:1px solid var(--line);border-radius:10px;padding:28px 30px;color:#111;font-size:13.5px;line-height:1.65}
+.ag-paper h1{text-align:center;font-size:20px;margin:0 0 22px;letter-spacing:-.3px}
+.ag-paper h3{font-size:14.5px;margin:18px 0 6px}
+.ag-paper .body{white-space:pre-wrap;word-break:keep-all}
+.ag-paper table{width:100%;border-collapse:collapse;margin:6px 0 8px;font-size:13px}
+.ag-paper th,.ag-paper td{border:1px solid #9AA1AC;padding:6px 8px;text-align:center}
+.ag-paper th{background:#F1F3F6;font-weight:700}
+.ag-paper .date{text-align:center;margin:26px 0 18px;font-weight:600}
+.ag-sig{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ag-sig .box{border:1px solid var(--line);border-radius:8px;padding:12px 14px;min-height:120px}
+.ag-sig .box b{display:block;margin-bottom:6px}
+.ag-sig .box .row{font-size:12.5px;color:#333}
+.ag-sig img{height:64px;max-width:100%;display:block;margin-top:4px}
+.ag-sig .none{color:var(--ink3);font-size:12px;margin-top:8px}
+.sigpad{border:1px dashed #B9C0CB;border-radius:8px;background:#FCFCFD;touch-action:none;width:100%;height:150px;display:block;cursor:crosshair}
+.ag-row{display:grid;grid-template-columns:1fr 1fr 1fr 34px;gap:6px;margin-bottom:6px}
+.ag-sec{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.ag-sec .h{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.ag-step{font-size:12px;font-weight:700;color:var(--acc-dk);margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}
+.ag-step:first-child{margin-top:0;padding-top:0;border-top:0}
+@media (max-width:860px){ .ag-paper{padding:18px 14px} .ag-sig{grid-template-columns:1fr} .ag-row{grid-template-columns:1fr 1fr 1fr 30px} }
+
 /* 반응형 */
 @media (max-width:1100px){
   .sms-g,.fee-g,.cal-g{grid-template-columns:1fr}
@@ -322,7 +345,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-10-13 18:50</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 14:10</div></div>
   </aside>
 
   <div class="main">
@@ -491,6 +514,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
         <div class="card"><div class="card-h"><h3 id="dashTotH">이번 달 지사 실적</h3></div><div class="card-b" id="dashTotal"></div></div>
         <div class="card"><div class="card-h"><h3 id="dashTeamH">설계사별 실적</h3></div><div class="card-b" id="dashTeam"></div></div>
       </div>
+    </section>
+
+    <!-- 부속약정서 -->
+    <section class="page view hide" id="v-agree">
+      <div class="ph"><div><h2>부속약정서</h2><div class="sub" id="agSub">지사장이 발행·서명하면 대상 설계사가 로그인해서 확인·서명합니다. 체결된 약정서는 양쪽 모두 열람·인쇄할 수 있습니다.</div></div>
+        <div style="display:flex;gap:8px" id="agOwnerBtns"><button class="btn" onclick="openAgTpl()">기본 양식 수정</button><button class="btn pri" onclick="openAgIssue()">+ 약정서 발행</button></div></div>
+      <div class="card"><div class="toolbar"><div class="chips" id="agFilter"></div><div class="spacer"></div><span class="muted" id="agCount"></span></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tAg"></table></div></div>
     </section>
 
     <!-- 수수료 설정 (관리자) -->
@@ -682,6 +713,21 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn danger hide" id="fcDelBtn" onclick="delFc()">설계사 삭제</button><div class="spacer"></div><button class="btn" onclick="closeFcForm()">취소</button><button class="btn pri" id="fcSaveBtn" onclick="saveFc()">저장</button></div>
 </div>
 
+<!-- 부속약정서 발행·양식 창 -->
+<div class="dim modal-dim hide" id="agDim" onclick="closeAg()"></div>
+<div class="modal hide" id="agModal" style="width:min(860px,96vw)">
+  <div class="drawer-h"><h3 id="agT">약정서 발행</h3><button class="x" onclick="closeAg()">×</button></div>
+  <div class="drawer-b" id="agBody"></div>
+  <div class="drawer-f" id="agFoot"></div>
+</div>
+<!-- 부속약정서 보기·서명 창 -->
+<div class="dim modal-dim hide" id="agvDim" onclick="closeAgView()"></div>
+<div class="modal hide" id="agvModal" style="width:min(860px,96vw)">
+  <div class="drawer-h"><h3 id="agvT">약정서</h3><span id="agvSt"></span><button class="x" onclick="closeAgView()">×</button></div>
+  <div class="drawer-b" id="agvBody" style="background:#F4F5F7"></div>
+  <div class="drawer-f" id="agvFoot"></div>
+</div>
+
 <!-- DB 구분 일괄 변경 창 -->
 <div class="dim modal-dim hide" id="dbDim" onclick="closeDbBulk()"></div>
 <div class="modal hide" id="dbModal" style="width:min(560px,96vw)">
@@ -789,9 +835,10 @@ var ICON = {
   recruit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.4"/><path d="M17 13v8M13 17h8"/></svg>',
   dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
+  agree:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h4M14 18c1-1.5 2-1.5 3 0"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['agree','부속약정서'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
 /* 메뉴별 권한: 지사장 전용 / 관리자(지점장·사업단장·지사장) */
 var MY_RANK='';
 function isManager(){ return isOwner() || ['지점장','사업단장','지사장'].indexOf(MY_RANK)>=0; }
@@ -853,12 +900,12 @@ function boot(){
   var d=new Date(today()); $('todayStr').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')';
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
-  loadAll(); loadTodos(); loadFee(); loadTpl();
+  loadAll(); loadTodos(); loadFee(); loadTpl(); agBadge();
   loadOrg().then(function(){ var me=ORG.find(function(x){return x.name===ME.name;}); MY_RANK=me?me.rank:''; drawNav(); document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===VIEW); }); var hh=(location.hash||'').slice(1); if(hh==='recruit'&&canView('recruit')&&VIEW!=='recruit') go('recruit'); });
   var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && canView(h);})) go(h);
 }
 function drawNav(){
-  var cnt={owner:'stO',prospect:'stP'};
+  var cnt={owner:'stO',prospect:'stP',agree:'stAg'};
   var NV=NAV.filter(function(n){ return canView(n[0]); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
@@ -875,6 +922,7 @@ function go(v){
   if(v==='fee') loadFeeList();
   if(v==='feeset') loadFeeSet(); if(v==='dash') loadDash(); if(v==='recruit') loadRec();
   if(v==='me') loadMyProfile();
+  if(v==='agree') loadAgree();
   window.scrollTo(0,0);
 }
 
@@ -2864,6 +2912,242 @@ function editTodo(id,sc){
 /* ───────── 시작 ───────── */
 document.addEventListener('keydown',function(e){ if(e.key==='Escape'){ closeCtrForm(); closeCust(); } });
 (function(){ try{ var s=sessionStorage.getItem('crmMe'); if(s){ ME=JSON.parse(s); if(ME&&ME.name){ boot(); return; } } }catch(e){} })();
+
+/* ───────── 부속약정서 (발행·서명·보관) ─────────
+   지사장: 기본 양식 관리, 대상자 선택 → 수수료·세부특약 직접 입력 → 서명 → 발행 / 서명 전 폐기
+   대상 설계사·관리자: 본인 약정서 확인 → 생년월일·주소 입력 → 서명 → 체결 */
+var AG_API='https://daonpartners.app.n8n.cloud/webhook/daon-agree';
+var AG_LIST=[], AG_OWNER=false, AG_F='전체', AG_TPL=null, AG_TPL_SIGN='', AG_TPL_SAVED=false, AG_DRAFT=null, AG_MODE='issue', AG_CUR=null, AG_PADS={};
+function agApi(action,p){ if(!ME||!ME.code) return Promise.resolve({ok:false,error:'보안을 위해 로그아웃 후 다시 로그인해 주세요.'}); return fetch(AG_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({action:action,by:ME.code,ua:navigator.userAgent},p||{}))}).then(function(r){return r.json();}); }
+/* 기본 양식: 첨부 원플러스지사 지점장(TFA) 부속 약정서 구성 기준. 회사명만 미래에셋금융서비스·그로우사업부로 바꿈 — 수치는 지사장이 확인 후 [기본 양식 수정]에서 저장 */
+function agDefaultTpl(){
+  return {
+    feeHead:['구분','구간','수수료율'],
+    fees:[['장기','상관없이','']],
+    feeNotes:'',
+    sections:[
+      {t:'모든 타입 공통 사항', b:'(1) 생명보험, 손해보험 장기보험, 일반보험 수수료 지급률표에 따라 지급\n(2) 수수료 지급률은 정산 기준 신계약 보험료에 따라 익월 반영하고 매월 달리하여 지급\n(3) 손해보험 수금수수료 : 그로우사업부 지급률 대비 50% 지급\n(4) 수수료 타입은 위촉 월 기준 연 1회 변경 가능\n(5) 장기보험 직전 6개월 신계약 합산 실적이 30만원 미만이고 신계약 체결 2건 미만인 경우 장기 비가동자로 분류하며 수수료율 70%로 변경\n(6) 장기 비가동자는 당월 신계약 30만원 이상 또는 당월 2건 이상 체결 시 정상 부활\n(7) 장기보험 1년 이상 미가동자 강제 해촉 가능\n(8) 개인 시상은 그로우사업부 시상안에 따라서 지급\n(9) 해촉 후 잔여수수료 미지급, 계약 이관은 불가\n(10) 이외 수수료 관련 내용은 미래에셋금융서비스 규정에 따른다'},
+      {t:'자동차, 일반보험 지급률 기준', b:'1) 자동차보험\n  - 삼성, 현대, DB, KB, 메리츠, 한화, 하나 : 12%\n  - 흥국, MG : 6%\n  - 롯데 : 0%\n  * 상기 수수료는 그로우사업부 수수료율에 따라 변동될 수 있음\n  * 사업용 및 기타물건은 그로우사업부 자동차보험 지급률에 따라 달라짐\n2) 일반보험 : 상품별 수수료율에 따라 모집자에게 지급'},
+      {t:'평생증원 수수료', b:'직도입 인원 1인당 10만원\n1) 피도입자 장기보험 신계약 업적 30만원 이상 시 지급\n2) 계약의 실효, 철회, 해지 발생으로 업적 기준 미달 시 환수\n3) 5명 이상 도입 시 별도 조직으로 묶어서 지점 단위로 승격 가능'},
+      {t:'보증보험', b:'1) 기본 2,000만원\n2) 이행보증 또는 부족분 기타 채권 가능 (예금질권, 근저당설정 등)\n3) 채권 추가 기준은 회사 규정에 따름\n4) 지점 단위 승격 시 지점장 기준에 따른다'}
+    ],
+    closing:'이외 모든 사항은 미래에셋금융서비스 규정에 따른다.'
+  };
+}
+function agClone(o){ return JSON.parse(JSON.stringify(o)); }
+function agTplNow(){ return AG_TPL ? agClone(AG_TPL) : agDefaultTpl(); }
+function agStTag(s){ var m={'서명대기':'y','완료':'g','폐기':''}; return '<span class="tag '+(m[s]||'')+'">'+esc(s==='완료'?'체결 완료':s==='서명대기'?'설계사 서명 대기':s)+'</span>'; }
+function agBadge(){ agApi('list').then(function(r){ if(!r||!r.ok) return; AG_LIST=r.items||[]; AG_OWNER=!!r.owner; agCountBadge(); }).catch(function(){}); }
+function agCountBadge(){
+  var n=AG_OWNER?0:AG_LIST.filter(function(a){return a.status==='서명대기';}).length;
+  var el=$('stAg'); if(el) el.textContent=n?n:'';
+  if(n && !agCountBadge._t){ agCountBadge._t=1; toast('서명할 부속약정서가 '+n+'건 있습니다'); }
+}
+function loadAgree(){
+  $('tAg').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
+  $('agOwnerBtns').classList.toggle('hide', !isOwner());
+  agApi('list').then(function(r){
+    if(!r.ok){ $('tAg').innerHTML='<tbody><tr><td class="empty">'+esc(r.error||'불러오지 못했습니다')+'</td></tr></tbody>'; return; }
+    AG_LIST=r.items||[]; AG_OWNER=!!r.owner; $('agOwnerBtns').classList.toggle('hide', !AG_OWNER);
+    $('agSub').textContent=AG_OWNER?'지사장이 발행·서명하면 대상 설계사가 로그인해서 확인·서명합니다. 체결된 약정서는 양쪽 모두 열람·인쇄할 수 있습니다.':'지사장이 발행한 내 부속약정서입니다. 내용을 확인하고 서명하면 체결됩니다.';
+    agCountBadge(); renderAgList();
+  }).catch(function(){ $('tAg').innerHTML='<tbody><tr><td class="empty">연결에 실패했습니다</td></tr></tbody>'; });
+}
+function renderAgList(){
+  var fs=['전체','서명대기','완료','폐기'];
+  $('agFilter').innerHTML=fs.map(function(f){ return '<button class="chip'+(AG_F===f?' on':'')+'" onclick="AG_F=\''+f+'\';renderAgList()">'+(f==='서명대기'?'서명 대기':f==='완료'?'체결 완료':f)+'</button>'; }).join('');
+  var list=AG_LIST.filter(function(a){ return AG_F==='전체' || a.status===AG_F; });
+  $('agCount').textContent=list.length+'건';
+  $('tAg').innerHTML='<thead><tr><th>대상</th><th>약정서</th><th>수수료 타입</th><th>상태</th><th>발행일</th><th>체결일</th><th></th></tr></thead><tbody>'
+    +(list.length?list.map(function(a){
+      return '<tr><td class="nm">'+esc(a.fcName)+'</td><td>'+esc(a.title)+'</td><td>'+esc(a.ftype||'-')+'</td><td>'+agStTag(a.status)+'</td><td class="nw">'+esc(String(a.issuedAt||'').slice(0,10))+'</td><td class="nw">'+esc(String(a.signedAt||'').slice(0,10)||'-')+'</td>'
+        +'<td class="nw"><button class="btn sm '+(!AG_OWNER&&a.status==='서명대기'?'pri':'')+'" onclick="openAgView(\''+a.aid+'\')">'+(!AG_OWNER&&a.status==='서명대기'?'확인·서명':'보기')+'</button>'
+        +(AG_OWNER&&a.status!=='완료'?' <button class="btn sm danger" onclick="voidAg(\''+a.aid+'\',\''+a.status+'\')">'+(a.status==='폐기'?'목록에서 삭제':'폐기')+'</button>':'')+'</td></tr>';
+    }).join(''):'<tr><td colspan="7" class="empty">'+(AG_OWNER?'발행한 약정서가 없습니다. [+ 약정서 발행]으로 시작하세요.':'받은 약정서가 없습니다.')+'</td></tr>')+'</tbody>';
+}
+function voidAg(aid,st){
+  var msg=st==='폐기'?'폐기된 약정서를 목록에서 삭제합니다. 계속할까요?':'이 약정서를 폐기합니다. 대상자는 더 이상 서명할 수 없습니다. 계속할까요?';
+  if(!confirm(msg)) return;
+  agApi('void',{aid:aid}).then(function(r){ if(r.ok){ toast(st==='폐기'?'삭제했어요':'폐기했어요'); loadAgree(); } else toast(r.error||'처리하지 못했습니다',true); }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+
+/* 서명 패드 */
+function sigPad(id){
+  var c=$(id); if(!c) return; var r=c.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+  c.width=Math.round(r.width*dpr); c.height=Math.round(r.height*dpr);
+  var x=c.getContext('2d'); x.scale(dpr,dpr); x.lineWidth=2.4; x.lineCap='round'; x.lineJoin='round'; x.strokeStyle='#111';
+  var pad={c:c, used:false, down:false};
+  function pt(e){ var b=c.getBoundingClientRect(); return [e.clientX-b.left, e.clientY-b.top]; }
+  c.onpointerdown=function(e){ e.preventDefault(); c.setPointerCapture&&c.setPointerCapture(e.pointerId); pad.down=true; var p=pt(e); x.beginPath(); x.moveTo(p[0],p[1]); x.lineTo(p[0]+.1,p[1]+.1); x.stroke(); pad.used=true; };
+  c.onpointermove=function(e){ if(!pad.down) return; e.preventDefault(); var p=pt(e); x.lineTo(p[0],p[1]); x.stroke(); };
+  c.onpointerup=c.onpointercancel=function(){ pad.down=false; };
+  AG_PADS[id]=pad;
+}
+function sigClear(id){ var p=AG_PADS[id]; if(!p) return; sigPad(id); }
+function sigImg(id){
+  var p=AG_PADS[id]; if(!p||!p.used) return '';
+  var c=p.c, w=420, h=Math.round(w*c.height/c.width), o=document.createElement('canvas'); o.width=w; o.height=h;
+  o.getContext('2d').drawImage(c,0,0,w,h); return o.toDataURL('image/png');
+}
+function sigBox(id,label){ return '<div class="fld"><div class="sec-t" style="margin:0 0 6px"><h4>'+label+'</h4><button type="button" class="btn sm" onclick="sigClear(\''+id+'\')">지우기</button></div><canvas class="sigpad" id="'+id+'"></canvas><div class="muted" style="font-size:12px;margin-top:4px">손가락이나 마우스로 서명하세요.</div></div>'; }
+
+/* 약정서 본문 그리기 (화면·인쇄 공용) */
+function agHtml(d, a){
+  a=a||{}; var n=1, h='<h1>'+esc(d.title||'부속 약정서')+'</h1>';
+  h+='<h3>'+(n++)+'. 수수료'+(d.ftype?' — '+esc(d.ftype):'')+'</h3>';
+  var fh=d.feeHead||['구분','구간','수수료율'], fr=(d.fees||[]).filter(function(r){ return r.some(function(v){return String(v||'').trim();}); });
+  if(fr.length) h+='<table><thead><tr>'+fh.map(function(x){return '<th>'+esc(x)+'</th>';}).join('')+'</tr></thead><tbody>'+fr.map(function(r){ return '<tr>'+fh.map(function(_,i){return '<td>'+esc(r[i]||'')+'</td>';}).join('')+'</tr>'; }).join('')+'</tbody></table>';
+  if(d.feeNotes) h+='<div class="body">'+esc(d.feeNotes)+'</div>';
+  (d.sections||[]).forEach(function(s){ if(!String(s.t||'').trim() && !String(s.b||'').trim()) return; h+='<h3>'+(n++)+'. '+esc(s.t||'')+'</h3><div class="body">'+esc(s.b||'')+'</div>'; });
+  var sp=(d.specials||[]).filter(function(x){return String(x||'').trim();});
+  if(sp.length) h+='<h3>'+(n++)+'. 세부 특약</h3><div class="body">'+sp.map(function(x,i){ return (i+1)+') '+esc(x); }).join('\n')+'</div>';
+  if(d.closing) h+='<h3>'+(n++)+'. 기타</h3><div class="body">'+esc(d.closing)+'</div>';
+  var dt=String(d.date||''); h+='<div class="date">'+(dt?dt.slice(0,4)+'년 '+(+dt.slice(5,7))+'월 '+(+dt.slice(8,10))+'일':'20&nbsp;&nbsp;&nbsp;&nbsp;년&nbsp;&nbsp;&nbsp;&nbsp;월&nbsp;&nbsp;&nbsp;&nbsp;일')+'</div>';
+  var fi=a.fcInfo||{}, tg=d.target||{}, ow=d.owner||{};
+  h+='<div class="ag-sig"><div class="box"><b>&lt;'+esc(ow.title||'지사장')+'&gt;</b><div class="row">'+esc(ow.org||'')+'</div><div class="row">'+esc(ow.title||'지사장')+' : '+esc(ow.name||'')+' (인/서명)</div>'+(a.ownerSign?'<img src="'+a.ownerSign+'" alt="지사장 서명">':'<div class="none">서명 전</div>')+'</div>'
+    +'<div class="box"><b>&lt;'+esc(tg.rank||'설계사')+'&gt;</b><div class="row">이름 : '+esc(tg.name||'')+' (인/서명)</div><div class="row">생년월일 : '+esc(fi.birth||'')+'</div><div class="row">주소 : '+esc(fi.addr||'')+'</div>'+(d.ftype?'<div class="row">수수료 타입 : '+esc(d.ftype)+'</div>':'')+(a.fcSign?'<img src="'+a.fcSign+'" alt="설계사 서명">':'<div class="none">서명 전</div>')+'</div></div>';
+  return h;
+}
+
+/* 지사장: 기본 양식 · 발행 */
+function agLoadTpl(){
+  return agApi('tplGet').then(function(r){ if(r&&r.ok){ AG_TPL=r.doc||null; AG_TPL_SIGN=r.ownerSign||''; AG_TPL_SAVED=!!r.doc; } return AG_TPL; });
+}
+function openAgTpl(){ agLoadTpl().then(function(){ AG_MODE='tpl'; AG_DRAFT=agTplNow(); drawAgForm(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function openAgIssue(){
+  Promise.all([agLoadTpl(), loadOrg(true)]).then(function(){
+    AG_MODE='issue'; var t=agTplNow();
+    AG_DRAFT=Object.assign(t,{targetId:'', ftype:'', specials:[''], date:today(), title:'', owner:{name:ME.name, title:'지사장', org:'미래에셋금융서비스 그로우사업부 다온지사'}});
+    drawAgForm();
+  }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+function agCollect(){
+  var d=AG_DRAFT; if(!d) return d;
+  if($('agFtype')) d.ftype=$('agFtype').value.trim();
+  if($('agTitle')) d.title=$('agTitle').value.trim();
+  if($('agDate')) d.date=$('agDate').value;
+  if($('agTarget')) d.targetId=$('agTarget').value;
+  d.feeHead=[0,1,2].map(function(i){ var e=$('agFh'+i); return e?e.value.trim():(d.feeHead||[])[i]; });
+  d.fees=(d.fees||[]).map(function(r,i){ return [0,1,2].map(function(j){ var e=$('agF'+i+'_'+j); return e?e.value:r[j]; }); });
+  if($('agFeeNotes')) d.feeNotes=$('agFeeNotes').value;
+  d.sections=(d.sections||[]).map(function(s,i){ var t=$('agSt'+i), b=$('agSb'+i); return {t:t?t.value:s.t, b:b?b.value:s.b}; });
+  if(d.specials) d.specials=d.specials.map(function(s,i){ var e=$('agSp'+i); return e?e.value:s; });
+  if($('agClosing')) d.closing=$('agClosing').value;
+  return d;
+}
+function agEdit(fn){ agCollect(); fn(AG_DRAFT); drawAgForm(true); }
+function drawAgForm(keep){
+  var d=AG_DRAFT, iss=AG_MODE==='issue', st=$('agBody').scrollTop, keepSig=($('agOwnerPad')&&sigImg('agOwnerPad'))||'';
+  $('agT').textContent=iss?'부속약정서 발행':'부속약정서 기본 양식';
+  var h='';
+  if(!AG_TPL_SAVED) h+='<div class="warn" style="margin:0 0 14px">아직 저장된 기본 양식이 없어 <b>첨부하신 원플러스지사 약정서 문구</b>를 바탕으로 한 초안이 들어 있습니다. 회사명은 미래에셋금융서비스·그로우사업부로 바꿨고, 수치(수금수수료 50%, 비가동 기준, 자동차 지급률, 증원수수료, 보증보험 금액 등)는 원플러스 기준 그대로입니다. 다온지사 기준으로 확인 후 [기본 양식 수정]에서 저장하세요.</div>';
+  if(iss){
+    var tg=ORG.filter(function(x){ return x.id!==ORG_ME && x.active!==false; }).sort(function(a,b){ return RANKS.indexOf(b.rank)-RANKS.indexOf(a.rank)||a.name.localeCompare(b.name,'ko'); });
+    h+='<div class="ag-step">① 대상자</div><div class="g2"><div class="fld"><label class="lbl">대상 설계사·관리자 *</label><select class="sel" id="agTarget" onchange="agEdit(function(d){ var x=orgById(d.targetId); if(x&&!d._titleEdited) d.title=\'다온지사 \'+(x.rank||\'설계사\')+\' 부속 약정서\'; })"><option value="">선택하세요</option>'
+      +tg.map(function(x){ return '<option value="'+x.id+'"'+(d.targetId===x.id?' selected':'')+'>'+esc(x.name)+' ('+esc(x.rank||'설계사')+')</option>'; }).join('')+'</select></div>'
+      +'<div class="fld"><label class="lbl">약정일</label><input class="inp" type="date" id="agDate" value="'+esc(d.date||'')+'"></div></div>'
+      +'<div class="fld"><label class="lbl">약정서 제목</label><input class="inp" id="agTitle" value="'+esc(d.title||'')+'" placeholder="예) 다온지사 지점장 부속 약정서" oninput="AG_DRAFT._titleEdited=true"></div>';
+  }
+  h+='<div class="ag-step">'+(iss?'② ':'')+'수수료</div>';
+  if(iss) h+='<div class="fld"><label class="lbl">수수료 타입 이름</label><input class="inp" id="agFtype" value="'+esc(d.ftype||'')+'" placeholder="예) A타입(1인GA타입)"></div>';
+  h+='<div class="ag-row" style="font-size:12px;font-weight:600;color:var(--ink2)">'+[0,1,2].map(function(i){ return '<input class="inp" id="agFh'+i+'" value="'+esc((d.feeHead||[])[i]||'')+'" title="표 머리글">'; }).join('')+'<span></span></div>'
+    +(d.fees||[]).map(function(r,i){ return '<div class="ag-row">'+[0,1,2].map(function(j){ return '<input class="inp" id="agF'+i+'_'+j+'" value="'+esc(r[j]||'')+'">'; }).join('')+'<button type="button" class="btn sm danger" onclick="agEdit(function(d){d.fees.splice('+i+',1);})" title="행 삭제">×</button></div>'; }).join('')
+    +'<button type="button" class="btn sm" onclick="agEdit(function(d){d.fees.push([\'\',\'\',\'\']);})">+ 수수료 행 추가</button>'
+    +'<div class="fld" style="margin-top:10px"><label class="lbl">수수료 관련 안내 (사무실 비용·차감 등)</label><textarea class="ta" rows="4" id="agFeeNotes" placeholder="예) * 사무실 이용 시 월 20만원(총무사무비 포함) 매월 수수료에서 차감함에 동의한다.">'+esc(d.feeNotes||'')+'</textarea></div>';
+  h+='<div class="ag-step">'+(iss?'③ ':'')+'기본 조항 <span class="muted" style="font-weight:500">'+(iss?'· 기본 양식에서 불러옴, 이 약정서에만 고쳐 쓸 수 있음':'· 발행할 때마다 이 내용이 기본으로 들어갑니다')+'</span></div>'
+    +(d.sections||[]).map(function(s,i){ return '<div class="ag-sec"><div class="h"><span class="muted" style="font-size:12px;width:22px">'+(i+2)+'.</span><input class="inp" id="agSt'+i+'" value="'+esc(s.t||'')+'" placeholder="조항 제목">'
+      +(i>0?'<button type="button" class="btn sm" onclick="agEdit(function(d){var t=d.sections['+i+'];d.sections['+i+']=d.sections['+(i-1)+'];d.sections['+(i-1)+']=t;})" title="위로">↑</button>':'')
+      +'<button type="button" class="btn sm danger" onclick="if(confirm(\'이 조항을 지울까요?\'))agEdit(function(d){d.sections.splice('+i+',1);})">삭제</button></div><textarea class="ta" rows="'+Math.min(12,Math.max(3,String(s.b||'').split('\n').length+1))+'" id="agSb'+i+'">'+esc(s.b||'')+'</textarea></div>'; }).join('')
+    +'<button type="button" class="btn sm" onclick="agEdit(function(d){d.sections.push({t:\'\',b:\'\'});})">+ 조항 추가</button>'
+    +'<div class="fld" style="margin-top:10px"><label class="lbl">마지막 문구</label><input class="inp" id="agClosing" value="'+esc(d.closing||'')+'"></div>';
+  if(iss){
+    h+='<div class="ag-step">④ 세부 특약 <span class="muted" style="font-weight:500">· 이 사람에게만 적용되는 조건</span></div>'
+      +(d.specials||[]).map(function(s,i){ return '<div style="display:flex;gap:6px;margin-bottom:6px"><span class="muted" style="width:22px;padding-top:9px;font-size:12px">'+(i+1)+')</span><textarea class="ta" rows="2" id="agSp'+i+'" placeholder="예) 위촉 후 6개월간 장기 수수료율 90% 적용">'+esc(s||'')+'</textarea><button type="button" class="btn sm danger" onclick="agEdit(function(d){d.specials.splice('+i+',1);})">×</button></div>'; }).join('')
+      +'<button type="button" class="btn sm" onclick="agEdit(function(d){d.specials.push(\'\');})">+ 특약 추가</button>';
+    h+='<div class="ag-step">⑤ 지사장 서명</div>'
+      +(AG_TPL_SIGN?'<div class="fld"><label style="display:flex;gap:8px;align-items:center;cursor:pointer"><input type="checkbox" id="agUseSaved" '+(d._useSaved!==false?'checked':'')+' onchange="agEdit(function(d){d._useSaved=$(\'agUseSaved\').checked;})" style="accent-color:var(--acc)"> 저장해 둔 서명 사용</label>'+(d._useSaved!==false?'<img src="'+AG_TPL_SIGN+'" style="height:60px;margin-top:6px;border:1px solid var(--line);border-radius:6px">':'')+'</div>':'')
+      +((!AG_TPL_SIGN||d._useSaved===false)?sigBox('agOwnerPad','서명')+'<label style="display:flex;gap:8px;align-items:center;cursor:pointer;font-size:13px"><input type="checkbox" id="agKeepSign" style="accent-color:var(--acc)"> 이 서명을 다음 발행에도 쓰도록 저장</label>':'');
+  }
+  $('agBody').innerHTML=h;
+  $('agFoot').innerHTML=iss
+    ?'<button class="btn" onclick="agPreview()">미리보기</button><div class="spacer"></div><button class="btn" onclick="closeAg()">취소</button><button class="btn pri" id="agGo" onclick="issueAg()">서명하고 발행</button>'
+    :'<button class="btn danger" onclick="if(confirm(\'첨부 약정서 기준 초안으로 되돌릴까요? (저장 전까지는 바뀌지 않습니다)\')){AG_DRAFT=agDefaultTpl();drawAgForm(true);}">초안으로 되돌리기</button><div class="spacer"></div><button class="btn" onclick="closeAg()">취소</button><button class="btn pri" id="agGo" onclick="saveAgTpl()">기본 양식 저장</button>';
+  $('agDim').classList.remove('hide'); $('agModal').classList.remove('hide');
+  if(keep) $('agBody').scrollTop=st; else $('agBody').scrollTop=0;
+  if($('agOwnerPad')) setTimeout(function(){ sigPad('agOwnerPad'); if(keepSig){ var im=new Image(); im.onload=function(){ var p=AG_PADS.agOwnerPad, c=p.c, r=c.getBoundingClientRect(); c.getContext('2d').drawImage(im,0,0,r.width,r.height); p.used=true; }; im.src=keepSig; } },30);
+}
+function closeAg(){ $('agDim').classList.add('hide'); $('agModal').classList.add('hide'); }
+function agTplOf(d){ return {feeHead:d.feeHead, fees:d.fees, feeNotes:d.feeNotes, sections:d.sections, closing:d.closing}; }
+function saveAgTpl(){
+  var d=agCollect(), b=$('agGo'); b.disabled=true; b.textContent='저장 중…';
+  agApi('tplSave',{doc:agTplOf(d)}).then(function(r){ b.disabled=false; b.textContent='기본 양식 저장';
+    if(r.ok){ AG_TPL=agTplOf(d); AG_TPL_SAVED=true; toast('기본 양식을 저장했어요'); closeAg(); } else toast(r.error||'저장하지 못했습니다',true);
+  }).catch(function(){ b.disabled=false; b.textContent='기본 양식 저장'; toast('연결에 실패했습니다',true); });
+}
+function agBuildDoc(){
+  var d=agCollect(), x=orgById(d.targetId);
+  return {title:d.title||('다온지사 '+((x&&x.rank)||'설계사')+' 부속 약정서'), ftype:d.ftype, feeHead:d.feeHead, fees:d.fees, feeNotes:d.feeNotes, sections:d.sections, specials:d.specials, closing:d.closing, date:d.date,
+    target:{id:d.targetId, name:x?x.name:'', rank:(x&&x.rank)||'설계사'}, owner:d.owner};
+}
+function agOwnerSignNow(){ var d=AG_DRAFT; if(AG_TPL_SIGN && d._useSaved!==false) return AG_TPL_SIGN; return sigImg('agOwnerPad'); }
+function agPreview(){ var doc=agBuildDoc(); showAgDoc({doc:doc, status:'미리보기', ownerSign:agOwnerSignNow()}); }
+function issueAg(){
+  var doc=agBuildDoc(), sign=agOwnerSignNow();
+  if(!doc.target.id){ toast('대상자를 선택하세요',true); return; }
+  if(!(doc.fees||[]).some(function(r){ return String(r[2]||'').trim(); }) && !confirm('수수료율이 비어 있습니다. 그대로 발행할까요?')) return;
+  if(!sign){ toast('지사장 서명을 해 주세요',true); return; }
+  if(!confirm(doc.target.name+'님에게 약정서를 발행합니다.\n발행 후에는 내용을 고칠 수 없고, 고치려면 폐기 후 새로 발행해야 합니다.')) return;
+  var keep=$('agKeepSign')&&$('agKeepSign').checked, b=$('agGo'); b.disabled=true; b.textContent='발행 중…';
+  agApi('issue',{fcId:doc.target.id, doc:doc, ownerSign:sign}).then(function(r){
+    b.disabled=false; b.textContent='서명하고 발행';
+    if(!r.ok){ toast(r.error||'발행하지 못했습니다',true); return; }
+    toast(doc.target.name+'님에게 발행했어요. 설계사가 로그인하면 서명할 수 있습니다.'); closeAg(); loadAgree();
+    if(keep) agApi('tplSave',{doc:AG_TPL||agTplOf(AG_DRAFT), ownerSign:sign}).then(function(x){ if(x.ok){ AG_TPL_SIGN=sign; if(!AG_TPL){ AG_TPL=agTplOf(AG_DRAFT); AG_TPL_SAVED=true; } } });
+  }).catch(function(){ b.disabled=false; b.textContent='서명하고 발행'; toast('연결에 실패했습니다',true); });
+}
+
+/* 보기 · 서명 */
+function openAgView(aid){
+  agApi('get',{aid:aid}).then(function(r){ if(!r.ok){ toast(r.error||'불러오지 못했습니다',true); return; } showAgDoc(r.item); }).catch(function(){ toast('연결에 실패했습니다',true); });
+}
+function showAgDoc(a){
+  AG_CUR=a; var d=a.doc||{}, canSign=!AG_OWNER && a.status==='서명대기' && a.aid;
+  $('agvT').textContent=d.title||'부속 약정서'; $('agvSt').innerHTML=a.status==='미리보기'?'<span class="tag b">미리보기</span>':agStTag(a.status);
+  var h='<div class="ag-paper" id="agPaper">'+agHtml(d,a)+'</div>';
+  if(canSign){
+    h+='<div class="card" style="margin-top:14px"><div class="card-b" style="padding:16px">'
+      +'<div class="sec-t"><h4>내 정보 입력 · 서명</h4></div>'
+      +'<div class="g2"><div class="fld"><label class="lbl">생년월일 *</label><input class="inp" id="agvBirth" placeholder="예) 1985-03-12"></div><div class="fld"><label class="lbl">연락처</label><input class="inp" id="agvPhone" value="'+esc(fmtPhone(ME.phone||''))+'" oninput="this.value=fmtPhone(this.value)"></div></div>'
+      +'<div class="fld"><label class="lbl">주소 *</label><input class="inp" id="agvAddr"></div>'
+      +sigBox('agFcPad','서명 *')
+      +'<label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer;font-size:13.5px"><input type="checkbox" id="agvAgree" style="accent-color:var(--acc);margin-top:3px"> 위 약정서의 수수료·공통 사항·세부 특약을 모두 읽고 확인했으며, 이에 동의하여 서명합니다.</label>'
+      +'</div></div>';
+  }
+  if(a.log&&a.log.length&&AG_OWNER) h+='<div class="muted" style="font-size:12px;margin-top:10px">'+a.log.map(function(l){ return esc(l.at)+' · '+esc(l.by)+' · '+esc(l.what); }).join('<br>')+'</div>';
+  $('agvBody').innerHTML=h;
+  $('agvFoot').innerHTML='<button class="btn" onclick="printAg()">인쇄 · PDF 저장</button><div class="spacer"></div><button class="btn" onclick="closeAgView()">닫기</button>'+(canSign?'<button class="btn pri" id="agvGo" onclick="signAg()">서명하고 체결</button>':'');
+  $('agvDim').classList.remove('hide'); $('agvModal').classList.remove('hide'); $('agvBody').scrollTop=0;
+  if(canSign) setTimeout(function(){ sigPad('agFcPad'); },30);
+}
+function closeAgView(){ $('agvDim').classList.add('hide'); $('agvModal').classList.add('hide'); }
+function signAg(){
+  var a=AG_CUR; if(!a) return;
+  var info={birth:$('agvBirth').value.trim(), addr:$('agvAddr').value.trim(), phone:$('agvPhone').value.trim()}, sign=sigImg('agFcPad');
+  if(!info.birth||!info.addr){ toast('생년월일과 주소를 입력하세요',true); return; }
+  if(!sign){ toast('서명을 해 주세요',true); return; }
+  if(!$('agvAgree').checked){ toast('내용 확인·동의에 체크해 주세요',true); return; }
+  var b=$('agvGo'); b.disabled=true; b.textContent='저장 중…';
+  agApi('sign',{aid:a.aid, fcInfo:info, fcSign:sign, agree:true}).then(function(r){
+    b.disabled=false; b.textContent='서명하고 체결';
+    if(!r.ok){ toast(r.error||'서명하지 못했습니다',true); return; }
+    toast('서명을 완료했어요. 약정이 체결되었습니다.'); loadAgree(); openAgView(a.aid);
+  }).catch(function(){ b.disabled=false; b.textContent='서명하고 체결'; toast('연결에 실패했습니다',true); });
+}
+function printAg(){
+  var p=$('agPaper'); if(!p) return; var w=window.open('','_blank'); if(!w){ toast('팝업이 차단되었습니다. 팝업을 허용해 주세요',true); return; }
+  w.document.write('<!doctype html><html><head><meta charset="utf-8"><title>'+esc((AG_CUR&&AG_CUR.doc&&AG_CUR.doc.title)||'부속 약정서')+'</title><style>body{font-family:"Pretendard","Malgun Gothic",sans-serif;color:#111;font-size:12.5px;line-height:1.6;margin:0;padding:18mm 16mm}h1{text-align:center;font-size:19px;margin:0 0 18px}h3{font-size:13.5px;margin:14px 0 4px}.body{white-space:pre-wrap}table{width:100%;border-collapse:collapse;margin:4px 0 6px}th,td{border:1px solid #777;padding:5px 7px;text-align:center}th{background:#eee}.date{text-align:center;margin:22px 0 14px;font-weight:600}.ag-sig{display:grid;grid-template-columns:1fr 1fr;gap:14px;page-break-inside:avoid}.box{border:1px solid #999;border-radius:6px;padding:10px 12px}.box b{display:block;margin-bottom:4px}.row{font-size:12px}img{height:60px;display:block;margin-top:4px}.none{color:#888;font-size:11px}@page{size:A4;margin:0}</style></head><body>'+p.innerHTML+'</body></html>');
+  w.document.close(); setTimeout(function(){ w.focus(); w.print(); },400);
+}
 </script>
 <script src="/assets/datefix.js"></script>
 </body>
