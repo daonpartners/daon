@@ -2710,6 +2710,7 @@ function renderMyProfile(){
     +'<div><div style="font-size:20px;font-weight:800">'+esc(pf.name)+'</div><div class="muted">'+esc(pf.title||'직함 미입력')+' · 사번 '+esc(pf.sabun||'-')+'</div>'
     +'<div style="margin-top:6px">'+(pf.publish?'<span class="tag g pubtag">전문가찾기 공개 중</span>':'<span class="tag pubtag">비공개 (지사장이 공개 설정)</span>')+'</div>'
     +'<label class="btn sm" style="margin-top:10px">사진 변경<input type="file" accept="image/*" class="hide" onchange="uploadMyPhoto(this)"></label></div></div>'
+    +'<div class="fld"><label class="lbl">직함 (고객 화면에 표시)</label><input class="inp" id="myTitle" maxlength="60" placeholder="예: 보험안전컨설턴트 팀장" value="'+v('title')+'"></div>'
     +'<div class="fld"><label class="lbl">소개문구</label><textarea class="ta" id="myIntro" rows="3" placeholder="고객에게 보이는 한두 줄 소개">'+v('intro')+'</textarea></div>'
     +'<div class="g2"><div class="fld"><label class="lbl">이메일 (명함에 표시)</label><input class="inp" id="myEmail" value="'+v('email')+'"></div>'
     +'<div class="fld"><label class="lbl">카카오톡 링크</label><input class="inp" id="myKakao" placeholder="https://open.kakao.com/..." value="'+v('kakao')+'"></div></div>'
@@ -2717,14 +2718,42 @@ function renderMyProfile(){
     +'<div class="fld"><label class="lbl">유튜브 링크</label><input class="inp" id="myYt" placeholder="https://youtube.com/..." value="'+v('youtube')+'"></div></div>'
     +'<div class="g2"><div class="fld"><label class="lbl">인스타그램 링크</label><input class="inp" id="myInsta" placeholder="https://instagram.com/아이디" value="'+v('instagram')+'"></div><div></div></div>'
     +'<div class="fld"><label class="lbl">전문분야</label><div class="chips" id="mySpec">'+SPECS.map(function(x){ var on=(pf.specialties||[]).indexOf(x)>=0; return '<button type="button" class="chip'+(on?' on':'')+'" data-v="'+x+'" onclick="this.classList.toggle(\'on\')">'+x+'</button>'; }).join('')+'</div></div>'
-    +'<div class="muted" style="font-size:12px;margin-bottom:12px">이메일·링크는 새 값으로 바꿀 수 있지만, 칸을 비워서 지우는 것은 지원되지 않습니다. 이름·연락처·직함·사번은 지사장이 관리합니다. 명함은 프로필 페이지에서 자동으로 만들어지며 [명함 이미지 다운로드]로 받을 수 있습니다.</div>'
+    +'<div class="muted" style="font-size:12px;margin-bottom:12px">이메일·링크는 새 값으로 바꿀 수 있지만, 칸을 비워서 지우는 것은 지원되지 않습니다. 이름·연락처·사번은 지사장이 관리합니다. 명함은 프로필 페이지에서 자동으로 만들어지며 [명함 이미지 다운로드]로 받을 수 있습니다.</div>'
     +'<div class="fld"><label class="lbl">활동지역 (고객 화면에 표시)</label><input class="inp" id="myRegion" maxlength="100" placeholder="예: 충남 아산·천안, 전국 비대면"></div>'
     +'<div class="fld"><label class="lbl">경력 (한 줄에 하나씩)</label><textarea class="ta" id="myCareer" rows="4" maxlength="1000" placeholder="예: 보험 경력 12년&#10;손해보험 상품·보상 실무&#10;소상공인 사업장보험 컨설팅"></textarea></div>'
-    +'<div class="fld" style="background:#F5F7FB;border-radius:10px;padding:12px"><label class="lbl">AI로 칼럼 초안 쓰기</label><div style="display:flex;gap:8px"><input class="inp" id="myColTopic" maxlength="200" placeholder="주제 예: 간병인 보장 확인법, 자동차보험 자손·자상 차이"><button type="button" class="btn" id="myColAi" onclick="aiColumn()">초안 쓰기</button></div><div class="muted" style="font-size:12px;margin-top:6px">초안이 아래 칸에 들어갑니다. 약관과 맞는지 직접 확인하고 고친 뒤 [저장]을 눌러야 홈에 올라갑니다.</div></div>'
-    +'<div class="fld"><label class="lbl">내 칼럼 제목</label><input class="inp" id="myColT" maxlength="100" placeholder="예: 실손보험, 이것만 알면 청구가 쉬워집니다"></div>'
-    +'<div class="fld"><label class="lbl">내 칼럼 내용 (1,900자까지 · 홈 칼럼란과 내 프로필에 표시)</label><textarea class="ta" id="myColB" rows="8" maxlength="1900" placeholder="고객에게 도움이 되는 보험 이야기를 직접 써 주세요. 약관·법령과 다른 내용은 쓰지 않습니다."></textarea></div>'
-    +'<button class="btn pri" id="mySave" onclick="saveMyProfile()">저장</button>';
-  loadMyExtra();
+    +'<button class="btn pri" id="mySave" onclick="saveMyProfile()">프로필 저장</button>'
+    +'<hr style="border:0;border-top:1px solid #E5E8EE;margin:28px 0 20px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div><div style="font-size:17px;font-weight:800">내 칼럼</div><div class="muted" style="font-size:12px">저장한 글이 홈 칼럼란과 칼럼 페이지(daon.io.kr/column)에 쌓입니다.</div></div><button type="button" class="btn sm" onclick="colNew()">+ 새 칼럼</button></div>'
+    +'<div id="colMine" style="margin:12px 0 18px"><div class="empty">불러오는 중…</div></div>'
+    +'<div id="colEd" style="background:#F5F7FB;border-radius:12px;padding:14px">'
+    +'<div style="font-weight:800;margin-bottom:10px" id="colEdH">새 칼럼 쓰기</div><input type="hidden" id="colId">'
+    +'<div class="fld"><label class="lbl">AI로 초안 쓰기</label><div style="display:flex;gap:8px"><input class="inp" id="myColTopic" maxlength="200" placeholder="주제 예: 간병인 보장 확인법, 자동차보험 자손·자상 차이"><button type="button" class="btn" id="myColAi" onclick="aiColumn()">초안 쓰기</button></div><div class="muted" style="font-size:12px;margin-top:6px">초안은 아래 칸에 들어갑니다. 약관과 맞는지 직접 확인하고 고친 뒤 저장하세요.</div></div>'
+    +'<div class="fld"><label class="lbl">제목</label><input class="inp" id="myColT" maxlength="100"></div>'
+    +'<div class="fld"><label class="lbl">내용 (1,900자까지)</label><textarea class="ta" id="myColB" rows="10" maxlength="1900"></textarea></div>'
+    +'<label style="display:flex;gap:6px;align-items:center;font-size:14px;margin-bottom:12px"><input type="checkbox" id="colPub" checked> 홈페이지에 공개</label>'
+    +'<button type="button" class="btn pri" id="colSave" onclick="colSave()">칼럼 저장</button></div>';
+  loadMyExtra(); colLoad();
+}
+var COL_API='https://daonpartners.app.n8n.cloud/webhook/daon-column', MY_COLS=[];
+function colApi(p){ return fetch(COL_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
+function colLoad(){
+  colApi({action:'mine'}).then(function(r){
+    if(!r||!r.ok){ $('colMine').innerHTML='<div class="empty">'+esc((r&&r.error)||'불러오지 못했습니다')+'</div>'; return; }
+    MY_COLS=r.items||[];
+    $('colMine').innerHTML=MY_COLS.length?MY_COLS.map(function(c,i){ return '<div style="display:flex;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #EEF0F4"><div style="flex:1;min-width:0"><div style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(c.title)+'</div><div class="muted" style="font-size:12px">'+esc(c.date)+' · '+(c.publish?'공개':'비공개')+'</div></div><button type="button" class="btn sm" onclick="colEdit('+i+')">고치기</button><button type="button" class="btn sm" onclick="colDel('+i+')">지우기</button></div>'; }).join(''):'<div class="empty">아직 쓴 칼럼이 없습니다.</div>';
+  }).catch(function(){ $('colMine').innerHTML='<div class="empty">연결에 실패했습니다.</div>'; });
+}
+function colNew(){ $('colId').value=''; $('myColT').value=''; $('myColB').value=''; $('colPub').checked=true; $('colEdH').textContent='새 칼럼 쓰기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
+function colEdit(i){ var c=MY_COLS[i]; if(!c) return; $('colId').value=c.id; $('myColT').value=c.title; $('myColB').value=c.body; $('colPub').checked=!!c.publish; $('colEdH').textContent='칼럼 고치기'; $('colEd').scrollIntoView({behavior:'smooth'}); }
+function colDel(i){ var c=MY_COLS[i]; if(!c||!confirm('"'+c.title+'" 칼럼을 지울까요?')) return;
+  colApi({action:'delete',id:c.id}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'지우지 못했습니다',true); return; } toast('지웠어요'); if($('colId').value===c.id) colNew(); colLoad(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function colSave(){
+  var t=$('myColT').value.trim(), bd=$('myColB').value.trim(); if(t.length<2||bd.length<20){ toast('제목과 내용을 적어 주세요',true); return; }
+  var b=$('colSave'); b.disabled=true;
+  colApi({action:'save',id:$('colId').value||'',title:t,body:bd,publish:$('colPub').checked}).then(function(r){ b.disabled=false;
+    if(!r||!r.ok){ toast((r&&r.error)||'저장하지 못했습니다',true); return; }
+    toast($('colId').value?'칼럼을 고쳤어요':'칼럼을 저장했어요'); colNew(); colLoad();
+  }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
 }
 var PFX_API='https://daonpartners.app.n8n.cloud/webhook/daon-fc-pfx';
 function aiColumn(){
@@ -2742,7 +2771,7 @@ function loadMyExtra(){
   if(!ME.code) return;
   pfxApi({action:'read'}).then(function(r){ if(!r||!r.ok) return;
     if($('myRegion')) $('myRegion').value=r.region||''; if($('myCareer')) $('myCareer').value=r.career||'';
-    if($('myColT')) $('myColT').value=r.colTitle||''; if($('myColB')) $('myColB').value=r.colBody||''; }).catch(function(){});
+    }).catch(function(){});
 }
 function normInsta(v){ /* @아이디 나 아이디만 입력해도 주소로 바꿔줌 */
   v=String(v||'').trim(); if(!v) return '';
@@ -2756,10 +2785,10 @@ function saveMyProfile(){
     specialties:[].map.call(document.querySelectorAll('#mySpec .chip.on'),function(x){return x.dataset.v;})}).then(function(r){
     b.disabled=false;
     if(!r.ok){ toast(r.error||'저장에 실패했습니다',true); return; }
-    pfxApi({action:'save',region:$('myRegion').value,career:$('myCareer').value,colTitle:$('myColT').value,colBody:$('myColB').value}).then(function(x){
-      if(!x||!x.ok){ toast('기본 정보는 저장됐지만 활동지역·경력·칼럼 저장 실패: '+((x&&x.error)||''),true); return; }
+    pfxApi({action:'save',title:$('myTitle').value,region:$('myRegion').value,career:$('myCareer').value}).then(function(x){
+      if(!x||!x.ok){ toast('기본 정보는 저장됐지만 직함·활동지역·경력 저장 실패: '+((x&&x.error)||''),true); return; }
       toast('프로필을 저장했어요'); loadMyProfile();
-    }).catch(function(){ toast('기본 정보는 저장됐지만 활동지역·경력·칼럼 저장에 실패했습니다',true); });
+    }).catch(function(){ toast('기본 정보는 저장됐지만 직함·활동지역·경력 저장에 실패했습니다',true); });
   }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
 }
 function uploadMyPhoto(inp){
