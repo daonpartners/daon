@@ -519,6 +519,13 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
       </div>
     </section>
 
+    <!-- DB 관리 (홈페이지로 들어온 질문·상담신청 배정) -->
+    <section class="page view hide" id="v-db">
+      <div class="ph"><div><h2>DB 관리</h2><div class="sub" id="dbSub">홈페이지 질문게시판과 상담신청으로 들어온 고객입니다. 지사장은 설계사를 골라 배정하고, 설계사는 배정받은 고객의 연락처를 보고 진행 상태를 바꿉니다.</div></div></div>
+      <div class="card"><div class="toolbar"><div class="chips" id="dbFilter"></div><div class="spacer"></div><input class="inp" id="dbQ" placeholder="이름·연락처·내용 검색" style="max-width:220px" oninput="drawDb()"></div>
+        <div class="tbl-wrap" style="max-height:none"><table class="tbl" id="tDb"></table></div></div>
+    </section>
+
     <!-- 고객 질문 (daon.io.kr/qna) -->
     <section class="page view hide" id="v-qna">
       <div class="ph"><div><h2>고객 질문</h2><div class="sub">홈페이지 질문게시판에 들어온 질문입니다. AI가 1차 안내를 했고, 설계사가 답을 다듬어 저장하면 고객 화면에 바로 보입니다. '게시판에 공개'를 켜면 이름을 가린 채 질문게시판에 올라갑니다.</div></div>
@@ -846,11 +853,12 @@ var ICON = {
   recruit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5 1.6 0 3 .5 4.1 1.4"/><path d="M17 13v8M13 17h8"/></svg>',
   dash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
   web:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg>',
+  db:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v5H4zM4 9h16v11H4z"/><path d="M9 14h6M12 11v6"/></svg>',
   qna:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11h-7l-5 4v-4H4z"/><path d="M10 9.2a2 2 0 1 1 2.6 1.9c-.4.2-.6.5-.6.9M12 13.5v.1"/></svg>',
   agree:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5M8 13h8M8 17h4M14 18c1-1.5 2-1.5 3 0"/></svg>',
   old:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg>'
 };
-var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['qna','고객 질문'],['agree','부속약정서'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
+var NAV = [['home','홈'],['owner','보유고객'],['prospect','가망고객'],['sms','문자'],['fee','예상수수료'],['cal','일정'],['todo','할 일'],['me','내 프로필'],['db','DB 관리'],['qna','고객 질문'],['agree','부속약정서'],['recruit','리쿠르팅'],['dash','지사 대시보드'],['feeset','설계사·수수료 설정']];
 /* 메뉴별 권한: 지사장 전용 / 관리자(지점장·사업단장·지사장) */
 var MY_RANK='';
 function isManager(){ return isOwner() || ['지점장','사업단장','지사장'].indexOf(MY_RANK)>=0; }
@@ -912,12 +920,12 @@ function boot(){
   var d=new Date(today()); $('todayStr').textContent=d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일 ('+'일월화수목금토'[d.getDay()]+')';
   drawNav(); drawChips();
   var t=today(); CAL={y:+t.slice(0,4), m:+t.slice(5,7)-1};
-  loadAll(); loadTodos(); loadFee(); loadTpl(); agBadge(); loadQna(true);
+  loadAll(); loadTodos(); loadFee(); loadTpl(); agBadge(); loadQna(true); loadDb(true);
   loadOrg().then(function(){ var me=ORG.find(function(x){return x.name===ME.name;}); MY_RANK=me?me.rank:''; drawNav(); document.querySelectorAll('#nav button,#mnav button').forEach(function(b){ b.classList.toggle('on', b.dataset.v===VIEW); }); var hh=(location.hash||'').slice(1); if(hh==='recruit'&&canView('recruit')&&VIEW!=='recruit') go('recruit'); });
   var h=(location.hash||'').slice(1); if(h && NAV.some(function(n){return n[0]===h && canView(h);})) go(h);
 }
 function drawNav(){
-  var cnt={owner:'stO',prospect:'stP',agree:'stAg',qna:'stQ'};
+  var cnt={owner:'stO',prospect:'stP',agree:'stAg',qna:'stQ',db:'stDb'};
   var NV=NAV.filter(function(n){ return canView(n[0]); });
   $('nav').innerHTML=NV.map(function(n){
     return '<button data-v="'+n[0]+'" onclick="go(\''+n[0]+'\')">'+ICON[n[0]]+n[1]+(cnt[n[0]]?'<span class="cnt" id="'+cnt[n[0]]+'"></span>':'')+'</button>';
@@ -936,6 +944,7 @@ function go(v){
   if(v==='me') loadMyProfile();
   if(v==='agree') loadAgree();
   if(v==='qna') loadQna();
+  if(v==='db') loadDb();
   window.scrollTo(0,0);
 }
 
@@ -2776,6 +2785,50 @@ function colSave(){
   }).catch(function(){ b.disabled=false; toast('연결에 실패했습니다',true); });
 }
 
+/* ───────── DB 관리 (질문게시판·상담신청 배정) ───────── */
+var DB_API='https://daonpartners.app.n8n.cloud/webhook/daon-db-admin', DBS=[], DB_TEAM=[], DB_BOSS=false, DB_F='';
+var DB_ST=['담당자배정','상담중','부재중','상담완료','상담거부'];
+function dbApi(p){ return fetch(DB_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
+function dbBadge(){ var n=DB_BOSS?DBS.filter(function(x){return !x.to;}).length:DBS.filter(function(x){return x.src==='w'?x.status==='담당자배정':x.status==='AI안내';}).length; var el=$('stDb'); if(el) el.textContent=n?n:''; }
+function loadDb(quiet){
+  if(!ME||!ME.code) return;
+  if(!quiet&&$('tDb')) $('tDb').innerHTML='<tbody><tr><td class="empty">불러오는 중…</td></tr></tbody>';
+  dbApi({action:'list'}).then(function(r){
+    if(!r||!r.ok){ if(!quiet) $('tDb').innerHTML='<tbody><tr><td class="empty">'+esc((r&&r.error)||'불러오지 못했습니다')+'</td></tr></tbody>'; return; }
+    DBS=r.items||[]; DB_TEAM=r.team||[]; DB_BOSS=!!r.boss; if(!DB_F) DB_F=DB_BOSS?'none':'new';
+    dbBadge(); if(!quiet||VIEW==='db') drawDb();
+  }).catch(function(){ if(!quiet) $('tDb').innerHTML='<tbody><tr><td class="empty">연결에 실패했습니다.</td></tr></tbody>'; });
+}
+function dbHit(x,f){ if(f==='none') return !x.to; if(f==='done') return !!x.to; if(f==='new') return x.src==='w'?x.status==='담당자배정':x.status==='AI안내'; if(f==='ing') return x.status==='상담중'||x.status==='부재중'; return true; }
+function drawDb(){
+  $('dbSub').textContent=DB_BOSS?'홈페이지 질문게시판과 상담신청으로 들어온 고객입니다. 설계사를 골라 배정하면 그 설계사에게만 연락처가 보이고, 텔레그램 아이디가 등록된 설계사에게는 알림이 갑니다.':'나에게 배정된 고객입니다. 연락 후 진행 상태를 바꿔 주세요. 질문게시판 고객은 [고객 질문]에서 답변합니다.';
+  var F=DB_BOSS?[['none','미배정'],['done','배정됨'],['all','전체']]:[['new','새로 배정'],['ing','진행 중'],['all','전체']];
+  $('dbFilter').innerHTML=F.map(function(f){ var n=DBS.filter(function(x){return dbHit(x,f[0]);}).length; return '<button type="button" class="chip'+(DB_F===f[0]?' on':'')+'" onclick="DB_F=\''+f[0]+'\';drawDb()">'+f[1]+' '+n+'</button>'; }).join('');
+  var q=($('dbQ').value||'').trim().toLowerCase();
+  var arr=DBS.filter(function(x){ return dbHit(x,DB_F) && (!q || (x.name+' '+x.phone+' '+x.title+' '+x.body+' '+x.kind).toLowerCase().indexOf(q)>=0); });
+  var opts=DB_TEAM.map(function(f){ return '<option value="'+esc(f.code)+'">'+esc(f.name)+'</option>'; }).join('');
+  $('tDb').innerHTML='<thead><tr><th>접수</th><th>종류</th><th>고객</th><th>내용</th><th>'+(DB_BOSS?'담당 설계사':'진행 상태')+'</th></tr></thead><tbody>'+(arr.length?arr.map(function(x){ var i=DBS.indexOf(x), ph=String(x.phone||'').replace(/\D/g,'');
+    var act;
+    if(DB_BOSS) act='<div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'+(x.to?'<b style="font-size:13px">'+esc(x.toName||x.to)+'</b>':'<span class="tag" style="background:#FFF3EA;color:#C65F1A">미배정</span>')+'<select class="sel" id="dbFc_'+i+'" style="width:auto;height:32px"><option value="">설계사 선택</option>'+opts+'</select><button type="button" class="btn sm pri" onclick="dbAssign('+i+')">'+(x.to?'바꾸기':'배정')+'</button></div>'+(x.src==='w'?'<div class="muted" style="font-size:12px;margin-top:4px">상태: '+esc(x.status)+'</div>':'');
+    else if(x.src==='w') act='<select class="sel" style="width:auto;height:32px" onchange="dbStatus('+i+',this.value)">'+DB_ST.map(function(s){ return '<option'+(s===x.status?' selected':'')+'>'+s+'</option>'; }).join('')+'</select><div style="margin-top:6px"><button type="button" class="btn sm" onclick="dbToPros('+i+')">가망고객으로 등록</button></div>';
+    else act='<button type="button" class="btn sm" onclick="go(\'qna\')">고객 질문에서 답변</button><div class="muted" style="font-size:12px;margin-top:4px">'+esc(x.status)+'</div>';
+    return '<tr><td class="nw muted" style="font-size:12.5px">'+esc(x.date)+'</td><td><span class="tag">'+esc(x.kind)+'</span></td>'
+      +'<td class="nw"><b>'+esc(x.name)+'</b><br>'+(ph?'<a href="tel:'+esc(ph)+'">'+esc(ph.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'))+'</a>':'')+(x.region?'<br><span class="muted" style="font-size:12px">'+esc(x.region)+'</span>':'')+'</td>'
+      +'<td style="max-width:420px"><div style="font-weight:700">'+esc(x.title)+'</div><div class="muted" style="font-size:12.5px;white-space:pre-wrap;max-height:4.6em;overflow:hidden">'+esc(x.body)+'</div></td>'
+      +'<td>'+act+'</td></tr>'; }).join(''):'<tr><td colspan="5" class="empty">해당하는 고객이 없습니다.</td></tr>')+'</tbody>';
+}
+function dbAssign(i){ var x=DBS[i], c=$('dbFc_'+i).value; if(!x) return; if(!c){ toast('설계사를 골라 주세요',true); return; }
+  var nm=(DB_TEAM.filter(function(f){return f.code===c;})[0]||{}).name||'';
+  if(!confirm((x.name||'고객')+' 님을 '+nm+' 설계사에게 배정할까요?')) return;
+  dbApi({action:'assign',src:x.src,id:x.id,code:c}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'배정하지 못했습니다',true); return; } toast(nm+' 설계사에게 배정했어요'+(r.notify?' · 텔레그램 알림 보냄':' · 텔레그램 미등록이라 알림은 못 보냈어요')); loadDb(); loadQna(true); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function dbStatus(i,v){ var x=DBS[i]; if(!x) return;
+  dbApi({action:'status',src:x.src,id:x.id,status:v}).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'바꾸지 못했습니다',true); return; } x.status=v; dbBadge(); toast('상태를 바꿨어요'); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+function dbToPros(i){ var x=DBS[i]; if(!x) return; if(!confirm((x.name||'고객')+' 님을 내 가망고객으로 등록할까요?')) return;
+  var p={fc:ME.name, branch:ME.branch, custType:'가망고객'};
+  CUST_KEEP.forEach(function(k){ if(k!=='visit') p[k]=''; });
+  Object.assign(p,{name:x.name||'이름미상', phone:x.phone||'', memo:'['+x.kind+'] '+x.title+'\n'+x.body, dbType:'온라인DB', sourceNote:'홈페이지 '+x.kind, status:'진행중'});
+  api('customerSave',p).then(function(r){ if(!r||!r.ok){ toast((r&&r.error)||'등록하지 못했습니다',true); return; } toast('가망고객으로 등록했어요'); loadAll(); }).catch(function(){ toast('연결에 실패했습니다',true); }); }
+
 /* ───────── 고객 질문 (daon.io.kr/qna) ───────── */
 var QNA_API='https://daonpartners.app.n8n.cloud/webhook/daon-qna-admin', QNA=[], QNA_F='wait', PENDING_COL=null;
 function qnaApi(p){ return fetch(QNA_API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(Object.assign({by:ME.code||''},p))}).then(function(r){return r.json();}); }
@@ -2796,7 +2849,7 @@ function drawQna(){
   $('qnaCount').textContent='전체 '+QNA.length+'건';
   $('qnaList').innerHTML=arr.length?arr.map(function(x){ var i=QNA.indexOf(x), ph=String(x.phone||''), tel=/^\d{10,11}$/.test(ph);
     return '<div style="border-bottom:1px solid #EEF0F4;padding:14px 0">'
-      +'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span class="tag">'+esc(x.cat)+'</span>'+(x.call?'<span class="tag" style="background:#FFF3EA;color:#C65F1A">상담 요청'+(x.how?' · '+esc(x.how):'')+'</span>':'')+(x.toMe?'<span class="tag" style="background:#E8F0FF;color:#1F4FA8">나를 지정</span>':'')+(x.toOther?'<span class="tag">다른 설계사 지정</span>':'')+(x.pub?'<span class="tag" style="background:#E7F6EC;color:#1C7C3A">게시판 공개</span>':'')+'<span class="muted" style="font-size:12px;margin-left:auto">'+esc(x.date)+'</span></div>'
+      +'<div style="display:flex;flex-wrap:wrap;gap:6px;align-items:center"><span class="tag">'+esc(x.cat)+'</span>'+(x.call?'<span class="tag" style="background:#FFF3EA;color:#C65F1A">상담 요청'+(x.how?' · '+esc(x.how):'')+'</span>':'')+(x.toMe?'<span class="tag" style="background:#E8F0FF;color:#1F4FA8">내게 배정</span>':'')+(x.toOther?'<span class="tag">다른 설계사 배정</span>':'')+(x.unassigned?'<span class="tag" style="background:#FFF3EA;color:#C65F1A">미배정</span>':'')+(x.pub?'<span class="tag" style="background:#E7F6EC;color:#1C7C3A">게시판 공개</span>':'')+'<span class="muted" style="font-size:12px;margin-left:auto">'+esc(x.date)+'</span></div>'
       +'<div style="font-weight:800;font-size:15.5px;margin-top:8px">'+esc(x.title)+'</div>'
       +'<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap">'+esc(x.q)+'</div>'
       +'<div class="muted" style="font-size:12.5px;margin-top:6px">'+esc(x.nick||'')+' · '+(tel?'<a href="tel:'+esc(ph)+'">'+esc(ph.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'))+'</a>':esc(ph))+(x.by?' · 답변 '+esc(x.by):'')+'</div>'
