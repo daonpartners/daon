@@ -380,6 +380,7 @@ footer b{color:var(--ink2)}
   $('backBtn').addEventListener('click', function(){ history.back(); });
   $('cta').addEventListener('click', next);
 
+
   function updateCta(){
     var ok = true;
     if(cur==='fac') ok = S.fac.length>0;
@@ -539,6 +540,14 @@ footer b{color:var(--ink2)}
   }
 
   show('intro', false);
+
+  /* ?biz=food 처럼 업종을 들고 오면 업종 선택을 건너뛰고 다음 질문부터 */
+  (function(){
+    var b = params.get('biz');
+    if(!b || !BIZ.some(function(o){ return o.v===b; })) return;
+    S.biz = b; mark('bizOpts', [b]);
+    show('biz', true); next();
+  })();
 })();
 </script>
 </body>
