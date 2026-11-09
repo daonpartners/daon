@@ -7,6 +7,8 @@
 - [보험물어봄 질문게시판](https://daon.io.kr/qna/): 보험 질문 남기기, 설계사가 답한 공개 질문
 - [설계사 칼럼](https://daon.io.kr/column/): 설계사가 쓴 보험 질문답변·정보·보상사례·가입사례. 분야별로 볼 수 있음
 - [칼럼 목록(사이트맵)](https://daon.io.kr/column-sitemap.xml)
+- [채용 칼럼](https://daon.io.kr/recruit/): 미래에셋금융서비스 다온지사 보험설계사 채용 안내 칼럼(교육·위촉 절차·업무 방식)
+- [새 글 RSS](https://daon.io.kr/rss.xml)
 - [보험금 청구 맡기기](https://daon.io.kr/claim/app/?m=daon)
 - [보험 상담 신청](https://daon.io.kr/ask/?m=daon)
 
