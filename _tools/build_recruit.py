@@ -156,13 +156,21 @@ def column_items():
         t = re.search(r'<meta property="og:title" content="([^"]*)"', s)
         d = re.search(r'<meta name="description" content="([^"]*)"', s)
         pub = re.search(r'article:published_time" content="([^"]*)"', s)
-        items.append({'title': html.unescape(t.group(1)) if t else loc, 'link': loc,
+        b = re.search(r'<div class="body">(.*?)</div>', s, re.S)
+        full = ''
+        if b:
+            full = b.group(1)
+            full = re.sub(r'<aside class="mid">.*?</aside>', '', full, flags=re.S)
+            full = re.sub(r'<(?!/?(p|h2)\b)[^>]+>', '', full)
+        items.append({'title': html.unescape(t.group(1)) if t else loc, 'link': loc, 'html': full,
                       'desc': html.unescape(d.group(1)) if d else '', 'date': (pub.group(1) if pub else mod or '')[:10], 'cat': '보험 칼럼'})
     return items
 
 
 def rss(posts):
-    items = [{'title': p['title'], 'link': f"{SITE}/recruit/p/{p['id']}.html", 'desc': p.get('summary', ''), 'date': p['date'], 'cat': '채용 칼럼'} for p in posts]
+    def body_html(p):
+        return ''.join('<h2>' + esc(re.sub(r'^#{2,3}\s*', '', l)) + '</h2>' if re.match(r'^#{2,3}\s*', l) else '<p>' + esc(l) + '</p>' for l in lines(p['body']))
+    items = [{'title': p['title'], 'link': f"{SITE}/recruit/p/{p['id']}.html", 'desc': p.get('summary', ''), 'html': body_html(p), 'date': p['date'], 'cat': '채용 칼럼'} for p in posts]
     items += column_items()
     items = [i for i in items if i['date']]
     items.sort(key=lambda i: i['date'], reverse=True)
@@ -174,7 +182,7 @@ def rss(posts):
          '<language>ko</language>', f'<lastBuildDate>{now}</lastBuildDate>']
     for i in items:
         x += ['<item>', f'<title>{esc(i["title"])}</title>', f'<link>{i["link"]}</link>', f'<guid isPermaLink="true">{i["link"]}</guid>',
-              f'<description>{esc(i["desc"])}</description>', f'<category>{i["cat"]}</category>', f'<pubDate>{rfc822(i["date"])}</pubDate>', '</item>']
+              '<description><![CDATA[' + ('<p><strong>' + esc(i['desc']) + '</strong></p>' if i['desc'] else '') + (i.get('html') or '').replace(']]>', ']]&gt;') + ']]></description>', f'<category>{i["cat"]}</category>', f'<pubDate>{rfc822(i["date"])}</pubDate>', '</item>']
     x += ['</channel>', '</rss>', '']
     return '\n'.join(x)
 
