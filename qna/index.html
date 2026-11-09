@@ -119,6 +119,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 html,body{max-width:100%;overflow-x:clip}
 @media (max-width:420px){.top nav .sm-hide{display:none}}
+mark.hl{background:#FFF0A0;color:inherit;font-weight:800;padding:0 2px;border-radius:2px}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -215,15 +216,17 @@ html,body{max-width:100%;overflow-x:clip}
   function loadExp(){ if(EXP||!TO) return Promise.resolve(); return fetch(API+'daon-expert-list-v2?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){ var a=Array.isArray(d)?d:(d&&d.items)||[]; EXP=a.filter(function(x){return x&&x.code===TO;})[0]||null; }).catch(function(){}); }
   loadExp().then(function(){ if(EXP) $('go').textContent=EXP.name+' 설계사에게 질문하기'; });
 
+  /* ==형광펜== → 노란 표시, **굵게** → 굵게 (글자 escape 뒤 변환) */
+  function rich(t){ return esc(t).replace(/==([^=\n]{1,80})==/g,'<mark class="hl">$1</mark>').replace(/\*\*([^*\n]{1,200})\*\*/g,'<b>$1</b>'); }
   function answerHtml(it, mine){
     var h='<div class="qbox"><small>'+esc(it.cat)+' · '+esc(it.date||'')+'</small><h3>'+esc(it.title)+'</h3><p>'+esc(it.q)+'</p></div>';
     if(it.answer){
       var w=it.expert;
-      h+='<div class="ans fc"><div class="ans__h">설계사 답변</div><div class="ans__b">'+esc(it.answer)+'</div>'
+      h+='<div class="ans fc"><div class="ans__h">설계사 답변</div><div class="ans__b">'+rich(it.answer)+'</div>'
         +(w?'<div class="ans__by"><img src="'+esc(img(w.photo))+'" alt=""><span><b>'+esc(w.name)+'</b> · '+esc(w.job||'보험설계사')+'<br><a href="/expert/?a='+encodeURIComponent(w.code)+'" style="color:var(--deep);font-weight:700">설계사 프로필 보기 ›</a></span></div>':'')
         +'<p class="ans__n" style="white-space:pre-wrap">'+esc(D_FC)+'</p></div>';
     }
-    if(mine && it.ai) h+='<div class="ans"'+(it.answer?' style="border-color:var(--line)"':'')+'><div class="ans__h">AI 1차 안내 <i>설계사 확인 전</i></div><div class="ans__b">'+esc(it.ai)+'</div><p class="ans__n">'+esc(D_AI)+'</p></div>';
+    if(mine && it.ai) h+='<div class="ans"'+(it.answer?' style="border-color:var(--line)"':'')+'><div class="ans__h">AI 1차 안내 <i>설계사 확인 전</i></div><div class="ans__b">'+rich(it.ai)+'</div><p class="ans__n">'+esc(D_AI)+'</p></div>';
     return h;
   }
   function nextHtml(){
