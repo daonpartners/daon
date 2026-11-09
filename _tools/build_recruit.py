@@ -196,7 +196,8 @@ def main():
         if f.endswith('.html') and f not in keep:
             os.remove(os.path.join(ROOT, 'recruit', 'p', f))
     open(os.path.join(ROOT, 'recruit', 'index.html'), 'w', encoding='utf-8').write(list_page(posts))
-    sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+          f'  <url><loc>{SITE}/join1/</loc></url>']  # 비어 있으면 네이버가 형식 오류로 거절하므로 모집 안내는 항상 포함
     if posts:
         sm.append(f'  <url><loc>{SITE}/recruit/</loc><lastmod>{posts[0].get("mod") or posts[0]["date"]}</lastmod></url>')
     sm += [f'  <url><loc>{SITE}/recruit/p/{p["id"]}.html</loc><lastmod>{p.get("mod") or p["date"]}</lastmod></url>' for p in posts]
