@@ -353,7 +353,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <aside class="side">
     <div class="side-brand">다온 <b>영업관리</b><a href="https://daon.io.kr/" class="side-home" title="daon.io.kr 홈페이지로 이동">daon.io.kr ↗</a></div>
     <nav class="nav" id="nav"></nav>
-    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button> <button class="js-app">앱 설치</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-06 19:05</div></div>
+    <div class="side-me"><b id="meName"></b><span id="meRole" style="font-size:12px"></span><br><button onclick="logout()">로그아웃</button> <button class="js-app">앱 설치</button><div style="font-size:10px;color:#6B7A93;margin-top:4px">화면 버전 2026-11-11 15:40</div></div>
   </aside>
 
   <div class="main">
@@ -397,12 +397,14 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
           <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="inp" id="qOwner" placeholder="이름, 연락처, 주소, 보험사, 상품 검색" oninput="renderOwner()"></div>
           <div class="chips" id="ownerCat"></div>
           <select class="sel" id="ownerComp" style="width:auto;min-width:150px;height:34px" onchange="OWNER_COMP=this.value;renderOwner()"><option value="">보험사 전체</option></select>
+          <button class="chip" id="ownerNoNew" onclick="toggleNoNew()" title="장기보험 계약일 기준, 최근 2년 안에 새로 가입한 장기계약이 없는 고객 (해지·실효 계약 제외)">장기 2년 신규 없음</button>
           <div class="spacer"></div>
           <div class="seg"><button id="ovCust" class="on" onclick="setOwnerView('cust')">고객별</button><button id="ovCtr" onclick="setOwnerView('ctr')">계약별</button></div>
         </div>
         <div class="selbar hide" id="selOwner"></div>
         <div class="toolbar" style="padding:8px 14px">
           <span class="muted" id="ownerCount"></span><div class="spacer"></div>
+          <button class="btn sm" onclick="openTx()">보장분석 PDF 치료비 점검</button>
           <button class="btn sm" onclick="smsFromSel('owner')">문자 보내기</button>
           <button class="btn sm" onclick="printList('owner')">출력</button>
           <button class="btn sm" onclick="excelOut('owner')">엑셀 다운로드</button>
@@ -832,6 +834,28 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
   <div class="drawer-f"><button class="btn" onclick="closeRrnImp()">닫기</button><div class="spacer"></div><button class="btn pri" id="riGo" onclick="runRrnImp()" disabled>저장하기</button></div>
 </div>
 
+<!-- 보장분석 PDF 치료비 점검 -->
+<div class="dim modal-dim hide" id="txDim" onclick="closeTx()"></div>
+<div class="modal hide" id="txModal" style="width:min(1040px,97vw)">
+  <div class="drawer-h"><h3>보장분석 PDF 치료비 점검</h3><button class="x" onclick="closeTx()">×</button></div>
+  <div class="drawer-b">
+    <ol style="margin:0 0 12px;padding-left:18px;line-height:1.8;font-size:14px">
+      <li>고객별 보장분석 PDF('상품별 가입담보상세'가 들어 있는 전체본)를 여러 개 한꺼번에 고르세요.</li>
+      <li>비급여암치료비 · 2대·순환계 주요치료비 · 치매치료비가 <b>없는</b> 고객과, 표적항암·암(주요)치료비를 <b>2년보다 전에</b> 가입한 고객을 골라 보여드립니다.</li>
+      <li>PDF는 이 화면 안에서만 읽고 어디에도 저장·전송하지 않습니다. 판정은 담보 이름 기준이므로 상담 전 원본으로 한 번 더 확인하세요.</li>
+    </ol>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px">
+      <label class="btn pri">PDF 고르기 (여러 개)<input type="file" id="txFile" accept=".pdf,application/pdf" multiple class="hide" onchange="txRun(this)"></label>
+      <input class="inp" id="txPw" type="password" placeholder="PDF 비밀번호 (있을 때만)" style="width:200px;height:34px">
+      <span class="muted" id="txMsg" style="font-size:13px"></span>
+    </div>
+    <div class="chips" id="txChips" style="margin-bottom:10px"></div>
+    <div class="tbl-wrap" style="max-height:56vh;border:1px solid var(--line);border-radius:8px"><table class="tbl" id="txTbl"></table></div>
+  </div>
+  <div class="drawer-f"><button class="btn" onclick="closeTx()">닫기</button><div class="spacer"></div>
+    <span id="txFoot" class="hide"><button class="btn" onclick="txClear()">비우기</button> <button class="btn" onclick="txExcel()">엑셀 다운로드</button> <button class="btn pri" onclick="txPick()">다온 고객 체크 → 문자</button></span></div>
+</div>
+
 <div id="printArea"></div>
 <div class="toast" id="toast"></div>
 
@@ -1235,6 +1259,7 @@ function owners(){
     var cs=ctrsOf(c);
     if(OWNER_CAT!=='전체' && !cs.some(function(ct){return ct.category===OWNER_CAT;})) return false;
     if(OWNER_COMP && !cs.some(function(ct){return compKey(ct.company)===OWNER_COMP && (OWNER_CAT==='전체'||ct.category===OWNER_CAT);})) return false;
+    if(OWNER_NONEW && !noNewLong(c)) return false;
     if(!q) return true;
     var hay=[c.name,c.phone,addrOf(c),c.birth].concat(cs.map(function(ct){return ct.company+' '+ct.product;})).join(' ').toLowerCase();
     return hay.indexOf(q)>=0 || digits(c.phone).indexOf(digits(q)||'@')>=0;
@@ -1246,6 +1271,7 @@ function ownerCtrs(){
     var c=custOfCtr(ct); if(c && c.custType==='가망고객') return false;
     if(OWNER_CAT!=='전체' && ct.category!==OWNER_CAT) return false;
     if(OWNER_COMP && compKey(ct.company)!==OWNER_COMP) return false;
+    if(OWNER_NONEW && !(c && noNewLong(c))) return false;
     if(!q) return true;
     return [ct.custName,ct.company,ct.product,ct.policyNo,c?c.phone:''].join(' ').toLowerCase().indexOf(q)>=0;
   });
@@ -1274,7 +1300,7 @@ function renderOwner(){
         var mini=cs.slice(0,3).map(function(ct){ return '<span class="tag '+({'장기':'b','자동차':'o','화재':'r','일반':'g'}[ct.category]||'')+'" onclick="event.stopPropagation();openCust(\''+c.id+'\')" title="'+esc(ct.company+' '+ct.product)+'">'+esc((ct.company||'')+' '+(ct.category||''))+'</span>'; }).join('')+(cs.length>3?'<span class="tag">+'+(cs.length-3)+'</span>':'');
         return '<tr class="row'+(PICK.owner[c.id]?' picked':'')+'" onclick="openCust(\''+c.id+'\')"><td class="ck" onclick="event.stopPropagation()"><input type="checkbox" '+(PICK.owner[c.id]?'checked':'')+' onchange="pick(\'owner\',\''+c.id+'\',this.checked)"></td>'
           +'<td class="nm">'+esc(c.name)+'</td><td class="nw">'+rrnCell(c)+'</td><td class="nw">'+esc(c.phone)+'</td><td class="addr">'+esc(addrOf(c))+'</td>'
-          +'<td><div class="ctr-mini">'+(mini||'<span class="muted">-</span>')+'</div></td><td class="num hide-m">'+(prem?won(prem):'-')+'</td></tr>';
+          +'<td><div class="ctr-mini">'+(mini||'<span class="muted">-</span>')+(OWNER_NONEW?(function(d){ return '<span class="muted" style="font-size:11px">최근 장기 '+(d||'없음')+'</span>'; })(lastLongDate(c)):'')+'</div></td><td class="num hide-m">'+(prem?won(prem):'-')+'</td></tr>';
       }).join(''):'<tr><td colspan="7" class="empty">조건에 맞는 고객이 없습니다.</td></tr>')+'</tbody>';
   } else {
     var cl=sortBy(ownerCtrs(),SORT.ctr.k,SORT.ctr.d);
@@ -1438,12 +1464,176 @@ function printList(scope){
   $('printArea').innerHTML='<h1>'+title+' 목록</h1><p>'+esc(ME.name)+' · '+today()+' · '+list.length+'명 · 주민등록번호 뒷자리는 가려서 출력됩니다</p><table>'+h+'</table>';
   setTimeout(function(){ window.print(); },60);
 }
+/* ───────── 보장분석 PDF 치료비 점검 ───────── */
+var TX_RULES = {
+  bigub: function(s){ return /비급여/.test(s) && /암/.test(s) && /치료/.test(s) && !/표적/.test(s); },
+  circ:  function(s){ if(/혈전/.test(s)) return false; return (/순환계/.test(s) && /치료/.test(s)) || (/(2대|3대|뇌|심장|허혈)/.test(s) && /주요치료/.test(s)); },
+  dem:   function(s){ return (/치매/.test(s) && /치료/.test(s)) || /레켐비|레카네맙/.test(s); },
+  target:function(s){ return /표적/.test(s) && /암/.test(s) && /치료/.test(s); },
+  cancer:function(s){
+    if(!/암/.test(s) || !/(주요치료|직접치료|통합치료)/.test(s)) return false;
+    if(/통원|입원|일당/.test(s)) return false;
+    var t=s.replace(/\(?\s*유사암\s*제외\s*\)?/g,'');
+    return !/(유사암|소액암|갑상선|기타피부암|제자리암|경계성)/.test(t);
+  }
+};
+function txLines(items){
+  var lines=[];
+  items.slice().sort(function(a,b){ return b.y-a.y || a.x-b.x; }).forEach(function(t){
+    var L=null; for(var i=0;i<lines.length;i++){ if(Math.abs(lines[i].y-t.y)<2.5){ L=lines[i]; break; } }
+    if(L) L.it.push(t); else lines.push({y:t.y,it:[t]});
+  });
+  return lines.map(function(l){
+    l.it.sort(function(a,b){ return a.x-b.x; });
+    var s='', px=null; l.it.forEach(function(t){ if(px!==null && t.x-px>1.5) s+=' '; s+=t.s; px=t.x+t.w; });
+    return s.replace(/\s+/g,' ').trim();
+  });
+}
+/* pages: [[{s,x,y,w}]] → {name, age, sex, products:[{company, date, items:[담보줄]}]} */
+function txParse(pages){
+  var r={name:'',age:null,sex:'',products:[],detail:false}, cur=null;
+  pages.forEach(function(items){
+    var lines=txLines(items), all=lines.join('\n');
+    if(!r.name){ var m=all.match(/(\S{2,10})\s*\(\s*(\d{1,3})세\s*,?\s*(남자|여자|남|여)\s*\)/); if(m){ r.name=m[1]; r.age=+m[2]; r.sex=m[3].charAt(0); } }
+    if(!/가입담보상세/.test(all)) return;
+    r.detail=true;
+    var dm=all.match(/가입일자\s*:\s*(\d{4})[-.\/](\d{2})[-.\/](\d{2})/);
+    if(dm){
+      var comp=''; for(var i=0;i<lines.length;i++){ if(/가입일자/.test(lines[i])){ comp=lines[i].split(/\s+/)[0]; if(/가입일자/.test(comp)) comp=lines[i-1]||''; break; } }
+      cur={company:comp.replace(/\|/g,'').trim(), date:dm[1]+'-'+dm[2]+'-'+dm[3], product:'', items:[]};
+      r.products.push(cur);
+      var di=-1; lines.forEach(function(l,i){ if(/가입일자/.test(l)) di=i; });
+      if(di>=0 && lines[di+1]) cur.product=lines[di+1].replace(/^\|\s*/,'');
+    }
+    if(!cur) return;
+    lines.forEach(function(l){
+      var m=l.match(/^(\d{1,3})\s+(정액|실손|비례|기타)\s+(.+)$/);
+      if(m) cur.items.push(m[3].replace(/\s*기타 인보험\(정액\)담보/,''));
+    });
+  });
+  return r;
+}
+function txJudge(r, base){
+  var cut=new Date(base||new Date()); cut.setFullYear(cut.getFullYear()-2);
+  var cutS=cut.getFullYear()+'-'+('0'+(cut.getMonth()+1)).slice(-2)+'-'+('0'+cut.getDate()).slice(-2);
+  var out={bigub:[],circ:[],dem:[],old:[],latest:''};
+  r.products.forEach(function(p){
+    if(p.date>out.latest) out.latest=p.date;
+    p.items.forEach(function(s){
+      var lab=p.company+' · '+s+' ('+p.date+')';
+      if(TX_RULES.bigub(s)) out.bigub.push(lab);
+      if(TX_RULES.circ(s)) out.circ.push(lab);
+      if(TX_RULES.dem(s)) out.dem.push(lab);
+      if((TX_RULES.target(s)||TX_RULES.cancer(s)) && p.date<cutS) out.old.push(lab);
+    });
+  });
+  out.cut=cutS;
+  return out;
+}
+
+/* ───────── 보유고객: 장기 2년 신규 없음 ───────── */
+var OWNER_NONEW = false;
+function ymdOf(v){ var d=digits(v||''); if(d.length<8) return ''; return d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8); }
+function twoYearsAgo(){ var t=today(), y=+t.slice(0,4)-2; return y+t.slice(4); }
+function lastLongDate(c){ /* 해지·실효·철회된 계약은 신규로 치지 않음 */
+  var d=''; ctrsOf(c).forEach(function(ct){ if(ct.category!=='장기' || /실효|해지|철회|해약/.test(ct.status||'')) return; var x=ymdOf(ct.contractDate); if(x>d) d=x; }); return d;
+}
+function noNewLong(c){ var d=lastLongDate(c); return !d || d<twoYearsAgo(); }
+function toggleNoNew(){ OWNER_NONEW=!OWNER_NONEW; $('ownerNoNew').classList.toggle('on',OWNER_NONEW); renderOwner(); }
+
+/* ───────── 보장분석 PDF 치료비 점검 (PDF는 이 브라우저 안에서만 읽고 어디에도 올리지 않음) ───────── */
+var TX_RES = [], TX_F = 'all', TX_LIB = null;
+function txLib(){
+  if(TX_LIB) return Promise.resolve(TX_LIB);
+  return new Promise(function(ok,no){
+    var s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=function(){ var L=window['pdfjs-dist/build/pdf']||window.pdfjsLib; L.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; TX_LIB=L; ok(L); };
+    s.onerror=function(){ no(new Error('PDF 도구를 불러오지 못했습니다')); }; document.head.appendChild(s);
+  });
+}
+function openTx(){ $('txDim').classList.remove('hide'); $('txModal').classList.remove('hide'); if(!TX_RES.length){ $('txFile').value=''; $('txMsg').textContent=''; } txRender(); }
+function closeTx(){ $('txDim').classList.add('hide'); $('txModal').classList.add('hide'); }
+function txRead(f,pw){
+  return txLib().then(function(L){ return f.arrayBuffer().then(function(buf){ return L.getDocument({data:new Uint8Array(buf),password:pw||undefined,isEvalSupported:false}).promise; }); })
+  .then(function(doc){
+    var pages=[], i=1;
+    function next(){ if(i>doc.numPages) return Promise.resolve(pages);
+      return doc.getPage(i++).then(function(p){ return p.getTextContent(); }).then(function(tc){
+        pages.push(tc.items.filter(function(t){return t.str&&t.str.trim();}).map(function(t){ return {s:t.str,x:t.transform[4],y:t.transform[5],w:t.width||0}; })); return next(); }); }
+    return next();
+  });
+}
+function txMatch(name){
+  var hit=CUSTOMERS.filter(function(c){ return c.name===name; });
+  if(!hit.length) return {note:'다온에 없는 고객'};
+  if(hit.length>1) return {note:'동명이인 '+hit.length+'명', list:hit};
+  return {cust:hit[0]};
+}
+function txRun(inp){
+  var fs=[].slice.call(inp.files||[]); if(!fs.length) return;
+  var pw=$('txPw').value, done=0; inp.disabled=true;
+  $('txMsg').textContent='읽는 중… (0/'+fs.length+')';
+  var chain=Promise.resolve();
+  fs.forEach(function(f){
+    chain=chain.then(function(){
+      return txRead(f,pw).then(function(pages){
+        var r=txParse(pages), j=txJudge(r, today());
+        TX_RES=TX_RES.filter(function(x){ return x.file!==f.name; });
+        TX_RES.push({file:f.name, name:r.name, age:r.age, sex:r.sex, ok:r.detail&&r.products.length>0, n:r.products.length, j:j, m:r.name?txMatch(r.name):{note:'이름 못 읽음'}});
+      }).catch(function(e){
+        var pwErr=e&&e.name==='PasswordException';
+        TX_RES.push({file:f.name, name:'', err: pwErr?'비밀번호가 걸린 PDF입니다. 위 칸에 비밀번호를 넣고 다시 올려주세요':'읽지 못했습니다'});
+      }).then(function(){ done++; $('txMsg').textContent='읽는 중… ('+done+'/'+fs.length+')'; });
+    });
+  });
+  chain.then(function(){ inp.disabled=false; inp.value=''; $('txMsg').textContent=fs.length+'개 파일을 읽었습니다. 판정은 담보 이름 기준이니 원본 증권·약관으로 한 번 더 확인하세요.'; txRender(); });
+}
+var TX_FILTERS=[['all','전체'],['bigub','비급여암치료비 없음'],['circ','2대·순환계 주요치료비 없음'],['dem','치매치료비 없음'],['old','2년 지난 표적항암·암주요치료비 보유'],['nonew','최근 2년 가입 없음']];
+function txPass(x,f){
+  if(!x.ok) return f==='all';
+  if(f==='all') return true;
+  if(f==='old') return x.j.old.length>0;
+  if(f==='nonew') return !x.j.latest || x.j.latest<x.j.cut;
+  return x.j[f].length===0;
+}
+function txList(){ return TX_RES.filter(function(x){ return txPass(x,TX_F); }); }
+function txCell(arr){
+  if(!arr.length) return '<span class="tag r">없음</span>';
+  return '<span class="tag g" title="'+esc(arr.join('\n'))+'">있음</span><div class="muted" style="font-size:11px;line-height:1.4;margin-top:2px">'+esc(arr.map(function(s){return s.split(' · ')[0];}).filter(function(v,i,a){return a.indexOf(v)===i;}).join(', '))+'</div>';
+}
+function txRender(){
+  $('txChips').innerHTML=TX_RES.length?TX_FILTERS.map(function(f){ var n=TX_RES.filter(function(x){return txPass(x,f[0]);}).length; return '<button class="chip'+(TX_F===f[0]?' on':'')+'" onclick="TX_F=\''+f[0]+'\';txRender()">'+f[1]+' '+n+'</button>'; }).join(''):'';
+  var list=txList();
+  $('txTbl').innerHTML=TX_RES.length?'<thead><tr><th>고객</th><th>다온 고객</th><th>비급여암치료비</th><th>2대·순환계 주요치료비</th><th>치매치료비</th><th>2년 지난 표적항암·암주요치료비</th><th>최근 가입일</th></tr></thead><tbody>'
+    +(list.length?list.map(function(x){
+      if(x.err||!x.ok) return '<tr><td class="nm">'+esc(x.name||x.file)+'</td><td colspan="6" class="muted">'+esc(x.err||'담보상세 페이지를 찾지 못했습니다. \'상품별 가입담보상세\'가 들어 있는 보장분석 PDF인지 확인하세요')+'</td></tr>';
+      var mc=x.m.cust?'<a href="javascript:void(0)" onclick="closeTx();openCust(\''+x.m.cust.id+'\')">'+esc(x.m.cust.phone||'보기')+'</a>':'<span class="tag y">'+esc(x.m.note)+'</span>';
+      var old=x.j.old.length?'<div style="font-size:12px;line-height:1.5">'+x.j.old.map(function(s){return esc(s);}).join('<br>')+'</div>':'<span class="muted">-</span>';
+      return '<tr><td class="nm nw">'+esc(x.name)+'<div class="muted" style="font-size:11px">'+(x.age?x.age+'세 ':'')+esc(x.sex||'')+' · 상품 '+x.n+'개</div></td><td class="nw">'+mc+'</td><td>'+txCell(x.j.bigub)+'</td><td>'+txCell(x.j.circ)+'</td><td>'+txCell(x.j.dem)+'</td><td>'+old+'</td><td class="nw">'+esc(x.j.latest||'-')+'</td></tr>';
+    }).join(''):'<tr><td colspan="7" class="empty">조건에 맞는 고객이 없습니다.</td></tr>')+'</tbody>':'';
+  $('txFoot').classList.toggle('hide',!TX_RES.length);
+}
+function txClear(){ TX_RES=[]; TX_F='all'; $('txMsg').textContent=''; txRender(); }
+function txExcel(){
+  if(typeof XLSX==='undefined'){ toast('엑셀 도구를 불러오지 못했습니다',true); return; }
+  var rows=txList().filter(function(x){return x.ok;}).map(function(x){ return {'고객명':x.name,'나이':x.age||'','성별':x.sex||'','다온 연락처':x.m.cust?(x.m.cust.phone||''):x.m.note,
+    '비급여암치료비':x.j.bigub.length?'있음':'없음','2대·순환계 주요치료비':x.j.circ.length?'있음':'없음','치매치료비':x.j.dem.length?'있음':'없음',
+    '2년 지난 표적항암·암주요치료비':x.j.old.join(' / '),'최근 가입일':x.j.latest||'','파일':x.file}; });
+  if(!rows.length){ toast('내려받을 고객이 없습니다',true); return; }
+  var wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'치료비점검'); XLSX.writeFile(wb,'다온_치료비점검_'+today()+'.xlsx');
+}
+function txPick(){
+  var n=0; txList().forEach(function(x){ if(x.ok && x.m.cust){ var sc=x.m.cust.custType==='가망고객'?'prospect':'owner'; PICK[sc][x.m.cust.id]=true; n++; } });
+  if(!n){ toast('다온에 등록된 고객이 없습니다',true); return; }
+  closeTx(); go('owner'); toast(n+'명을 체크했습니다. [문자 보내기]로 이어서 보낼 수 있어요');
+}
+
 function excelOut(scope){
   if(typeof XLSX==='undefined'){ toast('엑셀 도구를 불러오지 못했습니다',true); return; }
   var list=selectedOrFiltered(scope), wb=XLSX.utils.book_new();
   var base=list.map(function(c){
     var o={'이름':c.name,'주민등록번호':c.rrnEnc||scope==='owner'?rrnFront(c):'', '생년월일':c.birth||'','연락처':c.phone||'','우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
-    if(scope==='owner'){ var cs=ctrsOf(c); o['보유계약 수']=cs.length; o['월 보험료 합계']=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0); }
+    if(scope==='owner'){ var cs=ctrsOf(c); o['보유계약 수']=cs.length; o['월 보험료 합계']=cs.reduce(function(s,x){return s+(Number(x.premium)||0);},0); o['최근 장기계약일']=lastLongDate(c); }
     else {
       o={'이름':c.name,'DB구분':c.dbType||'','DB상세':dbDetail(c),'주민등록번호':c.rrnEnc?rrnFront(c):'','생년월일':c.birth||'','연락처':c.phone||'','시도':regionOf(c),'시군구':sigunOf(c),'우편번호':c.zip||'','주소':c.addr||'','상세주소':c.addr2||'','직업':c.job||'','메모':c.memo||''};
       EXTRA_KEYS.forEach(function(k){ o[k]=ex(c,k); });
