@@ -325,12 +325,84 @@ html,body{max-width:100%;overflow-x:clip}
 .tb-app{background:#CF2E38;color:#fff;font-weight:800;font-size:13px;padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap;box-shadow:0 2px 0 #9E1F28}
 .tb-menu{font:inherit;font-weight:800;font-size:13px;background:var(--gray);color:var(--navy);border:0;border-radius:999px;padding:8px 14px;cursor:pointer;white-space:nowrap}
 .tb-menu[aria-expanded="true"]{background:var(--navy);color:#fff}
-@media (max-width:640px){
+@media (max-width:900px){
  .topbar{flex-wrap:nowrap;padding:10px var(--pad)}
  .topbar__m{display:flex;gap:6px;align-items:center}
  .topbar__links{display:none;position:absolute;left:0;right:0;top:100%;background:#fff;flex-direction:column;gap:8px;padding:12px var(--pad) 16px;border-bottom:1px solid var(--line);box-shadow:0 14px 24px rgba(11,30,66,.12)}
  .topbar__links.open{display:flex}
  .topbar__links a{text-align:center;padding:13px!important;font-size:15px!important}
+}
+
+/* ══ 2026-11-11 홈 개편: 첫 화면에서 바로 상담으로 ══ */
+.wrap2{max-width:1200px}
+.topbar{max-width:1200px;flex-wrap:nowrap;padding:12px var(--pad)}
+.topbar__links{gap:2px;align-items:center}
+.topbar__links a{font-size:15px;font-weight:700;color:var(--ink-2);text-decoration:none;padding:9px 12px;border-radius:10px;white-space:nowrap}
+.topbar__links a:hover{background:var(--navygray);color:var(--navy)}
+.topbar__links a.nv-join{border:1.5px solid var(--line);margin-left:8px}
+.topbar__links a.nv-tel{background:var(--navy);color:#fff;margin-left:4px}
+.tb-tel{font-size:18px;text-decoration:none;padding:6px 8px}
+.hm{position:relative;overflow:hidden;background:linear-gradient(180deg,#FFFFFF 0%,#F3F5FA 100%);border-bottom:1px solid var(--line)}
+.hm__in{position:relative;max-width:1200px;margin:0 auto;padding:24px var(--pad) 30px;display:grid;gap:20px;grid-template-areas:"t" "r" "s"}
+.hm__l{grid-area:t}.hm__r{grid-area:r}.hm__s{grid-area:s}
+.hm__s .qh__search{margin-top:0}
+.hm__in>*{min-width:0}
+.hm h1{font-family:var(--display);font-weight:900;font-size:clamp(30px,6.4vw,50px);line-height:1.18;letter-spacing:-.025em;color:var(--navy);margin-top:8px}
+.hm__lead{margin-top:12px;font-size:16px;color:var(--ink-2)}
+.hm .qh__kick,.hm .qh__search{opacity:1;animation:none}
+.tg{background:#fff;border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 10px 30px rgba(11,30,66,.06)}
+.tg+.tg{margin-top:12px}
+.tg__h{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:12px}
+.tg__h i{font-style:normal;font-size:20px}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-decoration:none;color:var(--ink);background:var(--navygray);border:1.5px solid transparent;border-radius:14px;padding:12px;transition:transform .15s,border-color .15s,background .15s}
+.tile span{font-size:26px;line-height:1;margin-bottom:6px}
+.tile b{font-size:15.5px;font-weight:800;color:var(--navy);line-height:1.3}
+.tile small{font-size:12px;color:var(--steel);line-height:1.35}
+.tile:hover,.tile:focus-visible{transform:translateY(-2px);background:#fff;border-color:var(--navy);outline:none}
+.claimbar{display:flex;align-items:center;gap:12px;margin-top:12px;text-decoration:none;background:var(--navy);color:#fff;border-radius:18px;padding:16px 18px;transition:transform .15s}
+.claimbar:hover{transform:translateY(-2px)}
+.claimbar>span{font-size:28px}
+.claimbar div{flex:1;min-width:0}
+.claimbar b{display:block;font-size:17px;font-weight:800}
+.claimbar small{display:block;font-size:13px;color:#C6D0E0}
+.claimbar em{font-style:normal;flex:none;background:var(--orange);color:var(--navy);font-weight:800;font-size:14px;padding:9px 14px;border-radius:999px}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sh h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,4.6vw,26px);color:var(--navy);letter-spacing:-.015em}
+.sh a{font-weight:800;color:var(--deep);text-decoration:none;white-space:nowrap}
+.qa{padding:34px 0 30px}
+.qa__grid{display:grid;gap:22px}
+.qa__grid>*{min-width:0}
+.qa__side .chat{max-width:none;opacity:1;animation:none;padding:14px 14px 12px}
+.qa__side .chat__body{min-height:220px}
+.side__btn{display:block;margin-top:10px;text-align:center;background:var(--orange);color:var(--navy);font-weight:800;text-decoration:none;padding:14px;border-radius:14px;box-shadow:0 3px 0 var(--deep)}
+.fp{padding:32px 0}
+.bt{padding:26px 0 30px;background:#fff}
+.bt__in{display:grid;gap:12px}
+.bt__join{display:flex;align-items:center;gap:14px;text-decoration:none;background:var(--tint);border-radius:18px;padding:18px 20px;color:var(--ink)}
+.bt__join div{flex:1;min-width:0}
+.bt__join small{display:block;font-size:13px;color:var(--deep);font-weight:700}
+.bt__join b{display:block;font-size:19px;font-weight:900;color:var(--navy)}
+.bt__join span{display:block;font-size:13.5px;color:var(--ink-2)}
+.bt__join em{font-style:normal;flex:none;background:var(--navy);color:#fff;font-weight:800;font-size:14px;padding:10px 16px;border-radius:999px}
+.bt__staff{background:var(--navygray);border-radius:18px;padding:16px 20px}
+.bt__staff small{display:block;font-size:13px;font-weight:700;color:var(--steel);margin-bottom:8px}
+.bt__staff div{display:flex;flex-wrap:wrap;gap:8px}
+.bt__staff a{background:#fff;color:var(--navy);font-weight:800;font-size:14px;text-decoration:none;padding:9px 14px;border-radius:10px}
+@media (max-width:900px){.topbar__links a{background:var(--navygray);color:var(--navy)}.topbar__links a.nv-join,.topbar__links a.nv-tel{margin:0}.topbar__links a.nv-tel{background:var(--navy);color:#fff}}
+@media (min-width:980px){
+  .hm__in{grid-template-columns:.9fr 1.1fr;grid-template-areas:"t r" "s r";column-gap:48px;row-gap:22px;align-items:end;padding:44px var(--pad) 48px}
+  .hm__s{align-self:start}
+  .qa__grid{grid-template-columns:1fr 340px;align-items:start}
+  .qa__side{position:sticky;top:80px}
+  .qa__list{grid-template-columns:1fr 1fr!important}
+  .fp__list{grid-template-columns:repeat(4,1fr)!important}
+  .bt__in{grid-template-columns:1.4fr 1fr}
+}
+@media (max-width:640px){
+  .tiles{gap:6px}.tile{padding:10px 8px}.tile b{font-size:14px}.tile small{display:none}.tile span{font-size:24px}
+  .claimbar em{display:none}
+  .qh__ask{display:flex;justify-content:center}
 }
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
@@ -345,100 +417,97 @@ html,body{max-width:100%;overflow-x:clip}
 <div class="topbar-outer">
 <header class="topbar">
   <a href="/"><img class="brand-mark" src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="90" height="26" decoding="async" style="height:26px;width:auto;display:block"></a>
-  <div class="topbar__m"><a href="#" class="js-app tb-app">앱 설치</a><button type="button" class="tb-menu" id="tbMenu" aria-expanded="false" aria-controls="topLinks">메뉴</button></div>
-  <div class="topbar__links" id="topLinks">
-    <a class="about-link" href="/qna/">질문하기</a>
-    <a class="grow-link" href="/column/">칼럼</a>
-    <a class="grow-link" href="/ask/?m=daon">상담 신청</a>
-    <a class="grow-link" href="/about">다온지사 소개</a>
-  </div>
+  <div class="topbar__m"><a href="tel:0415341124" class="tb-tel">📞</a><button type="button" class="tb-menu" id="tbMenu" aria-expanded="false" aria-controls="topLinks">메뉴</button></div>
+  <nav class="topbar__links" id="topLinks">
+    <a href="#go">보험 상담</a>
+    <a href="/claim/app/?m=daon">보험금 청구</a>
+    <a href="#biz">사장님 보험</a>
+    <a href="#qa">칼럼·질문</a>
+    <a href="#fp">설계사 찾기</a>
+    <a class="nv-join" href="/join1">설계사 모집</a>
+    <a class="nv-tel" href="tel:0415341124">📞 041-534-1124</a>
+  </nav>
 </header>
 </div>
 
-<!-- ① 질문부터 -->
-<section class="qh">
-  <span class="qh__blob b1" aria-hidden="true"></span><span class="qh__blob b2" aria-hidden="true"></span>
-  <div class="qh__in">
-    <div>
+<!-- ① 첫 화면: 무엇을 도와드릴까요 -->
+<section class="hm" id="go">
+  <span class="qh__blob b1" aria-hidden="true"></span>
+  <div class="hm__in">
+    <div class="hm__l">
       <p class="qh__kick">보험물어봄 <span>by 다온</span></p>
-      <h1>보험, 궁금한 것부터<br>물어보세요</h1>
-      <p class="qh__lead">AI가 약관·법령 자료로 바로 1차 안내를 드리고, 다온 보험설계사가 내 증권을 보고 이어서 답합니다.</p>
-      <div class="qh__act">
-        <label class="qh__search"><span class="sr">칼럼 검색</span><input id="q" type="search" placeholder="예: 간병인, 실비 청구, 자동차 사고" autocomplete="off"><i aria-hidden="true">⌕</i></label>
-        <a class="qh__ask" href="/qna/" id="askBtn">바로 물어보기 <b>무료</b></a>
-        <p class="qh__trust"><span>설계사 등록번호 공개</span><span>상담 비용 없음</span><span>보험금 청구 대행</span></p>
-      </div>
+      <h1>무엇을<br>도와드릴까요?</h1>
+      <p class="hm__lead">필요한 것을 누르면 1분 안에 상담 신청이 끝납니다.<br>궁금한 것만 있다면 바로 물어보세요.</p>
     </div>
-    <div class="chat" aria-hidden="true">
-      <div class="chat__bar"><img src="/assets/favicon-daon.png" alt="">보험물어봄<small>답변 중</small></div>
-      <div class="chat__body" id="chatBody"></div>
-      <p class="chat__note">실제 질문 예시입니다. 보장 여부는 가입한 상품의 약관으로 정해집니다.</p>
+    <div class="hm__s">
+      <label class="qh__search"><span class="sr">궁금한 것 검색</span><input id="q" type="search" placeholder="예: 간병인, 실비 청구, 자동차 사고" autocomplete="off"><i aria-hidden="true">⌕</i></label>
+      <a class="qh__ask" href="/qna/" id="askBtn">AI에게 바로 물어보기 <b>무료</b></a>
+      <p class="qh__trust"><span>상담 비용 없음</span><span>설계사 등록번호 공개</span><span>보험금 청구 대행</span></p>
+    </div>
+
+    <div class="hm__r">
+      <div class="tg">
+        <h2 class="tg__h"><i>👨‍👩‍👧</i>개인·가족 보험 상담</h2>
+        <div class="tiles">
+          <a class="tile" href="/health-consult/?m=daon"><span>🩺</span><b>건강보험</b><small>실비·수술·간병·치매</small></a>
+          <a class="tile" href="/cancer-consult/?m=daon"><span>🎗️</span><b>암보험</b><small>보장 충분한지 비교</small></a>
+          <a class="tile" href="/consult/?m=daon"><span>📋</span><b>내 보험 점검</b><small>무료 보장분석</small></a>
+          <a class="tile" href="/auto-consult/?m=daon"><span>🚗</span><b>자동차보험</b><small>만기 전 견적 비교</small></a>
+          <a class="tile" href="/fire-consult/?m=daon"><span>🏠</span><b>주택 화재보험</b><small>주소만 알려주세요</small></a>
+          <a class="tile" href="/pet-consult/?m=daon"><span>🐾</span><b>펫보험</b><small>강아지·고양이</small></a>
+        </div>
+      </div>
+      <div class="tg" id="biz">
+        <h2 class="tg__h"><i>🏪</i>사장님·사업장 보험</h2>
+        <div class="tiles">
+          <a class="tile" href="/biz-d/?m=daon"><span>📜</span><b>의무보험 확인</b><small>1분 확인</small></a>
+          <a class="tile" href="/safety-consult/?m=daon"><span>🔥</span><b>사업장 보험 상담</b><small>화재·배상·직원</small></a>
+          <a class="tile" href="/business/?m=daon"><span>🦺</span><b>안전 자가진단</b><small>중대재해 5인 이상</small></a>
+        </div>
+      </div>
+      <a class="claimbar" href="/claim/app/?m=daon"><span>🧾</span><div><b>보험금 청구 무료 대행</b><small>담당 설계사가 없어도 됩니다 · 서류 사진만 올리세요</small></div><em>청구하기 ›</em></a>
     </div>
   </div>
 </section>
 
-<!-- ② 궁금한 질문·칼럼 -->
+<!-- ② 칼럼·질문 -->
 <section class="qa" id="qa">
   <div class="wrap2">
-    <div class="qa__types" id="qaTypes" role="tablist"></div>
-    <div class="qa__cats" id="qaCats"></div>
-    <div class="qa__list" id="qaList"><p class="fp__state">글을 불러오는 중입니다</p></div>
-    <a class="qa__all" href="/column/">칼럼 전체 보기 ›</a>
+    <div class="sh"><h2>보험, 이런 게 궁금하셨죠?</h2><a href="/column/">칼럼 전체 보기 ›</a></div>
+    <div class="qa__grid">
+      <div class="qa__main">
+        <div class="qa__types" id="qaTypes" role="tablist"></div>
+        <div class="qa__cats" id="qaCats"></div>
+        <div class="qa__list" id="qaList"><p class="fp__state">글을 불러오는 중입니다</p></div>
+      </div>
+      <aside class="qa__side">
+        <div class="chat" aria-hidden="true">
+          <div class="chat__bar"><img src="/assets/favicon-daon.png" alt="">보험물어봄<small>답변 중</small></div>
+          <div class="chat__body" id="chatBody"></div>
+          <p class="chat__note">실제 질문 예시입니다. 보장 여부는 가입한 상품의 약관으로 정해집니다.</p>
+        </div>
+        <a class="side__btn" href="/qna/">내 질문 남기기 ›</a>
+      </aside>
+    </div>
   </div>
 </section>
 
-<!-- ③ 설계사 고르기 (작게) -->
+<!-- ③ 설계사 찾기 -->
 <section class="fp" id="fp">
   <div class="wrap2">
     <div class="fp__head">
-      <h2>글이 도움 됐다면, 설계사에게 바로 물어보세요</h2>
+      <h2>담당 설계사를 직접 고르세요</h2>
       <div class="fp__filter" id="fpFilter"></div>
     </div>
     <div class="fp__list" id="fpList"><p class="fp__state">설계사 정보를 불러오는 중입니다</p></div>
   </div>
 </section>
 
-<!-- ④ 보험금 청구 -->
-<section class="cl">
-  <div class="wrap2 cl__in">
-    <div>
-      <h2>담당 설계사가 없어도<br>보험금 청구는 됩니다</h2>
-      <p>진료비 영수증·세부내역서를 사진으로 올려 주세요. 다온 설계사가 확인하고 보험사에 대신 접수해 드립니다. 비용은 받지 않습니다.</p>
-    </div>
-    <a class="cl__btn" href="/claim/app/?m=daon">청구 서류 사진 올리기</a>
-  </div>
-</section>
-
-<!-- ④-2 펫보험 상담 -->
-<section class="pet">
-  <div class="wrap2 pet__in">
-    <div class="pet__t">
-      <h2>🐶🐱 반려동물 키우시나요?</h2>
-      <p>보호자·우리 아이 정보만 남기면 펫보험 가설계를 만들어 연락드립니다.</p>
-    </div>
-    <a class="pet__btn" href="/pet-consult/?m=daon">펫보험 상담 신청</a>
-  </div>
-</section>
-
-<!-- ⑤ 모집 -->
-<section class="rc2">
-  <div class="wrap2">
-    <div class="recruit">
-      <h3>보험물어봄 by 다온에서 고객을 만날 설계사를 모집합니다</h3>
-      <p>신입 · 경력팀장 · 관리자 모집 | 현장 지역행사와 온라인, 두 가지 영업 시장을 함께 엽니다</p>
-      <a class="recruit-btn" href="/join1">모집 안내 보기</a>
-    </div>
-    <p class="biz-line">사업장을 운영하시나요? <a href="/biz-d/?m=daon">우리 사업장에 필요한 보험 확인하기</a></p>
-  </div>
-</section>
-
-<!-- ⑥ 설계사 전용 -->
-<section class="staffbar">
-  <div class="wrap2">
-    <span>다온지사 설계사</span>
-    <a href="/crm/index.html">다온 CRM</a>
-    <a href="/biz-insurance/">사업장보험 자료실</a>
-    <a href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a>
+<!-- ④ 모집 · 설계사 전용 -->
+<section class="bt">
+  <div class="wrap2 bt__in">
+    <a class="bt__join" href="/join1"><div><small>함께 일할 분을 찾습니다</small><b>보험설계사 모집</b><span>신입 · 경력팀장 · 관리자 | 현장 지역행사 + 온라인 영업</span></div><em>모집 안내 ›</em></a>
+    <div class="bt__staff"><small>다온지사 설계사 전용</small><div><a href="/crm/index.html">다온 CRM</a><a href="/biz-insurance/">사업장보험 자료실</a><a href="https://grow.ai.kr" target="_blank" rel="noopener">그로우사업부</a></div></div>
   </div>
 </section>
 
@@ -446,7 +515,8 @@ html,body{max-width:100%;overflow-x:clip}
 <footer class="foot">
   <div class="wrap">
     <div class="foot__legal" style="border-top:none;padding-top:0;margin-top:0;">
-      보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20150978060015<br>
+      모집 보험대리점 미래에셋금융서비스(주) · 대리점 등록번호 2014048012<br>
+      보험설계사 김화진 · 설계사 등록번호 20150978060015<br>
       전화 041-534-1124 · 팩스 041-534-1126<br>
       본 사이트는 특정 보험회사나 상품을 광고·비교하지 않으며, 상담·제휴·채용 관련 정보 제공 및 신청 접수를 목적으로 합니다.<br>
       개인정보 보호책임자 다온파트너스 · 041-534-1124
@@ -528,6 +598,7 @@ html,body{max-width:100%;overflow-x:clip}
   }
   chatDemo();
   var tbm=$('tbMenu'); if(tbm) tbm.addEventListener('click',function(){ var o=$('topLinks').classList.toggle('open'); tbm.setAttribute('aria-expanded',o); tbm.textContent=o?'닫기':'메뉴'; });
+  $('topLinks').addEventListener('click',function(e){ if(e.target.closest('a')&&tbm){ $('topLinks').classList.remove('open'); tbm.setAttribute('aria-expanded',false); tbm.textContent='메뉴'; } });
   function ticker(){}
   /* 설계사 (작게) */
   function exCard(p){
