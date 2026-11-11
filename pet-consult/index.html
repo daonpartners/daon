@@ -3,336 +3,84 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>펫보험 상담 신청 | 다온파트너스</title>
-<meta name="description" content="강아지·고양이 펫보험, 보호자 정보와 우리 아이 정보만 남겨주시면 다온 보험설계사가 가설계를 만들어 연락드립니다. 상담 비용 없음.">
+<title>펫보험 상담 신청 | 보험물어봄 by 다온</title>
+<meta name="description" content="강아지·고양이 펫보험, 우리 아이 정보와 보호자 정보만 남겨주시면 가설계를 만들어 연락드립니다. 상담 비용 없음.">
 <meta name="robots" content="index, follow">
 <meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:site_name" content="보험물어봄 by 다온">
 <meta property="og:title" content="펫보험 상담 신청">
-<meta property="og:description" content="보호자·반려동물 정보만 남기면 가설계를 만들어 연락드립니다.">
+<meta property="og:description" content="강아지·고양이 펫보험, 우리 아이 정보와 보호자 정보만 남겨주시면 가설계를 만들어 연락드립니다. 상담 비용 없음.">
 <meta property="og:url" content="https://daon.io.kr/pet-consult">
 <meta name="theme-color" content="#0B1E42">
 <link rel="canonical" href="https://daon.io.kr/pet-consult">
 <link rel="icon" type="image/png" href="/assets/favicon-daon.png">
 <link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<style>
-:root{
-  --ink:#14161A; --ink2:#5A626D; --line:#E4E7EA; --bg:#FAFAFB;
-  --pink:#E39BA5; --deep:#A85F6C; --tint:#F9E9EC;
-  --navy:#0B1E42; --kakao:#FEE500; --red:#D0342C;
-  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Malgun Gothic",sans-serif;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;word-break:keep-all}
-.wrap{max-width:560px;margin:0 auto;padding:0 16px 140px}
-.hide{display:none!important}
-
-.top{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
-.top img{height:22px;width:auto;display:block}
-.top a.call{font-size:13px;font-weight:700;color:var(--navy);text-decoration:none;border:1.5px solid var(--line);border-radius:999px;padding:7px 14px;background:#fff}
-
-.hero{padding:18px 0 8px}
-.hero h1{margin:0;font-size:clamp(24px,7vw,30px);line-height:1.3;font-weight:800;letter-spacing:-.04em}
-.hero h1 em{font-style:normal;color:var(--deep)}
-.hero p{margin:10px 0 0;font-size:15px;color:var(--ink2)}
-.steps{display:flex;gap:6px;margin:16px 0 4px;font-size:12.5px;font-weight:700;color:var(--ink2)}
-.steps span{flex:1;text-align:center;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 4px}
-.steps span.on{background:var(--tint);border-color:var(--pink);color:var(--deep)}
-
-.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 16px;margin-top:12px}
-.card h2{margin:0 0 4px;font-size:18px;font-weight:800;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
-.card h2 i{font-style:normal;display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-size:13px}
-.card .help{margin:0 0 14px;font-size:13.5px;color:var(--ink2)}
-
-.f{margin-top:14px}
-.f:first-of-type{margin-top:0}
-.lb{display:block;font-size:14px;font-weight:700;margin-bottom:7px}
-.lb small{font-weight:500;color:var(--ink2);margin-left:4px}
-.inp{width:100%;font-family:inherit;font-size:16px;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:14px;outline:none}
-.inp:focus{border-color:var(--navy)}
-.inp.bad{border-color:var(--red)}
-textarea.inp{min-height:76px;resize:vertical}
-.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
-
-.seg{display:flex;gap:8px;flex-wrap:wrap}
-.seg button{flex:1;min-width:72px;font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:13px 6px;cursor:pointer}
-.seg button.on{border-color:var(--navy);background:var(--navy);color:#fff}
-.seg.big button{font-size:17px;padding:18px 6px}
-.seg.big button b{display:block;font-size:28px;line-height:1;margin-bottom:6px}
-
-.open{margin-top:10px}
-.more{display:block;width:100%;margin-top:14px;font-family:inherit;font-size:14px;font-weight:700;color:var(--deep);background:var(--tint);border:0;border-radius:12px;padding:12px;cursor:pointer}
-
-.photo{display:flex;align-items:center;gap:12px;border:1.5px dashed var(--line);border-radius:12px;padding:12px;cursor:pointer;background:#fff}
-.photo input{display:none}
-.photo img{width:56px;height:56px;border-radius:10px;object-fit:cover;background:var(--tint)}
-.photo span{font-size:14px;font-weight:700;color:var(--navy)}
-.photo small{display:block;font-weight:500;color:var(--ink2);font-size:12.5px}
-
-.agree{display:flex;gap:10px;align-items:flex-start;margin-top:12px;font-size:13.5px;cursor:pointer}
-.agree input{width:20px;height:20px;margin:1px 0 0;flex:0 0 auto;accent-color:var(--navy)}
-.agree b{font-weight:700}
-.agree span{color:var(--ink2)}
-.agree span b{color:var(--ink)}
-
-.err{display:none;margin-top:12px;font-size:14px;font-weight:700;color:var(--red)}
-.err.on{display:block}
-
-.dock{position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom))}
-.dock-in{max-width:560px;margin:0 auto;display:flex;gap:8px}
-.send{flex:1;border:0;border-radius:14px;background:var(--navy);color:#fff;font-family:inherit;font-size:17px;font-weight:800;padding:17px;cursor:pointer}
-.send:disabled{background:#B8BEC8}
-.kk{flex:0 0 auto;display:grid;place-items:center;border-radius:14px;background:var(--kakao);color:#191600;font-size:13px;font-weight:800;text-decoration:none;padding:0 14px;line-height:1.25;text-align:center}
-
-.done{text-align:center;padding:40px 8px}
-.done .mark{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;background:var(--tint);display:grid;place-items:center;font-size:30px}
-.done h2{margin:0 0 10px;font-size:22px;font-weight:800;justify-content:center}
-.done p{margin:0;font-size:15px;color:var(--ink2)}
-.done a{display:block;margin-top:14px;border-radius:12px;padding:15px;font-weight:800;text-decoration:none}
-.done .k{background:var(--kakao);color:#191600;margin-top:24px}
-.done .h{border:1.5px solid var(--line);color:var(--ink)}
-
-.foot{margin-top:24px;font-size:11.5px;color:var(--ink2);line-height:1.75}
-.foot p{margin:0 0 4px}
-.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:14px;font-weight:600;padding:11px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;white-space:nowrap}
-.toast.on{opacity:1}
-</style>
+<link rel="stylesheet" href="/assets/consult.css?v=20261111">
 </head>
 <body>
-<div class="wrap">
-
-  <header class="top">
-    <a href="/"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
-    <a class="call" id="callTop" href="tel:0415341124">📞 전화 상담</a>
+<div class="app">
+  <header class="cs-top">
+    <a href="/" aria-label="보험물어봄 홈"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
+    <a class="call" href="tel:0415341124">📞 전화 상담</a>
   </header>
 
-  <div id="formArea">
-    <section class="hero">
-      <h1>우리 아이 <em>펫보험</em>,<br>1분이면 상담 신청 끝</h1>
-      <p>아래 세 가지만 채워 주세요. 다온 보험설계사가 가설계를 만들어 연락드립니다. 상담 비용은 없고, 신청만으로 가입되지 않습니다.</p>
-      <div class="steps"><span class="on" id="st1">① 보호자</span><span id="st2">② 우리 아이</span><span id="st3">③ 건강 상태</span></div>
-    </section>
-
-    <!-- ① 보호자(계약자) -->
-    <section class="card" id="c1">
-      <h2><i>1</i>보호자 정보</h2>
-      <p class="help">보험 계약자(상담받으실 분) 정보입니다.</p>
-      <div class="f"><label class="lb" for="uName">이름</label><input class="inp" id="uName" autocomplete="name" maxlength="20" placeholder="홍길동"></div>
-      <div class="f"><label class="lb" for="uPhone">휴대폰 번호</label><input class="inp" id="uPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000"></div>
-      <div class="f"><label class="lb" for="uBirth">생년월일 <small>숫자 8자리</small></label><input class="inp" id="uBirth" inputmode="numeric" maxlength="10" placeholder="19800101"></div>
-    </section>
-
-    <!-- ② 반려동물 -->
-    <section class="card" id="c2">
-      <h2><i>2</i>우리 아이 정보</h2>
-      <div class="f"><span class="lb">어떤 아이인가요?</span>
-        <div class="seg big" data-k="kind"><button type="button" data-v="강아지"><b>🐶</b>강아지</button><button type="button" data-v="고양이"><b>🐱</b>고양이</button></div>
-      </div>
-      <div class="row f">
-        <div><label class="lb" for="pName">이름</label><input class="inp" id="pName" maxlength="20" placeholder="예) 초코"></div>
-        <div><label class="lb" for="pBreed">품종</label><input class="inp" id="pBreed" maxlength="30" placeholder="예) 말티즈"></div>
-      </div>
-      <div class="f"><label class="lb" for="pBirth">생일 <small>모르면 나이만</small></label><input class="inp" id="pBirth" maxlength="20" placeholder="예) 20220501 또는 3살"></div>
-      <div class="f"><span class="lb">성별</span><div class="seg" data-k="pSex"><button type="button" data-v="수컷">수컷</button><button type="button" data-v="암컷">암컷</button></div></div>
-      <div class="f"><span class="lb">중성화</span><div class="seg" data-k="neutered"><button type="button" data-v="했음">했어요</button><button type="button" data-v="안 함">안 했어요</button></div></div>
-    </section>
-
-    <!-- ③ 건강 -->
-    <section class="card" id="c3">
-      <h2><i>3</i>건강 상태</h2>
-      <p class="help">정확히 알려주셔야 나중에 보험금 받을 때 문제가 없습니다.</p>
-      <div class="f"><span class="lb">지금 치료 중이거나 지켜보는 병이 있나요?</span>
-        <div class="seg" data-k="sick"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button><button type="button" data-v="모름">잘 모르겠어요</button></div>
-        <textarea class="inp open hide" id="pDisease" maxlength="200" placeholder="예) 슬개골 탈구 2기, 피부염 약 복용 중"></textarea>
-      </div>
-      <div class="f"><span class="lb">최근 6개월 안에 동물병원에 간 적 있나요?</span>
-        <div class="seg" data-k="visit"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button></div>
-        <textarea class="inp open hide" id="pVisit" maxlength="200" placeholder="예) 9월 장염으로 2회 통원 (예방접종·건강검진만 했다면 그렇게 적어주세요)"></textarea>
-      </div>
-
-      <button type="button" class="more" id="btnMore">+ 더 알려주기 (선택) — 동물등록·예방접종·사진</button>
-      <div id="moreBox" class="hide">
-        <div class="f"><span class="lb">동물등록</span><div class="seg" data-k="registered"><button type="button" data-v="등록">했어요</button><button type="button" data-v="미등록">안 했어요</button><button type="button" data-v="모름">모름</button></div></div>
-        <div class="f"><span class="lb">예방접종</span><div class="seg" data-k="vaccine"><button type="button" data-v="접종함">다 했어요</button><button type="button" data-v="일부 접종">일부만</button><button type="button" data-v="안 함">안 했어요</button></div></div>
-        <div class="f"><label class="lb" for="pHosp">다니는 동물병원 <small>지역도 함께</small></label><input class="inp" id="pHosp" maxlength="50" placeholder="예) 아산 OO동물병원"></div>
-        <div class="f"><span class="lb">아이 사진 <small>정면 얼굴 1장</small></span>
-          <label class="photo"><input type="file" id="pPhoto" accept="image/*"><img id="pPrev" alt="" class="hide"><div><span id="pPhotoTxt">사진 올리기</span><small>가입 심사 때 필요해요. 나중에 카톡으로 보내셔도 됩니다.</small></div></label>
-        </div>
-      </div>
-    </section>
-
-    <!-- ④ 연락 -->
-    <section class="card" id="c4">
-      <h2><i>✓</i>어떻게 연락드릴까요?</h2>
-      <div class="f"><div class="seg" data-k="way"><button type="button" data-v="전화">📞 전화</button><button type="button" data-v="문자·카톡">💬 문자·카톡</button></div></div>
-      <div class="f"><label class="lb" for="memo">궁금한 점·통화 편한 시간 <small>선택</small></label><textarea class="inp" id="memo" maxlength="500" placeholder="예) 평일 저녁 7시 이후, 슬개골도 보장되는지 궁금해요"></textarea></div>
-      <label class="agree"><input type="checkbox" id="agree1"><span><b>[필수] 개인정보 수집·이용 동의</b><br>이름·휴대폰·생년월일·반려동물 정보를 펫보험 상담·가설계 목적으로만 이용하며, 상담 종료 후 1년간 보관 후 파기합니다. 동의하지 않으면 신청할 수 없습니다.</span></label>
-      <label class="agree"><input type="checkbox" id="agree2"><span><b>[선택] 보험 상품·이벤트 안내 수신 동의</b><br>동의하지 않아도 상담은 그대로 진행됩니다.</span></label>
-      <p class="err" id="err"></p>
-    </section>
-
-    <footer class="foot">
-      <p><b>다온파트너스</b> · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>
-      <p>보험대리점 등록번호 2014048012 · 보험설계사 등록번호 20150978060015 · 개인정보 보호책임자 다온파트너스(041-534-1124)</p>
-      <p>이 페이지는 가설계(견적) 상담 신청 창구이며, 신청만으로 보험계약이 체결되지 않습니다. 보장 내용·보험료는 보험회사 인수 심사에 따라 달라질 수 있으니 상품의 약관과 상품설명서를 확인해 주세요. 고지 내용이 사실과 다르면 보험금 지급이 제한되거나 계약이 해지될 수 있습니다.</p>
-    </footer>
-  </div>
-
-  <!-- 완료 -->
-  <section class="done hide" id="done">
-    <div class="mark">🐾</div>
-    <h2>신청이 접수되었습니다</h2>
-    <p id="doneMsg">다온 보험설계사가 가설계를 만들어 곧 연락드립니다.</p>
-    <a class="k" id="kAfter" href="https://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">카카오톡으로 사진·추가 내용 보내기</a>
-    <a class="h" href="/">보험물어봄 홈으로</a>
+  <section class="cs-hero">
+    <div class="ic">🐾</div>
+    <p class="kick">펫보험 상담</p>
+    <h1>우리 아이 펫보험,<br>1분이면 신청 끝</h1>
+    <p class="sub">아이 정보와 건강 상태만 알려주세요. 가설계를 만들어 연락드립니다.</p>
+    <div class="cs-badges"><span>상담 비용 없음</span><span>신청만으로 가입되지 않음</span></div>
   </section>
-</div>
 
-<div class="dock" id="dock">
-  <div class="dock-in">
-    <button type="button" class="send" id="btnSend">상담 신청하기</button>
-    <a class="kk" id="kTop" href="https://pf.kakao.com/_ZVtsX/chat" target="_blank" rel="noopener">카톡<br>문의</a>
-  </div>
+  <section class="cs-sec">
+    <h2><span class="n">1</span>우리 아이 정보</h2>
+    <div class="fl"><span class="lb">어떤 아이인가요?</span><div class="opts" data-k="kind"><button type="button" class="opt" data-v="강아지"><span class="i">🐶</span><span><b>강아지</b></span></button><button type="button" class="opt" data-v="고양이"><span class="i">🐱</span><span><b>고양이</b></span></button></div></div>
+    <div class="row fl"><div><label for="pName">이름</label><input class="inp" id="pName" maxlength="20" placeholder="예) 초코"></div><div><label for="pBreed">품종</label><input class="inp" id="pBreed" maxlength="30" placeholder="예) 말티즈"></div></div>
+    <div class="fl"><label for="pBirth">생일 <small>모르면 나이만</small></label><input class="inp" id="pBirth" placeholder="예) 20220501 또는 3살" maxlength="20" data-date></div>
+    <div class="fl"><span class="lb">성별</span><div class="seg" data-k="pSex"><button type="button" data-v="수컷">수컷</button><button type="button" data-v="암컷">암컷</button></div></div>
+    <div class="fl"><span class="lb">중성화</span><div class="seg" data-k="neut"><button type="button" data-v="했음">했어요</button><button type="button" data-v="안 함">안 했어요</button></div></div>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">2</span>건강 상태</h2>
+    <div class="fl"><span class="lb">지금 치료 중이거나 지켜보는 병이 있나요?</span><div class="seg" data-k="sick"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button><button type="button" data-v="모름">잘 몰라요</button></div></div>
+    <div class="fl" data-if="sick=있음"><label for="pDisease">어떤 병인가요?</label><textarea class="inp" id="pDisease" placeholder="예) 슬개골 탈구 2기, 피부염 약 복용 중" maxlength="200"></textarea></div>
+    <div class="fl"><span class="lb">최근 6개월 안에 동물병원에 간 적 있나요?</span><div class="seg" data-k="visit"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button></div></div>
+    <div class="fl" data-if="visit=있음"><label for="pVisit">어떤 일로 갔나요?</label><textarea class="inp" id="pVisit" placeholder="예) 9월 장염으로 2회 통원" maxlength="200"></textarea></div>
+    <button type="button" class="more" data-open="petMore">+ 더 알려주기 (선택) · 동물등록 · 예방접종 · 사진</button>
+    <div id="petMore" class="hide">
+    <div class="fl"><span class="lb">동물등록</span><div class="seg" data-k="reg"><button type="button" data-v="등록">했어요</button><button type="button" data-v="미등록">안 했어요</button><button type="button" data-v="모름">모름</button></div></div>
+    <div class="fl"><span class="lb">예방접종</span><div class="seg" data-k="vac"><button type="button" data-v="접종함">다 했어요</button><button type="button" data-v="일부 접종">일부만</button><button type="button" data-v="안 함">안 했어요</button></div></div>
+    <div class="fl"><label for="pHosp">다니는 동물병원 <small>지역도 함께</small></label><input class="inp" id="pHosp" placeholder="예) 아산 OO동물병원" maxlength="50"></div>
+    <div class="fl"><label class="photo"><input type="file" accept="image/*" data-photo="pet"><span class="ph">📷</span><span><b>아이 사진 올리기</b><small>정면 얼굴 1장 · 가입 심사 때 필요해요</small></span></label></div>
+    </div>
+  </section>
+  <div data-contact></div>
+  <footer class="cs-legal"></footer>
 </div>
-<div class="toast" id="toast"></div>
-
+<script src="/assets/consult.js?v=20261111"></script>
 <script>
-(function(){
-  var API = 'https://daonpartners.app.n8n.cloud/webhook/daon-pet-lead';
-  var PROFILE_API = 'https://daonpartners.app.n8n.cloud/webhook/daon-expert-profile';
-  var $ = function(id){ return document.getElementById(id); };
-  var params = new URLSearchParams(location.search);
-  var code = params.get('m') || params.get('a') || '';
-  var SEG = {}, PHOTO = '', FC = null;
-
-  function toast(t){ var e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(function(){ e.classList.remove('on'); }, 2200); }
-  function v(id){ return ($(id).value || '').trim(); }
-
-  /* 버튼 선택 */
-  document.querySelectorAll('.seg').forEach(function(g){
-    g.addEventListener('click', function(e){
-      var b = e.target.closest('button'); if(!b) return;
-      g.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); });
-      var k = g.dataset.k; SEG[k] = b.dataset.v;
-      if(k === 'sick') $('pDisease').classList.toggle('hide', SEG.sick !== '있음');
-      if(k === 'visit') $('pVisit').classList.toggle('hide', SEG.visit !== '있음');
-      steps();
-    });
-  });
-  $('btnMore').addEventListener('click', function(){ $('moreBox').classList.remove('hide'); this.classList.add('hide'); });
-
-  /* 휴대폰·생년월일 자동 정리 */
-  $('uPhone').addEventListener('input', function(){
-    var n = this.value.replace(/\D/g,'').slice(0,11);
-    this.value = n.length >= 8 ? n.replace(/(\d{3})(\d{3,4})(\d{4})/,'$1-$2-$3') : (n.length >= 4 ? n.replace(/(\d{3})(\d{1,4})/,'$1-$2') : n);
-    this.classList.remove('bad'); steps();
-  });
-  function birthFix(el){
-    var d = el.value.replace(/\D/g,'');
-    if(/^\d{8}$/.test(d) && el.value.replace(/[\d.\-\s]/g,'') === '') el.value = d.slice(0,4) + '-' + d.slice(4,6) + '-' + d.slice(6,8);
-  }
-  $('uBirth').addEventListener('input', function(){ this.value = this.value.replace(/[^\d\-]/g,''); birthFix(this); this.classList.remove('bad'); steps(); });
-  $('pBirth').addEventListener('input', function(){ birthFix(this); });
-  $('uName').addEventListener('input', function(){ this.classList.remove('bad'); steps(); });
-
-  function validBirth(s){
-    var m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/); if(!m) return false;
-    var y = +m[1], mo = +m[2], d = +m[3], dt = new Date(y, mo - 1, d);
-    return y >= 1920 && y <= new Date().getFullYear() && dt.getMonth() === mo - 1 && dt.getDate() === d;
-  }
-  function steps(){
-    var s1 = v('uName').length >= 2 && /^01\d{8,9}$/.test(v('uPhone').replace(/\D/g,'')) && validBirth(v('uBirth'));
-    var s2 = !!SEG.kind;
-    $('st1').classList.toggle('on', true);
-    $('st2').classList.toggle('on', s1);
-    $('st3').classList.toggle('on', s1 && s2);
-  }
-
-  /* 사진: 휴대폰 사진을 작게 줄여서 보냄 */
-  $('pPhoto').addEventListener('change', function(){
-    var f = this.files && this.files[0]; if(!f) return;
-    var img = new Image(), url = URL.createObjectURL(f);
-    img.onload = function(){
-      var max = 1000, w = img.width, h = img.height, r = Math.min(1, max / Math.max(w, h));
-      var c = document.createElement('canvas'); c.width = Math.round(w * r); c.height = Math.round(h * r);
-      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-      PHOTO = c.toDataURL('image/jpeg', 0.82);
-      $('pPrev').src = PHOTO; $('pPrev').classList.remove('hide'); $('pPhotoTxt').textContent = '사진 바꾸기';
-      URL.revokeObjectURL(url);
-    };
-    img.onerror = function(){ toast('사진을 읽지 못했어요. 카톡으로 보내주세요'); };
-    img.src = url;
-  });
-
-  /* 설계사 페이지에서 들어온 경우 담당 설계사 연결 */
-  if(code && /^[0-9A-Za-z-]{3,20}$/.test(code)){
-    fetch(PROFILE_API + '?a=' + encodeURIComponent(code), {cache:'no-store'}).then(function(r){ return r.json(); }).then(function(p){
-      if(!p || !p.name) return; FC = p;
-      if(p.kakao){ $('kTop').href = p.kakao; $('kAfter').href = p.kakao; }
-      if(p.phone){ $('callTop').href = 'tel:' + String(p.phone).replace(/\D/g,''); }
-    }).catch(function(){});
-  }
-
-  function fail(msg, el){
-    var e = $('err'); e.textContent = msg; e.classList.add('on'); toast(msg);
-    if(el){ el.classList.add('bad'); el.scrollIntoView({behavior:'smooth', block:'center'}); setTimeout(function(){ el.focus(); }, 300); }
-    else e.scrollIntoView({behavior:'smooth', block:'center'});
-  }
-
-  var sending = false;
-  $('btnSend').addEventListener('click', function(){
-    if(sending) return;
-    $('err').classList.remove('on');
-    var name = v('uName'), phone = v('uPhone'), birth = v('uBirth');
-    if(name.length < 2) return fail('보호자 이름을 입력해 주세요', $('uName'));
-    if(!/^01\d{8,9}$/.test(phone.replace(/\D/g,''))) return fail('휴대폰 번호를 확인해 주세요', $('uPhone'));
-    if(!validBirth(birth)) return fail('보호자 생년월일 8자리를 입력해 주세요 (예: 19800101)', $('uBirth'));
-    if(!SEG.kind) return fail('강아지인지 고양이인지 골라주세요', $('c2'));
-    if(!SEG.sick) return fail('치료 중인 병이 있는지 골라주세요', $('c3'));
-    if(SEG.sick === '있음' && !v('pDisease')) return fail('어떤 병인지 간단히 적어주세요', $('pDisease'));
-    if(!SEG.visit) return fail('최근 6개월 병원 방문 여부를 골라주세요', $('c3'));
-    if(SEG.visit === '있음' && !v('pVisit')) return fail('병원에 간 이유를 간단히 적어주세요', $('pVisit'));
-    if(!SEG.way) return fail('연락 방법(전화·문자)을 골라주세요', $('c4'));
-    if(!$('agree1').checked) return fail('개인정보 수집·이용에 동의해 주세요');
-
-    var memoLines = [
-      '보호자(계약자) 생년월일: ' + birth,
-      '연락 방법: ' + SEG.way,
-      '광고수신동의: ' + ($('agree2').checked ? '동의' : '미동의')
-    ];
-    if(FC) memoLines.push('담당: ' + FC.name + ' 설계사');
-    if(v('memo')) memoLines.push('남긴 말: ' + v('memo'));
-
-    /* 고르지 않은 칸은 '-'로 보냄 (접수 알림에 '없음'으로 잘못 찍히지 않게) */
+DaonConsult({
+  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-pet-lead', contactNo: 3, whoTitle: '보호자(계약자) 정보',
+  memoHint: '예) 슬개골도 보장되는지 궁금해요',
+  doneTips: ['아이 사진(정면 얼굴)이 가입 심사에 필요합니다. 못 올리셨다면 카톡으로 보내주세요.'],
+  validate: function(a){
+    if (!a.S.kind) return ['강아지인지 고양이인지 골라주세요', document.querySelector('[data-k=kind]')];
+    if (!a.S.sick) return ['치료 중인 병이 있는지 골라주세요', document.querySelector('[data-k=sick]')];
+    if (a.S.sick === '있음' && !a.v('pDisease')) return ['어떤 병인지 간단히 적어주세요', 'pDisease'];
+    if (!a.S.visit) return ['최근 6개월 병원 방문 여부를 골라주세요', document.querySelector('[data-k=visit]')];
+    if (a.S.visit === '있음' && !a.v('pVisit')) return ['병원에 간 이유를 간단히 적어주세요', 'pVisit'];
+  },
+  payload: function(a){
     var d = function(x){ return x ? x : '-'; };
-    var payload = {
-      name: name, phone: phone, birth: birth,
-      petName: d(v('pName')), petBirth: d(v('pBirth')), petBreed: SEG.kind + (v('pBreed') ? ' / ' + v('pBreed') : ''), petColor: '-',
-      petSex: d(SEG.pSex), neutered: d(SEG.neutered), registered: d(SEG.registered), vaccine: d(SEG.vaccine),
-      petDisease: SEG.sick === '있음' ? v('pDisease') : SEG.sick,
-      petVisit: SEG.visit === '있음' ? v('pVisit') : SEG.visit,
-      chronic: '-', petMed: '-', petHospital: d(v('pHosp')), petHospitalArea: '-', address: '-',
-      memo: memoLines.join(' / '),
-      photoBase64: PHOTO,
-      manager: code, consentRequired: true, consentMarketing: $('agree2').checked,
-      utm_source: params.get('utm_source') || 'direct', utm_medium: params.get('utm_medium') || '', utm_campaign: params.get('utm_campaign') || '',
-      referrer: document.referrer || '', submittedAt: new Date().toISOString()
-    };
-
-    sending = true; var btn = $('btnSend'); btn.disabled = true; btn.textContent = '접수 중…';
-    fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)})
-      .then(function(r){ if(!r.ok) throw new Error('bad'); })
-      .then(function(){
-        $('formArea').classList.add('hide'); $('dock').classList.add('hide'); $('done').classList.remove('hide');
-        $('doneMsg').textContent = (FC ? FC.name + ' 설계사가 ' : '다온 보험설계사가 ') + (SEG.way === '전화' ? '가설계를 만들어 전화드립니다.' : '가설계를 만들어 문자·카톡으로 보내드립니다.');
-        window.scrollTo({top:0, behavior:'smooth'});
-      })
-      .catch(function(){ sending = false; btn.disabled = false; btn.textContent = '다시 신청하기'; fail('접수하지 못했어요. 잠시 후 다시 시도하시거나 전화(041-534-1124)로 문의해 주세요.'); });
-  });
-})();
+    return { petName: d(a.v('pName')), petBirth: d(a.v('pBirth')), petBreed: a.S.kind + (a.v('pBreed') ? ' / ' + a.v('pBreed') : ''), petColor: '-',
+      petSex: d(a.S.pSex), neutered: d(a.S.neut), registered: d(a.S.reg), vaccine: d(a.S.vac),
+      petDisease: a.S.sick === '있음' ? a.v('pDisease') : a.S.sick, petVisit: a.S.visit === '있음' ? a.v('pVisit') : a.S.visit,
+      chronic: '-', petMed: '-', petHospital: d(a.v('pHosp')), petHospitalArea: '-', address: '-', photoBase64: a.PHOTOS.pet || '' };
+  }
+});
 </script>
 <script src="/assets/home-btn.js" defer></script>
 </body>

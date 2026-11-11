@@ -12,7 +12,7 @@
 <style>
 :root{
   --bg:#F2F4F6; --surface:#FFFFFF; --ink:#191F28; --ink2:#4E5968; --ink3:#8B95A1; --line:#E5E8EB;
-  --brand:#E8772E; --brand-dk:#C95F1B; --brand-lt:#FFF1E6;
+  --brand:#0B1E42; --brand-dk:#0B1E42; --brand-lt:#FBEFF1;
   --must:#D9480F; --must-lt:#FFF4EC; --law:#1F5FBF; --law-lt:#EEF4FF; --opt:#1E9E5A; --opt-lt:#EAF7F0;
   --err:#E5484D; --err-lt:#FDECEC;
 }
@@ -128,6 +128,13 @@ main{flex:1;padding:24px 22px 150px}
 footer{padding:24px 22px calc(120px + env(safe-area-inset-bottom,0px));color:var(--ink3);font-size:12px;line-height:1.7;background:var(--surface)}
 footer ul{margin:6px 0 0;padding-left:16px}
 footer b{color:var(--ink2)}
+
+/* 보험물어봄 by 다온 공통 표기 (2026-11-11) */
+.brand img{height:22px;width:auto;display:inline-block;vertical-align:middle}
+.cs-legal{margin:0;padding:22px 22px calc(130px + env(safe-area-inset-bottom,0px));background:#F3F4F7;font-size:12.5px;color:#8B95A1;line-height:1.7;text-align:left}
+.cs-legal .who{margin:0 0 10px;padding:12px 14px;border-radius:12px;background:#fff;color:#4E5968;font-size:13px}
+.cs-legal .who b{color:#191F28}
+.cs-legal p{margin:0 0 4px}
 </style>
 </head>
 <body>
@@ -137,7 +144,7 @@ footer b{color:var(--ink2)}
       <button class="back off" id="backBtn" aria-label="이전 단계">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
       </button>
-      <div class="brand">다온<b>파트너스</b></div>
+      <div class="brand"><a href="/"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a></div>
     </div>
     <div class="bar hide" id="bar"><i id="barFill"></i></div>
   </div>
@@ -249,16 +256,16 @@ footer b{color:var(--ink2)}
     </section>
   </main>
 
-  <footer>
-    <b>보험모집 관련 안내</b>
-    <ul>
-      <li>모집주체: 미래에셋금융서비스 다온지사</li>
-      <li>보험 상담 연결 페이지이며, 보험료 산출과 청약은 상담을 통해 진행합니다.</li>
-      <li>계약 전 상품설명서와 약관을 반드시 확인하세요.</li>
-      <li>기존 계약 해지 후 재가입 시 인수 거절, 보험료 인상, 보장 변경이 있을 수 있습니다.</li>
-      <li>보험금은 지급한도와 면책사항에 따라 제한될 수 있습니다.</li>
-    </ul>
-    <div style="margin-top:10px">충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 문의 041-534-1124</div>
+  <footer class="cs-legal">
+    <div class="who">
+      <p><b>모집 보험대리점</b> 미래에셋금융서비스(주) · 대리점 등록번호 2014048012</p>
+      <p><b>담당 보험설계사</b> 김화진 · 설계사 등록번호 20150978060015</p>
+      <p><b>운영</b> 다온파트너스 · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>
+    </div>
+    <p>이 페이지는 보험 상담 연결 화면이며, 보험료 산출과 청약은 상담을 통해 진행합니다. 신청만으로 보험계약이 체결되지 않습니다.</p>
+    <p>계약 전 상품설명서와 약관을 반드시 확인하세요. 기존 계약을 해지하고 새로 가입하면 인수 거절, 보험료 인상, 보장 변경이 있을 수 있습니다.</p>
+    <p>보험금은 약관의 지급 한도와 면책 사항에 따라 제한될 수 있습니다.</p>
+    <p>개인정보 보호책임자 다온파트너스 · 041-534-1124</p>
   </footer>
 </div>
 
