@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="/assets/favicon-daon.png">
 <link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/assets/consult.css?v=20261111">
+<link rel="stylesheet" href="/assets/consult.css?v=20261111b">
 </head>
 <body>
 <div class="app">
@@ -49,7 +49,7 @@
   <div data-contact></div>
   <footer class="cs-legal"></footer>
 </div>
-<script src="/assets/consult.js?v=20261111"></script>
+<script src="/assets/consult.js?v=20261111b"></script>
 <script>
 DaonConsult({
   api: 'https://daonpartners.app.n8n.cloud/webhook/daon-health-lead', contactNo: 3,
@@ -61,7 +61,7 @@ DaonConsult({
     if (a.S.ints.indexOf('자동차') >= 0) L.push('[자동차] 차량번호 ' + (a.v('aCar') || '-') + ' / 만기 ' + (a.v('aExp') || '-'));
     if (a.S.ints.indexOf('펫') >= 0) L.push('[펫] ' + (a.v('aPet') || '-') + ' / ' + (a.v('aPetAge') || '-'));
     if (a.S.ints.indexOf('화재') >= 0) L.push('[화재] 주소 ' + (a.v('aAddr') || '-'));
-    if (b.memo) L.push(b.memo);
+    if (b.memo) L.push('[남긴 말] ' + b.memo);
     return { interests: a.S.ints, interestEtc: '현재 가입 ' + (a.S.has || '-'), memo: L.join(' / '), origin: '통합상담' };
   }
 });

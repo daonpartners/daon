@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" href="/assets/favicon-daon.png">
 <link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/assets/consult.css?v=20261111">
+<link rel="stylesheet" href="/assets/consult.css?v=20261111b">
 </head>
 <body>
 <div class="app">
@@ -49,10 +49,10 @@
   <div data-contact></div>
   <footer class="cs-legal"></footer>
 </div>
-<script src="/assets/consult.js?v=20261111"></script>
+<script src="/assets/consult.js?v=20261111b"></script>
 <script>
 DaonConsult({
-  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-health-lead', contactNo: 3,
+  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-insurance-lead', contactNo: 3,
   validate: function(a){
     if (!a.S.policyCount) return ['가입한 보험 개수를 골라주세요', document.querySelector('[data-k=policyCount]')];
     if (!a.S.concern) return ['점검 받고 싶은 것을 골라주세요', document.querySelector('[data-k=concern]')];

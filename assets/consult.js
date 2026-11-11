@@ -202,7 +202,7 @@
       var base = {
         name: name, phone: phone, birth: birth,
         contactWay: S._way === '전화' ? 'phone' : 'kakao', callTime: way,
-        memo: [v('uMemo') ? '남긴 말: ' + v('uMemo') : '', birth ? '고객 생년월일: ' + birth : ''].concat(extra).filter(Boolean).join(' / '),
+        memo: v('uMemo'),
         extra: extra.join(' / '),
         origin: location.pathname, manager: code,
         consentRequired: true, consentMarketing: $('agree2').checked,
