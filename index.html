@@ -305,6 +305,12 @@ body{font-family:var(--body);background:var(--paper);color:var(--ink);line-heigh
 .cl h2{font-family:var(--display);font-weight:900;font-size:clamp(22px,5.4vw,30px);color:var(--navy);line-height:1.35}
 .cl p{margin-top:10px;font-size:15px;color:var(--ink-2);max-width:32em}
 .cl__btn{display:block;text-align:center;background:var(--navy);color:#fff;font-weight:800;font-size:16px;text-decoration:none;padding:16px 26px;border-radius:12px}
+.pet{background:#fff;padding:30px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.pet__in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.pet__t{flex:1;min-width:220px}
+.pet h2{font-family:var(--display);font-weight:900;font-size:clamp(20px,5vw,26px);color:var(--navy);line-height:1.35}
+.pet p{margin-top:6px;font-size:14.5px;color:var(--ink-2)}
+.pet__btn{flex:0 0 auto;display:inline-block;background:var(--orange);color:var(--navy);font-weight:800;font-size:16px;text-decoration:none;padding:15px 24px;border-radius:12px;box-shadow:0 3px 0 var(--deep)}
 @media (min-width:760px){.cl__in{grid-template-columns:1fr auto}}
 .rc2{padding:44px 0}
 .biz-line{margin-top:18px;font-size:14px;color:var(--steel);text-align:center}
@@ -400,6 +406,17 @@ html,body{max-width:100%;overflow-x:clip}
       <p>진료비 영수증·세부내역서를 사진으로 올려 주세요. 다온 설계사가 확인하고 보험사에 대신 접수해 드립니다. 비용은 받지 않습니다.</p>
     </div>
     <a class="cl__btn" href="/claim/app/?m=daon">청구 서류 사진 올리기</a>
+  </div>
+</section>
+
+<!-- ④-2 펫보험 상담 -->
+<section class="pet">
+  <div class="wrap2 pet__in">
+    <div class="pet__t">
+      <h2>🐶🐱 반려동물 키우시나요?</h2>
+      <p>보호자·우리 아이 정보만 남기면 펫보험 가설계를 만들어 연락드립니다.</p>
+    </div>
+    <a class="pet__btn" href="/pet-consult/?m=daon">펫보험 상담 신청</a>
   </div>
 </section>
 
