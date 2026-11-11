@@ -404,6 +404,37 @@ html,body{max-width:100%;overflow-x:clip}
   .claimbar em{display:none}
   .qh__ask{display:flex;justify-content:center}
 }
+
+/* ══ 2026-11-11 홈 2차: 왼쪽 실시간 질문·답변, 오른쪽 상담 바로가기, 아래 설계사|칼럼 ══ */
+.hm__in{grid-template-areas:"r" "c"!important}
+.hm__r{grid-area:r}.hm__c{grid-area:c}
+.hm h1{font-size:clamp(28px,5.4vw,40px);margin-top:4px}
+.hm__lead{margin:6px 0 14px;font-size:15px}
+.hm__lead span{display:inline-block;color:var(--steel);font-size:13.5px;font-weight:600}
+.hm__c .chat{display:block;text-decoration:none;color:inherit;max-width:none;opacity:1;animation:none;padding:14px 14px 10px;transition:transform .15s}
+.hm__c .chat:hover{transform:translateY(-2px)}
+.hm__c .chat__body{min-height:300px}
+.hm__c .qh__search{margin-top:14px;max-width:none}
+.hm__c .qh__ask{display:flex;justify-content:center;margin-top:10px}
+.bub .by{display:block;font-size:11.5px;font-weight:700;color:var(--orange);margin-bottom:2px}
+.bub.me .by{color:var(--deep)}
+.duo{background:var(--navygray);padding:30px 0 34px}
+.duo__in{display:grid;gap:16px}
+.duo__in>*{min-width:0}
+.duo__box{background:#fff;border-radius:20px;padding:20px;border:1px solid var(--line)}
+.duo .fp,.duo .qa{padding:20px}
+.duo .fp__filter{margin-bottom:12px}
+.duo .ex{border:1px solid var(--line)}
+.duo .qa__list{grid-template-columns:1fr!important}
+.duo .qc{padding:14px 16px}
+.duo .qc h3{font-size:16.5px;margin-top:6px}
+.duo .qc p{-webkit-line-clamp:2}
+@media (min-width:980px){
+  .hm__in{grid-template-columns:400px 1fr!important;grid-template-areas:"c r"!important;align-items:start!important;column-gap:40px!important}
+  .hm__c{position:sticky;top:84px}
+  .duo__in{grid-template-columns:1fr 1fr}
+  .duo .fp__list{grid-template-columns:1fr 1fr!important}
+}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -422,7 +453,8 @@ html,body{max-width:100%;overflow-x:clip}
     <a href="#go">보험 상담</a>
     <a href="/claim/app/?m=daon">보험금 청구</a>
     <a href="#biz">사장님 보험</a>
-    <a href="#qa">칼럼·질문</a>
+    <a href="/qna/">질문하기</a>
+    <a href="#qa">칼럼</a>
     <a href="#fp">설계사 찾기</a>
     <a class="nv-join" href="/join1">설계사 모집</a>
     <a class="nv-tel" href="tel:0415341124">📞 041-534-1124</a>
@@ -430,22 +462,24 @@ html,body{max-width:100%;overflow-x:clip}
 </header>
 </div>
 
-<!-- ① 첫 화면: 무엇을 도와드릴까요 -->
+<!-- ① 첫 화면: 실시간 질문·답변 + 무엇을 도와드릴까요 -->
 <section class="hm" id="go">
   <span class="qh__blob b1" aria-hidden="true"></span>
   <div class="hm__in">
-    <div class="hm__l">
-      <p class="qh__kick">보험물어봄 <span>by 다온</span></p>
-      <h1>무엇을<br>도와드릴까요?</h1>
-      <p class="hm__lead">필요한 것을 누르면 1분 안에 상담 신청이 끝납니다.<br>궁금한 것만 있다면 바로 물어보세요.</p>
-    </div>
-    <div class="hm__s">
+    <div class="hm__c">
+      <a class="chat" href="/qna/" aria-label="보험물어봄 질문·답변 보러 가기">
+        <div class="chat__bar"><img src="/assets/favicon-daon.png" alt="">보험물어봄 실시간 질문·답변<small>답변 중</small></div>
+        <div class="chat__body" id="chatBody"></div>
+        <p class="chat__note" id="chatNote">보장 여부는 가입한 상품의 약관으로 정해집니다.</p>
+      </a>
       <label class="qh__search"><span class="sr">궁금한 것 검색</span><input id="q" type="search" placeholder="예: 간병인, 실비 청구, 자동차 사고" autocomplete="off"><i aria-hidden="true">⌕</i></label>
-      <a class="qh__ask" href="/qna/" id="askBtn">AI에게 바로 물어보기 <b>무료</b></a>
-      <p class="qh__trust"><span>상담 비용 없음</span><span>설계사 등록번호 공개</span><span>보험금 청구 대행</span></p>
+      <a class="qh__ask" href="/qna/" id="askBtn">나도 물어보기 <b>무료</b></a>
     </div>
 
     <div class="hm__r">
+      <p class="qh__kick">보험물어봄 <span>by 다온</span></p>
+      <h1>무엇을 도와드릴까요?</h1>
+      <p class="hm__lead">누르면 1분 안에 상담 신청이 끝납니다. <span>상담 비용 없음 · 설계사 등록번호 공개</span></p>
       <div class="tg">
         <h2 class="tg__h"><i>👨‍👩‍👧</i>개인·가족 보험 상담</h2>
         <div class="tiles">
@@ -470,36 +504,20 @@ html,body{max-width:100%;overflow-x:clip}
   </div>
 </section>
 
-<!-- ② 칼럼·질문 -->
-<section class="qa" id="qa">
-  <div class="wrap2">
-    <div class="sh"><h2>보험, 이런 게 궁금하셨죠?</h2><a href="/column/">칼럼 전체 보기 ›</a></div>
-    <div class="qa__grid">
-      <div class="qa__main">
-        <div class="qa__types" id="qaTypes" role="tablist"></div>
-        <div class="qa__cats" id="qaCats"></div>
-        <div class="qa__list" id="qaList"><p class="fp__state">글을 불러오는 중입니다</p></div>
-      </div>
-      <aside class="qa__side">
-        <div class="chat" aria-hidden="true">
-          <div class="chat__bar"><img src="/assets/favicon-daon.png" alt="">보험물어봄<small>답변 중</small></div>
-          <div class="chat__body" id="chatBody"></div>
-          <p class="chat__note">실제 질문 예시입니다. 보장 여부는 가입한 상품의 약관으로 정해집니다.</p>
-        </div>
-        <a class="side__btn" href="/qna/">내 질문 남기기 ›</a>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ③ 설계사 찾기 -->
-<section class="fp" id="fp">
-  <div class="wrap2">
-    <div class="fp__head">
-      <h2>담당 설계사를 직접 고르세요</h2>
+<!-- ② 설계사 소개 | 칼럼 -->
+<section class="duo">
+  <div class="wrap2 duo__in">
+    <div class="duo__box fp" id="fp">
+      <div class="sh"><h2>설계사 소개</h2><a href="/experts/">전체 보기 ›</a></div>
       <div class="fp__filter" id="fpFilter"></div>
+      <div class="fp__list" id="fpList"><p class="fp__state">설계사 정보를 불러오는 중입니다</p></div>
     </div>
-    <div class="fp__list" id="fpList"><p class="fp__state">설계사 정보를 불러오는 중입니다</p></div>
+    <div class="duo__box qa" id="qa">
+      <div class="sh"><h2>설계사 칼럼</h2><a href="/column/">전체 보기 ›</a></div>
+      <div class="qa__types" id="qaTypes" role="tablist"></div>
+      <div class="qa__cats" id="qaCats"></div>
+      <div class="qa__list" id="qaList"><p class="fp__state">글을 불러오는 중입니다</p></div>
+    </div>
   </div>
 </section>
 
@@ -581,20 +599,32 @@ html,body{max-width:100%;overflow-x:clip}
     ['간병인 사용일당이랑 지원일당은 뭐가 달라요?','사용일당은 간병인을 쓰고 증빙하면 정해진 일당을 받고, 지원일당은 보험사와 계약된 업체가 간병인을 보내 주는 방식이에요.'],
     ['예전 병원비도 지금 청구할 수 있나요?','보험금 청구권은 3년이 지나면 소멸해요(상법 제662조). 3년이 안 지났다면 지금 청구해 보세요.']
   ];
+  /* 실시간 질문·답변: 공개된 실제 질문 중 설계사 답변이 달린 것을 돌려 보여줌 (없으면 예시) */
+  function plain(t,n){ t=String(t||'').replace(/[#*_>`\[\]]/g,'').replace(/\s+/g,' ').trim(); return t.length>n?t.slice(0,n)+'…':t; }
+  var LIVE=DEMO.map(function(d){ return {q:d[0],a:d[1],by:'AI 1차 안내',ph:'',note:'예시 질문입니다. 보장 여부는 가입한 상품의 약관으로 정해집니다.'}; });
   function chatDemo(){
-    var box=$('chatBody'); if(!box) return; var k=0, T=[];
+    var box=$('chatBody'); if(!box) return; var k=0, T=[], iv;
     function add(h){ box.insertAdjacentHTML('beforeend',h); return box.lastElementChild; }
     function show(n,anim){
-      box.innerHTML=''; var d=DEMO[n];
-      add('<div class="bub me">'+esc(d[0])+'</div>');
-      if(!anim){ add('<div class="bub ai"><small>AI 1차 안내</small>'+esc(d[1])+'</div>'); add('<div class="chat__fc"><img src="/assets/profile-hwajin-expert.jpg" alt="">다온 설계사가 증권 보고 이어서 답변</div>'); return; }
+      box.innerHTML=''; var d=LIVE[n]; $('chatNote').textContent=d.note;
+      add('<div class="bub me"><span class="by">'+esc(d.who||'고객 질문')+'</span>'+esc(d.q)+'</div>');
+      var ans='<div class="bub ai"><span class="by">'+esc(d.by)+'</span>'+esc(d.a)+'</div>';
+      var chip='<div class="chat__fc">'+(d.ph?'<img src="'+esc(d.ph)+'" alt="">':'<img src="/assets/profile-hwajin-expert.jpg" alt="">')+(d.ph?'전체 답변 보기 ›':'다온 설계사가 증권 보고 이어서 답변')+'</div>';
+      if(!anim){ add(ans); add(chip); return; }
       T.push(setTimeout(function(){ var t=add('<div class="bub ai typing"><i></i><i></i><i></i></div>');
-        T.push(setTimeout(function(){ t.remove(); add('<div class="bub ai"><small>AI 1차 안내</small>'+esc(d[1])+'</div>');
-          T.push(setTimeout(function(){ add('<div class="chat__fc"><img src="/assets/profile-hwajin-expert.jpg" alt="">다온 설계사가 증권 보고 이어서 답변</div>'); },900));
-        },1300)); },700));
+        T.push(setTimeout(function(){ t.remove(); add(ans); T.push(setTimeout(function(){ add(chip); },800)); },1300)); },700));
     }
-    if(still){ show(0,false); return; }
-    show(0,true); setInterval(function(){ T.forEach(clearTimeout); T=[]; k=(k+1)%DEMO.length; show(k,true); },7000);
+    function start(){ clearInterval(iv); T.forEach(clearTimeout); T=[]; k=0;
+      if(still){ show(0,false); return; }
+      show(0,true); iv=setInterval(function(){ T.forEach(clearTimeout); T=[]; k=(k+1)%LIVE.length; show(k,true); },8000); }
+    start();
+    fetch('https://daonpartners.app.n8n.cloud/webhook/daon-qna-list?_='+Date.now(),{cache:'no-store'}).then(function(r){return r.json();}).then(function(r){
+      var items=((r&&r.items)||[]).filter(function(x){ return x&&x.answer&&(x.title||x.q); }).slice(0,8);
+      if(!items.length) return;
+      LIVE=items.map(function(x){ var w=x.expert||{};
+        return {q:plain(x.q||x.title,90), who:(x.nick?x.nick+' 님':'고객')+' · '+(x.cat||'질문'), a:plain(x.answer,150), by:(w.name?w.name+' 설계사 답변':'설계사 답변'), ph:img(w.photo), note:'실제 공개 질문입니다'+(x.date?' · '+x.date:'')+' · 보장 여부는 약관으로 정해집니다.'}; });
+      start();
+    }).catch(function(){});
   }
   chatDemo();
   var tbm=$('tbMenu'); if(tbm) tbm.addEventListener('click',function(){ var o=$('topLinks').classList.toggle('open'); tbm.setAttribute('aria-expanded',o); tbm.textContent=o?'닫기':'메뉴'; });
