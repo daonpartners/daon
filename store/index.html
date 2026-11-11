@@ -19,6 +19,7 @@
 <link rel="apple-touch-icon" href="/assets/favicon-daon.png">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/assets/consult.css?v=20261111b">
+<style>#storeList{display:grid;gap:10px;margin-top:12px;text-align:left}.st-card{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #E4E7EA;border-radius:14px;padding:10px;text-decoration:none;color:#14161A}.st-card img,.st-ph{width:84px;height:84px;border-radius:10px;object-fit:cover;flex:none;background:#F3F4F7;display:flex;align-items:center;justify-content:center;font-size:30px}.st-t{display:grid;gap:2px;min-width:0}.st-t small{font-size:12px;color:#6B7480}.st-t b{font-size:15px;line-height:1.4;color:#0B1E42}.st-t em{font-style:normal;font-size:13px;color:#A85F6C;font-weight:700}</style>
 </head>
 <body>
 <div class="app">
@@ -34,7 +35,7 @@
     <p class="sub">다온 고객에게 우리 가게를 알리고 싶다면 아래에서 제휴를 신청하세요.</p>
     <div class="cs-badges"><span>제휴 신청 무료</span><span>지역 사장님 우선</span></div>
     <div class="fl"><div class="seg" id="storeCat"><button type="button" class="on">전체</button><button type="button">음식·카페</button><button type="button">뷰티</button><button type="button">생활·서비스</button><button type="button">교육</button></div></div>
-    <div class="empty"><b>첫 제휴업체를 모시는 중입니다</b>제휴가 확정된 가게부터 이곳에 사진·소개·다온 회원 혜택과 함께 올라갑니다.</div>
+    <div id="storeList"></div><div class="empty" id="storeEmpty"><b>첫 제휴업체를 모시는 중입니다</b>제휴가 확정된 가게부터 이곳에 사진·소개·다온 회원 혜택과 함께 올라갑니다.</div>
   </section>
 
   <section class="cs-sec">
@@ -54,7 +55,21 @@
 </div>
 <script src="/assets/consult.js?v=20261111b"></script>
 <script>
-document.querySelectorAll('#storeCat button').forEach(function(b){ b.addEventListener('click', function(){ document.querySelectorAll('#storeCat button').forEach(function(x){ x.classList.toggle('on', x === b); }); }); });
+(function(){
+  var ALL=[], CAT='전체';
+  var GRP={'음식·카페':/식당|카페|음식|베이커리|주점/,'뷰티':/미용|네일|피부|뷰티|헤어/,'교육':/학원|교육/};
+  function grp(b){ for(var k in GRP){ if(GRP[k].test(b||'')) return k; } return '생활·서비스'; }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  function draw(){
+    var L=ALL.filter(function(x){ return CAT==='전체'||grp(x.biz)===CAT; });
+    document.getElementById('storeList').innerHTML=L.map(function(x){
+      return '<a class="st-card" href="'+esc(x.url)+'">'+(x.thumb?'<img src="'+esc(x.thumb)+'" alt="'+esc(x.shop)+'" loading="lazy">':'<span class="st-ph">🏪</span>')+'<span class="st-t"><small>'+esc([x.biz,x.area].filter(Boolean).join(' · '))+'</small><b>'+esc(x.title)+'</b><em>'+esc(x.shop)+'</em></span></a>';
+    }).join('');
+    document.getElementById('storeEmpty').style.display=L.length?'none':'';
+  }
+  document.querySelectorAll('#storeCat button').forEach(function(b){ b.addEventListener('click', function(){ document.querySelectorAll('#storeCat button').forEach(function(x){ x.classList.toggle('on', x === b); }); CAT=b.textContent.trim(); draw(); }); });
+  fetch('/store/list.json?t='+Date.now()).then(function(r){return r.ok?r.json():[];}).then(function(d){ ALL=Array.isArray(d)?d:[]; draw(); }).catch(function(){});
+})();
 DaonConsult({
   api: 'https://daonpartners.app.n8n.cloud/webhook/daon-ceo-lead', operator: 'daon', noBirth: true, kakaoFallback: true, whoTitle: '연락받으실 사장님',
   doneTips: ['보험 가입 여부와 관계없이 같은 조건으로 도와드립니다.', '주변에 도움이 필요한 사장님이 계시면 이 페이지를 공유해 주세요.'],

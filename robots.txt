@@ -7,3 +7,4 @@ Disallow: /send/
 Sitemap: https://daon.io.kr/sitemap.xml
 Sitemap: https://daon.io.kr/column-sitemap.xml
 Sitemap: https://daon.io.kr/recruit-sitemap.xml
+Sitemap: https://daon.io.kr/store-sitemap.xml
