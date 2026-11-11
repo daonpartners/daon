@@ -119,3 +119,26 @@ textarea.inp{min-height:84px;resize:vertical;line-height:1.5}
 .cs-toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);z-index:60;background:var(--ink);color:#fff;font-size:14.5px;font-weight:600;padding:11px 18px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
 .cs-toast.on{opacity:1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* 사장님 전용관 (2026-11-11) */
+.svc{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}
+.svc a{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px;transition:border-color .15s,transform .15s}
+.svc a:hover{border-color:var(--navy);transform:translateY(-2px)}
+.svc a span{font-size:24px;line-height:1;margin-bottom:6px}
+.svc a b{font-size:15.5px;color:var(--navy)}
+.svc a small{font-size:12.5px;color:var(--ink3);line-height:1.4}
+.svc a.wide{grid-column:1/-1;flex-direction:row;align-items:center;gap:12px;background:var(--navy);border-color:var(--navy)}
+.svc a.wide b{color:#fff}.svc a.wide small{color:#C6D0E0}.svc a.wide span{margin:0}
+.gets{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.gets li{display:flex;gap:10px;align-items:flex-start;background:var(--bg);border-radius:12px;padding:11px 13px;font-size:14.5px}
+.gets li b{flex:none;width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.rule{margin-top:14px;border:1.5px solid var(--rose);background:var(--tint);border-radius:14px;padding:14px 16px;font-size:14.5px}
+.rule b{display:block;color:var(--rose);margin-bottom:4px}
+.rule p{margin:2px 0}
+.plans{display:grid;gap:8px;margin-top:14px}
+.plan{border:1.5px solid var(--line);border-radius:16px;padding:14px 16px;background:#fff}
+.plan h3{margin:0;font-size:17px;color:var(--navy);display:flex;justify-content:space-between;align-items:baseline}
+.plan h3 em{font-style:normal;font-size:13.5px;color:var(--rose);font-weight:700}
+.plan p{margin:6px 0 0;font-size:14px;color:var(--ink2)}
+.empty{margin-top:14px;text-align:center;border:1.5px dashed #CDD3DA;border-radius:16px;padding:26px 16px;color:var(--ink2);font-size:14.5px}
+.empty b{display:block;font-size:17px;color:var(--navy);margin-bottom:4px}

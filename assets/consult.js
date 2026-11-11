@@ -21,6 +21,15 @@
     '<p>보험금은 약관의 지급 한도와 면책 사항에 따라 제한될 수 있으며, 고지 내용이 사실과 다르면 보험금 지급이 제한되거나 계약이 해지될 수 있습니다.</p>' +
     '<p>개인정보 보호책임자 다온파트너스 · 041-534-1124</p>';
 
+  var LEGAL_DAON =
+    '<div class="who">' +
+      '<p><b>운영</b> 다온파트너스 · 충남 아산시 탕정면 용머리길 22, 상가동 3층 301호 · 041-534-1124</p>' +
+    '</div>' +
+    '<p>마케팅·제휴 서비스는 다온파트너스가 운영하며, 보험 가입 여부와 관계없이 모든 사장님께 같은 조건으로 제공합니다.</p>' +
+    '<p>대가를 받고 작성하는 소개 글에는 \'광고\' 표시를 합니다. 실제 손님이 아닌 리뷰는 만들지 않습니다.</p>' +
+    '<p>제휴 혜택의 내용과 이행은 각 제휴업체가 책임집니다.</p>' +
+    '<p>개인정보 보호책임자 다온파트너스 · 041-534-1124</p>';
+
   function $(id){ return document.getElementById(id); }
   function v(id){ var e = $(id); return e ? (e.value || '').trim() : ''; }
   function digits(s){ return (s || '').replace(/\D/g, ''); }
@@ -62,7 +71,8 @@
       '</section>';
 
     /* ── 하단 표기 · 버튼 · 완료 화면 ── */
-    var legal = document.querySelector('.cs-legal'); if (legal) legal.innerHTML = LEGAL;
+    var legal = document.querySelector('.cs-legal'); if (legal) legal.innerHTML = cfg.operator === 'daon' ? LEGAL_DAON : LEGAL;
+    if (cfg.noForm) return;
     document.body.insertAdjacentHTML('beforeend',
       '<div class="cs-dock" id="csDock"><div class="in"><button type="button" class="cs-send" id="csSend">' + esc(cfg.sendText || '상담 신청하기') + '</button>' +
       '<a class="cs-kk" id="csKk" href="' + KAKAO + '" target="_blank" rel="noopener">카톡<br>문의</a></div></div>' +
@@ -222,7 +232,17 @@
           $('csDoneNx').innerHTML = (cfg.doneTips || ['가입하신 보험증권이 있으면 미리 찾아두시면 상담이 빨라집니다.']).map(function(t){ return '<p>· ' + esc(t) + '</p>'; }).join('');
           window.scrollTo({top: 0, behavior: 'smooth'});
         })
-        .catch(function(){ sending = false; btn.disabled = false; btn.textContent = '다시 신청하기'; fail('접수하지 못했어요. 잠시 후 다시 시도하시거나 전화(041-534-1124)로 문의해 주세요.'); });
+        .catch(function(){
+          sending = false; btn.disabled = false; btn.textContent = '다시 신청하기';
+          if (cfg.kakaoFallback) {
+            var t = '[' + document.title.split('|')[0].trim() + ']\n' + Object.keys(base).filter(function(k){ return typeof base[k] === 'string' && base[k] && ['origin','submittedAt','referrer','utm_source','utm_medium','utm_campaign','contactWay','manager'].indexOf(k) < 0 && base[k].indexOf('data:') !== 0; }).map(function(k){ return base[k]; }).join('\n');
+            try { navigator.clipboard.writeText(t); } catch(e){}
+            fail('접수 서버를 준비 중입니다. 내용을 복사했으니 카톡 상담창에 붙여넣어 주세요.');
+            var w = window.open($('csKk').href, '_blank'); if (!w) location.href = $('csKk').href;
+            return;
+          }
+          fail('접수하지 못했어요. 잠시 후 다시 시도하시거나 전화(041-534-1124)로 문의해 주세요.');
+        });
     });
   };
 })();
