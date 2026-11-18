@@ -50,7 +50,10 @@ a{color:inherit}
 .room.f-blue{background:repeating-linear-gradient(90deg,#1D3366 0 18px,#21396F 18px 36px)}
 .room.f-green{background:repeating-linear-gradient(90deg,#173F3A 0 18px,#1B4741 18px 36px)}
 .room.f-gray{background:repeating-linear-gradient(0deg,#25304A 0 18px,#2A3651 18px 36px)}
-.room.exec{grid-column:span 2;border-color:rgba(227,184,92,.5)}
+.room.wide{grid-column:span 2}
+.room.f-gold.wide{border-color:rgba(227,184,92,.5)}
+.room__teams{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.room__teams span{font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;background:rgba(0,0,0,.25);color:var(--ink2)}
 .room__name{font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
 .room__desks{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;padding-top:12px}
 .desk{display:flex;flex-direction:column;align-items:center;gap:3px;width:56px}
@@ -70,7 +73,16 @@ a{color:inherit}
 .org{display:grid;gap:10px}
 @media(min-width:720px){.org{grid-template-columns:1fr 1fr}}
 .dept{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.dept.wide{grid-column:1/-1}
 .dept h3{margin:0 0 8px;font-size:14px;color:var(--gold)}
+.team{border-top:1px solid var(--line);padding-top:8px;margin-top:8px}
+.team:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.team__h{font-size:13.5px;font-weight:800;margin:2px 6px 0}
+.team__d{font-size:12.5px;color:var(--ink3);margin:2px 6px 2px}
+.sh-team{margin-top:18px}
+.sh-team:first-child{margin-top:4px}
+.sh-team__h{font-size:15px;font-weight:800}
+.sh-team__d{font-size:13px;color:var(--ink3);margin-top:2px}
 .person{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 6px;border-radius:10px}
 .person:hover{background:rgba(255,255,255,.05)}
 .person i{font-style:normal;font-size:18px}
@@ -192,7 +204,7 @@ a{color:inherit}
     fetch('log.json'+bust).then(function(r){return r.json()}).catch(function(){return {logs:[]}})
   ]).then(function(res){
     data = res[0]; logs = (res[1].logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)});
-    data.depts.forEach(function(d){ d.staff.forEach(function(s){ s.dept = d.name; people[s.id] = s; }); });
+    data.groups.forEach(function(g){ g.teams.forEach(function(t){ t.staff.forEach(function(s){ s.dept = (t.name===g.name? g.name : g.name+' · '+t.name); people[s.id] = s; }); }); });
     render();
   }).catch(function(){ $('floor').innerHTML = '<p class="empty">데이터를 불러오지 못했습니다.</p>'; });
 
@@ -203,19 +215,24 @@ a{color:inherit}
     $('ceoName').textContent = '👑 ' + data.ceo.name;
     $('ceoOrg').textContent = data.ceo.org;
 
-    $('floor').innerHTML = data.depts.map(function(d, i){
-      var head = d.staff[0];
-      return '<button class="room f-'+esc(d.floor)+(d.id==='exec'?' exec':'')+'" data-d="'+i+'">'
-        + '<span class="room__name">'+esc(d.icon)+' '+esc(d.name)+'</span>'
-        + '<span class="room__now">'+esc(head.now)+'</span>'
-        + '<span class="room__desks">' + d.staff.map(function(s){
+    $('floor').innerHTML = data.groups.map(function(g, i){
+      var multi = g.teams.length > 1, all = staffOf(g);
+      return '<button class="room f-'+esc(g.floor)+(g.wide?' wide':'')+'" data-g="'+i+'">'
+        + '<span class="room__name">'+esc(g.icon)+' '+esc(g.name)+'</span>'
+        + (multi ? '<span class="room__teams">'+g.teams.map(function(t){return '<span>'+esc(t.name)+'</span>'}).join('')+'</span>'
+                 : '<span class="room__now">'+esc(g.teams[0].desc)+'</span>')
+        + '<span class="room__desks">' + all.map(function(s){
             return '<span class="desk"><span class="desk__av">'+esc(s.emoji)+'<span class="dot '+esc(s.status)+'"></span></span><span class="desk__n">'+esc(s.name)+'</span></span>';
           }).join('') + '</span></button>';
     }).join('');
 
-    $('org').innerHTML = data.depts.map(function(d){
-      return '<div class="dept"><h3>'+esc(d.name)+'</h3>' + d.staff.map(function(s){
-        return '<button class="person" data-s="'+esc(s.id)+'"><i>'+esc(s.emoji)+'</i><b>'+esc(s.name)+'</b><span>'+esc(s.en)+' · '+esc(s.role)+'</span><span class="dot '+esc(s.status)+'"></span></button>';
+    $('org').innerHTML = data.groups.map(function(g){
+      var multi = g.teams.length > 1;
+      return '<div class="dept'+(multi?' wide':'')+'"><h3>'+esc(g.icon)+' '+esc(g.name)+'</h3>' + g.teams.map(function(t){
+        return '<div class="team">' + (multi ? '<div class="team__h">'+esc(t.name)+'</div>' : '') + '<div class="team__d">'+esc(t.desc)+'</div>'
+          + t.staff.map(function(s){
+            return '<button class="person" data-s="'+esc(s.id)+'"><i>'+esc(s.emoji)+'</i><b>'+esc(s.name)+'</b><span>'+esc(s.en)+' · '+esc(s.role)+'</span><span class="dot '+esc(s.status)+'"></span></button>';
+          }).join('') + '</div>';
       }).join('') + '</div>';
     }).join('');
 
@@ -225,6 +242,7 @@ a{color:inherit}
     }).join('') : '<p class="empty">아직 기록이 없습니다.</p>';
   }
 
+  function staffOf(g){ return g.teams.reduce(function(a,t){return a.concat(t.staff)},[]); }
   function card(s){
     var mine = logs.filter(function(l){return l.who===s.id}).slice(0,5);
     return '<div class="card"><div class="card__top"><div class="card__av">'+esc(s.emoji)+'</div><div><b>'+esc(s.name)+' <small>'+esc(s.en)+'</small></b><small>'+esc(s.dept)+' · '+esc(s.role)+'</small></div>'
@@ -241,7 +259,7 @@ a{color:inherit}
   document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
 
   document.addEventListener('click', function(e){
-    var r = e.target.closest('.room'); if(r){ var d = data.depts[+r.dataset.d]; open(d.icon+' '+d.name, d.staff.map(card).join('')); return; }
+    var r = e.target.closest('.room'); if(r){ var g = data.groups[+r.dataset.g]; open(g.icon+' '+g.name, g.teams.map(function(t){ return '<div class="sh-team">'+(g.teams.length>1?'<div class="sh-team__h">'+esc(t.name)+'</div>':'')+'<div class="sh-team__d">'+esc(t.desc)+'</div>'+t.staff.map(card).join('')+'</div>'; }).join('')); return; }
     var p = e.target.closest('.person'); if(p){ var s = people[p.dataset.s]; open(s.emoji+' '+s.name, card(s)); return; }
     var t = e.target.closest('.tab'); if(t){
       document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on', x===t)});
