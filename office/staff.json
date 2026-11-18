@@ -1,0 +1,100 @@
+{
+  "updated": "2026-11-18",
+  "ceo": { "name": "김화진 대표", "org": "미래에셋금융서비스 다온지사" },
+  "depts": [
+    {
+      "id": "exec", "name": "대표실", "icon": "📋", "floor": "gold",
+      "staff": [
+        { "id": "hana", "name": "하나", "en": "Hana", "role": "비서실장", "emoji": "📋", "status": "on",
+          "duties": ["대표 일정·회의 관리", "회의록 정리", "일일 브리핑 텔레그램 발송"],
+          "tools": ["비서실(Claude 프로젝트)", "n8n", "Notion", "Telegram"],
+          "now": "대표 일정·업무 브리핑 담당" }
+      ]
+    },
+    {
+      "id": "mkt", "name": "마케팅팀", "icon": "🎬", "floor": "blue",
+      "staff": [
+        { "id": "lumi", "name": "루미", "en": "Lumi", "role": "마케팅·콘텐츠", "emoji": "🎬", "status": "on",
+          "duties": ["일일 카드뉴스 발행", "보험 데일리(WF-3) 발행", "네이버 SEO 포스팅 원고", "온라인 게시물 자동화"],
+          "tools": ["마케팅팀·컨텐츠팀(Claude 프로젝트)", "온라인게시물자동화", "n8n"],
+          "now": "카드뉴스·보험 데일리 자동 발행 운영" }
+      ]
+    },
+    {
+      "id": "edu", "name": "교육지원팀", "icon": "🎓", "floor": "green",
+      "staff": [
+        { "id": "ara", "name": "아라", "en": "Ara", "role": "교육매니저", "emoji": "🎓", "status": "on",
+          "duties": ["다온아카데미 교안·강의자료 제작", "설계사 교육 리플렛"],
+          "tools": ["강사실(Claude 프로젝트)"],
+          "now": "다온아카데미 강의자료 지원" }
+      ]
+    },
+    {
+      "id": "sales", "name": "영업지원팀", "icon": "🗂️", "floor": "blue",
+      "staff": [
+        { "id": "dodam", "name": "도담", "en": "Dodam", "role": "DB 매니저", "emoji": "🗂️", "status": "part",
+          "duties": ["체험행사 동의 DB 수집", "설계사별 DB 배분"],
+          "tools": ["체험행사(자녀지문·양자분석·펫)"],
+          "now": "체험행사 동의 DB 관리 (자동화 준비)" },
+        { "id": "sori", "name": "소리", "en": "Sori", "role": "보장분석가", "emoji": "🔍", "status": "on",
+          "duties": ["KGATest 지문성향 리포트 생성", "질병예측·보장분석 리포트"],
+          "tools": ["KGATest 리포트 생성기"],
+          "now": "고객 리포트 생성기 운영 (설계사 10명 배포)" }
+      ]
+    },
+    {
+      "id": "care", "name": "고객관리팀", "icon": "💙", "floor": "green",
+      "staff": [
+        { "id": "onyu", "name": "온유", "en": "Onyu", "role": "고객케어·보상청구", "emoji": "💙", "status": "dev",
+          "duties": ["보험금 청구 접수", "보상청구 팩스 동시청구", "고객관리·문자 발송"],
+          "tools": ["보잇 BOIT", "daon.io.kr 보험금 청구"],
+          "now": "보잇(BOIT) 개발 진행 중" }
+      ]
+    },
+    {
+      "id": "ops", "name": "운영기획팀", "icon": "🧭", "floor": "gray",
+      "staff": [
+        { "id": "gyeol", "name": "결", "en": "Gyeol", "role": "운영기획", "emoji": "🧭", "status": "part",
+          "duties": ["지사 운영 계획 수립", "사업 기획 문서 정리"],
+          "tools": ["운영기획팀(Claude 프로젝트)"],
+          "now": "지사 운영 기획 지원" }
+      ]
+    },
+    {
+      "id": "it", "name": "전산실", "icon": "💻", "floor": "gray",
+      "staff": [
+        { "id": "koda", "name": "코다", "en": "Koda", "role": "전산·자동화", "emoji": "💻", "status": "on",
+          "duties": ["daon.io.kr 사이트 운영", "n8n 자동화 관리", "다온 CRM 관리"],
+          "tools": ["자동화팀·웹개발팀(Claude 프로젝트)", "n8n", "GitHub"],
+          "now": "사이트·자동화 유지보수" }
+      ]
+    },
+    {
+      "id": "hr", "name": "인재영입팀", "icon": "🤝", "floor": "gold",
+      "staff": [
+        { "id": "ieum", "name": "이음", "en": "Ieum", "role": "리크루팅", "emoji": "🤝", "status": "plan",
+          "duties": ["설계사 모집 문의 정리", "지원자 면담 일정 관리"],
+          "tools": ["daon.io.kr 설계사 모집"],
+          "now": "배치 준비 중" }
+      ]
+    },
+    {
+      "id": "comp", "name": "준법지원", "icon": "🛡️", "floor": "gray",
+      "staff": [
+        { "id": "bareum", "name": "바름", "en": "Bareum", "role": "준법 점검 보조", "emoji": "🛡️", "status": "plan",
+          "duties": ["홍보 문구 사전 점검(보조)", "최종 판단은 담당자·광고심의 절차에 따름"],
+          "tools": [],
+          "now": "배치 준비 중" }
+      ]
+    },
+    {
+      "id": "fin", "name": "경영지원", "icon": "💰", "floor": "gray",
+      "staff": [
+        { "id": "sem", "name": "셈", "en": "Sem", "role": "정산", "emoji": "💰", "status": "plan",
+          "duties": ["수수료 정산 집계", "월별 실적 정리"],
+          "tools": ["다온 CRM"],
+          "now": "배치 준비 중" }
+      ]
+    }
+  ]
+}

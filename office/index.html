@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>다온지사 AI 오피스</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#0B1530; --bg2:#111E3F; --panel:#15244A; --line:#24365F; --ink:#F2F4F8; --ink2:#B6C0D4; --ink3:#7C88A3;
+  --acc:#E8772E; --gold:#E3B85C; --on:#37C77F; --part:#E3B85C; --dev:#5B9BFF; --plan:#7C88A3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;-webkit-font-smoothing:antialiased;word-break:keep-all}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px}
+
+/* 헤더 */
+.hd{padding:22px 0 14px;border-bottom:1px solid var(--line)}
+.hd__top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.hd__brand{font-size:13px;letter-spacing:.24em;color:var(--gold);font-weight:800}
+.hd__home{font-size:13px;color:var(--ink3);text-decoration:none}
+.hd h1{margin:10px 0 4px;font-size:22px;font-weight:800}
+.hd p{margin:0;color:var(--ink3);font-size:13.5px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--line);background:var(--bg2);border-radius:999px;font-size:13px;color:var(--ink2)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}
+.dot.on{background:var(--on);box-shadow:0 0 0 3px rgba(55,199,127,.18)}
+.dot.part{background:var(--part)} .dot.dev{background:var(--dev)} .dot.plan{background:var(--plan)}
+
+/* 탭 */
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:flex;border-bottom:1px solid var(--line)}
+.tab{flex:1;padding:14px 0;font-size:15px;font-weight:700;color:var(--ink3);border-bottom:3px solid transparent}
+.tab.on{color:var(--gold);border-color:var(--gold)}
+.pane{display:none;padding:18px 0 40px}
+.pane.on{display:block}
+
+/* 사무실 평면도 */
+.floor{background:linear-gradient(135deg,#1A2A52,#0F1C3D);border:1px solid var(--line);border-radius:20px;padding:14px;
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:720px){.floor{grid-template-columns:repeat(4,1fr);padding:18px;gap:12px}}
+.room{position:relative;text-align:left;border-radius:14px;padding:12px 12px 10px;min-height:118px;border:1px solid rgba(255,255,255,.08);
+  display:flex;flex-direction:column;transition:transform .15s, box-shadow .15s}
+.room:active{transform:scale(.98)}
+.room:hover{box-shadow:0 0 0 2px var(--gold)}
+.room.f-gold{background:repeating-linear-gradient(90deg,#3A2F1C 0 18px,#43361F 18px 36px)}
+.room.f-blue{background:repeating-linear-gradient(90deg,#1D3366 0 18px,#21396F 18px 36px)}
+.room.f-green{background:repeating-linear-gradient(90deg,#173F3A 0 18px,#1B4741 18px 36px)}
+.room.f-gray{background:repeating-linear-gradient(0deg,#25304A 0 18px,#2A3651 18px 36px)}
+.room.exec{grid-column:span 2;border-color:rgba(227,184,92,.5)}
+.room__name{font-size:13px;font-weight:800;color:#fff;display:flex;align-items:center;gap:6px}
+.room__desks{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;padding-top:12px}
+.desk{display:flex;flex-direction:column;align-items:center;gap:3px;width:56px}
+.desk__av{position:relative;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:20px}
+.desk__av .dot{position:absolute;right:-2px;top:-2px;border:2px solid #15244A;width:11px;height:11px}
+.desk__n{font-size:12px;font-weight:700;color:#fff}
+.room__now{font-size:11.5px;color:var(--ink2);margin-top:6px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:12.5px;color:var(--ink3)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.hint{font-size:13px;color:var(--ink3);margin:12px 0 0}
+
+/* 조직도 */
+.ceo{background:linear-gradient(135deg,#3A2F1C,#2A2213);border:1.5px solid var(--gold);border-radius:16px;padding:16px;text-align:center}
+.ceo b{display:block;font-size:19px;color:var(--gold)}
+.ceo small{color:var(--ink2);font-size:13px}
+.vline{width:2px;height:16px;background:var(--line);margin:0 auto}
+.org{display:grid;gap:10px}
+@media(min-width:720px){.org{grid-template-columns:1fr 1fr}}
+.dept{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.dept h3{margin:0 0 8px;font-size:14px;color:var(--gold)}
+.person{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 6px;border-radius:10px}
+.person:hover{background:rgba(255,255,255,.05)}
+.person i{font-style:normal;font-size:18px}
+.person b{font-size:15px}
+.person span{color:var(--ink3);font-size:13px}
+.person .dot{margin-left:auto}
+
+/* 로그 */
+.log{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+.log__row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;line-height:1.45}
+.log__row:last-child{border-bottom:0}
+.log__t{color:var(--gold);font-variant-numeric:tabular-nums;flex:none;font-size:13px;padding-top:1px}
+.log__who{font-weight:700}
+.empty{color:var(--ink3);font-size:14px;padding:18px 0;text-align:center}
+
+/* 카드(바텀시트) */
+.dim{position:fixed;inset:0;background:rgba(3,8,20,.6);z-index:20;display:none}
+.dim.on{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;max-height:86vh;overflow:auto;background:var(--bg2);border-radius:20px 20px 0 0;
+  border-top:1px solid var(--line);padding:10px 18px calc(24px + env(safe-area-inset-bottom));transform:translateY(105%);visibility:hidden;transition:transform .25s ease,visibility 0s .25s}
+.sheet.on{transform:none;visibility:visible;transition:transform .25s ease}
+@media(min-width:720px){.sheet{left:50%;right:auto;width:560px;margin-left:-280px}}
+.grab{width:42px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+.sheet__hd{display:flex;align-items:center;justify-content:space-between}
+.sheet__hd h2{margin:0;font-size:18px}
+.x{font-size:22px;color:var(--ink3);padding:4px 8px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px}
+.card__top{display:flex;align-items:center;gap:12px}
+.card__av{width:52px;height:52px;border-radius:14px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:26px;flex:none}
+.card__top b{font-size:18px;display:block}
+.card__top small{color:var(--ink3);font-size:13px}
+.badge{margin-left:auto;font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.06);white-space:nowrap}
+.card h4{margin:16px 0 6px;font-size:12.5px;color:var(--ink3);font-weight:700;letter-spacing:.02em}
+.card ul{margin:0;padding-left:18px;color:var(--ink2);font-size:14px;line-height:1.6}
+.now{background:rgba(232,119,46,.12);border:1px solid rgba(232,119,46,.35);border-radius:10px;padding:10px 12px;font-size:14px}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tags span{font-size:12.5px;padding:5px 9px;border-radius:8px;background:rgba(255,255,255,.06);color:var(--ink2)}
+.mini{font-size:13px;color:var(--ink2)}
+.mini div{padding:6px 0;border-bottom:1px dashed var(--line)}
+.mini div:last-child{border:0}
+.mini em{font-style:normal;color:var(--gold);margin-right:8px;font-variant-numeric:tabular-nums}
+.foot{color:var(--ink3);font-size:12px;text-align:center;padding:20px 0 30px}
+</style>
+</head>
+<body>
+
+<header class="hd">
+  <div class="wrap">
+    <div class="hd__top"><span class="hd__brand">DAON</span><a class="hd__home" href="/">다온파트너스 홈 ›</a></div>
+    <h1>다온지사 AI 오피스</h1>
+    <p id="sub">미래에셋금융서비스 다온지사 · AI 직원 현황</p>
+    <div class="chips">
+      <span class="chip"><span class="dot on"></span><span id="cntOn">-</span></span>
+      <span class="chip">👥 <span id="cntAll">-</span></span>
+      <span class="chip" id="clock">-</span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs wrap" role="tablist">
+  <button class="tab on" data-p="office">사무실</button>
+  <button class="tab" data-p="org">조직도</button>
+  <button class="tab" data-p="log">활동 로그</button>
+</nav>
+
+<main class="wrap">
+  <section class="pane on" id="p-office">
+    <div class="floor" id="floor"></div>
+    <div class="legend">
+      <span><span class="dot on"></span>자동화 가동</span>
+      <span><span class="dot part"></span>부분 가동</span>
+      <span><span class="dot dev"></span>개발 중</span>
+      <span><span class="dot plan"></span>준비 중</span>
+    </div>
+    <p class="hint">부서를 누르면 부서장 카드(하는 일 · 현재 업무 · 최근 기록)가 열립니다.</p>
+  </section>
+
+  <section class="pane" id="p-org">
+    <div class="ceo"><b id="ceoName">대표</b><small id="ceoOrg"></small></div>
+    <div class="vline"></div>
+    <div class="org" id="org"></div>
+  </section>
+
+  <section class="pane" id="p-log">
+    <div class="log" id="log"></div>
+  </section>
+</main>
+
+<p class="foot">활동 로그는 자동화가 실제로 처리한 업무만 기록됩니다.</p>
+
+<div class="dim" id="dim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div class="sheet__hd"><h2 id="shTitle"></h2><button class="x" id="shClose" aria-label="닫기">✕</button></div>
+  <div id="shBody"></div>
+</div>
+
+<script>
+(function(){
+  var ST = {on:'자동화 가동', part:'부분 가동', dev:'개발 중', plan:'준비 중'};
+  var data = null, logs = [], people = {};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function $(id){return document.getElementById(id)}
+  function fmt(t, withDate){
+    var d = new Date(t); if(isNaN(d)) return '';
+    var p = function(n){return (n<10?'0':'')+n};
+    var hm = p(d.getHours())+':'+p(d.getMinutes());
+    return withDate ? (d.getMonth()+1)+'/'+d.getDate()+' '+hm : hm;
+  }
+  function tick(){
+    var d = new Date(), w = '일월화수목금토'[d.getDay()];
+    $('clock').textContent = (d.getMonth()+1)+'/'+d.getDate()+'('+w+') '+fmt(d);
+  }
+  tick(); setInterval(tick, 30000);
+
+  var bust = '?v=' + Math.floor(Date.now()/60000);
+  Promise.all([
+    fetch('staff.json'+bust).then(function(r){return r.json()}),
+    fetch('log.json'+bust).then(function(r){return r.json()}).catch(function(){return {logs:[]}})
+  ]).then(function(res){
+    data = res[0]; logs = (res[1].logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)});
+    data.depts.forEach(function(d){ d.staff.forEach(function(s){ s.dept = d.name; people[s.id] = s; }); });
+    render();
+  }).catch(function(){ $('floor').innerHTML = '<p class="empty">데이터를 불러오지 못했습니다.</p>'; });
+
+  function render(){
+    var all = Object.keys(people).map(function(k){return people[k]});
+    $('cntOn').textContent = '가동 중 ' + all.filter(function(s){return s.status==='on'||s.status==='part'}).length + '명';
+    $('cntAll').textContent = 'AI 직원 ' + all.length + '명';
+    $('ceoName').textContent = '👑 ' + data.ceo.name;
+    $('ceoOrg').textContent = data.ceo.org;
+
+    $('floor').innerHTML = data.depts.map(function(d, i){
+      var head = d.staff[0];
+      return '<button class="room f-'+esc(d.floor)+(d.id==='exec'?' exec':'')+'" data-d="'+i+'">'
+        + '<span class="room__name">'+esc(d.icon)+' '+esc(d.name)+'</span>'
+        + '<span class="room__now">'+esc(head.now)+'</span>'
+        + '<span class="room__desks">' + d.staff.map(function(s){
+            return '<span class="desk"><span class="desk__av">'+esc(s.emoji)+'<span class="dot '+esc(s.status)+'"></span></span><span class="desk__n">'+esc(s.name)+'</span></span>';
+          }).join('') + '</span></button>';
+    }).join('');
+
+    $('org').innerHTML = data.depts.map(function(d){
+      return '<div class="dept"><h3>'+esc(d.name)+'</h3>' + d.staff.map(function(s){
+        return '<button class="person" data-s="'+esc(s.id)+'"><i>'+esc(s.emoji)+'</i><b>'+esc(s.name)+'</b><span>'+esc(s.en)+' · '+esc(s.role)+'</span><span class="dot '+esc(s.status)+'"></span></button>';
+      }).join('') + '</div>';
+    }).join('');
+
+    $('log').innerHTML = logs.length ? logs.slice(0,100).map(function(l){
+      var p = people[l.who];
+      return '<div class="log__row"><span class="log__t">'+esc(fmt(l.t,true))+'</span><span><span class="log__who">'+esc(p?p.name+'('+p.role+')':l.who)+'</span> — '+esc(l.msg)+'</span></div>';
+    }).join('') : '<p class="empty">아직 기록이 없습니다.</p>';
+  }
+
+  function card(s){
+    var mine = logs.filter(function(l){return l.who===s.id}).slice(0,5);
+    return '<div class="card"><div class="card__top"><div class="card__av">'+esc(s.emoji)+'</div><div><b>'+esc(s.name)+' <small>'+esc(s.en)+'</small></b><small>'+esc(s.dept)+' · '+esc(s.role)+'</small></div>'
+      + '<span class="badge"><span class="dot '+esc(s.status)+'"></span>'+esc(ST[s.status]||'')+'</span></div>'
+      + '<h4>현재 업무</h4><div class="now">'+esc(s.now)+'</div>'
+      + '<h4>하는 일</h4><ul>'+s.duties.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'
+      + (s.tools&&s.tools.length ? '<h4>연결된 도구</h4><div class="tags">'+s.tools.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>' : '')
+      + '<h4>최근 기록</h4><div class="mini">'+(mine.length ? mine.map(function(l){return '<div><em>'+esc(fmt(l.t,true))+'</em>'+esc(l.msg)+'</div>'}).join('') : '<div>아직 기록이 없습니다.</div>')+'</div>'
+      + '</div>';
+  }
+  function open(title, html){ $('shTitle').textContent = title; $('shBody').innerHTML = html; $('dim').classList.add('on'); $('sheet').classList.add('on'); $('sheet').scrollTop = 0; }
+  function close(){ $('dim').classList.remove('on'); $('sheet').classList.remove('on'); }
+  $('dim').onclick = close; $('shClose').onclick = close;
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape') close(); });
+
+  document.addEventListener('click', function(e){
+    var r = e.target.closest('.room'); if(r){ var d = data.depts[+r.dataset.d]; open(d.icon+' '+d.name, d.staff.map(card).join('')); return; }
+    var p = e.target.closest('.person'); if(p){ var s = people[p.dataset.s]; open(s.emoji+' '+s.name, card(s)); return; }
+    var t = e.target.closest('.tab'); if(t){
+      document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on', x===t)});
+      document.querySelectorAll('.pane').forEach(function(x){x.classList.toggle('on', x.id==='p-'+t.dataset.p)});
+    }
+  });
+})();
+</script>
+</body>
+</html>
