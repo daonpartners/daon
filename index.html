@@ -452,6 +452,32 @@ html,body{max-width:100%;overflow-x:clip}
   .hm__b{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .hm__b .claimbar{margin-top:0}
 }
+
+/* 2026-11-19 모바일 깨짐 방지: 큰 글씨(앱 내 브라우저·글자 크게 설정)에서도 넘치지 않게 */
+html,body{overflow-x:hidden}
+.tg__h{flex-wrap:wrap;row-gap:6px}
+.tg__h,.sh h2,.chat__bar small{white-space:nowrap}
+.chat__bar{flex-wrap:wrap;row-gap:4px}
+.tg__more{max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+.tile{min-width:0}
+.tile b,.tile small{word-break:keep-all;overflow-wrap:anywhere}
+.claimbar div,.claimbar b,.claimbar small{overflow-wrap:anywhere}
+@media (max-width:640px){
+  .tg__more-x{display:none}
+  .tg__h{font-size:15px}
+  .tile b{font-size:13.5px;line-height:1.25}
+  .claimbar{padding:14px}
+  .claimbar>span{font-size:24px}
+  .claimbar b{font-size:16px}
+  .claimbar small{font-size:12.5px}
+  .bt__join{flex-wrap:wrap}
+  .bt__join div{flex-basis:100%}
+  .chat__bar{font-size:12.5px}
+}
+@media (max-width:340px){
+  .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 </style>
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/assets/app-icon-red-180.png">
@@ -509,7 +535,7 @@ html,body{max-width:100%;overflow-x:clip}
         </div>
       </div>
       <div class="tg" id="biz">
-        <h2 class="tg__h"><i>🏪</i>사장님·사업장<a class="tg__more" href="/ceo/">사장님 전용관 · 마케팅·리뷰·제휴 ›</a></h2>
+        <h2 class="tg__h"><i>🏪</i>사장님·사업장<a class="tg__more" href="/ceo/">사장님 전용관<span class="tg__more-x"> · 마케팅·리뷰·제휴</span> ›</a></h2>
         <div class="tiles">
           <a class="tile" href="/biz-d/?m=daon"><span>📜</span><b>의무보험 확인</b><small>1분 확인</small></a>
           <a class="tile" href="/safety-consult/?m=daon"><span>🔥</span><b>사업장 보험 상담</b><small>화재·배상·직원</small></a>
