@@ -1,0 +1,59 @@
+/* 사장님 든든 서랍 (/ceo/care/) 공통 — consult.css 위에 얹어 씀 (2026-11-19) */
+.dr-crumb{padding:12px 22px 0;font-size:13px;color:var(--ink3)}
+.dr-crumb a{color:var(--ink2);text-decoration:none;font-weight:700}
+
+/* 서랍 목록 (첫 화면) */
+.drawers{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.drawer{position:relative;display:flex;flex-direction:column;gap:3px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:16px 14px 14px;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s}
+.drawer::before{content:"";position:absolute;left:14px;right:14px;top:0;height:5px;border-radius:0 0 6px 6px;background:var(--c,#A85F6C)}
+.drawer:hover,.drawer:focus-visible{border-color:var(--c,#A85F6C);transform:translateY(-2px);box-shadow:0 8px 18px rgba(11,30,66,.08)}
+.drawer .i{font-size:26px;line-height:1.2}
+.drawer b{font-size:16.5px}
+.drawer small{font-size:13px;color:var(--ink2);line-height:1.45}
+.drawer em{margin-top:6px;font-style:normal;font-size:13px;font-weight:800;color:var(--c,#A85F6C)}
+@media (prefers-reduced-motion:no-preference){
+  .drawer{animation:drIn .5s both}
+  .drawer:nth-child(2){animation-delay:.05s}.drawer:nth-child(3){animation-delay:.1s}.drawer:nth-child(4){animation-delay:.15s}.drawer:nth-child(5){animation-delay:.2s}.drawer:nth-child(6){animation-delay:.25s}
+  @keyframes drIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+}
+
+/* 스스로 점검 */
+.chk{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.chk label{display:flex;gap:11px;align-items:flex-start;background:var(--bg);border:1.5px solid transparent;border-radius:14px;padding:12px 14px;font-size:15px;cursor:pointer}
+.chk label:has(input:checked){background:#FFF6E5;border-color:#E9A23B}
+.chk input{width:20px;height:20px;margin-top:2px;flex:none;accent-color:#C77A0A}
+.chk span small{display:block;margin-top:2px;font-size:12.5px;color:var(--ink3)}
+.chk-out{margin-top:12px;padding:14px 16px;border-radius:14px;background:var(--navy);color:#fff;font-size:15px}
+.chk-out b{color:#FFD27A}
+
+/* 계산 상자 */
+.calc{margin-top:8px;padding:16px;border:1.5px solid var(--line);border-radius:16px}
+.calc .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.calc select.inp{appearance:auto}
+.calc-out{margin-top:12px;padding:13px 15px;border-radius:12px;background:var(--bg);font-size:15px;min-height:48px}
+.calc-out.ok{background:#E8F6EE;color:#14663B}
+.calc-out.warn{background:#FFF1DC;color:#7A4A05}
+
+/* 알아두실 것 */
+.facts{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.facts li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14.5px}
+.facts li b{display:block;margin-bottom:2px}
+.facts li .src{display:block;margin-top:4px;font-size:12px;color:var(--ink3)}
+
+/* 경고 */
+.warnbox{margin-top:14px;border:1.5px solid #E05A4F;background:#FDECEC;border-radius:14px;padding:14px 16px;font-size:14.5px}
+.warnbox b{color:#B3261E}
+.warnbox p{margin:6px 0 0}
+
+/* 공식 창구 */
+.links{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.links a{display:flex;justify-content:space-between;align-items:center;gap:10px;text-decoration:none;color:var(--ink);background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:13px 15px;font-size:15px}
+.links a b{font-size:15.5px}
+.links a small{display:block;font-size:12.5px;color:var(--ink3)}
+.links a em{font-style:normal;font-weight:800;color:var(--navy);white-space:nowrap}
+
+/* 다온 역할 안내 */
+.role{margin-top:14px;padding:13px 15px;border-radius:14px;background:#EEF3FB;font-size:13.5px;color:var(--ink2)}
+.role b{color:var(--navy)}
+.next{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.next a{font-size:13.5px;font-weight:700;color:var(--navy);text-decoration:none;background:var(--bg);border-radius:999px;padding:7px 12px}

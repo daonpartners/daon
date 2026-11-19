@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>장부·기장 점검 | 사장님 든든 서랍 · 보험물어봄 by 다온</title>
+<meta name="description" content="작년 수입금액과 업종만 넣으면 복식부기 의무자인지 간편장부 대상인지 바로 확인. 무기장 가산세와 기장세액공제까지 정리했습니다.">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:site_name" content="보험물어봄 by 다온">
+<meta property="og:title" content="장부·기장 점검 · 사장님 든든 서랍">
+<meta property="og:description" content="작년 수입금액과 업종만 넣으면 복식부기 의무자인지 간편장부 대상인지 바로 확인. 무기장 가산세와 기장세액공제까지 정리했습니다.">
+<meta property="og:url" content="https://daon.io.kr/ceo/care/book/">
+<meta name="theme-color" content="#0B1E42">
+<link rel="canonical" href="https://daon.io.kr/ceo/care/book/">
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="/assets/consult.css?v=20261111b">
+<link rel="stylesheet" href="/ceo/care/care.css?v=1">
+</head>
+<body>
+<div class="app">
+  <header class="cs-top">
+    <a href="/" aria-label="보험물어봄 홈"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
+    <a class="call" href="tel:0415341124">📞 전화 상담</a>
+  </header>
+  <p class="dr-crumb"><a href="/ceo/care/">‹ 사장님 든든 서랍</a></p>
+  <section class="cs-hero">
+    <div class="ic">📒</div>
+    <p class="kick">장부·기장</p>
+    <h1>우리 가게,<br>어떤 장부를 써야 할까요?</h1>
+    <p class="sub">업종과 작년 수입금액만 넣으면 바로 알 수 있습니다.</p>
+    <div class="cs-badges"><span>1분 확인</span><span>소득세법 기준</span></div>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">1</span>복식부기 대상인지 확인 <small style="font-weight:500;color:var(--ink3);font-size:13px">개인사업자</small></h2>
+    <div class="calc">
+      <div class="fl"><label for="bKind">업종</label><select class="inp" id="bKind">
+        <option value="">업종을 고르세요</option>
+        <option value="30000">도매·소매, 농업·임업·어업, 부동산매매, 그 밖의 업종</option>
+        <option value="15000">음식점·숙박, 제조, 건설, 운수·창고, 정보통신 등</option>
+        <option value="7500">부동산임대, 학원·교육, 미용 등 수리·개인서비스, 전문·과학기술서비스, 예술·스포츠·여가 등</option>
+        <option value="pro">병의원·약국·변호사·세무사 등 전문직</option>
+      </select></div>
+      <div class="fl"><label for="bRev">작년(직전 연도) 수입금액 (만원)</label><input class="inp" id="bRev" inputmode="numeric" placeholder="예) 12000 (=1억 2천만원)"></div>
+      <div class="fl"><span class="lb">올해 새로 개업했나요?</span><div class="seg" data-k="bNew"><button type="button" data-v="n" class="on">아니요</button><button type="button" data-v="y">네, 올해 개업</button></div></div>
+      <div class="calc-out" id="bOut">업종과 수입금액을 넣어 보세요.</div>
+    </div>
+    <p class="box-note">업종을 두 가지 이상 하거나 사업장이 여러 곳이면 합산해서 따로 계산합니다(소득세법 시행령 제208조 제7항). 정확한 판단은 세무사와 확인하세요.</p>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">2</span>해당하는 것을 눌러 보세요</h2>
+    <div class="chk"><label><input type="checkbox" data-t="장부를 따로 쓰지 않는다"><span>장부를 따로 쓰지 않는다</span></label><label><input type="checkbox" data-t="영수증·카드 내역을 모아 두지 않는다"><span>영수증·카드 내역을 모아 두지 않는다<small>실제 비용을 인정받으려면 증빙이 필요</small></span></label><label><input type="checkbox" data-t="작년 매출이 크게 늘었다"><span>작년 매출이 크게 늘었다<small>올해 장부 의무가 바뀌었을 수 있음</small></span></label><label><input type="checkbox" data-t="간편장부 대상인데 복식부기 공제를 받아 본 적 없다"><span>간편장부 대상인데 복식부기 공제를 받아 본 적 없다</span></label></div>
+    <div class="chk-out"></div>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">3</span>알아두실 것</h2>
+    <ul class="facts"><li><b>업종별 기준 금액</b>직전 연도 수입금액이 업종별 기준(3억원·1억5천만원·7천5백만원) 이상이면 복식부기 의무자, 미만이면 간편장부 대상자입니다. 전문직은 금액과 관계없이 복식부기입니다.<span class="src">근거: 소득세법 제160조, 같은 법 시행령 제208조 제5항</span></li><li><b>무기장 가산세</b>복식부기 의무자가 장부 없이 신고하면 산출세액의 20% 등 가산세가 붙을 수 있습니다.<span class="src">근거: 소득세법 제81조의5</span></li><li><b>기장세액공제</b>간편장부 대상자가 복식부기로 쓰고 신고하면 산출세액의 20%(100만원 한도)를 공제받습니다.<span class="src">근거: 소득세법 제56조의2</span></li></ul><div class="next"><a href="/ceo/care/tax/">💰 세금·절세</a><a href="/ceo/care/labor/">🤝 직원·노무</a><a href="/ceo/care/refund/">↩️ 더 낸 세금</a><a href="/ceo/care/fund/">🏦 정책자금</a><a href="/ceo/care/marketing/">📣 가게 홍보</a></div>
+  </section>
+  <section class="cs-sec">
+    <h2><span class="n">4</span>상담 요청</h2>
+    <div class="fl"><label for="sShop">상호</label><input class="inp" id="sShop" maxlength="40" placeholder="예) 다온식당"></div>
+    <div class="fl"><label for="sArea">지역 <small>선택</small></label><input class="inp" id="sArea" maxlength="40" placeholder="예) 아산시 탕정면"></div>
+    <div class="fl"><span class="lb">업종</span><div class="seg" data-k="biz"><button type="button" data-v="식당·카페">식당·카페</button><button type="button" data-v="미용·네일·피부">미용·뷰티</button><button type="button" data-v="학원·교육">학원</button><button type="button" data-v="인테리어·청소">인테리어·청소</button><button type="button" data-v="병의원·약국">병의원·약국</button><button type="button" data-v="판매·서비스">판매·서비스</button><button type="button" data-v="제조·공장">제조</button><button type="button" data-v="기타">기타</button></div></div>
+    <div class="fl"><span class="lb">사업자</span><div class="seg" data-k="kind"><button type="button" data-v="개인사업자">개인사업자</button><button type="button" data-v="법인">법인</button><button type="button" data-v="예비 창업">창업 준비 중</button></div></div>
+    <div class="role"><b>누가 해 드리나요?</b> 세금 신고·장부·경정청구는 <b>세무사</b>의 업무입니다. 다온파트너스는 세무사 사무소가 아니며 세무 업무를 대신하지 않습니다. 상담을 요청하시면 연락드려 점검하신 내용을 정리하고, 사장님이 세무사와 직접 상담하실 수 있게 안내해 드립니다.</div>
+  </section>
+  <div data-contact></div>
+  <footer class="cs-legal"></footer>
+</div>
+<script src="/ceo/care/care.js?v=1"></script>
+<script>
+(function(){
+  var NEWBIZ = 'n';
+  function f(n){ return Number(n).toLocaleString('ko-KR'); }
+  function won(man){ return man >= 10000 ? (man / 10000).toString().replace(/\.0+$/, '') + '억원' : f(man) + '만원'; }
+  function run(){
+    var o = document.getElementById('bOut'), k = document.getElementById('bKind').value, r = parseInt(String(document.getElementById('bRev').value).replace(/[^0-9]/g, ''), 10);
+    if(k === 'pro'){ o.className = 'calc-out warn'; o.innerHTML = '전문직은 수입금액과 관계없이 <b>복식부기 의무자</b>입니다.'; return; }
+    if(!k){ o.className = 'calc-out'; o.textContent = '업종과 수입금액을 넣어 보세요.'; return; }
+    if(NEWBIZ === 'y'){ o.className = 'calc-out ok'; o.innerHTML = '올해 새로 개업했다면 올해는 <b>간편장부 대상</b>입니다(소득세법 시행령 제208조 제5항). 복식부기로 쓰면 기장세액공제를 받을 수 있습니다.'; return; }
+    if(isNaN(r)){ o.className = 'calc-out'; o.textContent = '작년 수입금액을 넣어 보세요.'; return; }
+    var lim = +k;
+    if(r >= lim){ o.className = 'calc-out warn'; o.innerHTML = '기준 ' + won(lim) + ' 이상 → <b>복식부기 의무자</b>입니다. 장부 없이 신고하면 무기장 가산세가 붙을 수 있습니다.'; }
+    else { o.className = 'calc-out ok'; o.innerHTML = '기준 ' + won(lim) + ' 미만 → <b>간편장부 대상</b>입니다. 복식부기로 쓰면 산출세액 20%(100만원 한도) 기장세액공제를 받을 수 있습니다.'; }
+  }
+  document.getElementById('bKind').addEventListener('change', run);
+  document.getElementById('bRev').addEventListener('input', run);
+  document.querySelector('[data-k=bNew]').addEventListener('click', function(e){ var b = e.target.closest('button'); if(!b) return; NEWBIZ = b.getAttribute('data-v'); this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x === b); }); run(); });
+})();
+</script>
+<script src="/assets/consult.js?v=20261111b"></script>
+<script>
+DaonConsult({
+  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-ceo-lead', operator: 'daon', noBirth: true, kakaoFallback: true, whoTitle: '연락받으실 사장님',
+  doneTips: ['점검하신 항목을 보고 연락드리겠습니다.', '보험 가입 여부와 관계없이 같은 조건으로 도와드립니다.'],
+  contactNo: 5, sendText: '기장 상담 요청하기',
+  validate: function(a){
+    if (!a.v('sShop')) return ['상호를 적어주세요', 'sShop'];
+    if (!a.S.biz) return ['업종을 골라주세요', document.querySelector('[data-k=biz]')];
+  },
+  payload: function(a){ var p = (window.CARE_PICKED ? window.CARE_PICKED() : []); return { service: '든든 서랍 · 장부·기장', items: p.length ? p : ['점검 항목 선택 없음'], detail: '사업자: ' + (a.S.kind || '-'), shop: a.v('sShop'), place: '-', area: a.v('sArea') || '-', biz: a.S.biz }; }
+});
+</script>
+<script src="/assets/home-btn.js" defer></script>
+</body>
+</html>
