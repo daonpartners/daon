@@ -171,6 +171,27 @@ a{color:inherit}
 .tnote{font-size:12px;color:var(--ink3);margin:10px 2px 0}
 .todo__empty{padding:16px 4px;color:var(--ink2);font-size:15px}
 @media(min-width:960px){.ttitle{font-size:17px}}
+
+/* 비용 정산 */
+.st-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.st-hd h2{margin:0;font-size:19px}
+.st-hd span{color:var(--ink3);font-size:13px}
+.st-grid{display:grid;gap:10px}
+@media(min-width:720px){.st-grid{grid-template-columns:repeat(3,1fr)}}
+.st-card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;border-top:4px solid var(--line)}
+.st-card.p-다온{border-top-color:var(--acc)} .st-card.p-보잇{border-top-color:var(--on)} .st-card.p-그로우{border-top-color:#5B9BFF}
+.st-card b{display:block;font-size:15px}
+.st-total{font-size:26px;font-weight:800;margin:6px 0 8px;font-variant-numeric:tabular-nums}
+.st-row{display:flex;justify-content:space-between;font-size:13.5px;color:var(--ink2);padding:3px 0}
+.st-bar{height:6px;border-radius:3px;background:rgba(255,255,255,.08);margin:8px 0 4px;overflow:hidden}
+.st-bar i{display:block;height:100%;background:var(--gold)}
+.st-items{font-size:12.5px;color:var(--ink3);margin-top:8px;line-height:1.5;word-break:break-all}
+.st-note{font-size:12.5px;color:var(--ink3);margin:12px 2px 0;line-height:1.6}
+.st-hist{margin-top:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.st-hist table{width:100%;border-collapse:collapse;font-size:13.5px}
+.st-hist th,.st-hist td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
+.st-hist th:first-child,.st-hist td:first-child{text-align:left}
+.st-hist th{color:var(--ink3);font-weight:700;font-size:12.5px}
 </style>
 </head>
 <body>
@@ -219,6 +240,7 @@ a{color:inherit}
   <button class="tab on" data-p="office">사무실</button>
   <button class="tab" data-p="org">조직도</button>
   <button class="tab" data-p="log">활동 로그</button>
+  <button class="tab" data-p="cost">비용 정산</button>
 </nav>
 
 <main class="wrap">
@@ -242,6 +264,10 @@ a{color:inherit}
   <section class="pane" id="p-log">
     <div class="log" id="log"></div>
   </section>
+
+  <section class="pane" id="p-cost">
+    <div id="cost"></div>
+  </section>
 </main>
 
 <p class="foot">할 일은 비서봇과 같은 목록이며 5분마다 새로고침됩니다 · 활동 로그는 자동화가 실제로 처리한 업무만 기록됩니다 · 지사장 전용</p>
@@ -256,7 +282,7 @@ a{color:inherit}
 <script>
 (function(){
   var ST = {on:'자동화 가동', part:'부분 가동', dev:'개발 중', plan:'준비 중'};
-  var data = null, logs = [], people = {}, todos = [], CODE = '';
+  var data = null, logs = [], people = {}, todos = [], settle = [], CODE = '';
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function $(id){return document.getElementById(id)}
   function fmt(t, withDate){
@@ -282,11 +308,11 @@ a{color:inherit}
       $('gbtn').disabled = false; $('gbtn').textContent = '입장';
       if(!res[1] || !res[1].ok){ try{ sessionStorage.removeItem('officeCode'); }catch(e){} $('gate').classList.remove('hide'); $('gerr').textContent = (res[1] && res[1].error) || '접속 권한이 없습니다.'; return; }
       try{ sessionStorage.setItem('officeCode', code); }catch(e){}
-      CODE = code; todos = res[1].todos || [];
+      CODE = code; todos = res[1].todos || []; settle = res[1].settle || [];
       $('gate').classList.add('hide');
       data = res[0]; people = {}; logs = (res[1].logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)});
       data.groups.forEach(function(g){ g.teams.forEach(function(t){ t.staff.forEach(function(s){ s.dept = (t.name===g.name? g.name : g.name+' · '+t.name); people[s.id] = s; }); }); });
-      render(); renderTodos();
+      render(); renderTodos(); renderCost();
     }).catch(function(){ $('gbtn').disabled = false; $('gbtn').textContent = '입장'; $('gerr').textContent = '연결에 실패했습니다. 잠시 후 다시 시도하세요.'; });
   }
   $('gbtn').onclick = function(){ var c = $('gcode').value.trim(); if(!c){ $('gerr').textContent='접속코드를 입력하세요.'; return; } loadAll(c); };
@@ -355,7 +381,7 @@ a{color:inherit}
     body.code = CODE;
     return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=UTF-8'},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(r){
       if(!r||!r.ok){ alertMsg('처리하지 못했습니다. 다시 로그인해 주세요.'); return; }
-      todos=r.todos||[]; logs=(r.logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)}); renderTodos();
+      todos=r.todos||[]; settle=r.settle||settle; renderCost(); logs=(r.logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)}); renderTodos();
     }).catch(function(){ alertMsg('연결에 실패했습니다. 잠시 후 다시 시도하세요.'); }).then(function(){ if(btn){ btn.classList.remove('busy'); btn.disabled=false; } });
   }
   function alertMsg(m){ var p=document.querySelector('.tnote'); if(p){ p.textContent=m; p.style.color='#FF8A8A'; } }
@@ -365,6 +391,31 @@ a{color:inherit}
   $('tAddBtn').onclick=function(){ var t=$('tTitle').value.trim(); if(!t){ $('tTitle').focus(); return; } todoCall({action:'add', title:t, due:$('tDue').value||''}, $('tAddBtn')).then(function(){ $('tTitle').value=''; $('tDue').value=''; }); };
   $('tTitle').addEventListener('keydown', function(e){ if(e.key==='Enter') $('tAddBtn').onclick(); });
   setInterval(function(){ if(CODE && !document.hidden) todoCall({}, null); }, 5*60*1000);
+
+  function renderCost(){
+    var P=['다온','보잇','그로우'], f=function(v){return Number(v||0).toLocaleString('ko-KR')};
+    if(!settle.length){
+      $('cost').innerHTML='<div class="st-hd"><h2>💰 플랫폼 비용 정산</h2><span>회계팀 셈 · 매월 말일 23:55 자동</span></div>'
+        +'<p class="empty">아직 정산 기록이 없습니다. 첫 정산은 이번 달 말일 23:55에 만들어집니다.</p>'
+        +'<p class="st-note">· 기준: 다온파트너스 장부(PTN_거래)의 매입 중 <b>플랫폼</b> 칸이 다온·보잇·그로우·공통인 건<br>· 공통비(n8n·OpenAI·Claude·Notion 등)는 그 달 자동화 실행 수 비율로 나눔<br>· 금액은 공급가액(없으면 합계) 기준</p>';
+      return;
+    }
+    var byM={}; settle.forEach(function(r){ var k=r.month; (byM[k]=byM[k]||{}); if(!byM[k][r.platform] || String(r.at)>String(byM[k][r.platform].at)) byM[k][r.platform]=r; });
+    var months=Object.keys(byM).sort().reverse(), cur=months[0], m=byM[cur];
+    var sum=P.reduce(function(a,p){return a+Number((m[p]||{}).total||0)},0), note=(m[P[0]]||{}).note||'';
+    var html='<div class="st-hd"><h2>💰 '+esc(cur.replace('-','년 '))+'월 플랫폼 비용</h2><span>합계 '+f(sum)+'원 · 회계팀 셈</span></div><div class="st-grid">'
+      + P.map(function(p){ var r=m[p]||{}; return '<div class="st-card p-'+p+'"><b>'+p+'</b><div class="st-total">'+f(r.total)+'원</div>'
+        +'<div class="st-row"><span>직접 비용</span><span>'+f(r.direct)+'</span></div><div class="st-row"><span>공통비 배분</span><span>'+f(r.shared)+'</span></div>'
+        +'<div class="st-bar"><i style="width:'+Math.min(100,Number(r.share||0))+'%"></i></div><div class="st-row"><span>자동화 사용 '+f(r.usage)+'회</span><span>'+esc(r.share)+'%</span></div>'
+        +(r.items?'<div class="st-items">'+esc(r.items)+'</div>':'')+'</div>'; }).join('')
+      + '</div><p class="st-note">'+esc(note)+' · 금액은 공급가액(없으면 합계) 기준 · 출처: 노션 PTN_거래 매입의 플랫폼 칸</p>';
+    if(months.length>1){
+      html+='<div class="st-hist"><table><tr><th>월</th>'+P.map(function(p){return '<th>'+p+'</th>'}).join('')+'<th>합계</th></tr>'
+        + months.map(function(k){ var t=0; var tds=P.map(function(p){ var v=Number((byM[k][p]||{}).total||0); t+=v; return '<td>'+f(v)+'</td>'; }).join(''); return '<tr><td>'+esc(k)+'</td>'+tds+'<td><b>'+f(t)+'</b></td></tr>'; }).join('')
+        + '</table></div>';
+    }
+    $('cost').innerHTML=html;
+  }
   function staffOf(g){ return g.teams.reduce(function(a,t){return a.concat(t.staff)},[]); }
   function card(s){
     var mine = logs.filter(function(l){return l.who===s.id}).slice(0,5);
