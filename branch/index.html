@@ -190,7 +190,7 @@ main{padding:22px 0 60px}
   document.addEventListener('visibilitychange', function(){ if(document.hidden) saveOA(); });
 
   /* 도구 파일은 처음 열 때 한 번만 불러옴 */
-  var TOOLS = { online: { key:'oa', src:'online.js?v=8', api:'ONLINE' }, bizopen: { key:'bo', src:'biz-open.js?v=1', api:'BIZOPEN' } };
+  var TOOLS = { online: { key:'oa', src:'online.js?v=9', api:'ONLINE' }, bizopen: { key:'bo', src:'biz-open.js?v=1', api:'BIZOPEN' } };
   var TOOL = 'online';
   function loadTool(name){
     var t = TOOLS[name]; if(t.loaded) { if(window[t.api]) window[t.api].render(); return; } t.loaded = true;
