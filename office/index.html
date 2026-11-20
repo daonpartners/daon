@@ -192,6 +192,15 @@ a{color:inherit}
 .st-hist th,.st-hist td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
 .st-hist th:first-child,.st-hist td:first-child{text-align:left}
 .st-hist th{color:var(--ink3);font-weight:700;font-size:12.5px}
+
+/* 비서실 보험사 코드 */
+.codes{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+.codes th{font-size:12px;color:var(--ink3);font-weight:700;text-align:left;padding:6px 6px;border-bottom:1px solid var(--line)}
+.codes td{padding:8px 6px;border-bottom:1px dashed var(--line);font-variant-numeric:tabular-nums;word-break:break-all}
+.codes tr.kind td{padding-top:12px;color:var(--gold);font-weight:800;font-size:12.5px;border-bottom:0}
+.codes .pw{font-family:ui-monospace,Menlo,Consolas,monospace}
+.pwbtn{font-size:12px;color:var(--gold);text-decoration:underline;margin-left:6px}
+.codes-note{font-size:12px;color:var(--ink3);margin-top:8px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -282,7 +291,7 @@ a{color:inherit}
 <script>
 (function(){
   var ST = {on:'자동화 가동', part:'부분 가동', dev:'개발 중', plan:'준비 중'};
-  var data = null, logs = [], people = {}, todos = [], settle = [], CODE = '';
+  var data = null, logs = [], people = {}, todos = [], settle = [], codes = [], CODE = '';
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function $(id){return document.getElementById(id)}
   function fmt(t, withDate){
@@ -308,7 +317,7 @@ a{color:inherit}
       $('gbtn').disabled = false; $('gbtn').textContent = '입장';
       if(!res[1] || !res[1].ok){ try{ sessionStorage.removeItem('officeCode'); }catch(e){} $('gate').classList.remove('hide'); $('gerr').textContent = (res[1] && res[1].error) || '접속 권한이 없습니다.'; return; }
       try{ sessionStorage.setItem('officeCode', code); }catch(e){}
-      CODE = code; todos = res[1].todos || []; settle = res[1].settle || [];
+      CODE = code; todos = res[1].todos || []; settle = res[1].settle || []; codes = res[1].codes || [];
       $('gate').classList.add('hide');
       data = res[0]; people = {}; logs = (res[1].logs||[]).slice().sort(function(a,b){return new Date(b.t)-new Date(a.t)});
       data.groups.forEach(function(g){ g.teams.forEach(function(t){ t.staff.forEach(function(s){ s.dept = (t.name===g.name? g.name : g.name+' · '+t.name); people[s.id] = s; }); }); });
@@ -416,6 +425,22 @@ a{color:inherit}
     }
     $('cost').innerHTML=html;
   }
+
+  function codesHtml(){
+    if(!codes.length) return '';
+    var last='', rows=codes.map(function(c){
+      var head = c.kind!==last ? '<tr class="kind"><td colspan="3">'+esc(c.kind==='소속'?'소속':c.kind)+'</td></tr>' : ''; last=c.kind;
+      var pw = c.pw ? '<span class="pw" data-pw="'+esc(c.pw)+'">••••••</span><button class="pwbtn">보기</button>' : '<span style="color:var(--ink3)">미등록</span>';
+      return head+'<tr><td>'+esc(c.company)+'</td><td class="pw">'+(c.code?esc(c.code):'<span style="color:var(--ink3)">미등록</span>')+'</td><td>'+pw+'</td></tr>';
+    }).join('');
+    return '<h4>🔑 보험사 코드</h4><table class="codes"><tr><th>보험사</th><th>코드</th><th>비밀번호</th></tr>'+rows+'</table>'
+      +'<p class="codes-note">비서봇에서 "현대해상 코드 알려줘", "현대해상 비밀번호 ○○로 변경"처럼 말하면 조회·변경됩니다. 비서봇 답장은 2분 뒤 자동으로 지워집니다.</p>';
+  }
+  document.addEventListener('click', function(e){
+    var b=e.target.closest('.pwbtn'); if(!b) return; var sp=b.previousElementSibling; if(!sp) return;
+    if(sp.dataset.show==='1'){ sp.textContent='••••••'; sp.dataset.show=''; b.textContent='보기'; }
+    else { sp.textContent=sp.dataset.pw; sp.dataset.show='1'; b.textContent='숨기기'; setTimeout(function(){ if(sp.dataset.show==='1'){ sp.textContent='••••••'; sp.dataset.show=''; b.textContent='보기'; } }, 30000); }
+  });
   function staffOf(g){ return g.teams.reduce(function(a,t){return a.concat(t.staff)},[]); }
   function card(s){
     var mine = logs.filter(function(l){return l.who===s.id}).slice(0,5);
@@ -424,6 +449,7 @@ a{color:inherit}
       + '<h4>현재 업무</h4><div class="now">'+esc(s.now)+'</div>'
       + '<h4>하는 일</h4><ul>'+s.duties.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>'
       + (s.tools&&s.tools.length ? '<h4>연결된 도구</h4><div class="tags">'+s.tools.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>' : '')
+      + (s.id==='hana' ? codesHtml() : '')
       + '<h4>최근 기록</h4><div class="mini">'+(mine.length ? mine.map(function(l){return '<div><em>'+esc(fmt(l.t,true))+'</em>'+esc(l.msg)+'</div>'}).join('') : '<div>아직 기록이 없습니다.</div>')+'</div>'
       + '</div>';
   }
