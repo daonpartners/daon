@@ -91,6 +91,9 @@ td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
 .hd__brand b{font-size:17px}
 .hd__me{display:flex;align-items:center;gap:10px;font-size:13px;color:#B6C0D4}
 .hd__me button{border:1px solid #24365F;background:transparent;color:#B6C0D4;border-radius:8px;padding:6px 10px;cursor:pointer}
+.hd__grow{display:inline-flex;align-items:center;gap:4px;border-radius:8px;padding:6px 11px;background:#F58220;color:#fff;font-weight:700;text-decoration:none;white-space:nowrap}
+.hd__grow:hover{filter:brightness(1.08)}
+.gate__grow{display:block;margin-top:10px;color:#F5A55C;font-size:13px;font-weight:700;text-decoration:none}
 .bt-tabs{display:flex;gap:4px;overflow-x:auto}
 .bt-tab{border:0;background:transparent;color:#9AA6BF;padding:10px 14px;font-weight:700;font-size:15px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
 .bt-tab.on{color:#fff;border-bottom-color:var(--gold)}
@@ -121,6 +124,7 @@ main{padding:22px 0 60px}
     <button id="gbtn" type="button">입장</button>
     <div class="gate__err" id="gerr"></div>
     <a class="gate__home" href="https://grow.ai.kr/daon/">daon.io.kr 홈으로</a>
+    <a class="gate__grow" href="https://grow.ai.kr/">🏠 그로우온 홈으로</a>
   </div>
 </div>
 
@@ -129,7 +133,7 @@ main{padding:22px 0 60px}
     <div class="wrap">
       <div class="hd__in">
         <a class="hd__brand" href="/branch/"><small>DAON</small><b>다온지사</b></a>
-        <div class="hd__me"><span id="meName"></span><button type="button" id="logout">로그아웃</button></div>
+        <div class="hd__me"><a class="hd__grow" href="https://grow.ai.kr/" title="그로우온 홈으로">🏠 그로우 홈</a><span id="meName"></span><button type="button" id="logout">로그아웃</button></div>
       </div>
       <nav class="bt-tabs">
         <button class="bt-tab on" type="button" data-tab="home">지사 홈</button>
