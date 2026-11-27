@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>홍보 글 만들기 | 다온파트너스</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#14110F">
+<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{--ink:#14110F;--cream:#FFF7EC;--paper:#FFFDF8;--red:#FF4F2E;--yel:#FFC83D;--mint:#2EC4A0;--sub:#6E6560;--line:#EADFD2}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Pretendard,"Apple SD Gothic Neo","Noto Sans KR",system-ui,sans-serif;word-break:keep-all}
+.wrap{max-width:860px;margin:0 auto;padding:0 18px}
+header{background:var(--ink);color:#fff}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{font-weight:900;font-size:18px;text-decoration:none;color:#fff}.logo b{color:var(--red)}
+header span{font-size:14px;opacity:.75}
+h1{font-size:28px;font-weight:900;letter-spacing:-.03em;margin:26px 0 4px}
+.lead{color:var(--sub);margin:0 0 18px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 0 14px}
+.card h2{font-size:18px;font-weight:900;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+label{display:block;font-size:14px;font-weight:700;margin:10px 0 4px}
+input[type=text],input[type=password],textarea,select{width:100%;font:inherit;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--paper)}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--ink)}
+textarea{min-height:90px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;padding:0 20px;border:0;border-radius:999px;font:inherit;font-weight:800;cursor:pointer;background:var(--ink);color:#fff}
+.btn.red{background:var(--red)}
+.btn.sm{min-height:34px;padding:0 14px;font-size:14px}
+.btn.line{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+.btn:disabled{opacity:.5;cursor:wait}
+.tabs{display:flex;gap:8px;margin:4px 0 14px}
+.tabs button{flex:1;min-height:48px;border-radius:14px;border:2px solid var(--ink);background:#fff;font:inherit;font-weight:900;cursor:pointer}
+.tabs button.on{background:var(--ink);color:#fff}
+.drop{border:2px dashed var(--line);border-radius:14px;padding:16px;text-align:center;color:var(--sub);cursor:pointer}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.thumbs div{position:relative}
+.thumbs img{width:84px;height:84px;object-fit:cover;border-radius:10px;display:block}
+.thumbs button{position:absolute;top:-6px;right:-6px;width:24px;height:24px;border-radius:50%;border:0;background:var(--ink);color:#fff;cursor:pointer}
+.radio{display:flex;gap:10px;flex-wrap:wrap}
+.radio label{display:flex;gap:6px;align-items:center;font-weight:600;margin:4px 0;border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;cursor:pointer}
+.out{white-space:pre-wrap;background:var(--cream);border-radius:12px;padding:12px;margin:8px 0}
+.tags{color:#2563eb}
+.oh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{font-size:12px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--cream)}
+.badge.warn{background:#FFE1D9;color:#B4280F}
+.note{font-size:14px;color:var(--sub)}
+.err{color:#B4280F;font-weight:700}
+.check{background:#FFF4D6;border-radius:12px;padding:10px 14px;margin:0 0 14px}
+.check ul{margin:4px 0 0;padding-left:18px}
+.stores{display:flex;gap:8px;align-items:end}
+.stores select{flex:1}
+[hidden]{display:none!important}
+@media (max-width:600px){.row,.row3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><a class="logo" href="/">다온<b>파트너스</b></a><span>홍보 글 만들기</span></div></header>
+<main class="wrap">
+  <h1>사진 올리고, 버튼 한 번</h1>
+  <p class="lead">플레이스 새소식·블로그·인스타 초안과 리뷰 답글을 만듭니다. 올리기 전에 꼭 한 번 읽어 보세요.</p>
+
+  <div class="card" id="codeCard">
+    <h2>이용 코드</h2>
+    <div class="stores"><input type="password" id="code" placeholder="다온파트너스에서 받은 코드" autocomplete="off"><button class="btn sm line" id="codeSave">저장</button></div>
+  </div>
+
+  <div class="card">
+    <h2>가게 정보</h2>
+    <div class="stores"><div style="flex:1"><label for="storeSel">저장된 가게</label><select id="storeSel"></select></div><button class="btn sm line" id="storeDel">삭제</button></div>
+    <div class="row3">
+      <div><label for="sName">가게 이름 *</label><input type="text" id="sName" maxlength="40"></div>
+      <div><label for="sType">업종</label><input type="text" id="sType" maxlength="30" placeholder="예: 분식, 카페, 네일"></div>
+      <div><label for="sArea">지역</label><input type="text" id="sArea" maxlength="40" placeholder="예: 청주 오창"></div>
+    </div>
+    <label for="sTone">말투</label><input type="text" id="sTone" maxlength="60" placeholder="예: 친근한 존댓말, 차분하고 정중하게">
+    <label for="sFacts">가게 기본 정보 (사실만 — AI는 여기 적힌 것만 씁니다)</label>
+    <textarea id="sFacts" maxlength="600" placeholder="영업시간, 휴무일, 대표 메뉴와 가격, 주차, 예약 방법 등"></textarea>
+    <div style="margin-top:10px"><button class="btn sm line" id="storeSave">이 가게 저장</button> <span class="note" id="storeMsg"></span></div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="on" data-t="post" role="tab">홍보 글</button>
+    <button data-t="review" role="tab">리뷰 답글</button>
+  </div>
+
+  <section id="tPost">
+    <div class="card">
+      <h2>사진과 메모</h2>
+      <div class="drop" id="drop">사진 고르기 (최대 4장)<input type="file" id="files" accept="image/*" multiple hidden></div>
+      <div class="thumbs" id="thumbs"></div>
+      <label for="note">알리고 싶은 말</label>
+      <textarea id="note" maxlength="600" placeholder="예: 이번 주 신메뉴 로제떡볶이 출시"></textarea>
+      <label>어디에 올리나요</label>
+      <div class="radio">
+        <label><input type="radio" name="ch" value="owner" checked> 사장님 가게 계정</label>
+        <label><input type="radio" name="ch" value="daon"> 다온파트너스 채널 (광고 표시 자동)</label>
+      </div>
+      <div style="margin-top:14px"><button class="btn red" id="goPost">글 만들기</button> <span class="note" id="postMsg"></span></div>
+    </div>
+    <div id="postOut" hidden>
+      <div class="check" id="checkBox" hidden><b>올리기 전에 확인하세요</b><ul id="checkList"></ul></div>
+      <div class="card"><div class="oh"><h2>플레이스 새소식</h2><button class="btn sm line" data-copy="newsBody">복사</button></div><div class="out" id="newsBody"></div></div>
+      <div class="card"><div class="oh"><h2>블로그</h2><button class="btn sm line" data-copy="blogAll">전체 복사</button></div>
+        <div class="oh"><b id="blogTitle"></b><button class="btn sm line" data-copy="blogTitle">제목만</button></div>
+        <div class="out" id="blogBody"></div><div class="tags" id="blogTags"></div><div id="blogAll" hidden></div></div>
+      <div class="card"><div class="oh"><h2>인스타그램</h2><button class="btn sm line" data-copy="igAll">복사</button></div><div class="out" id="igAll"></div></div>
+    </div>
+  </section>
+
+  <section id="tReview" hidden>
+    <div class="card">
+      <h2>리뷰 붙여넣기</h2>
+      <label for="platform">어디 리뷰인가요</label>
+      <select id="platform"><option>네이버 플레이스</option><option>배달의민족</option><option>쿠팡이츠</option><option>요기요</option><option>카카오맵</option><option>기타</option></select>
+      <label for="reviews">리뷰 내용 (닉네임·별점·내용을 화면에서 그대로 복사해 여러 개 한꺼번에)</label>
+      <textarea id="reviews" maxlength="6000" style="min-height:180px"></textarea>
+      <p class="note">답글은 환불·보상·쿠폰을 약속하지 않게 만들어집니다. 불만 리뷰는 '주의' 표시가 붙으니 직접 읽고 고쳐서 올려 주세요.</p>
+      <button class="btn red" id="goReview">답글 만들기</button> <span class="note" id="revMsg"></span>
+    </div>
+    <div id="revOut"></div>
+  </section>
+</main>
+<script>
+(function(){
+var API='https://daonpartners.app.n8n.cloud/webhook/daon-studio';
+var $=function(id){return document.getElementById(id)};
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+var imgs=[];
+
+/* 이용 코드 */
+$('code').value=ls('dsCode')||'';
+$('codeSave').onclick=function(){ls('dsCode',$('code').value.trim());this.textContent='저장됨'};
+
+/* 가게 저장 */
+var F=['sName','sType','sArea','sTone','sFacts'];
+function stores(){try{return JSON.parse(ls('dsStores')||'[]')}catch(e){return[]}}
+function fillSel(sel){var a=stores(),s=$('storeSel');s.innerHTML='<option value="">— 새 가게 —</option>'+a.map(function(x,i){return '<option value="'+i+'">'+x.sName.replace(/</g,'&lt;')+'</option>'}).join('');if(sel!=null)s.value=sel}
+fillSel();
+$('storeSel').onchange=function(){var a=stores(),x=a[this.value];F.forEach(function(k){$(k).value=x?x[k]||'':''})};
+$('storeSave').onclick=function(){var o={};F.forEach(function(k){o[k]=$(k).value.trim()});if(!o.sName){$('storeMsg').textContent='가게 이름을 넣어 주세요';return}
+  var a=stores(),i=a.findIndex(function(x){return x.sName===o.sName});if(i<0){a.push(o);i=a.length-1}else a[i]=o;ls('dsStores',JSON.stringify(a));fillSel(i);$('storeMsg').textContent='저장했습니다'};
+$('storeDel').onclick=function(){var v=$('storeSel').value;if(v==='')return;var a=stores();a.splice(+v,1);ls('dsStores',JSON.stringify(a));fillSel();F.forEach(function(k){$(k).value=''})};
+function store(){return{name:$('sName').value.trim(),type:$('sType').value.trim(),area:$('sArea').value.trim(),tone:$('sTone').value.trim(),facts:$('sFacts').value.trim()}}
+
+/* 탭 */
+document.querySelectorAll('.tabs button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$('tPost').hidden=b.dataset.t!=='post';$('tReview').hidden=b.dataset.t!=='review'}});
+
+/* 사진: 긴 변 1024px로 줄여 JPEG */
+$('drop').onclick=function(){$('files').click()};
+$('files').onchange=function(){Array.prototype.slice.call(this.files,0,4-imgs.length).forEach(shrink);this.value=''};
+function shrink(f){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var m=1024,w=im.width,h=im.height,s=Math.min(1,m/Math.max(w,h));var c=document.createElement('canvas');c.width=Math.round(w*s);c.height=Math.round(h*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);imgs.push(c.toDataURL('image/jpeg',0.82));thumbs()};im.src=r.result};r.readAsDataURL(f)}
+function thumbs(){$('thumbs').innerHTML=imgs.map(function(u,i){return '<div><img src="'+u+'" alt="사진 '+(i+1)+'"><button data-i="'+i+'" aria-label="빼기">×</button></div>'}).join('');$('thumbs').querySelectorAll('button').forEach(function(b){b.onclick=function(){imgs.splice(+b.dataset.i,1);thumbs()}})}
+
+function call(body,btn,msg,done){
+  var code=$('code').value.trim();if(!code){msg.innerHTML='<span class="err">이용 코드를 넣어 주세요</span>';return}
+  if(!body.store.name){msg.innerHTML='<span class="err">가게 이름을 넣어 주세요</span>';return}
+  body.code=code;ls('dsCode',code);btn.disabled=true;msg.textContent='만드는 중… (20초 정도)';
+  fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+   .then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+   .then(function(d){btn.disabled=false;if(!d||!d.ok)throw new Error('x');msg.textContent='완료';done(d)})
+   .catch(function(){btn.disabled=false;msg.innerHTML='<span class="err">만들지 못했습니다. 이용 코드와 입력 내용을 확인하고 다시 눌러 주세요.</span>'});
+}
+var esc=function(s){return String(s||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+
+$('goPost').onclick=function(){
+  var note=$('note').value.trim();if(!imgs.length&&!note){$('postMsg').innerHTML='<span class="err">사진이나 알리고 싶은 말을 넣어 주세요</span>';return}
+  var ch=document.querySelector('input[name=ch]:checked').value;
+  call({mode:'post',channel:ch,store:store(),note:note,images:imgs},this,$('postMsg'),function(d){
+    $('newsBody').textContent=d.news.body;
+    $('blogTitle').textContent=d.blog.title;$('blogBody').textContent=d.blog.body;
+    var tags=d.blog.tags.map(function(t){return '#'+t}).join(' ');$('blogTags').textContent=tags;
+    $('blogAll').textContent=d.blog.title+'\n\n'+d.blog.body+'\n\n'+tags;
+    $('igAll').textContent=d.insta.caption+'\n\n'+d.insta.hashtags.map(function(t){return '#'+t}).join(' ');
+    $('checkList').innerHTML=(d.check||[]).map(function(c){return '<li>'+esc(c)+'</li>'}).join('');$('checkBox').hidden=!(d.check||[]).length;
+    $('postOut').hidden=false;$('postOut').scrollIntoView({behavior:'smooth'});
+  });
+};
+
+$('goReview').onclick=function(){
+  var t=$('reviews').value.trim();if(!t){$('revMsg').innerHTML='<span class="err">리뷰를 붙여넣어 주세요</span>';return}
+  call({mode:'review',platform:$('platform').value,store:store(),reviews:t},this,$('revMsg'),function(d){
+    if(!d.items.length){$('revOut').innerHTML='<div class="card">답글을 만들 리뷰를 찾지 못했습니다.</div>';return}
+    $('revOut').innerHTML=d.items.map(function(x,i){return '<div class="card"><div class="oh"><b>'+esc(x.who)+'</b>'+(x.caution?'<span class="badge warn">주의 — 직접 읽고 고치세요</span>':'<span class="badge">일반</span>')+'</div><p class="note">'+esc(x.summary)+'</p><div class="out" id="rv'+i+'">'+esc(x.reply)+'</div><button class="btn sm line" data-copy="rv'+i+'">복사</button></div>'}).join('');
+  });
+};
+
+/* 복사 */
+document.addEventListener('click',function(e){var b=e.target.closest('[data-copy]');if(!b)return;var t=$(b.dataset.copy).textContent;
+  var ok=function(){var o=b.textContent;b.textContent='복사됨';setTimeout(function(){b.textContent=o},1200)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(ok,fb);else fb();
+  function fb(){var a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');ok()}catch(x){}a.remove()}});
+})();
+</script>
+</body>
+</html>
