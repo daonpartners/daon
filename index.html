@@ -123,6 +123,7 @@ h2{font-size:clamp(30px,4.2vw,48px);font-weight:900;line-height:1.12}
 .plan h3{font-size:24px;font-weight:900;margin:10px 0 8px}
 .plan ul{margin:0 0 10px;padding-left:20px}.plan li{margin:4px 0}
 .plan a{font-weight:800;color:var(--red2)}
+.plan .price{margin:0 0 10px;font-size:15px}.plan .price s{color:var(--sub)}.plan .price b{font-size:26px;font-weight:900;color:var(--red2)}.plan .price s+b{margin-left:4px}.plan .price small{display:block;color:var(--sub);font-weight:700}
 .pnote{font-size:14.5px;color:var(--sub);margin:12px 0 0}
 @media(max-width:700px){.plans{grid-template-columns:1fr}}
 .nots{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,60px);align-items:start}
@@ -226,13 +227,13 @@ footer{background:#0B0908;color:#8C8077;font-size:13.5px;padding:30px 0 40px;lin
   </div>
   
 <div class="plans" id="plans">
-<div class="plan"><span class="pk">Basic</span><h3>글 홍보</h3><ul>
+<div class="plan"><span class="pk">Basic</span><h3>글 홍보</h3><p class="price"><s>월 9.9만원</s> <b>월 5.9만원</b><small>창립 제휴가 · 선착순 10곳 · 12개월 고정</small></p><ul>
 <li>플레이스 새소식 주 1회 (저희가 올림)</li>
 <li>인스타 게시물 월 4회 (저희가 올림)</li>
 <li>블로그 완성 글 월 4편</li>
 <li>네이버·배달앱 리뷰 답글</li>
 <li>다온파트너스 채널 가게 소개 월 1회</li></ul></div>
-<div class="plan pro"><span class="pk">Pro</span><h3>글 + 영상 홍보</h3><ul>
+<div class="plan pro"><span class="pk">Pro</span><h3>글 + 영상 홍보</h3><p class="price"><b>월 14.9만원</b></p><ul>
 <li>Basic 전부</li>
 <li>인스타 월 8회 + 릴스</li>
 <li>쇼츠·릴스·클립 영상 월 4편 — 사장님이 폰으로 찍은 10초 영상을 저희가 편집</li>
@@ -240,7 +241,7 @@ footer{background:#0B0908;color:#8C8077;font-size:13.5px;padding:30px 0 40px;lin
 <li>다온파트너스 채널 소개 월 2회 + 유튜브</li></ul>
 <a href="/guide/">영상은 이렇게 찍어요 →</a></div>
 </div>
-<p class="pnote">월 이용료는 무료 체험이 끝나기 전에 안내드립니다. 다온파트너스 채널에 올리는 소개 글에는 법에 따라 '광고' 표시를 합니다.</p>
+<p class="pnote">한 달 무료 체험 후 계속하실 때만 요금이 나갑니다. 창립 제휴가는 먼저 신청한 10곳에 12개월 동안 같은 가격으로 적용됩니다. 다온파트너스 채널에 올리는 소개 글에는 법에 따라 '광고' 표시를 합니다.</p>
 <div class="you">사장님이 하실 일은 딱 두 가지 → <b>📸 사진 보내기</b><b>👍 "올려 주세요" 답하기</b></div>
 </div></section>
 
@@ -280,7 +281,7 @@ footer{background:#0B0908;color:#8C8077;font-size:13.5px;padding:30px 0 40px;lin
     <p>체험 기간 동안 플레이스 조회수와 전화 문의 변화를 같이 확인합니다. 계속할지는 그다음에 정하시면 됩니다.</p>
     <ul>
       <li>체험 중 비용 없음</li>
-      <li>월 이용료는 체험이 끝나기 전에 미리 안내</li>
+      <li>체험 후 Basic 창립 제휴가 월 5.9만원(12개월 고정)</li>
       <li>올린 글은 모두 사장님 계정에 남음</li>
     </ul>
     <a class="btn red" href="https://daonpartners.app.n8n.cloud/form/daon-partner-join">무료 체험 신청하기 →</a>
@@ -306,7 +307,7 @@ footer{background:#0B0908;color:#8C8077;font-size:13.5px;padding:30px 0 40px;lin
 <section class="sec" id="faq"><div class="wrap faq">
   <span class="eyebrow">자주 묻는 질문</span>
   <h2 style="margin-bottom:18px">궁금한 점</h2>
-  <details><summary>무료 체험이 끝나면 비용이 드나요?</summary><p>계속 이용하실지는 사장님이 정하십니다. 이용하시면 월 관리비가 있고, 금액은 체험이 끝나기 전에 미리 안내드립니다. 원하지 않으시면 그대로 끝납니다.</p></details>
+  <details><summary>무료 체험이 끝나면 비용이 드나요?</summary><p>계속 이용하실지는 사장님이 정하십니다. 이용하시면 Basic 월 9.9만원, Pro 월 14.9만원이고, 먼저 신청한 10곳은 Basic을 창립 제휴가 월 5.9만원에 12개월 동안 이용하실 수 있습니다. 원하지 않으시면 그대로 끝납니다.</p></details>
   <details><summary>AI가 쓴 글이면 티가 나지 않나요?</summary><p>AI가 초안을 만들고 사람이 사실과 표현을 고칩니다. 마지막 확인은 사장님이 하시고, 승인하지 않은 글은 올리지 않습니다.</p></details>
   <details><summary>제 계정 비밀번호를 알려 드려야 하나요?</summary><p>비밀번호는 받지 않습니다. 스마트플레이스는 매니저 초대, 인스타그램은 메타 비즈니스 권한 초대로 연결하면 저희가 올립니다. 블로그는 완성 글을 보내 드리면 사장님이 붙여넣으시면 됩니다.</p></details>
 <details><summary>사진이나 영상을 잘 못 찍는데 괜찮나요?</summary><p>괜찮습니다. 폰으로 10초씩 3~5개만 찍어 보내 주시면 자르고, 자막과 음악을 넣는 편집은 저희가 합니다. <a href="/guide/">촬영 가이드</a>를 한 번만 봐 주세요. AI로 음식 사진을 새로 만들지는 않습니다.</p></details>
