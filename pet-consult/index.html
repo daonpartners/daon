@@ -1,87 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>펫보험 상담 신청 | 보험물어봄 by 다온</title>
-<meta name="description" content="강아지·고양이 펫보험, 우리 아이 정보와 보호자 정보만 남겨주시면 가설계를 만들어 연락드립니다. 상담 비용 없음.">
-<meta name="robots" content="index, follow">
-<meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:site_name" content="보험물어봄 by 다온">
-<meta property="og:title" content="펫보험 상담 신청">
-<meta property="og:description" content="강아지·고양이 펫보험, 우리 아이 정보와 보호자 정보만 남겨주시면 가설계를 만들어 연락드립니다. 상담 비용 없음.">
-<meta property="og:url" content="https://daon.io.kr/pet-consult">
-<meta name="theme-color" content="#0B1E42">
-<link rel="canonical" href="https://daon.io.kr/pet-consult">
-<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
-<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/assets/consult.css?v=20261111b">
-</head>
-<body>
-<div class="app">
-  <header class="cs-top">
-    <a href="/" aria-label="보험물어봄 홈"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
-    <a class="call" href="tel:0415341124">📞 전화 상담</a>
-  </header>
-
-  <section class="cs-hero">
-    <div class="ic">🐾</div>
-    <p class="kick">펫보험 상담</p>
-    <h1>우리 아이 펫보험,<br>1분이면 신청 끝</h1>
-    <p class="sub">아이 정보와 건강 상태만 알려주세요. 가설계를 만들어 연락드립니다.</p>
-    <div class="cs-badges"><span>상담 비용 없음</span><span>신청만으로 가입되지 않음</span></div>
-  </section>
-
-  <section class="cs-sec">
-    <h2><span class="n">1</span>우리 아이 정보</h2>
-    <div class="fl"><span class="lb">어떤 아이인가요?</span><div class="opts" data-k="kind"><button type="button" class="opt" data-v="강아지"><span class="i">🐶</span><span><b>강아지</b></span></button><button type="button" class="opt" data-v="고양이"><span class="i">🐱</span><span><b>고양이</b></span></button></div></div>
-    <div class="row fl"><div><label for="pName">이름</label><input class="inp" id="pName" maxlength="20" placeholder="예) 초코"></div><div><label for="pBreed">품종</label><input class="inp" id="pBreed" maxlength="30" placeholder="예) 말티즈"></div></div>
-    <div class="fl"><label for="pBirth">생일 <small>모르면 나이만</small></label><input class="inp" id="pBirth" placeholder="예) 20220501 또는 3살" maxlength="20" data-date></div>
-    <div class="fl"><span class="lb">성별</span><div class="seg" data-k="pSex"><button type="button" data-v="수컷">수컷</button><button type="button" data-v="암컷">암컷</button></div></div>
-    <div class="fl"><span class="lb">중성화</span><div class="seg" data-k="neut"><button type="button" data-v="했음">했어요</button><button type="button" data-v="안 함">안 했어요</button></div></div>
-  </section>
-  <section class="cs-sec">
-    <h2><span class="n">2</span>건강 상태</h2>
-    <div class="fl"><span class="lb">지금 치료 중이거나 지켜보는 병이 있나요?</span><div class="seg" data-k="sick"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button><button type="button" data-v="모름">잘 몰라요</button></div></div>
-    <div class="fl" data-if="sick=있음"><label for="pDisease">어떤 병인가요?</label><textarea class="inp" id="pDisease" placeholder="예) 슬개골 탈구 2기, 피부염 약 복용 중" maxlength="200"></textarea></div>
-    <div class="fl"><span class="lb">최근 6개월 안에 동물병원에 간 적 있나요?</span><div class="seg" data-k="visit"><button type="button" data-v="없음">없어요</button><button type="button" data-v="있음">있어요</button></div></div>
-    <div class="fl" data-if="visit=있음"><label for="pVisit">어떤 일로 갔나요?</label><textarea class="inp" id="pVisit" placeholder="예) 9월 장염으로 2회 통원" maxlength="200"></textarea></div>
-    <button type="button" class="more" data-open="petMore">+ 더 알려주기 (선택) · 동물등록 · 예방접종 · 사진</button>
-    <div id="petMore" class="hide">
-    <div class="fl"><span class="lb">동물등록</span><div class="seg" data-k="reg"><button type="button" data-v="등록">했어요</button><button type="button" data-v="미등록">안 했어요</button><button type="button" data-v="모름">모름</button></div></div>
-    <div class="fl"><span class="lb">예방접종</span><div class="seg" data-k="vac"><button type="button" data-v="접종함">다 했어요</button><button type="button" data-v="일부 접종">일부만</button><button type="button" data-v="안 함">안 했어요</button></div></div>
-    <div class="fl"><label for="pHosp">다니는 동물병원 <small>지역도 함께</small></label><input class="inp" id="pHosp" placeholder="예) 아산 OO동물병원" maxlength="50"></div>
-    <div class="fl"><label class="photo"><input type="file" accept="image/*" data-photo="pet"><span class="ph">📷</span><span><b>아이 사진 올리기</b><small>정면 얼굴 1장 · 가입 심사 때 필요해요</small></span></label></div>
-    </div>
-  </section>
-  <div data-contact></div>
-  <footer class="cs-legal"></footer>
-</div>
-<script src="/assets/consult.js?v=20261111b"></script>
-<script>
-DaonConsult({
-  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-pet-lead', contactNo: 3, whoTitle: '보호자(계약자) 정보',
-  memoHint: '예) 슬개골도 보장되는지 궁금해요',
-  doneTips: ['아이 사진(정면 얼굴)이 가입 심사에 필요합니다. 못 올리셨다면 카톡으로 보내주세요.'],
-  validate: function(a){
-    if (!a.S.kind) return ['강아지인지 고양이인지 골라주세요', document.querySelector('[data-k=kind]')];
-    if (!a.S.sick) return ['치료 중인 병이 있는지 골라주세요', document.querySelector('[data-k=sick]')];
-    if (a.S.sick === '있음' && !a.v('pDisease')) return ['어떤 병인지 간단히 적어주세요', 'pDisease'];
-    if (!a.S.visit) return ['최근 6개월 병원 방문 여부를 골라주세요', document.querySelector('[data-k=visit]')];
-    if (a.S.visit === '있음' && !a.v('pVisit')) return ['병원에 간 이유를 간단히 적어주세요', 'pVisit'];
-  },
-  payload: function(a){
-    var d = function(x){ return x ? x : '-'; };
-    return { petName: d(a.v('pName')), petBirth: d(a.v('pBirth')), petBreed: a.S.kind + (a.v('pBreed') ? ' / ' + a.v('pBreed') : ''), petColor: '-',
-      petSex: d(a.S.pSex), neutered: d(a.S.neut), registered: d(a.S.reg), vaccine: d(a.S.vac),
-      petDisease: a.S.sick === '있음' ? a.v('pDisease') : a.S.sick, petVisit: a.S.visit === '있음' ? a.v('pVisit') : a.S.visit,
-      chronic: '-', petMed: '-', petHospital: d(a.v('pHosp')), petHospitalArea: '-', address: '-', photoBase64: a.PHOTOS.pet || '' };
-  }
-});
-</script>
-<script src="/assets/home-btn.js" defer></script>
-</body>
-</html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>보장점검센터 | 이동 안내</title>
+<link rel="canonical" href="https://daon.io.kr/insu/">
+<meta http-equiv="refresh" content="0; url=/insu/">
+<script>location.replace('/insu/'+location.search+location.hash);</script>
+</head><body style="font-family:sans-serif;padding:24px">
+<p>이 페이지는 <a href="/insu/">보장점검센터</a>(으)로 옮겨졌습니다.</p>
+</body></html>

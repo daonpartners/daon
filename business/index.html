@@ -1,82 +1,11 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>사업장 안전 자가진단 | 보험물어봄 by 다온</title>
-<meta name="description" content="상시 근로자 5명 이상 사업장은 중대재해처벌법 적용 대상입니다. 안전관리 상태를 1분 만에 점검해 보세요.">
-<meta name="robots" content="index, follow">
-<meta name="naver-site-verification" content="a09350fbdee79685108cbb46df68b0bb178bb94b">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="ko_KR">
-<meta property="og:site_name" content="보험물어봄 by 다온">
-<meta property="og:title" content="사업장 안전 자가진단">
-<meta property="og:description" content="상시 근로자 5명 이상 사업장은 중대재해처벌법 적용 대상입니다. 안전관리 상태를 1분 만에 점검해 보세요.">
-<meta property="og:url" content="https://daon.io.kr/business">
-<meta name="theme-color" content="#0B1E42">
-<link rel="canonical" href="https://daon.io.kr/business">
-<link rel="icon" type="image/png" href="/assets/favicon-daon.png">
-<link rel="apple-touch-icon" href="/assets/favicon-daon.png">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/assets/consult.css?v=20261111b">
-</head>
-<body>
-<div class="app">
-  <header class="cs-top">
-    <a href="/" aria-label="보험물어봄 홈"><img src="/assets/logo-daon-wordmark.png" alt="다온파트너스" width="65" height="22"></a>
-    <a class="call" href="tel:0415341124">📞 전화 상담</a>
-  </header>
-
-  <section class="cs-hero">
-    <div class="ic">🦺</div>
-    <p class="kick">사업장 안전 자가진단</p>
-    <h1>직원 5명 이상 사업장,<br>안전관리 1분 점검</h1>
-    <p class="sub">상시 근로자 5명 이상 사업장은 중대재해처벌법 적용 대상입니다. 아래 질문에 답하면 점검이 필요한 항목을 바로 보여드립니다.</p>
-    <div class="cs-badges"><span>상담 비용 없음</span><span>결과 바로 확인</span></div>
-  </section>
-
-  <section class="cs-sec">
-    <h2><span class="n">1</span>사업장</h2>
-    <div class="fl"><span class="lb">상시 근로자 수</span><div class="seg" data-k="headcount"><button type="button" data-v="under5">5명 미만</button><button type="button" data-v="5to19">5~19명</button><button type="button" data-v="20to49">20~49명</button><button type="button" data-v="over50">50명 이상</button></div></div>
-    <div class="fl"><span class="lb">업종</span><div class="seg" data-k="industry"><button type="button" data-v="manufacturing">제조</button><button type="button" data-v="construction">건설</button><button type="button" data-v="logistics">물류·운송</button><button type="button" data-v="etc">그 외</button></div></div>
-  </section>
-  <section class="cs-sec">
-    <h2><span class="n">2</span>안전관리 상태</h2>
-    <div class="fl"><span class="lb">위험성평가를 하고 있나요?</span><div class="seg" data-k="riskAssess"><button type="button" data-v="yearly">매년 해요</button><button type="button" data-v="once">한 번 해봤어요</button><button type="button" data-v="never">안 했어요</button><button type="button" data-v="unknown">처음 들어요</button></div></div>
-    <div class="fl"><span class="lb">안전 담당자가 있나요?</span><div class="seg" data-k="safetyStaff"><button type="button" data-v="dedicated">전담자 있음</button><button type="button" data-v="parttime">다른 일과 겸직</button><button type="button" data-v="none">지정 안 됨</button><button type="button" data-v="unknown">모름</button></div></div>
-    <div class="fl"><span class="lb">사고 배상 보험이 준비돼 있나요?</span><div class="seg" data-k="liability"><button type="button" data-v="yes">준비됨</button><button type="button" data-v="old">오래돼서 모름</button><button type="button" data-v="no">없어요</button><button type="button" data-v="unknown">모름</button></div></div>
-    <div class="fl"><span class="lb">직원 단체보험이 있나요?</span><div class="seg" data-k="groupPlan"><button type="button" data-v="yes">있어요</button><button type="button" data-v="reviewing">검토 중</button><button type="button" data-v="no">없어요</button><button type="button" data-v="unknown">모름</button></div></div>
-    <div class="box-note hide" id="bizRes"></div>
-  </section>
-  <div data-contact></div>
-  <footer class="cs-legal"></footer>
-</div>
-<script src="/assets/consult.js?v=20261111b"></script>
-<script>
-var BAD = { riskAssess: ['never','unknown','once'], safetyStaff: ['none','unknown'], liability: ['no','old','unknown'], groupPlan: ['no','unknown'] };
-var NAME = { riskAssess: '위험성평가', safetyStaff: '안전 담당자 지정', liability: '사고 배상 보험', groupPlan: '직원 단체보험' };
-DaonConsult({
-  api: 'https://daonpartners.app.n8n.cloud/webhook/daon-business-check', contactNo: 3, sendText: '점검 결과로 상담 신청',
-  onPick: function(k, S){
-    var keys = Object.keys(BAD), done = keys.filter(function(x){ return S[x]; });
-    if (done.length < keys.length) return;
-    var need = keys.filter(function(x){ return BAD[x].indexOf(S[x]) >= 0; }).map(function(x){ return NAME[x]; });
-    var box = document.getElementById('bizRes'); box.classList.remove('hide');
-    box.innerHTML = need.length ? '<b>점검이 필요한 항목 ' + need.length + '개</b><br>' + need.join(' · ') + '<br>아래에 연락처를 남기시면 무엇부터 준비하면 되는지 알려드립니다.' : '<b>기본 항목은 잘 준비되어 있어요.</b><br>보험 보장 금액이 충분한지는 상담으로 확인해 보세요.';
-  },
-  validate: function(a){
-    var miss = ['headcount','industry','riskAssess','safetyStaff','liability','groupPlan'].filter(function(k){ return !a.S[k]; });
-    if (miss.length) return ['점검 질문에 모두 답해주세요', document.querySelector('[data-k=' + miss[0] + ']')];
-  },
-  payload: function(a){
-    var ans = {}; ['headcount','industry','riskAssess','safetyStaff','liability','groupPlan'].forEach(function(k){ ans[k] = a.S[k]; });
-    var T = { under5:'5명 미만', '5to19':'5~19명', '20to49':'20~49명', over50:'50명 이상', manufacturing:'제조', construction:'건설', logistics:'물류·운송', etc:'그 외' };
-    var lab = function(k){ var b = document.querySelector('[data-k=' + k + '] button.on'); return b ? b.textContent : '-'; };
-    return { interests: ['사업장 안전 자가진단'], origin: '사업장 자가진단', answers: ans,
-      interestEtc: '근로자 ' + T[a.S.headcount] + ' · ' + T[a.S.industry] + ' · 위험성평가 ' + lab('riskAssess') + ' · 안전담당 ' + lab('safetyStaff') + ' · 배상보험 ' + lab('liability') + ' · 단체보험 ' + lab('groupPlan') };
-  }
-});
-</script>
-<script src="/assets/home-btn.js" defer></script>
-</body>
-</html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>사업장 보험 상담 | 이동 안내</title>
+<link rel="canonical" href="https://daon.io.kr/safety-consult/">
+<meta http-equiv="refresh" content="0; url=/safety-consult/">
+<script>location.replace('/safety-consult/'+location.search+location.hash);</script>
+</head><body style="font-family:sans-serif;padding:24px">
+<p>이 페이지는 <a href="/safety-consult/">사업장 보험 상담</a>(으)로 옮겨졌습니다.</p>
+</body></html>
